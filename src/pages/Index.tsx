@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import MediaRow from "@/components/MediaRow";
 import ContinueWatching from "@/components/ContinueWatching";
+import JarvisTutorial from "@/components/JarvisTutorial";
 import { Button } from "@/components/ui/button";
 import { 
   getTrending, 
@@ -142,6 +143,7 @@ const Index = () => {
           </p>
         </div>
       </footer>
+      <JarvisTutorial />
     </div>
   );
 };
