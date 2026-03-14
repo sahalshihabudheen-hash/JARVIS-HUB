@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
+import { ShieldAlert } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
@@ -70,13 +71,21 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           src={embedUrl}
           className="absolute inset-0 w-full h-full"
           allowFullScreen
+          sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         />
       </div>
 
-      <div className="pt-2">
+      <div className="pt-2 flex flex-col items-center gap-4">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-500">
+          <ShieldAlert className="w-3.5 h-3.5" />
+          <p className="text-[10px] font-medium uppercase tracking-wider">
+            Kaspersky/Ad-Block Alert? These are safe to ignore - they are just blocking 3rd party ads.
+          </p>
+        </div>
+        
         <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center opacity-50">
-          Note: All content is provided by non-affiliated third-party servers.
+          Note: This content is hosted on third-party servers. We recommend using **Brave Browser** or **uBlock Origin** for the best experience.
         </p>
       </div>
     </div>
