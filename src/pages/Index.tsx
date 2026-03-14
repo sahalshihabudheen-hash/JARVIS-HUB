@@ -62,15 +62,14 @@ const Index = () => {
   const isKerala = location?.region?.toLowerCase().includes("kerala");
   
   const { data: regionalNow, isLoading: regionalLoading } = useQuery({
-    queryKey: ["regionalNow", isKerala ? "ml" : "none"],
-    queryFn: () => fetch("https://api.themoviedb.org/3/discover/movie?api_key=4e44d9029b1270a757cddc766a1bcb63&with_original_language=ml&sort_by=popularity.desc").then(res => res.json()),
-    enabled: isKerala,
+    queryKey: ["regionalNow", location?.country, location?.region],
+    queryFn: () => getPopularMovies(1, location?.country),
+    enabled: !!location,
   });
 
-  const { data: regionalUpcoming } = useQuery({
-    queryKey: ["regionalUpcoming", isKerala ? "ml" : "none"],
-    queryFn: () => fetch("https://api.themoviedb.org/3/discover/movie?api_key=4e44d9029b1270a757cddc766a1bcb63&with_original_language=ml&primary_release_date.gte=" + new Date().toISOString().split('T')[0]).then(res => res.json()),
-    enabled: isKerala,
+  const { data: worldwideUpcoming, isLoading: worldwideLoading } = useQuery({
+    queryKey: ["worldwideUpcoming"],
+    queryFn: () => getUpcomingMovies(1), // No region = Worldwide
   });
 
   // Genre specific queries for personalized hub
@@ -140,37 +139,31 @@ const Index = () => {
         <div className="container mx-auto -mt-20 relative z-10">
           <ContinueWatching />
           
-          {isKerala && (
-            <>
-              <MediaRow
-                title="🔥 Hot in Kerala"
-                items={regionalNow?.results || []}
-                mediaType="movie"
-                isLoading={regionalLoading}
-              />
-              <MediaRow
-                title="🆕 Upcoming in Kerala"
-                items={regionalUpcoming?.results || []}
-                mediaType="movie"
-              />
-            </>
+          {location?.region && (
+            <MediaRow
+              title={`🔥 Hot in ${location.region}`}
+              items={regionalNow?.results || []}
+              mediaType="movie"
+              isLoading={regionalLoading}
+            />
           )}
 
           <MediaRow
-            title="Trending Now"
-            items={trending?.slice(5) || []}
-            isLoading={trendingLoading}
-          />
-          
-          <MediaRow
-            title={location?.country === "IN" ? "⚡ Now Playing in India" : `Hot in ${location?.country_name || 'Your Area'}`}
+            title={location ? `⚡ Trending in ${location.country_name}` : "Trending Now"}
             items={nowPlaying?.results || []}
             mediaType="movie"
             isLoading={nowPlayingLoading}
           />
 
           <MediaRow
-            title={location?.country === "IN" ? "📅 Upcoming in India" : `Upcoming in ${location?.country_name || 'Your Area'}`}
+            title="🌍 Worldwide Most Anticipated"
+            items={worldwideUpcoming?.results || []}
+            mediaType="movie"
+            isLoading={worldwideLoading}
+          />
+
+          <MediaRow
+            title={location ? `📅 Upcoming in ${location.country_name}` : "Upcoming Releases"}
             items={upcoming?.results || []}
             mediaType="movie"
             isLoading={upcomingLoading}
