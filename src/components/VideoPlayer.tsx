@@ -71,7 +71,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           src={embedUrl}
           className="absolute inset-0 w-full h-full"
           allowFullScreen
-          sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
+          sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         />
       </div>
