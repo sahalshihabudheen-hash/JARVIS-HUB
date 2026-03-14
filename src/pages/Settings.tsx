@@ -50,8 +50,27 @@ const Settings = () => {
   const clearData = () => {
     localStorage.removeItem("user_selected_genres");
     localStorage.removeItem("jarvis_tutorial_complete");
+    localStorage.removeItem("user_regional_focus");
     updateSelectedGenres([]);
     toast.success("Protocol data wiped successfully.");
+  };
+
+  const regionalOptions = [
+    { id: "auto", name: "Auto-Detect", icon: <Globe className="w-4 h-4" /> },
+    { id: "kerala", name: "Kerala (Malayalam)", icon: "🥥" },
+    { id: "tamilnadu", name: "Tamil Nadu (Tamil)", icon: "🕉️" },
+    { id: "karnataka", name: "Karnataka (Kannada)", icon: "🏰" },
+    { id: "maharashtra", name: "Maharashtra (Marathi)", icon: "🚩" },
+    { id: "bengal", name: "West Bengal (Bengali)", icon: "🐅" },
+    { id: "north_india", name: "North India (Hindi)", icon: "🕉️" },
+  ];
+
+  const currentFocus = localStorage.getItem("user_regional_focus") || "auto";
+
+  const setRegionalFocus = (id: string) => {
+    localStorage.setItem("user_regional_focus", id);
+    toast.success(`Regional focus set to ${id.replace('_', ' ')}`);
+    window.location.reload(); // Reload to refresh queries
   };
 
   const tabs = [
@@ -170,6 +189,34 @@ const Settings = () => {
                         Launch JARVIS Assistant
                         <ChevronRight className="w-4 h-4 ml-2" />
                      </Button>
+                   </div>
+
+                  <div className="pt-8 border-t border-white/10">
+                     <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 flex items-center gap-2">
+                        <Globe className="w-5 h-5 text-primary" />
+                        Regional Intelligence Calibration
+                     </h3>
+                     <p className="text-muted-foreground text-sm mb-6">
+                        Manually override the hub's location protocols to focus on a specific regional cinema database.
+                     </p>
+                     
+                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {regionalOptions.map((opt) => (
+                           <button
+                             key={opt.id}
+                             onClick={() => setRegionalFocus(opt.id)}
+                             className={cn(
+                               "flex items-center gap-3 p-4 rounded-xl border transition-all duration-300",
+                               currentFocus === opt.id 
+                                 ? "bg-primary/20 border-primary text-primary" 
+                                 : "bg-white/5 border-white/5 hover:bg-white/10 text-muted-foreground"
+                             )}
+                           >
+                             <span className="text-xl">{opt.icon}</span>
+                             <span className="text-[10px] font-bold uppercase tracking-widest">{opt.name}</span>
+                           </button>
+                        ))}
+                     </div>
                    </div>
 
                    <div className="pt-8 border-t border-white/10">

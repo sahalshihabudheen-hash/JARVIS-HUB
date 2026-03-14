@@ -96,18 +96,18 @@ const Index = () => {
   const isKerala = location?.region?.toLowerCase().includes("kerala");
   
   const { data: regionalNow, isLoading: regionalLoading } = useQuery({
-    queryKey: ["regionalNow", location?.country, location?.region],
+    queryKey: ["regionalNow", location?.country, location?.region, localStorage.getItem("user_regional_focus")],
     queryFn: () => {
-      const isIndia = location?.country === "IN";
-      const regionName = location?.region?.toLowerCase() || "";
+      const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
+      const isIndia = location?.country === "IN" || manualFocus !== "auto";
+      const regionName = manualFocus !== "auto" ? manualFocus : (location?.region?.toLowerCase() || "");
       
       const params: Record<string, string> = {
         sort_by: "popularity.desc",
         include_adult: "false"
       };
 
-      // Special handling for Indian regional cinemas
-      if (isIndia) {
+      if (isIndia || manualFocus !== "auto") {
         params.with_origin_country = "IN";
         if (regionName.includes("kerala")) params.with_original_language = "ml";
         else if (regionName.includes("tamil")) params.with_original_language = "ta";
@@ -115,18 +115,12 @@ const Index = () => {
         else if (regionName.includes("karnataka")) params.with_original_language = "kn";
         else if (regionName.includes("bengal")) params.with_original_language = "bn";
         else if (regionName.includes("maharashtra")) params.with_original_language = "mr";
-        else params.with_original_language = "hi"; // Default to Hindi for India if no specific state match
+        else params.with_original_language = "hi";
       } else {
-        // Universal detection for other countries
         params.with_origin_country = location?.country;
-        
-        // Pick the first non-English language from the detected list
         const detectedLanguages = location?.languages?.split(',') || [];
         const localLang = detectedLanguages.find(l => !l.startsWith('en'))?.split('-')[0];
-        
-        if (localLang) {
-          params.with_original_language = localLang;
-        }
+        if (localLang) params.with_original_language = localLang;
       }
       
       return discoverMovies(params);
@@ -135,10 +129,11 @@ const Index = () => {
   });
 
   const { data: regionalUpcoming, isLoading: regionalUpcomingLoading } = useQuery({
-    queryKey: ["regionalUpcoming", location?.country, location?.region],
+    queryKey: ["regionalUpcoming", location?.country, location?.region, localStorage.getItem("user_regional_focus")],
     queryFn: () => {
-      const isIndia = location?.country === "IN";
-      const regionName = location?.region?.toLowerCase() || "";
+      const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
+      const isIndia = location?.country === "IN" || manualFocus !== "auto";
+      const regionName = manualFocus !== "auto" ? manualFocus : (location?.region?.toLowerCase() || "");
       
       const params: Record<string, string> = {
         sort_by: "popularity.desc",
@@ -146,7 +141,7 @@ const Index = () => {
         "primary_release_date.gte": new Date().toISOString().split('T')[0]
       };
 
-      if (isIndia) {
+      if (isIndia || manualFocus !== "auto") {
         params.with_origin_country = "IN";
         if (regionName.includes("kerala")) params.with_original_language = "ml";
         else if (regionName.includes("tamil")) params.with_original_language = "ta";
@@ -220,6 +215,10 @@ const Index = () => {
     sessionStorage.setItem("ad-warning-dismissed", "true");
   };
 
+  const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
+  const regionLabel = manualFocus !== "auto" ? manualFocus : (location?.region || "");
+  const isKeralaFocus = regionLabel.toLowerCase().includes("kerala");
+  
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -250,16 +249,16 @@ const Index = () => {
         <div className="container mx-auto -mt-20 relative z-10">
           <ContinueWatching />
           
-          {location?.region && (
+          {(location?.region || manualFocus !== "auto") && (
             <>
               <MediaRow
-                title={`🔥 Top in ${location.region}`}
+                title={isKeralaFocus ? "🔥 Malayalam Blockbusters" : `🔥 Top in ${regionLabel}`}
                 items={regionalNow?.results || []}
                 mediaType="movie"
                 isLoading={regionalLoading}
               />
               <MediaRow
-                title={`🆕 Upcoming in ${location.region}`}
+                title={isKeralaFocus ? "🆕 Upcoming Malayalam Cinema" : `🆕 Upcoming in ${regionLabel}`}
                 items={regionalUpcoming?.results || []}
                 mediaType="movie"
                 isLoading={regionalUpcomingLoading}
@@ -267,13 +266,7 @@ const Index = () => {
             </>
           )}
 
-          <MediaRow
-            title={location?.country === "IN" ? "⚡ Indian Cinema Trends" : (location ? `⚡ Trending in ${location.country_name}` : "Trending Now")}
-            items={nowPlaying?.results || []}
-            mediaType="movie"
-            isLoading={nowPlayingLoading}
-          />
-
+          {/* Worldwide row moved up for better global context after local focus */}
           <MediaRow
             title="🌍 Worldwide Most Anticipated"
             items={worldwideUpcoming?.results || []}
@@ -281,12 +274,24 @@ const Index = () => {
             isLoading={worldwideLoading}
           />
 
-          <MediaRow
-            title={location?.country === "IN" ? "📅 Upcoming Indian Releases" : (location ? `📅 Upcoming in ${location.country_name}` : "Upcoming Releases")}
-            items={upcoming?.results || []}
-            mediaType="movie"
-            isLoading={upcomingLoading}
-          />
+          {/* Hide/De-prioritize broader India row if user wants strict local focus */}
+          {!isKeralaFocus && (
+            <MediaRow
+              title={location?.country === "IN" ? "⚡ Indian Cinema Trends" : (location ? `⚡ Trending in ${location.country_name}` : "Trending Now")}
+              items={nowPlaying?.results || []}
+              mediaType="movie"
+              isLoading={nowPlayingLoading}
+            />
+          )}
+
+          {!isKeralaFocus && (
+            <MediaRow
+              title={location?.country === "IN" ? "📅 Upcoming Indian Releases" : (location ? `📅 Upcoming in ${location.country_name}` : "Upcoming Releases")}
+              items={upcoming?.results || []}
+              mediaType="movie"
+              isLoading={upcomingLoading}
+            />
+          )}
 
           {(user || selectedGenres.length > 0) && (
             <>
