@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import Footer from "@/components/Footer";
 
 const NotFound = () => {
   const location = useLocation();
@@ -16,6 +17,9 @@ const NotFound = () => {
         <a href="/" className="text-primary underline hover:text-primary/90">
           Return to Home
         </a>
+      </div>
+      <div className="absolute bottom-0 w-full">
+        <Footer />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Search as SearchIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import MediaCard from "@/components/MediaCard";
+import Footer from "@/components/Footer";
 import { searchMulti, MediaItem } from "@/lib/tmdb";
 
 const Search = () => {
@@ -93,6 +94,7 @@ const Search = () => {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

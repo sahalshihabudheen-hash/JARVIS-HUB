@@ -6,6 +6,7 @@ import HeroSection from "@/components/HeroSection";
 import MediaRow from "@/components/MediaRow";
 import ContinueWatching from "@/components/ContinueWatching";
 import JarvisTutorial from "@/components/JarvisTutorial";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { 
   getTrending, 
@@ -132,17 +133,8 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-border">
-        <div className="container mx-auto px-4 text-center space-y-2">
-          <p className="text-muted-foreground text-sm">
-            © 2024 JARVIS HUB. All rights reserved. Powered by VidLink & TMDB.
-          </p>
-          <p className="text-muted-foreground/60 text-xs">
-            Administered by Shiha
-          </p>
-        </div>
-      </footer>
+      <Footer />
+      <JarvisTutorial />
     </div>
   );
 };

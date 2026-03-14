@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Play, Star, Clock, Calendar, Heart } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import MediaRow from "@/components/MediaRow";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { getMovieDetails, getSimilar, getBackdropUrl, getImageUrl } from "@/lib/tmdb";
 import { isInWatchlist, toggleWatchlist } from "@/lib/watchlist";
@@ -189,6 +190,7 @@ const MovieDetails = () => {
           mediaType="movie"
         />
       </div>
+      <Footer />
     </div>
   );
 };

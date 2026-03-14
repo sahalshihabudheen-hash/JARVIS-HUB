@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import MediaCard from "@/components/MediaCard";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { getPopularMovies, getTopRatedMovies, getNowPlayingMovies, getUpcomingMovies, getMovieGenres, discoverMovies } from "@/lib/tmdb";
 
@@ -123,6 +124,7 @@ const Movies = () => {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

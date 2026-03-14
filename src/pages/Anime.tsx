@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import MediaCard from "@/components/MediaCard";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { discoverTV, SearchResult } from "@/lib/tmdb";
 
@@ -63,6 +64,7 @@ const Anime = () => {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

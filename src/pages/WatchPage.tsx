@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { getMovieDetails, getTVDetails, getSeasonDetails } from "@/lib/tmdb";
 
@@ -147,6 +148,7 @@ const WatchPage = () => {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

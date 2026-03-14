@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Play, Star, Calendar, Tv, Heart } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import MediaRow from "@/components/MediaRow";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getTVDetails, getSeasonDetails, getSimilar, getBackdropUrl, getImageUrl } from "@/lib/tmdb";
@@ -263,6 +264,7 @@ const TVDetails = () => {
           mediaType="tv"
         />
       </div>
+      <Footer />
     </div>
   );
 };

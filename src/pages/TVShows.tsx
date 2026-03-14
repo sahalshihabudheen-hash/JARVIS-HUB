@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import MediaCard from "@/components/MediaCard";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { getPopularTVShows, getTopRatedTVShows, getTVGenres, discoverTV } from "@/lib/tmdb";
 
@@ -119,6 +120,7 @@ const TVShows = () => {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };
