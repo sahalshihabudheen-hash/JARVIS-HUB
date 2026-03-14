@@ -15,6 +15,7 @@ interface VideoPlayerProps {
 const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
   const [currentServer, setCurrentServer] = useState(getDefaultServer());
   const [showOverlay, setShowOverlay] = useState(true);
+  const [shieldActive, setShieldActive] = useState(false);
 
   useEffect(() => {
     setupProgressListener();
@@ -23,7 +24,8 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
   const handleServerChange = (serverId: string) => {
     setCurrentServer(serverId);
     setDefaultServer(serverId);
-    setShowOverlay(true); // Show overlay again when server changes
+    setShowOverlay(true);
+    setShieldActive(false);
   };
 
   const server = videoServers.find((s) => s.id === currentServer) || videoServers[0];
@@ -76,11 +78,14 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         />
 
-        {/* Ad-Block Overlay Shield */}
+        {/* Ad-Block Overlay Shield (Initial) */}
         {showOverlay && (
           <div 
             className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer group-hover:bg-black/60 transition-colors"
-            onClick={() => setShowOverlay(false)}
+            onClick={() => {
+              setShowOverlay(false);
+              setShieldActive(true); // Automatically engage shield after first click
+            }}
           >
             <div className="text-center animate-pulse-glow">
               <div className="w-20 h-20 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 mx-auto shadow-[0_0_30px_rgba(34,211,238,0.4)]">
@@ -91,19 +96,49 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
               <p className="text-primary font-display font-semibold tracking-widest text-sm uppercase">
                 Initialize Secure Stream
               </p>
-              <p className="text-muted-foreground text-[10px] mt-2 uppercase tracking-[0.3em]">
-                (Prevents Initial Ad Popups)
-              </p>
             </div>
           </div>
         )}
+
+        {/* Persistent Stealth Shield (Manual) */}
+        {shieldActive && !showOverlay && (
+          <div 
+            className="absolute inset-0 z-40 bg-transparent cursor-default"
+            title="Stealth Shield Active - No clicks allowed"
+          />
+        )}
       </div>
 
-      <div className="pt-4 flex flex-col items-center gap-4">
+      {/* Shield Controls */}
+      <div className="flex justify-center">
+        <Button
+          variant={shieldActive ? "default" : "outline"}
+          size="sm"
+          onClick={() => setShieldActive(!shieldActive)}
+          className={cn(
+            "rounded-full px-6 transition-all duration-500",
+            shieldActive ? "bg-red-500/20 text-red-400 border-red-500/50 hover:bg-red-500/30" : "bg-primary/10 text-primary border-primary/20"
+          )}
+        >
+          {shieldActive ? (
+            <span className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+              LOCK ENGAGED (No Ads Possible)
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
+              ENGAGE STEALTH SHIELD
+            </span>
+          )}
+        </Button>
+      </div>
+
+      <div className="pt-2 flex flex-col items-center gap-4">
         <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 max-w-2xl text-center">
           <ShieldAlert className="w-5 h-5 shrink-0" />
           <p className="text-xs font-medium leading-relaxed">
-            <span className="font-bold">Security Protocol:</span> If you see ads or popups, simply close them. They come from the video server, not JARVIS HUB.
+            <span className="font-bold">Protocol:</span> Use the <span className="text-white italic">Stealth Shield</span> to block all ad popups while watching. Unlock to pause.
           </p>
         </div>
         
