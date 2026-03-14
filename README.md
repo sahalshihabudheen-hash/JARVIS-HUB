@@ -1,66 +1,43 @@
-# Welcome To AeroX Streamflix
+# JARVIS HUB - Premium Media Terminal 🤖🛡️
 
-## Project info
+Welcome to **JARVIS HUB**, a sophisticated media streaming interface designed for high-security, ad-free viewing.
 
-**URL**: https://strelixstream.lovable.app/
+## 🚀 Initialization
 
-## How Can I Edit the code? 
-Simply download the zip file and go to lovable site, start prompting. 
-
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+To start the hub locally:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Step 1: Clone the repository
+git clone https://github.com/sahalshihabudheen-hash/JARVIS-HUB.git
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Step 2: Navigate to the project directory
+cd JARVIS-HUB
 
-# Step 3: Install the necessary dependencies.
+# Step 3: Install dependencies
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Launch the terminal
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🛡️ Key Features
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Stealth Shield Protocol:** A manual lock system that prevents all ad-script interaction during playback.
+- **Mirror Relay Tech:** Access to multiple mirror servers for optimized bandwidth and uptime.
+- **Interactive JARVIS Assistant:** An integrated tactical training guide for new users.
+- **Cross-Platform Sync:** Responsive design for mobile and desktop viewing.
 
-**Use GitHub Codespaces**
+## 🧬 Technologies
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **Vite** & **React**
+- **TypeScript**
+- **Tailwind CSS** & **Shadcn UI**
+- **Firebase Auth**
+- **TMDB API**
 
-## What technologies are used for this project?
+## 🌐 Deployment
 
-This project is built with:
+The hub is optimized for **Vercel** or **Netlify**. Simply connect your GitHub repository and deploy.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open ```vercel, netlify``` and click on deploy -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
+---
+**Administrated by SAHAL made by JARVIS**
