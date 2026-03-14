@@ -42,8 +42,76 @@ const JarvisTutorial = () => {
     );
   }
 
-  // Step 5: Completion Modal
+  // Step 5: Genre Preferences
   if (step === 5) {
+    const genres = [
+      { id: 28, name: "Action", icon: "⚔️" },
+      { id: 878, name: "Sci-Fi", icon: "🚀" },
+      { id: 27, name: "Horror", icon: "👻" },
+      { id: 35, name: "Comedy", icon: "😂" },
+      { id: 53, name: "Thriller", icon: "🔪" },
+      { id: 10749, name: "Romance", icon: "❤️" },
+      { id: 18, name: "Drama", icon: "🎭" },
+      { id: 16, name: "Animation", icon: "🎨" },
+      { id: 14, name: "Fantasy", icon: "🔮" },
+      { id: 9648, name: "Mystery", icon: "🔍" },
+    ];
+
+    const { selectedGenres, updateSelectedGenres } = useTutorial();
+
+    const toggleGenre = (genreId: number) => {
+      if (selectedGenres.includes(genreId)) {
+        updateSelectedGenres(selectedGenres.filter(id => id !== genreId));
+      } else {
+        updateSelectedGenres([...selectedGenres, genreId]);
+      }
+    };
+
+    return (
+      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+        <div className="w-full max-w-2xl glass border border-primary/20 rounded-3xl p-8 relative shadow-[0_0_50px_rgba(34,211,238,0.15)] animate-scale-in">
+          <div className="flex flex-col items-center text-center">
+            <h2 className="text-2xl font-display font-bold text-white uppercase tracking-tighter mb-2">
+              Preference Calibration
+            </h2>
+            <p className="text-muted-foreground mb-8">
+              Select your preferred data streams to optimize the terminal dashboard.
+            </p>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8 w-full">
+              {genres.map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => toggleGenre(g.id)}
+                  className={cn(
+                    "flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300",
+                    selectedGenres.includes(g.id) 
+                      ? "bg-primary/20 border-primary shadow-[0_0_20px_rgba(34,211,238,0.2)]" 
+                      : "bg-white/5 border-white/10 hover:border-white/20"
+                  )}
+                >
+                  <span className="text-2xl">{g.icon}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest">{g.name}</span>
+                </button>
+              ))}
+            </div>
+
+            <Button 
+                onClick={nextStep} 
+                disabled={selectedGenres.length === 0}
+                className="rounded-full px-8 hover-glow transition-all"
+            >
+              Continue Calibration
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 6: Completion Modal
+  if (step === 6) {
     return (
       <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
         <div className="w-full max-w-lg glass border border-primary/20 rounded-3xl p-8 relative shadow-[0_0_50px_rgba(34,211,238,0.15)] animate-scale-in">
@@ -52,10 +120,10 @@ const JarvisTutorial = () => {
               <Shield className="w-10 h-10 text-green-500" />
             </div>
             <h2 className="text-2xl font-display font-bold text-white uppercase tracking-tighter mb-4">
-              Training Complete
+              Training & Calibration Complete
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              Protocol Alpha-1 is successful. You are now prepared to navigate the hub with maximum security. Dismissing assistant...
+              Protocol Alpha-1 is successful. Regional data and personalized genre streams have been prioritized. Dismissing assistant...
             </p>
             <Button onClick={completeTutorial} className="rounded-full px-8 hover-glow bg-green-600 hover:bg-green-500">
               Initialize Hub

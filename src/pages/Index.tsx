@@ -19,9 +19,24 @@ import {
   discoverMovies
 } from "@/lib/tmdb";
 import { useAuth } from "@/context/AuthContext";
+import { useTutorial } from "@/context/TutorialContext";
+
+const GENRE_LABELS: Record<number, string> = {
+  28: "Combat & Action Protocols",
+  878: "Cybernetic & Sci-Fi Realities",
+  27: "Dark & Horror Encounters",
+  35: "Humor & Comedy Modules",
+  53: "Infiltration & Thriller Operations",
+  10749: "Diplomacy & Romance Files",
+  18: "Social & Drama Simulations",
+  16: "Holographic & Animated Data",
+  14: "Mystical & Fantasy Realms",
+  9648: "Encrypted & Mystery Logs",
+};
 
 const Index = () => {
   const { user } = useAuth();
+  const { selectedGenres } = useTutorial();
   const [location, setLocation] = useState<{ country: string; country_name: string; region: string } | null>(null);
 
   useEffect(() => {
@@ -75,27 +90,38 @@ const Index = () => {
   // Genre specific queries for personalized hub
   const { data: actionMovies } = useQuery({
     queryKey: ["genreAction"],
-    queryFn: () => discoverMovies(28), // 28 is Action
-    enabled: !!user,
+    queryFn: () => discoverMovies(28),
+    enabled: !!user || selectedGenres.includes(28),
   });
 
   const { data: sciFiMovies } = useQuery({
     queryKey: ["genreSciFi"],
-    queryFn: () => discoverMovies(878), // 878 is Sci-Fi
-    enabled: !!user,
+    queryFn: () => discoverMovies(878),
+    enabled: !!user || selectedGenres.includes(878),
   });
 
   const { data: thrillerMovies } = useQuery({
     queryKey: ["genreThriller"],
-    queryFn: () => discoverMovies(53), // 53 is Thriller
-    enabled: !!user,
+    queryFn: () => discoverMovies(53),
+    enabled: !!user || selectedGenres.includes(53),
   });
 
   const { data: animationMovies } = useQuery({
     queryKey: ["genreAnimation"],
-    queryFn: () => discoverMovies(16), // 16 is Animation
-    enabled: !!user,
+    queryFn: () => discoverMovies(16),
+    enabled: !!user || selectedGenres.includes(16),
   });
+
+  // Dynamic rows based on tutorial choices
+  const personalizedQueries = selectedGenres
+    .filter(id => ![28, 878, 53, 16].includes(id)) // Filter already included ones
+    .map(id => {
+      return useQuery({
+        queryKey: ["genre", id],
+        queryFn: () => discoverMovies(id),
+        enabled: selectedGenres.includes(id),
+      });
+    });
 
   const [showAdWarning, setShowAdWarning] = useState(false);
 
@@ -169,28 +195,39 @@ const Index = () => {
             isLoading={upcomingLoading}
           />
 
-          {user && (
+          {(user || selectedGenres.length > 0) && (
             <>
               <MediaRow
-                title="Combat & Action Protocols"
+                title={GENRE_LABELS[28]}
                 items={actionMovies?.results || []}
                 mediaType="movie"
               />
               <MediaRow
-                title="Cybernetic & Sci-Fi Realities"
+                title={GENRE_LABELS[878]}
                 items={sciFiMovies?.results || []}
                 mediaType="movie"
               />
               <MediaRow
-                title="Infiltration & Thriller Operations"
+                title={GENRE_LABELS[53]}
                 items={thrillerMovies?.results || []}
                 mediaType="movie"
               />
               <MediaRow
-                title="Holographic & Animated Data"
+                title={GENRE_LABELS[16]}
                 items={animationMovies?.results || []}
                 mediaType="movie"
               />
+              
+              {selectedGenres
+                .filter(id => ![28, 878, 53, 16].includes(id))
+                .map((id, index) => (
+                  <MediaRow
+                    key={id}
+                    title={GENRE_LABELS[id]}
+                    items={personalizedQueries[index]?.data?.results || []}
+                    mediaType="movie"
+                  />
+                ))}
             </>
           )}
           
