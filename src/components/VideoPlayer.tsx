@@ -30,27 +30,9 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
       : server.getTVUrl(tmdbId, season || 1, episode || 1);
 
   return (
-    <div className="space-y-4">
-      {/* Server Selector */}
-      <div className="flex flex-wrap gap-2">
-        <span className="text-sm text-muted-foreground self-center mr-2">Server:</span>
-        {videoServers.map((s) => (
-          <Button
-            key={s.id}
-            variant={s.id === currentServer ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleServerChange(s.id)}
-            className={cn(
-              s.id === currentServer && "hover-glow"
-            )}
-          >
-            {s.name}
-          </Button>
-        ))}
-      </div>
-
-      {/* Video Player */}
-      <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-card">
+    <div className="space-y-6">
+      {/* Video Player Container */}
+      <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5">
         <iframe
           key={`${currentServer}-${tmdbId}-${season}-${episode}`}
           src={embedUrl}
@@ -58,6 +40,44 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           allowFullScreen
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         />
+      </div>
+
+      {/* Control Panel */}
+      <div className="glass border border-white/10 p-4 rounded-2xl space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              Source Selection
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              If the current server is slow or not working, please try another mirror below.
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            {videoServers.map((s) => (
+              <Button
+                key={s.id}
+                variant={s.id === currentServer ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleServerChange(s.id)}
+                className={cn(
+                  "rounded-full px-4 transition-all duration-300",
+                  s.id === currentServer ? "hover-glow shadow-[0_0_15px_rgba(34,211,238,0.4)]" : "hover:bg-white/5"
+                )}
+              >
+                {s.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-white/5">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center">
+            Note: All content is provided by non-affiliated third-party servers.
+          </p>
+        </div>
       </div>
     </div>
   );
