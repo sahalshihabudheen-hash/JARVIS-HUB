@@ -59,8 +59,13 @@ const Navbar = () => {
       )}>
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center group">
-            <span className="text-xl md:text-2xl font-display font-bold tracking-tighter text-gradient group-hover:drop-shadow-[0_0_8px_hsl(var(--primary))] transition-all">
+          <Link to="/" className="flex items-center gap-2 group">
+            <img 
+              src="/JARVIS2.gif" 
+              alt="JARVIS Logo" 
+              className="w-10 h-10 md:w-12 md:h-12 object-cover rounded-full group-hover:shadow-[0_0_15px_hsl(var(--primary))] transition-all duration-300"
+            />
+            <span className="text-xl md:text-2xl font-display font-bold tracking-tighter text-gradient group-hover:drop-shadow-[0_0_8px_hsl(var(--primary))] transition-all hidden sm:block">
               JARVIS<span className="text-foreground ml-1">HUB</span>
             </span>
           </Link>
