@@ -65,12 +65,26 @@ const Index = () => {
 
   const { data: nowPlaying, isLoading: nowPlayingLoading } = useQuery({
     queryKey: ["nowPlaying", location?.country],
-    queryFn: () => getNowPlayingMovies(1, location?.country),
+    queryFn: () => {
+      // If India, show strictly Indian content for this row
+      if (location?.country === "IN") {
+        return discoverMovies({ with_origin_country: "IN", region: "IN", sort_by: "popularity.desc" });
+      }
+      return getNowPlayingMovies(1, location?.country);
+    },
+    enabled: !!location,
   });
 
   const { data: upcoming, isLoading: upcomingLoading } = useQuery({
     queryKey: ["upcoming", location?.country],
-    queryFn: () => getUpcomingMovies(1, location?.country),
+    queryFn: () => {
+      // If India, show strictly Indian content for this row
+      if (location?.country === "IN") {
+        return discoverMovies({ with_origin_country: "IN", region: "IN", "primary_release_date.gte": new Date().toISOString().split('T')[0] });
+      }
+      return getUpcomingMovies(1, location?.country);
+    },
+    enabled: !!location,
   });
 
   // Region specific content (e.g., Malayalam for Kerala)
@@ -78,7 +92,26 @@ const Index = () => {
   
   const { data: regionalNow, isLoading: regionalLoading } = useQuery({
     queryKey: ["regionalNow", location?.country, location?.region],
-    queryFn: () => getPopularMovies(1, location?.country),
+    queryFn: () => {
+      const isIndia = location?.country === "IN";
+      const isKerala = location?.region?.toLowerCase().includes("kerala");
+      
+      const params: Record<string, string> = {
+        sort_by: "popularity.desc",
+        include_adult: "false"
+      };
+
+      if (isKerala) {
+        params.with_original_language = "ml";
+        params.with_origin_country = "IN";
+      } else if (isIndia) {
+        params.with_origin_country = "IN";
+      } else {
+        params.region = location?.country || "US";
+      }
+      
+      return discoverMovies(params);
+    },
     enabled: !!location,
   });
 
@@ -90,25 +123,25 @@ const Index = () => {
   // Genre specific queries for personalized hub
   const { data: actionMovies } = useQuery({
     queryKey: ["genreAction"],
-    queryFn: () => discoverMovies(28),
+    queryFn: () => discoverMovies({ with_genres: "28" }),
     enabled: !!user || selectedGenres.includes(28),
   });
 
   const { data: sciFiMovies } = useQuery({
     queryKey: ["genreSciFi"],
-    queryFn: () => discoverMovies(878),
+    queryFn: () => discoverMovies({ with_genres: "878" }),
     enabled: !!user || selectedGenres.includes(878),
   });
 
   const { data: thrillerMovies } = useQuery({
     queryKey: ["genreThriller"],
-    queryFn: () => discoverMovies(53),
+    queryFn: () => discoverMovies({ with_genres: "53" }),
     enabled: !!user || selectedGenres.includes(53),
   });
 
   const { data: animationMovies } = useQuery({
     queryKey: ["genreAnimation"],
-    queryFn: () => discoverMovies(16),
+    queryFn: () => discoverMovies({ with_genres: "16" }),
     enabled: !!user || selectedGenres.includes(16),
   });
 
@@ -118,7 +151,7 @@ const Index = () => {
     .map(id => {
       return useQuery({
         queryKey: ["genre", id],
-        queryFn: () => discoverMovies(id),
+        queryFn: () => discoverMovies({ with_genres: id.toString() }),
         enabled: selectedGenres.includes(id),
       });
     });
@@ -167,7 +200,7 @@ const Index = () => {
           
           {location?.region && (
             <MediaRow
-              title={`🔥 Hot in ${location.region}`}
+              title={location.region.toLowerCase().includes("kerala") ? "🔥 Malayalam Hits" : `🔥 Hot in ${location.region}`}
               items={regionalNow?.results || []}
               mediaType="movie"
               isLoading={regionalLoading}
@@ -175,7 +208,7 @@ const Index = () => {
           )}
 
           <MediaRow
-            title={location ? `⚡ Trending in ${location.country_name}` : "Trending Now"}
+            title={location?.country === "IN" ? "⚡ Indian Cinema Trends" : (location ? `⚡ Trending in ${location.country_name}` : "Trending Now")}
             items={nowPlaying?.results || []}
             mediaType="movie"
             isLoading={nowPlayingLoading}
@@ -189,7 +222,7 @@ const Index = () => {
           />
 
           <MediaRow
-            title={location ? `📅 Upcoming in ${location.country_name}` : "Upcoming Releases"}
+            title={location?.country === "IN" ? "📅 Upcoming Indian Releases" : (location ? `📅 Upcoming in ${location.country_name}` : "Upcoming Releases")}
             items={upcoming?.results || []}
             mediaType="movie"
             isLoading={upcomingLoading}

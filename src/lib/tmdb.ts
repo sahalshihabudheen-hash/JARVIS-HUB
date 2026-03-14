@@ -72,7 +72,12 @@ export const getBackdropUrl = (path: string | null, size: string = "original"): 
 const fetchTMDB = async <T>(endpoint: string, params: Record<string, string> = {}): Promise<T> => {
   const url = new URL(`${TMDB_BASE_URL}${endpoint}`);
   url.searchParams.set("api_key", TMDB_API_KEY);
-  url.searchParams.set("language", "en-US");
+  
+  // Set default language but allow override
+  if (!params.language) {
+    url.searchParams.set("language", "en-US");
+  }
+  
   Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
   
   const response = await fetch(url.toString());
@@ -85,9 +90,10 @@ export const getTrending = async (mediaType: "movie" | "tv" | "all" = "all", tim
   return data.results;
 };
 
-export const getPopularMovies = async (page: number = 1, region?: string): Promise<SearchResult> => {
+export const getPopularMovies = async (page: number = 1, region?: string, with_origin_country?: string): Promise<SearchResult> => {
   const params: Record<string, string> = { page: page.toString() };
   if (region) params.region = region;
+  if (with_origin_country) params.with_origin_country = with_origin_country;
   return fetchTMDB<SearchResult>("/movie/popular", params);
 };
 
@@ -109,9 +115,10 @@ export const getUpcomingMovies = async (page: number = 1, region?: string): Prom
   return fetchTMDB<SearchResult>("/movie/upcoming", params);
 };
 
-export const getNowPlayingMovies = async (page: number = 1, region?: string): Promise<SearchResult> => {
+export const getNowPlayingMovies = async (page: number = 1, region?: string, with_origin_country?: string): Promise<SearchResult> => {
   const params: Record<string, string> = { page: page.toString() };
   if (region) params.region = region;
+  if (with_origin_country) params.with_origin_country = with_origin_country;
   return fetchTMDB<SearchResult>("/movie/now_playing", params);
 };
 
@@ -141,9 +148,9 @@ export const getTVGenres = async (): Promise<Genre[]> => {
   return data.genres;
 };
 
-export const discoverMovies = async (genreId: number, page: number = 1): Promise<SearchResult> => {
+export const discoverMovies = async (params: Record<string, string> = {}, page: number = 1): Promise<SearchResult> => {
   return fetchTMDB<SearchResult>("/discover/movie", { 
-    with_genres: genreId.toString(), 
+    ...params,
     page: page.toString(),
     sort_by: "popularity.desc"
   });

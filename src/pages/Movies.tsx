@@ -25,7 +25,7 @@ const Movies = () => {
 
   const fetchFn = () => {
     if (category === "genre" && selectedGenre) {
-      return discoverMovies(selectedGenre, page);
+      return discoverMovies({ with_genres: selectedGenre.toString() }, page);
     }
     switch (category) {
       case "top_rated": return getTopRatedMovies(page);
