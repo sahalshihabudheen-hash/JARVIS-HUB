@@ -5,6 +5,9 @@ import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers"
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
+import { TutorialPointer } from "./JarvisTutorial";
+import { useTutorial } from "@/context/TutorialContext";
+
 interface VideoPlayerProps {
   type: "movie" | "tv";
   tmdbId: number;
@@ -13,6 +16,7 @@ interface VideoPlayerProps {
 }
 
 const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
+  const { isActive, step, nextStep } = useTutorial();
   const [currentServer, setCurrentServer] = useState(getDefaultServer());
   const [showOverlay, setShowOverlay] = useState(true);
   const [shieldActive, setShieldActive] = useState(false);
@@ -49,13 +53,22 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
             </p>
           </div>
           
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 relative">
+            <TutorialPointer 
+              activeStep={3}
+              title="Protocol 3: Bandwidth Optimization"
+              description="If a stream fails or is slow, try switching to a different Mirror server."
+              className="bottom-full left-1/2 -translate-x-1/2 mb-2"
+            />
             {videoServers.map((s) => (
               <Button
                 key={s.id}
                 variant={s.id === currentServer ? "default" : "outline"}
                 size="sm"
-                onClick={() => handleServerChange(s.id)}
+                onClick={() => {
+                  handleServerChange(s.id);
+                  if (isActive && step === 3) nextStep();
+                }}
                 className={cn(
                   "rounded-full px-4 transition-all duration-300",
                   s.id === currentServer ? "hover-glow shadow-[0_0_15px_rgba(34,211,238,0.4)]" : "hover:bg-white/5"
@@ -85,8 +98,15 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
             onClick={() => {
               setShowOverlay(false);
               setShieldActive(true); // Automatically engage shield after first click
+              if (isActive && step === 2) nextStep();
             }}
           >
+            <TutorialPointer 
+              activeStep={2}
+              title="Protocol 2: Secure Start"
+              description="Click here to neutralize potential ad popups and initialize the player."
+              className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            />
             <div className="text-center animate-pulse-glow">
               <div className="w-20 h-20 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 mx-auto shadow-[0_0_30px_rgba(34,211,238,0.4)]">
                 <div className="w-16 h-16 rounded-full border border-primary flex items-center justify-center bg-primary/5">
@@ -110,11 +130,20 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
       </div>
 
       {/* Shield Controls */}
-      <div className="flex justify-center">
+      <div className="flex justify-center relative">
+        <TutorialPointer 
+          activeStep={4}
+          title="Protocol 4: Stealth Shield"
+          description="While watching, keep the shield LOCKED to block all ad interactions. Toggle it to unlock player controls."
+          className="bottom-full left-1/2 -translate-x-1/2 mb-4"
+        />
         <Button
           variant={shieldActive ? "default" : "outline"}
           size="sm"
-          onClick={() => setShieldActive(!shieldActive)}
+          onClick={() => {
+            setShieldActive(!shieldActive);
+            if (isActive && step === 4) nextStep();
+          }}
           className={cn(
             "rounded-full px-6 transition-all duration-500",
             shieldActive ? "bg-red-500/20 text-red-400 border-red-500/50 hover:bg-red-500/30" : "bg-primary/10 text-primary border-primary/20"

@@ -4,6 +4,8 @@ import { Play, Info, Star } from "lucide-react";
 import { MediaItem, getBackdropUrl } from "@/lib/tmdb";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { TutorialPointer } from "./JarvisTutorial";
+import { useTutorial } from "@/context/TutorialContext";
 
 interface HeroSectionProps {
   items: MediaItem[];
@@ -11,6 +13,7 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
+  const { isActive, step, nextStep } = useTutorial();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayIndex, setDisplayIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
@@ -146,8 +149,20 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
 
           {/* Buttons */}
           <div className="flex flex-wrap gap-3">
-            <Link to={watchPath}>
-              <Button size="lg" className="hover-glow">
+            <Link to={watchPath} className="relative">
+              <TutorialPointer 
+                activeStep={1}
+                title="Protocol 1: Direct Entry"
+                description="Click 'Watch Now' to launch the secure stream immediately."
+                className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              />
+              <Button 
+                size="lg" 
+                className="hover-glow"
+                onClick={() => {
+                  if (isActive && step === 1) nextStep();
+                }}
+              >
                 <Play className="w-5 h-5 mr-2 fill-current" />
                 Watch Now
               </Button>

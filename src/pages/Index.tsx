@@ -143,7 +143,6 @@ const Index = () => {
           </p>
         </div>
       </footer>
-      <JarvisTutorial />
     </div>
   );
 };

@@ -15,6 +15,8 @@ import Watchlist from "./pages/Watchlist";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
+import { TutorialProvider } from "./context/TutorialContext";
+import JarvisTutorial from "./components/JarvisTutorial";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,31 +39,35 @@ const ProtectedLayout = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            
-            {/* Protected Routes */}
-            <Route element={<ProtectedLayout />}>
-              <Route path="/" element={<Index />} />
-              <Route path="/movies" element={<Movies />} />
-              <Route path="/tv" element={<TVShows />} />
-              <Route path="/anime" element={<Anime />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/watchlist" element={<Watchlist />} />
-              <Route path="/movie/:id" element={<MovieDetails />} />
-              <Route path="/tv/:id" element={<TVDetails />} />
-              <Route path="/watch/:type/:id" element={<WatchPage />} />
-              <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
-            </Route>
-
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <TutorialProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <JarvisTutorial />
+            <Routes>
+              <Route path="/auth" element={<Auth />} />
+              
+              {/* Protected Routes */}
+              <Route element={<ProtectedLayout />}>
+                <Route path="/" element={<Index />} />
+                <Route path="/movies" element={<Movies />} />
+                <Route path="/tv" element={<TVShows />} />
+                <Route path="/anime" element={<Anime />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/watchlist" element={<Watchlist />} />
+                <Route path="/movie/:id" element={<MovieDetails />} />
+                <Route path="/tv/:id" element={<TVDetails />} />
+                <Route path="/watch/:type/:id" element={<WatchPage />} />
+                <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
+              </Route>
+  
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </TutorialProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

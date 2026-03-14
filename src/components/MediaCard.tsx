@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { Play, Star } from "lucide-react";
 import { MediaItem, getImageUrl } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
+import { TutorialPointer } from "./JarvisTutorial";
+import { useTutorial } from "@/context/TutorialContext";
 
 interface MediaCardProps {
   item: MediaItem;
@@ -11,6 +13,7 @@ interface MediaCardProps {
 }
 
 const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardProps) => {
+  const { isActive, step, nextStep } = useTutorial();
   const type = mediaType || item.media_type || "movie";
   const title = item.title || item.name || "Untitled";
   const year = (item.release_date || item.first_air_date || "").split("-")[0];
@@ -42,7 +45,10 @@ const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardP
           <Link 
             to={type === "movie" ? `/watch/movie/${item.id}` : `/watch/tv/${item.id}/1/1`}
             className="w-14 h-14 rounded-full gradient-primary flex items-center justify-center shadow-glow transform scale-75 group-hover:scale-100 transition-transform duration-300 pointer-events-auto"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (isActive && step === 1) nextStep();
+            }}
           >
             <Play className="w-6 h-6 text-primary-foreground fill-current ml-1" />
           </Link>
