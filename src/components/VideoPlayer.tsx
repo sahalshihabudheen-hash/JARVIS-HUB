@@ -71,22 +71,28 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           src={embedUrl}
           className="absolute inset-0 w-full h-full"
           allowFullScreen
-          sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         />
       </div>
 
-      <div className="pt-2 flex flex-col items-center gap-4">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-500">
-          <ShieldAlert className="w-3.5 h-3.5" />
-          <p className="text-[10px] font-medium uppercase tracking-wider">
-            Kaspersky/Ad-Block Alert? These are safe to ignore - they are just blocking 3rd party ads.
+      <div className="pt-4 flex flex-col items-center gap-4">
+        <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 max-w-2xl text-center">
+          <ShieldAlert className="w-5 h-5 shrink-0" />
+          <p className="text-xs font-medium leading-relaxed">
+            <span className="font-bold">Security Protocol:</span> If you see ads or popups, simply close them. They come from the video server, not JARVIS HUB.
           </p>
         </div>
         
-        <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center opacity-50">
-          Note: This content is hosted on third-party servers. We recommend using **Brave Browser** or **uBlock Origin** for the best experience.
-        </p>
+        <div className="flex flex-col items-center gap-2 opacity-60">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-semibold">
+            Operational Optimization Tips:
+          </p>
+          <div className="flex gap-4 text-[9px] text-muted-foreground uppercase tracking-widest">
+            <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-cyan-400" /> Use Brave Browser</span>
+            <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-cyan-400" /> Install uBlock Origin</span>
+            <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-cyan-400" /> Switch Mirrors if needed</span>
+          </div>
+        </div>
       </div>
     </div>
   );
