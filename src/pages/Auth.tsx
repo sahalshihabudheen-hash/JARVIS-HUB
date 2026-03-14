@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import Footer from "@/components/Footer";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -133,6 +134,9 @@ const Auth = () => {
             </button>
           </div>
         </div>
+      </div>
+      <div className="absolute bottom-0 w-full">
+        <Footer />
       </div>
     </div>
   );
