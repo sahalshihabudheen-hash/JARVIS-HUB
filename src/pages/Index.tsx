@@ -14,18 +14,28 @@ import {
   getPopularTVShows, 
   getTopRatedMovies,
   getNowPlayingMovies,
-  getUpcomingMovies
+  getUpcomingMovies,
+  getUserLocation,
+  discoverMovies
 } from "@/lib/tmdb";
+import { useAuth } from "@/context/AuthContext";
 
 const Index = () => {
+  const { user } = useAuth();
+  const [location, setLocation] = useState<{ country: string; country_name: string } | null>(null);
+
+  useEffect(() => {
+    getUserLocation().then(setLocation);
+  }, []);
+
   const { data: trending, isLoading: trendingLoading } = useQuery({
     queryKey: ["trending"],
     queryFn: () => getTrending("all", "week"),
   });
 
   const { data: popularMovies, isLoading: moviesLoading } = useQuery({
-    queryKey: ["popularMovies"],
-    queryFn: () => getPopularMovies(),
+    queryKey: ["popularMovies", location?.country],
+    queryFn: () => getPopularMovies(1, location?.country),
   });
 
   const { data: popularTV, isLoading: tvLoading } = useQuery({
@@ -39,13 +49,38 @@ const Index = () => {
   });
 
   const { data: nowPlaying, isLoading: nowPlayingLoading } = useQuery({
-    queryKey: ["nowPlaying"],
-    queryFn: () => getNowPlayingMovies(),
+    queryKey: ["nowPlaying", location?.country],
+    queryFn: () => getNowPlayingMovies(1, location?.country),
   });
 
   const { data: upcoming, isLoading: upcomingLoading } = useQuery({
-    queryKey: ["upcoming"],
-    queryFn: () => getUpcomingMovies(),
+    queryKey: ["upcoming", location?.country],
+    queryFn: () => getUpcomingMovies(1, location?.country),
+  });
+
+  // Genre specific queries for personalized hub
+  const { data: actionMovies } = useQuery({
+    queryKey: ["genreAction"],
+    queryFn: () => discoverMovies(28), // 28 is Action
+    enabled: !!user,
+  });
+
+  const { data: sciFiMovies } = useQuery({
+    queryKey: ["genreSciFi"],
+    queryFn: () => discoverMovies(878), // 878 is Sci-Fi
+    enabled: !!user,
+  });
+
+  const { data: thrillerMovies } = useQuery({
+    queryKey: ["genreThriller"],
+    queryFn: () => discoverMovies(53), // 53 is Thriller
+    enabled: !!user,
+  });
+
+  const { data: animationMovies } = useQuery({
+    queryKey: ["genreAnimation"],
+    queryFn: () => discoverMovies(16), // 16 is Animation
+    enabled: !!user,
   });
 
   const [showAdWarning, setShowAdWarning] = useState(false);
@@ -97,11 +132,36 @@ const Index = () => {
           />
           
           <MediaRow
-            title="Now Playing"
+            title={location ? `Hot in ${location.country_name}` : "Now Playing"}
             items={nowPlaying?.results || []}
             mediaType="movie"
             isLoading={nowPlayingLoading}
           />
+
+          {user && (
+            <>
+              <MediaRow
+                title="Combat & Action Protocols"
+                items={actionMovies?.results || []}
+                mediaType="movie"
+              />
+              <MediaRow
+                title="Cybernetic & Sci-Fi Realities"
+                items={sciFiMovies?.results || []}
+                mediaType="movie"
+              />
+              <MediaRow
+                title="Infiltration & Thriller Operations"
+                items={thrillerMovies?.results || []}
+                mediaType="movie"
+              />
+              <MediaRow
+                title="Holographic & Animated Data"
+                items={animationMovies?.results || []}
+                mediaType="movie"
+              />
+            </>
+          )}
           
           <MediaRow
             title="Popular Movies"
@@ -125,7 +185,7 @@ const Index = () => {
           />
           
           <MediaRow
-            title="Coming Soon"
+            title={location ? `Upcoming in ${location.country_name}` : "Coming Soon"}
             items={upcoming?.results || []}
             mediaType="movie"
             isLoading={upcomingLoading}

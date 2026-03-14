@@ -85,8 +85,10 @@ export const getTrending = async (mediaType: "movie" | "tv" | "all" = "all", tim
   return data.results;
 };
 
-export const getPopularMovies = async (page: number = 1): Promise<SearchResult> => {
-  return fetchTMDB<SearchResult>("/movie/popular", { page: page.toString() });
+export const getPopularMovies = async (page: number = 1, region?: string): Promise<SearchResult> => {
+  const params: Record<string, string> = { page: page.toString() };
+  if (region) params.region = region;
+  return fetchTMDB<SearchResult>("/movie/popular", params);
 };
 
 export const getPopularTVShows = async (page: number = 1): Promise<SearchResult> => {
@@ -101,12 +103,16 @@ export const getTopRatedTVShows = async (page: number = 1): Promise<SearchResult
   return fetchTMDB<SearchResult>("/tv/top_rated", { page: page.toString() });
 };
 
-export const getUpcomingMovies = async (page: number = 1): Promise<SearchResult> => {
-  return fetchTMDB<SearchResult>("/movie/upcoming", { page: page.toString() });
+export const getUpcomingMovies = async (page: number = 1, region?: string): Promise<SearchResult> => {
+  const params: Record<string, string> = { page: page.toString() };
+  if (region) params.region = region;
+  return fetchTMDB<SearchResult>("/movie/upcoming", params);
 };
 
-export const getNowPlayingMovies = async (page: number = 1): Promise<SearchResult> => {
-  return fetchTMDB<SearchResult>("/movie/now_playing", { page: page.toString() });
+export const getNowPlayingMovies = async (page: number = 1, region?: string): Promise<SearchResult> => {
+  const params: Record<string, string> = { page: page.toString() };
+  if (region) params.region = region;
+  return fetchTMDB<SearchResult>("/movie/now_playing", params);
 };
 
 export const getMovieDetails = async (id: number): Promise<MediaDetails> => {
@@ -159,4 +165,19 @@ export const getSimilar = async (mediaType: "movie" | "tv", id: number): Promise
 export const getRecommendations = async (mediaType: "movie" | "tv", id: number): Promise<MediaItem[]> => {
   const data = await fetchTMDB<{ results: MediaItem[] }>(`/${mediaType}/${id}/recommendations`);
   return data.results;
+};
+
+export const getUserLocation = async (): Promise<{ country: string; country_name: string }> => {
+  try {
+    const response = await fetch("https://ipapi.co/json/");
+    if (!response.ok) throw new Error("Location service unavailable");
+    const data = await response.json();
+    return { 
+      country: data.country_code || "US", 
+      country_name: data.country_name || "United States" 
+    };
+  } catch (error) {
+    console.error("Error fetching location:", error);
+    return { country: "US", country_name: "United States" };
+  }
 };

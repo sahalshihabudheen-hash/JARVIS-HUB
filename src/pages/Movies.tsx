@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import MediaCard from "@/components/MediaCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { getPopularMovies, getTopRatedMovies, getNowPlayingMovies, getUpcomingMovies, getMovieGenres, discoverMovies } from "@/lib/tmdb";
+import { getPopularMovies, getTopRatedMovies, getNowPlayingMovies, getUpcomingMovies, getMovieGenres, discoverMovies, getUserLocation } from "@/lib/tmdb";
 
 type Category = "popular" | "top_rated" | "now_playing" | "upcoming" | "genre";
 
@@ -12,6 +12,11 @@ const Movies = () => {
   const [category, setCategory] = useState<Category>("popular");
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
   const [page, setPage] = useState(1);
+  const [location, setLocation] = useState<{ country: string; country_name: string } | null>(null);
+
+  useEffect(() => {
+    getUserLocation().then(setLocation);
+  }, []);
 
   const { data: genres } = useQuery({
     queryKey: ["movieGenres"],
@@ -24,9 +29,9 @@ const Movies = () => {
     }
     switch (category) {
       case "top_rated": return getTopRatedMovies(page);
-      case "now_playing": return getNowPlayingMovies(page);
-      case "upcoming": return getUpcomingMovies(page);
-      default: return getPopularMovies(page);
+      case "now_playing": return getNowPlayingMovies(page, location?.country);
+      case "upcoming": return getUpcomingMovies(page, location?.country);
+      default: return getPopularMovies(page, location?.country);
     }
   };
 
