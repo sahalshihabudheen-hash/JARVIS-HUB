@@ -66,7 +66,12 @@ const Auth = () => {
         </Button>
 
         <div className="glass border border-white/10 p-8 rounded-3xl shadow-2xl">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 flex flex-col items-center">
+            <img 
+              src="/JARVIS2.gif" 
+              alt="JARVIS Logo" 
+              className="w-16 h-16 object-cover rounded-full mb-4 shadow-[0_0_20px_rgba(34,211,238,0.3)] animate-pulse"
+            />
             <h1 className="text-3xl font-display font-bold tracking-tighter mb-2">
               JARVIS<span className="text-primary ml-1">HUB</span>
             </h1>
