@@ -134,6 +134,39 @@ const Index = () => {
     enabled: !!location,
   });
 
+  const { data: regionalUpcoming, isLoading: regionalUpcomingLoading } = useQuery({
+    queryKey: ["regionalUpcoming", location?.country, location?.region],
+    queryFn: () => {
+      const isIndia = location?.country === "IN";
+      const regionName = location?.region?.toLowerCase() || "";
+      
+      const params: Record<string, string> = {
+        sort_by: "popularity.desc",
+        include_adult: "false",
+        "primary_release_date.gte": new Date().toISOString().split('T')[0]
+      };
+
+      if (isIndia) {
+        params.with_origin_country = "IN";
+        if (regionName.includes("kerala")) params.with_original_language = "ml";
+        else if (regionName.includes("tamil")) params.with_original_language = "ta";
+        else if (regionName.includes("telugu") || regionName.includes("andhra")) params.with_original_language = "te";
+        else if (regionName.includes("karnataka")) params.with_original_language = "kn";
+        else if (regionName.includes("bengal")) params.with_original_language = "bn";
+        else if (regionName.includes("maharashtra")) params.with_original_language = "mr";
+        else params.with_original_language = "hi";
+      } else {
+        params.with_origin_country = location?.country;
+        const detectedLanguages = location?.languages?.split(',') || [];
+        const localLang = detectedLanguages.find(l => !l.startsWith('en'))?.split('-')[0];
+        if (localLang) params.with_original_language = localLang;
+      }
+      
+      return discoverMovies(params);
+    },
+    enabled: !!location,
+  });
+
   const { data: worldwideUpcoming, isLoading: worldwideLoading } = useQuery({
     queryKey: ["worldwideUpcoming"],
     queryFn: () => getUpcomingMovies(1), // No region = Worldwide
@@ -218,12 +251,20 @@ const Index = () => {
           <ContinueWatching />
           
           {location?.region && (
-            <MediaRow
-              title={`🔥 Top in ${location.region}`}
-              items={regionalNow?.results || []}
-              mediaType="movie"
-              isLoading={regionalLoading}
-            />
+            <>
+              <MediaRow
+                title={`🔥 Top in ${location.region}`}
+                items={regionalNow?.results || []}
+                mediaType="movie"
+                isLoading={regionalLoading}
+              />
+              <MediaRow
+                title={`🆕 Upcoming in ${location.region}`}
+                items={regionalUpcoming?.results || []}
+                mediaType="movie"
+                isLoading={regionalUpcomingLoading}
+              />
+            </>
           )}
 
           <MediaRow
