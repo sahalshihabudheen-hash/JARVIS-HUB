@@ -127,7 +127,7 @@ const Navbar = () => {
                     <Heart className="mr-2 h-4 w-4" />
                     Watchlist
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-white/5">
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer hover:bg-white/5">
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </DropdownMenuItem>

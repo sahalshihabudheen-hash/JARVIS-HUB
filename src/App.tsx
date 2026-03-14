@@ -13,6 +13,7 @@ import TVDetails from "./pages/TVDetails";
 import WatchPage from "./pages/WatchPage";
 import Watchlist from "./pages/Watchlist";
 import Auth from "./pages/Auth";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import { TutorialProvider } from "./context/TutorialContext";
@@ -61,6 +62,7 @@ const App = () => (
                 <Route path="/tv/:id" element={<TVDetails />} />
                 <Route path="/watch/:type/:id" element={<WatchPage />} />
                 <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
+                <Route path="/settings" element={<Settings />} />
               </Route>
   
               <Route path="*" element={<NotFound />} />
