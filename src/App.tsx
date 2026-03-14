@@ -25,6 +25,15 @@ const queryClient = new QueryClient({
   },
 });
 
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
+
+const ProtectedLayout = () => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/auth" replace />;
+  return <Outlet />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -33,17 +42,22 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/movies" element={<Movies />} />
-            <Route path="/tv" element={<TVShows />} />
-            <Route path="/anime" element={<Anime />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/movie/:id" element={<MovieDetails />} />
-            <Route path="/tv/:id" element={<TVDetails />} />
-            <Route path="/watch/:type/:id" element={<WatchPage />} />
-            <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
+            
+            {/* Protected Routes */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/movies" element={<Movies />} />
+              <Route path="/tv" element={<TVShows />} />
+              <Route path="/anime" element={<Anime />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/watchlist" element={<Watchlist />} />
+              <Route path="/movie/:id" element={<MovieDetails />} />
+              <Route path="/tv/:id" element={<TVDetails />} />
+              <Route path="/watch/:type/:id" element={<WatchPage />} />
+              <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
+            </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
