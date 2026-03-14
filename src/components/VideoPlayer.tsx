@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, Play } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ interface VideoPlayerProps {
 
 const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
   const [currentServer, setCurrentServer] = useState(getDefaultServer());
+  const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
     setupProgressListener();
@@ -22,6 +23,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
   const handleServerChange = (serverId: string) => {
     setCurrentServer(serverId);
     setDefaultServer(serverId);
+    setShowOverlay(true); // Show overlay again when server changes
   };
 
   const server = videoServers.find((s) => s.id === currentServer) || videoServers[0];
@@ -65,7 +67,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
       </div>
 
       {/* Video Player Container */}
-      <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5">
+      <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 group">
         <iframe
           key={`${currentServer}-${tmdbId}-${season}-${episode}`}
           src={embedUrl}
@@ -73,6 +75,28 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           allowFullScreen
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         />
+
+        {/* Ad-Block Overlay Shield */}
+        {showOverlay && (
+          <div 
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer group-hover:bg-black/60 transition-colors"
+            onClick={() => setShowOverlay(false)}
+          >
+            <div className="text-center animate-pulse-glow">
+              <div className="w-20 h-20 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 mx-auto shadow-[0_0_30px_rgba(34,211,238,0.4)]">
+                <div className="w-16 h-16 rounded-full border border-primary flex items-center justify-center bg-primary/5">
+                  <Play className="w-8 h-8 text-primary fill-primary ml-1" />
+                </div>
+              </div>
+              <p className="text-primary font-display font-semibold tracking-widest text-sm uppercase">
+                Initialize Secure Stream
+              </p>
+              <p className="text-muted-foreground text-[10px] mt-2 uppercase tracking-[0.3em]">
+                (Prevents Initial Ad Popups)
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="pt-4 flex flex-col items-center gap-4">
