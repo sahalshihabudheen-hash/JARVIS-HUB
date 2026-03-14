@@ -88,7 +88,7 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
   const year = (current.release_date || current.first_air_date || "").split("-")[0];
   const rating = current.vote_average?.toFixed(1);
   const linkPath = type === "movie" ? `/movie/${current.id}` : `/tv/${current.id}`;
-  const watchPath = type === "movie" ? `/watch/movie/${current.id}` : `/tv/${current.id}`;
+  const watchPath = type === "movie" ? `/watch/movie/${current.id}` : `/watch/tv/${current.id}/1/1`;
 
   return (
     <section 

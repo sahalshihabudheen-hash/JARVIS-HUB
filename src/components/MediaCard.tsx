@@ -39,9 +39,13 @@ const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardP
         
         {/* Play Button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-          <div className="w-14 h-14 rounded-full gradient-primary flex items-center justify-center shadow-glow transform scale-75 group-hover:scale-100 transition-transform duration-300">
+          <Link 
+            to={type === "movie" ? `/watch/movie/${item.id}` : `/watch/tv/${item.id}/1/1`}
+            className="w-14 h-14 rounded-full gradient-primary flex items-center justify-center shadow-glow transform scale-75 group-hover:scale-100 transition-transform duration-300 pointer-events-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Play className="w-6 h-6 text-primary-foreground fill-current ml-1" />
-          </div>
+          </Link>
         </div>
 
         {/* Rating Badge */}

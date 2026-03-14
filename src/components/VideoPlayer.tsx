@@ -31,18 +31,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Video Player Container */}
-      <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5">
-        <iframe
-          key={`${currentServer}-${tmdbId}-${season}-${episode}`}
-          src={embedUrl}
-          className="absolute inset-0 w-full h-full"
-          allowFullScreen
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        />
-      </div>
-
-      {/* Control Panel */}
+      {/* Control Panel (Top) */}
       <div className="glass border border-white/10 p-4 rounded-2xl space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -51,7 +40,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
               Source Selection
             </h3>
             <p className="text-xs text-muted-foreground">
-              If the current server is slow or not working, please try another mirror below.
+              If "Content Not Found" appears, please click **Mirror 1** or **Mirror 2**.
             </p>
           </div>
           
@@ -72,12 +61,23 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
             ))}
           </div>
         </div>
+      </div>
 
-        <div className="pt-2 border-t border-white/5">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center">
-            Note: All content is provided by non-affiliated third-party servers.
-          </p>
-        </div>
+      {/* Video Player Container */}
+      <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5">
+        <iframe
+          key={`${currentServer}-${tmdbId}-${season}-${episode}`}
+          src={embedUrl}
+          className="absolute inset-0 w-full h-full"
+          allowFullScreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        />
+      </div>
+
+      <div className="pt-2">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center opacity-50">
+          Note: All content is provided by non-affiliated third-party servers.
+        </p>
       </div>
     </div>
   );
