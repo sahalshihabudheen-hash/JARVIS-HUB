@@ -139,8 +139,8 @@ const Navbar = () => {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-white/10" />
                     
-                    {user.email?.toLowerCase() === "admin@gmail.com" && (
-                      <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer text-[#ffd700] hover:bg-[#ffd700]/10 focus:text-[#ffd700]">
+                    {(user.email?.toLowerCase() === "admin@gmail.com" || user.isAdmin) && (
+                      <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer text-blue-400 hover:bg-blue-400/10 focus:text-blue-400">
                         <Settings className="mr-2 h-4 w-4" />
                         Admin Dashboard
                       </DropdownMenuItem>
@@ -239,10 +239,10 @@ const Navbar = () => {
               <div className="pt-2">
                 {user ? (
                   <>
-                    {user.email?.toLowerCase() === "admin@gmail.com" && (
+                    {(user.email?.toLowerCase() === "admin@gmail.com" || user.isAdmin) && (
                       <Button
                         variant="ghost"
-                        className="w-full flex items-center justify-start gap-3 px-4 py-2.5 rounded-xl text-[#ffd700] hover:bg-[#ffd700]/10 mb-2"
+                        className="w-full flex items-center justify-start gap-3 px-4 py-2.5 rounded-xl text-blue-400 hover:bg-blue-400/10 mb-2"
                         onClick={() => {
                           navigate("/admin");
                           setIsMobileMenuOpen(false);

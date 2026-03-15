@@ -29,9 +29,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const savedUser = localStorage.getItem("jarvis_user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const parsed = JSON.parse(savedUser);
+      setUser(parsed);
     }
   }, []);
+
+  // Real-time user data listener
+  useEffect(() => {
+    if (!user?.email) return;
+
+    const userDocId = user.email.replace(/\./g, "_");
+    const { onSnapshot, doc } = require("firebase/firestore");
+    
+    let isInitial = true;
+    const unsubscribe = onSnapshot(doc(db, "users", userDocId), (snapshot: any) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        
+        // Detect if user became admin
+        if (!isInitial && !user.isAdmin && data.isAdmin) {
+          const { toast } = require("sonner");
+          toast("JARVIS: PROMOTED TO ADMIN", {
+            description: "Access your new Admin Dashboard via the profile icon in the top right corner. You now have full control over the hub.",
+            icon: "🤖",
+            duration: 8000
+          });
+        }
+        
+        if (JSON.stringify(data) !== JSON.stringify(user)) {
+          setUser(prev => ({ ...prev, ...data }));
+          localStorage.setItem("jarvis_user", JSON.stringify({ ...user, ...data }));
+        }
+      }
+      isInitial = false;
+    });
+
+    return () => unsubscribe();
+  }, [user?.email]);
 
   const login = async (email: string, name?: string, photoURL?: string) => {
     let location = "Unknown";

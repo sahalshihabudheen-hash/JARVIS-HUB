@@ -47,7 +47,7 @@ const Admin = () => {
   const handleSave = (key: string, value: string, fieldName: string) => {
     updateBranding({ [key]: value });
     toast.success(`${fieldName} updated successfully`, {
-      style: { background: "#1a1a1a", border: "1px solid #ffd700", color: "#ffd700" }
+      style: { background: "#1a1a1a", border: "1px solid #3b82f6", color: "#3b82f6" }
     });
   };
 
@@ -58,12 +58,12 @@ const Admin = () => {
       setLogoPreview(url);
       updateBranding({ appLogo: url });
       toast.success("App Logo updated successfully", {
-        style: { background: "#1a1a1a", border: "1px solid #ffd700", color: "#ffd700" }
+        style: { background: "#1a1a1a", border: "1px solid #3b82f6", color: "#3b82f6" }
       });
     }
   };
 
-  if (user?.email?.toLowerCase() !== "admin@gmail.com") {
+  if (user?.email?.toLowerCase() !== "admin@gmail.com" && !user?.isAdmin) {
     return <Navigate to="/" replace />;
   }
 
@@ -86,10 +86,10 @@ const Admin = () => {
                   : "text-white/40 hover:text-white/70 hover:bg-white/5"
               )}
             >
-              <tab.icon className={cn("w-4 h-4", activeTab === tab.id ? "text-[#ffd700]" : "text-inherit")} />
+              <tab.icon className={cn("w-4 h-4", activeTab === tab.id ? "text-blue-500" : "text-inherit")} />
               <span className="text-sm font-medium">{tab.label}</span>
               {activeTab === tab.id && (
-                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-8 h-1 bg-[#ffd700] rounded-full shadow-[0_0_10px_#ffd700]" />
+                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-500 rounded-full shadow-[0_0_10px_#3b82f6]" />
               )}
             </button>
           ))}
@@ -103,8 +103,8 @@ const Admin = () => {
           {activeTab === "activity" && (
             <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 md:p-8 shadow-2xl animate-fade-in max-w-4xl mx-auto">
               <div className="flex items-center gap-4 mb-6 relative">
-                <div className="w-10 h-10 rounded-lg bg-[#ffd700]/10 flex items-center justify-center">
-                  <ActivityIcon className="text-[#ffd700] w-5 h-5" />
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <ActivityIcon className="text-blue-500 w-5 h-5" />
                 </div>
                 <div>
                   <h2 className="text-xl font-bold tracking-tight text-white/90">Viewing Activity</h2>
@@ -134,7 +134,7 @@ const Admin = () => {
                         </div>
                       </div>
                       <div className="text-right flex flex-col items-end">
-                        <span className="text-[14px] font-bold text-[#ffd700] hover:underline cursor-pointer">{activity.userEmail}</span>
+                        <span className="text-[14px] font-bold text-blue-400 hover:underline cursor-pointer">{activity.userEmail}</span>
                         <span className="text-[11px] text-white/20 mt-1 uppercase tracking-widest">{timeDisplay}</span>
                       </div>
                     </div>
@@ -149,8 +149,8 @@ const Admin = () => {
               {/* Branding Section */}
               <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 md:p-8 shadow-2xl">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-10 h-10 rounded-lg bg-[#ffd700]/10 flex items-center justify-center">
-                    <ImageIcon className="text-[#ffd700] w-5 h-5" />
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <ImageIcon className="text-blue-500 w-5 h-5" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold tracking-tight text-white/90">App Branding</h2>
@@ -188,10 +188,10 @@ const Admin = () => {
                       <Input 
                         value={appName}
                         onChange={(e) => setAppName(e.target.value)}
-                        className="bg-[#050505] border-white/10 focus-visible:ring-[#ffd700] rounded-xl h-11"
+                        className="bg-[#050505] border-white/10 focus-visible:ring-blue-500 rounded-xl h-11"
                       />
                       <Button 
-                        className="shrink-0 bg-[#ffd700] hover:bg-[#ffed4a] text-black h-11 w-11 rounded-xl p-0"
+                        className="shrink-0 bg-blue-600 hover:bg-blue-500 text-white h-11 w-11 rounded-xl p-0"
                         onClick={() => handleSave('appName', appName, 'App Name')}
                       >
                         <Save className="w-5 h-5" />
@@ -205,10 +205,10 @@ const Admin = () => {
                       <Input 
                         value={tagline}
                         onChange={(e) => setTagline(e.target.value)}
-                        className="bg-[#050505] border-white/10 focus-visible:ring-[#ffd700] rounded-xl h-11"
+                        className="bg-[#050505] border-white/10 focus-visible:ring-blue-500 rounded-xl h-11"
                       />
                       <Button 
-                        className="shrink-0 bg-[#ffd700] hover:bg-[#ffed4a] text-black h-11 w-11 rounded-xl p-0"
+                        className="shrink-0 bg-blue-600 hover:bg-blue-500 text-white h-11 w-11 rounded-xl p-0"
                         onClick={() => handleSave('tagline', tagline, 'Tagline')}
                       >
                         <Save className="w-5 h-5" />
@@ -221,8 +221,8 @@ const Admin = () => {
               {/* Footer Section */}
               <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 md:p-8 shadow-2xl">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-10 h-10 rounded-lg bg-[#ffd700]/10 flex items-center justify-center">
-                    <FileText className="text-[#ffd700] w-5 h-5" />
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <FileText className="text-blue-500 w-5 h-5" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold tracking-tight text-white/90">Footer</h2>
@@ -236,10 +236,10 @@ const Admin = () => {
                       <Input 
                         value={copyright}
                         onChange={(e) => setCopyright(e.target.value)}
-                        className="bg-[#050505] border-white/10 focus-visible:ring-[#ffd700] rounded-xl h-11"
+                        className="bg-[#050505] border-white/10 focus-visible:ring-blue-500 rounded-xl h-11"
                       />
                       <Button 
-                        className="shrink-0 bg-[#ffd700] hover:bg-[#ffed4a] text-black h-11 w-11 rounded-xl p-0"
+                        className="shrink-0 bg-blue-600 hover:bg-blue-500 text-white h-11 w-11 rounded-xl p-0"
                         onClick={() => handleSave('copyrightText', copyright, 'Copyright Text')}
                       >
                         <Save className="w-5 h-5" />
@@ -252,10 +252,10 @@ const Admin = () => {
                       <Input 
                         value={poweredBy}
                         onChange={(e) => setPoweredBy(e.target.value)}
-                        className="bg-[#050505] border-white/10 focus-visible:ring-[#ffd700] rounded-xl h-11"
+                        className="bg-[#050505] border-white/10 focus-visible:ring-blue-500 rounded-xl h-11"
                       />
                       <Button 
-                        className="shrink-0 bg-[#ffd700] hover:bg-[#ffed4a] text-black h-11 w-11 rounded-xl p-0"
+                        className="shrink-0 bg-blue-600 hover:bg-blue-500 text-white h-11 w-11 rounded-xl p-0"
                         onClick={() => handleSave('poweredBy', poweredBy, 'Powered By Text')}
                       >
                         <Save className="w-5 h-5" />

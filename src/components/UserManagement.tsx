@@ -50,7 +50,7 @@ const UserManagement = () => {
   };
 
   const filterTabs = [
-    { id: 'all', label: 'All', count: stats.total, color: 'bg-yellow-500' },
+    { id: 'all', label: 'All', count: stats.total, color: 'bg-blue-500' },
     { id: 'online', label: 'Online', count: stats.online, color: 'bg-green-500' },
     { id: 'offline', label: 'Offline', count: stats.offline, color: 'bg-white/20' },
     { id: 'phone', label: 'Phone', count: stats.phone, icon: Smartphone },
@@ -75,11 +75,11 @@ const UserManagement = () => {
         gradient: "from-cyan-400 via-cyan-300 to-blue-500"
       };
       case "ADMIN": return { 
-        color: "yellow", 
-        glow: "rgba(234,179,8,0.15)", 
-        border: "border-yellow-500/20", 
-        text: "text-yellow-400",
-        gradient: "from-yellow-400 via-yellow-300 to-orange-500"
+        color: "blue", 
+        glow: "rgba(59,130,246,0.15)", 
+        border: "border-blue-500/20", 
+        text: "text-blue-400",
+        gradient: "from-blue-400 via-blue-300 to-indigo-500"
       };
       default: return { 
         color: "green", 
@@ -96,8 +96,8 @@ const UserManagement = () => {
       {/* Header Info */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-            <Users className="text-yellow-500 w-6 h-6" />
+          <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+            <Users className="text-blue-500 w-6 h-6" />
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white tracking-tight">Registered Users</h2>
@@ -125,7 +125,7 @@ const UserManagement = () => {
               placeholder="Search by name, email, location, ISP..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-[#111] border-white/5 pl-11 focus-visible:ring-yellow-500 rounded-xl h-12 text-sm text-white/80"
+              className="bg-[#111] border-white/5 pl-11 focus-visible:ring-blue-500 rounded-xl h-12 text-sm text-white/80"
             />
           </div>
           
@@ -137,7 +137,7 @@ const UserManagement = () => {
                 className={cn(
                   "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap",
                   filter === t.id 
-                    ? "bg-[#ffd700] text-black shadow-lg shadow-yellow-500/10" 
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/10" 
                     : "text-white/40 hover:text-white/70 hover:bg-white/5"
                 )}
               >
@@ -178,7 +178,7 @@ const UserManagement = () => {
               {/* Vertical Accent */}
               <div className={cn(
                 "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 rounded-r-full transition-all",
-                u.isAdmin ? (type === "OWNER" ? "bg-cyan-500 shadow-[0_0_15px_#06b6d4]" : "bg-yellow-500 shadow-[0_0_15px_#eab308]") : "bg-green-500 shadow-[0_0_15px_#22c55e]"
+                u.isAdmin ? (type === "OWNER" ? "bg-cyan-500 shadow-[0_0_15px_#06b6d4]" : "bg-blue-500 shadow-[0_0_15px_#3b82f6]") : "bg-green-500 shadow-[0_0_15px_#22c55e]"
               )} />
 
               {/* User Meta (Avatar + Status) */}
@@ -278,8 +278,8 @@ const UserManagement = () => {
                     size="icon" 
                     onClick={() => toggleAdmin(u.email, u.isAdmin)}
                     className={cn(
-                      "w-10 h-10 rounded-xl bg-white/5 transition-all hover:bg-yellow-500/10 hover:text-yellow-500",
-                      u.isAdmin ? "text-yellow-500" : "text-white/20"
+                      "w-10 h-10 rounded-xl bg-white/5 transition-all hover:bg-blue-500/10 hover:text-blue-500",
+                      u.isAdmin ? "text-blue-500" : "text-white/20"
                     )}
                    >
                       <Shield className="w-4 h-4" />
