@@ -9,6 +9,10 @@ import { cn } from "@/lib/utils";
 import "@/tutorial.css";
 import PS2Intro from "./PS2Intro";
 
+// Module-level flag — resets on every full page reload (not SPA navigation)
+// This makes the intro play every time the user loads/reloads the page
+let introShownThisLoad = false;
+
 // ─── Typewriter Effect ─────────────────────────────────────────────────────────
 const Typewriter = ({ text, speed = 18, onComplete }: { text: string; speed?: number; onComplete?: () => void }) => {
   const [displayed, setDisplayed] = useState("");
@@ -134,18 +138,16 @@ const JarvisTutorial = () => {
     }
   };
 
-  // ── Auto-start: PS2 intro on every first visit per session ──
+  // ── Auto-start: PS2 intro on every page load when user is logged in ──
   useEffect(() => {
     if (!user || location.pathname === "/auth") return;
-    // Already showed intro this session — skip
-    if (sessionStorage.getItem("ps2_intro_seen")) return;
-    // Already showing or tutorial active — skip
-    if (showPS2Intro || isActive) return;
+    if (introShownThisLoad || isActive || showPS2Intro) return;
 
-    // Show PS2 intro shortly after arriving home
+    // Show intro shortly after arriving at home (gives page time to render)
     const t = setTimeout(() => {
+      introShownThisLoad = true;   // prevent double-trigger within same load
       setShowPS2Intro(true);
-    }, 500);
+    }, 400);
     return () => clearTimeout(t);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, location.pathname]);
@@ -185,7 +187,6 @@ const JarvisTutorial = () => {
     return (
       <PS2Intro
         onComplete={() => {
-          sessionStorage.setItem("ps2_intro_seen", "true");
           setShowPS2Intro(false);
           // Only start tutorial if user hasn't completed it
           if (!localStorage.getItem("jarvis_tutorial_complete")) {
