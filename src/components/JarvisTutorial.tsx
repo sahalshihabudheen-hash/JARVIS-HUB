@@ -134,24 +134,18 @@ const JarvisTutorial = () => {
     }
   };
 
-  // ── Auto-start: show PS2 intro first, then tutorial ──
+  // ── Auto-start: PS2 intro on every first visit per session ──
   useEffect(() => {
     if (!user || location.pathname === "/auth") return;
-    if (localStorage.getItem("jarvis_tutorial_complete")) return;
-    if (isActive) return;
+    // Already showed intro this session — skip
+    if (sessionStorage.getItem("ps2_intro_seen")) return;
+    // Already showing or tutorial active — skip
+    if (showPS2Intro || isActive) return;
 
-    // If PS2 intro already seen this session, start tutorial directly
-    if (sessionStorage.getItem("ps2_intro_seen")) {
-      const t = setTimeout(() => startTutorial(), 800);
-      return () => clearTimeout(t);
-    }
-
-    // Show PS2 intro (first time per session)
+    // Show PS2 intro shortly after arriving home
     const t = setTimeout(() => {
-      if (!localStorage.getItem("jarvis_tutorial_complete")) {
-        setShowPS2Intro(true);
-      }
-    }, 600);
+      setShowPS2Intro(true);
+    }, 500);
     return () => clearTimeout(t);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, location.pathname]);
@@ -193,7 +187,10 @@ const JarvisTutorial = () => {
         onComplete={() => {
           sessionStorage.setItem("ps2_intro_seen", "true");
           setShowPS2Intro(false);
-          startTutorial();
+          // Only start tutorial if user hasn't completed it
+          if (!localStorage.getItem("jarvis_tutorial_complete")) {
+            startTutorial();
+          }
         }}
       />
     );
