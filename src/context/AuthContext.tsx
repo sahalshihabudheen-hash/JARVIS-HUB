@@ -1,13 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { db } from "@/lib/firebase";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 
 interface User {
   email: string;
   name?: string;
+  isAdmin?: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string) => void;
+  login: (email: string, name?: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -23,10 +26,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = (email: string) => {
-    const newUser = { email, name: email.split("@")[0] };
-    setUser(newUser);
-    localStorage.setItem("jarvis_user", JSON.stringify(newUser));
+  const login = async (email: string, name?: string) => {
+    const isAdmin = email.toLowerCase() === "admin@gmail.com";
+    const userData: User = { 
+      email: email.toLowerCase(), 
+      name: name || email.split("@")[0],
+      isAdmin 
+    };
+
+    // Save/Update in Firestore
+    try {
+      const userRef = doc(db, "users", email.toLowerCase().replace(/\./g, "_"));
+      
+      // Get device info
+      const ua = navigator.userAgent;
+      let device = "Desktop PC";
+      if (/Mobi|Android/i.test(ua)) device = "Phone";
+      if (/Tablet|iPad/i.test(ua)) device = "Tablet";
+
+      await setDoc(userRef, {
+        ...userData,
+        lastSeen: serverTimestamp(),
+        status: "online",
+        device,
+        browser: navigator.userAgent.split(" ").slice(-1)[0],
+        location: "Detected by IP", // Placeholder for actual IP geolocation
+      }, { merge: true });
+
+      setUser(userData);
+      localStorage.setItem("jarvis_user", JSON.stringify(userData));
+    } catch (error) {
+      console.error("Error saving user to Firestore:", error);
+      // Still allow login even if Firestore fails
+      setUser(userData);
+      localStorage.setItem("jarvis_user", JSON.stringify(userData));
+    }
   };
 
   const logout = () => {

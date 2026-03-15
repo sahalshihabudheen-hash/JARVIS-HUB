@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
+import { db } from "@/lib/firebase";
+import { collection, onSnapshot, query, orderBy, limit, getDocs } from "firebase/firestore";
 
 interface AppBranding {
   appName: string;
@@ -59,9 +61,19 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
 
-  const refreshData = () => {
-    // In a real app, this would re-fetch from Firestore/API
+  const refreshData = async () => {
     toast.success("Syncing with JARVIS database...", { icon: "🔄" });
+    try {
+      const q = query(collection(db, "users"), orderBy("lastSeen", "desc"));
+      const snapshot = await getDocs(q);
+      const fetchedUsers = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as any[];
+      setUsers(fetchedUsers);
+    } catch (err) {
+      console.error("Refresh error:", err);
+    }
   };
 
   useEffect(() => {
@@ -70,106 +82,30 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setBranding({ ...defaultBranding, ...JSON.parse(saved) });
     }
 
-    const savedActivity = localStorage.getItem("jarvis_admin_activity");
-    if (savedActivity) {
-      setActivityLog(JSON.parse(savedActivity));
-    } else {
-      // populate with fake data initially based on user's screenshot
-      setActivityLog([
-        {
-          id: "1",
-          userEmail: "admin@gmail.com",
-          mediaTitle: "Aadu 3",
-          mediaType: "movie",
-          mediaPoster: "https://image.tmdb.org/t/p/w200/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
-          timestamp: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-        },
-        {
-          id: "2",
-          userEmail: "abhijithvazhuvelil@gmail.com",
-          mediaTitle: "Inception",
-          mediaType: "movie",
-          mediaPoster: "https://image.tmdb.org/t/p/w200/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
-          timestamp: new Date(Date.now() - 1000 * 60 * 19).toISOString(),
-        },
-        {
-          id: "3",
-          userEmail: "sahal.shihabudheen@gmail.com",
-          mediaTitle: "Stranger Things (S4, Ep1)",
-          mediaType: "tv",
-          mediaPoster: "https://image.tmdb.org/t/p/w200/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
-          timestamp: new Date(Date.now() - 1000 * 60 * 32).toISOString(),
-        },
-        {
-          id: "4",
-          userEmail: "abhijithvazhuvelil@gmail.com",
-          mediaTitle: "The Dark Knight",
-          mediaType: "movie",
-          mediaPoster: "https://image.tmdb.org/t/p/w200/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-          timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-        },
-      ]);
-    }
+    // Real-time Users from Firestore
+    const q = query(collection(db, "users"), orderBy("lastSeen", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedUsers = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as any[];
+      setUsers(fetchedUsers);
+    });
 
-    // Mock Users
-    setUsers([
-      {
-        id: "u1",
-        name: "JARVIS",
-        email: "admin@gmail.com",
-        location: "Malappuram, Kerala, India",
-        device: "Desktop PC",
-        os: "Windows 10/11 Desktop",
-        browser: "Firefox",
-        isp: "BSNL Internet",
-        status: "online",
-        isAdmin: true,
-        isVerified: true,
-        countryCode: "IN"
-      },
-      {
-        id: "u2",
-        name: "SAHAL_PRO",
-        email: "sahalshihabudheen@gmail.com",
-        location: "Malappuram, Kerala, India",
-        device: "Desktop PC",
-        os: "Windows 10/11 Desktop",
-        browser: "Firefox",
-        isp: "BSNL Internet",
-        status: "online",
-        isAdmin: true,
-        isVerified: true,
-        countryCode: "IN"
-      },
-      {
-        id: "u3",
-        name: "",
-        email: "cj873785@gmail.com",
-        location: "Kottayam, Kerala, India",
-        device: "Phone",
-        os: "Android",
-        browser: "Chrome",
-        isp: "Kerala Vision Broad Band",
-        status: "online",
-        isAdmin: false,
-        isVerified: true,
-        countryCode: "IN"
-      },
-      {
-        id: "u4",
-        name: "",
-        email: "abhijithvazhuvelil@gmail.com",
-        location: "Malappuram, Kerala, India",
-        device: "Phone",
-        os: "Android",
-        browser: "Chrome",
-        isp: "Kerala Fibre Optic Networ...",
-        status: "online",
-        isAdmin: false,
-        isVerified: true,
-        countryCode: "IN"
-      }
-    ]);
+    // Real-time Activity (if you have an activity collection, for now keeping local or empty)
+    const qAct = query(collection(db, "activity"), orderBy("timestamp", "desc"), limit(20));
+    const unsubAct = onSnapshot(qAct, (snapshot) => {
+      const fetchedAct = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as any[];
+      setActivityLog(fetchedAct);
+    });
+
+    return () => {
+      unsubscribe();
+      unsubAct();
+    };
   }, []);
 
   const updateBranding = (newBranding: Partial<AppBranding>) => {

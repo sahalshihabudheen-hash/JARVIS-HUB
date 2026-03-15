@@ -40,7 +40,6 @@ const Admin = () => {
   const tabs = [
     { id: "users", label: "Users", icon: Users },
     { id: "activity", label: "Activity", icon: ActivityIcon },
-    { id: "playlists", label: "Playlists", icon: Music },
     { id: "games", label: "Games", icon: Gamepad2, badge: "1" },
     { id: "keys", label: "Keys", icon: Key },
     { id: "maint", label: "Maint.", icon: Wrench },

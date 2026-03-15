@@ -38,13 +38,13 @@ const UserManagement = () => {
   });
 
   const stats = {
-    total: 45, // Hardcoded for fidelity to screenshot
-    online: 9,
-    offline: 36,
-    phone: 14,
-    desktop: 5,
-    laptop: 1,
-    vpn: 0
+    total: users.length,
+    online: users.filter(u => u.status === "online").length,
+    offline: users.filter(u => u.status === "offline").length,
+    phone: users.filter(u => u.device === "Phone").length,
+    desktop: users.filter(u => u.device === "Desktop PC").length,
+    laptop: users.filter(u => u.device === "Laptop").length,
+    vpn: users.filter(u => u.device === "VPN").length
   };
 
   const filterTabs = [
@@ -108,7 +108,7 @@ const UserManagement = () => {
                 )}
               >
                 {t.icon && <t.icon className="w-3.5 h-3.5" />}
-                {t.label} ({t.count})
+                {t.label} {t.count > 0 && `(${t.count})`}
               </button>
             ))}
             
@@ -154,7 +154,12 @@ const UserManagement = () => {
                   {u.name || u.email.split('@')[0].toUpperCase()}
                 </h4>
                 <p className="text-[11px] text-red-500 font-medium mt-1 truncate max-w-[140px]">{u.email}</p>
-                <span className="text-[10px] text-green-500 font-bold mt-1 block">Online now</span>
+                <span className={cn(
+                  "text-[10px] font-bold mt-1 block",
+                  u.status === "online" ? "text-green-500" : "text-white/20"
+                )}>
+                  {u.status === "online" ? "Online now" : "Offline"}
+                </span>
               </div>
 
               {/* Location */}
@@ -162,12 +167,12 @@ const UserManagement = () => {
                 <div className="flex items-start gap-2 text-[12px] text-white/70 font-bold">
                   <span className="opacity-30 mt-0.5">📍</span> 
                   <div>
-                    <p>{u.location.split(',')[0]}, {u.location.split(',')[1]}</p>
-                    <p className="text-[10px] text-white/30 font-normal mt-0.5">{u.location.split(',')[2]}</p>
+                    <p>{u.location?.split(',')[0] || "Unknown"}{u.location?.split(',')[1] ? `, ${u.location.split(',')[1]}` : ""}</p>
+                    <p className="text-[10px] text-white/30 font-normal mt-0.5">{u.location?.split(',')[2] || "Analyzing..."}</p>
                   </div>
                 </div>
                 <p className="text-[10px] text-white/30 mt-1 flex items-center gap-1 pl-4">
-                  <span className="text-[8px] opacity-40 italic">▸</span> {u.isp}
+                  <span className="text-[8px] opacity-40 italic">▸</span> {u.isp || "Detecting ISP..."}
                 </p>
               </div>
 

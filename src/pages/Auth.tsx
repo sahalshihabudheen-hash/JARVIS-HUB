@@ -15,7 +15,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Custom admin logic
@@ -26,8 +26,8 @@ const Auth = () => {
       }
     }
 
-    // Simulate authentication
-    login(email);
+    // Authenticate
+    await login(email);
     toast.success(isLogin ? "Welcome back to JARVIS HUB!" : "Account created successfully!");
     navigate("/");
   };
