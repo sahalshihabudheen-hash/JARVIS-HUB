@@ -213,18 +213,23 @@ const JarvisTutorial = () => {
     const spaceBelow = window.innerHeight - coords.y - coords.height;
     const spaceAbove = coords.y;
 
-    if (spaceBelow >= BALLOON_H + 30) {
+    if (spaceBelow >= BALLOON_H + 20) {
       // Place below target
-      balloonStyle.top = coords.y + coords.height + 20;
+      balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
       nibPos = "top";
-    } else if (spaceAbove >= BALLOON_H + 30) {
+    } else if (spaceAbove >= BALLOON_H + 20) {
       // Place above target
-      balloonStyle.top = coords.y - BALLOON_H - 20;
+      balloonStyle.top = Math.max(10, coords.y - BALLOON_H - 16);
       nibPos = "bottom";
     } else {
-      // fallback: center vertically
-      balloonStyle.top = Math.max(20, window.innerHeight / 2 - BALLOON_H / 2);
-      nibPos = "none";
+      // fallback: force below with scroll-safe clamp
+      balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
+      nibPos = "top";
+    }
+
+    // Clamp top to always be on-screen
+    if (typeof balloonStyle.top === "number") {
+      balloonStyle.top = Math.max(10, Math.min(balloonStyle.top, window.innerHeight - BALLOON_H - 10));
     }
 
     // Horizontal alignment: center on target but clamp to screen
@@ -325,10 +330,7 @@ const JarvisTutorial = () => {
                 </div>
               </div>
               <div>
-                <div className="text-[9px] font-black text-primary uppercase tracking-[0.25em] opacity-70 mb-0.5">
-                  Neural Interface
-                </div>
-                <h3 className="text-lg font-bold text-white leading-none tracking-tight">
+                <h3 className="text-base font-bold text-white leading-none tracking-tight">
                   {currentStep.title}
                 </h3>
               </div>
