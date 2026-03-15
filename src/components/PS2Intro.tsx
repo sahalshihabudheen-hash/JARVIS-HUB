@@ -65,9 +65,14 @@ const PARTICLES = buildParticles(40);
 // ─── Component ────────────────────────────────────────────────────────────────
 const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const onCompleteRef = useRef(onComplete);
   const [phase, setPhase] = useState(0);
   const [visible, setVisible] = useState(true);
 
+  // Keep ref current so we always call the latest callback
+  useEffect(() => { onCompleteRef.current = onComplete; });
+
+  // Empty deps — runs ONCE on mount only, never on re-renders
   useEffect(() => {
     const audio = new Audio("/ps2_start_up.mp3");
     audio.volume = 1.0;
@@ -79,10 +84,10 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
       setTimeout(() => setPhase(3), T.LOGO_APPEAR),
       setTimeout(() => setPhase(4), T.LOGO_FULL),
       setTimeout(() => setPhase(5), T.FADE_OUT),
-      setTimeout(() => { setVisible(false); audio.pause(); onComplete(); }, T.DONE),
+      setTimeout(() => { audio.pause(); setVisible(false); onCompleteRef.current(); }, T.DONE),
     ];
     return () => { timers.forEach(clearTimeout); audio.pause(); };
-  }, [onComplete]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const skip = () => { audioRef.current?.pause(); setVisible(false); onComplete(); };
 
