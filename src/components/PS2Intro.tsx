@@ -127,26 +127,6 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
         }} />
       ))}
 
-      {/* ── Ghost watermark (very faint logo visible before towers) ── */}
-      <div style={{
-        position: "absolute", inset: 0,
-        display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center", gap: 14,
-        opacity: showLogo ? 0 : 0.06,
-        transition: "opacity 0.6s ease",
-        pointerEvents: "none",
-      }}>
-        <div style={{
-          width: 80, height: 80, borderRadius: "50%",
-          overflow: "hidden", filter: "grayscale(1) brightness(0.4)",
-        }}>
-          <img src="/JARVIS2.gif" alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        </div>
-        <div style={{
-          fontFamily: "'Outfit','Inter',sans-serif",
-          fontSize: 48, fontWeight: 900, color: "#fff", letterSpacing: "-0.02em",
-        }}>JARVISHUB</div>
-      </div>
 
       {/* ── Centre glow pulse (appears at 0.8s, expands at 4s) ── */}
       {showGlow && (
