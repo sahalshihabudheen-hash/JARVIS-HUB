@@ -7,6 +7,7 @@ import { useTutorial } from "@/context/TutorialContext";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import "@/tutorial.css";
+import PS2Intro from "./PS2Intro";
 
 // ─── Typewriter Effect ─────────────────────────────────────────────────────────
 const Typewriter = ({ text, speed = 18, onComplete }: { text: string; speed?: number; onComplete?: () => void }) => {
@@ -100,6 +101,7 @@ const JarvisTutorial = () => {
   const location = useLocation();
   const [typingDone, setTypingDone] = useState(false);
   const [coords, setCoords] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const [showPS2Intro, setShowPS2Intro] = useState(false);
   const bgMusicRef = useRef<HTMLAudioElement | null>(null);
   const clickSfxRef = useRef<HTMLAudioElement | null>(null);
 
@@ -132,15 +134,18 @@ const JarvisTutorial = () => {
     }
   };
 
-  // ── Auto-start (3s after login, only on home) ──
+  // ── Auto-start: show PS2 intro first, then tutorial ──
   useEffect(() => {
     if (!user || location.pathname === "/auth") return;
-    if (localStorage.getItem("jarvis_tutorial_complete") || isActive) return;
+    if (localStorage.getItem("jarvis_tutorial_complete") || isActive || showPS2Intro) return;
+    // Trigger PS2 intro immediately after login
     const t = setTimeout(() => {
-      if (!localStorage.getItem("jarvis_tutorial_complete")) startTutorial();
-    }, 3000);
+      if (!localStorage.getItem("jarvis_tutorial_complete")) {
+        setShowPS2Intro(true);
+      }
+    }, 800);
     return () => clearTimeout(t);
-  }, [user, location.pathname, isActive, startTutorial]);
+  }, [user, location.pathname, isActive, startTutorial, showPS2Intro]);
 
   // ── Tutorial Steps ──
   const steps = [
@@ -170,7 +175,21 @@ const JarvisTutorial = () => {
     }
   }, [step, isActive]);
 
-  if (!user || !isActive || location.pathname === "/auth") return null;
+  if (!user || location.pathname === "/auth") return null;
+
+  // Show PS2 intro before tutorial
+  if (showPS2Intro) {
+    return (
+      <PS2Intro
+        onComplete={() => {
+          setShowPS2Intro(false);
+          startTutorial();
+        }}
+      />
+    );
+  }
+
+  if (!isActive) return null;
 
   const currentStep = steps[step];
   const Icon = currentStep.icon;
