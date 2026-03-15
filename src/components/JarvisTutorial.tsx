@@ -111,9 +111,9 @@ const JarvisTutorial = () => {
 
   // ── Audio setup ──
   useEffect(() => {
-    bgMusicRef.current = new Audio("https://assets.mixkit.co/music/preview/mixkit-sci-fi-ambient-loop-96.mp3");
+    bgMusicRef.current = new Audio("/aylex-evolution.mp3");
     bgMusicRef.current.loop = true;
-    bgMusicRef.current.volume = 0.12;
+    bgMusicRef.current.volume = 0.18;
 
     clickSfxRef.current = new Audio("/meme-click.mp3");
     clickSfxRef.current.volume = 0.8;
