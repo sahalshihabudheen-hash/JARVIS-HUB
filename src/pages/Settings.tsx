@@ -18,12 +18,10 @@ import {
   Lock,
   Eye,
   Bell,
-  Camera
+  Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { storage } from "@/lib/firebase";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const Settings = () => {
   const { user, logout, updateProfile, resetPassword } = useAuth();
@@ -32,6 +30,7 @@ const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [isUpdating, setIsUpdating] = useState(false);
   const [userName, setUserName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   // Sync username when user object is available
   useEffect(() => {
@@ -46,7 +45,7 @@ const Settings = () => {
     setIsUpdating(true);
     try {
       await updateProfile({ name: userName.trim() });
-      toast.success("Identity updated in JARVIS database.");
+      toast.success("Identity synchronized in JARVIS database.");
     } catch (e) {
       toast.error("Failed to sync new identity.");
     } finally {
@@ -54,44 +53,23 @@ const Settings = () => {
     }
   };
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
+  const handleUrlUpdate = async () => {
+    if (!avatarUrl.trim()) return;
     
-    // Size check: 2MB limit
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("File exceeds 2MB limit. GIFs can be heavy!");
-      return;
-    }
-
     setIsUpdating(true);
-    const toastId = toast.loading("Initializing secure upload...");
-    
+    const toastId = toast.loading("Syncing external avatar link...");
     try {
-      const storageRef = ref(storage, `avatars/${user.email.replace(/\./g, "_")}_${Date.now()}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          toast.loading(`Syncing data: ${Math.round(progress)}%`, { id: toastId });
-        },
-        (error) => {
-          console.error("Storage Error:", error);
-          toast.error("Upload denied. Storage protocols may be restricted.", { id: toastId });
-          setIsUpdating(false);
-        },
-        async () => {
-          const url = await getDownloadURL(uploadTask.snapshot.ref);
-          await updateProfile({ photoURL: url });
-          toast.success("Avatar synchronized successfully!", { id: toastId });
-          setIsUpdating(false);
-        }
-      );
+      // Basic validation
+      if (!avatarUrl.startsWith('http')) {
+        throw new Error("Invalid URL protocol");
+      }
+      
+      await updateProfile({ photoURL: avatarUrl });
+      toast.success("External avatar protocol established!", { id: toastId });
+      setAvatarUrl("");
     } catch (e) {
-      console.error("Initiation Error:", e);
-      toast.error("Failed to initiate upload.", { id: toastId });
+      toast.error("Invalid URL or connection failed.", { id: toastId });
+    } finally {
       setIsUpdating(false);
     }
   };
@@ -190,41 +168,59 @@ const Settings = () => {
                {activeTab === "profile" && (
                  <div className="space-y-8 relative z-10">
                    <div className="flex flex-col md:flex-row items-center gap-8">
-                     <div className="relative group">
-                       <div className="w-32 h-32 rounded-3xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-4xl font-display font-bold text-primary overflow-hidden shadow-2xl transition-transform group-hover:scale-105">
+                     <div className="shrink-0">
+                       <div className="w-32 h-32 rounded-3xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-4xl font-display font-bold text-primary overflow-hidden shadow-2xl transition-transform hover:scale-105 duration-500">
                          {user?.photoURL ? (
                            <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
                          ) : (
                            user?.name?.substring(0, 2).toUpperCase()
                          )}
                        </div>
-                       <label className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-primary text-black flex items-center justify-center cursor-pointer hover:bg-white transition-colors shadow-xl group">
-                         <Camera className="w-5 h-5 transition-transform group-hover:scale-110" />
-                         <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} disabled={isUpdating} />
-                       </label>
                      </div>
                      
-                     <div className="flex-1 space-y-4 text-center md:text-left">
-                       <div>
-                         <div className="flex items-center gap-3 justify-center md:justify-start">
+                     <div className="flex-1 space-y-6 w-full">
+                       {/* Name Sync */}
+                       <div className="space-y-2">
+                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Identity Tag</p>
+                         <div className="flex items-center gap-3">
                            <input 
                              value={userName}
                              onChange={(e) => setUserName(e.target.value)}
                              placeholder="Set your identity..."
-                             className="text-2xl font-bold bg-transparent border-b-2 border-white/10 focus:border-primary outline-none px-2 py-1 w-full max-w-[300px] transition-all"
+                             className="text-2xl font-bold bg-transparent border-b-2 border-white/10 focus:border-primary outline-none px-2 py-1 flex-1 transition-all"
                            />
                            <Button 
                              onClick={handleUpdateName} 
                              disabled={isUpdating || !userName.trim() || userName === user?.name}
-                             className="rounded-xl px-6 bg-primary text-black hover:bg-white font-black uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:shadow-[0_0_20px_rgba(34,211,238,0.5)] transition-all"
+                             className="rounded-xl px-6 bg-primary text-black hover:bg-white font-black uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-all shrink-0"
                            >
-                             {isUpdating ? "Syncing..." : "Update"}
+                             Update
                            </Button>
                          </div>
-                         <p className="text-muted-foreground mt-2 font-medium tracking-tight h-5">{user?.email}</p>
+                       </div>
+
+                       {/* GIF Link Sync */}
+                       <div className="space-y-2">
+                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Avatar Link (GIF/PNG)</p>
+                         <div className="flex items-center gap-3">
+                           <input 
+                             value={avatarUrl}
+                             onChange={(e) => setAvatarUrl(e.target.value)}
+                             placeholder="Paste your GIF or Image link here..."
+                             className="text-sm font-medium bg-white/5 border border-white/10 rounded-xl focus:border-primary outline-none px-4 py-2.5 flex-1 transition-all placeholder:text-white/20"
+                           />
+                           <Button 
+                             onClick={handleUrlUpdate} 
+                             disabled={isUpdating || !avatarUrl.trim()}
+                             className="rounded-xl px-4 bg-white/5 border border-white/10 text-white hover:bg-white hover:text-black font-black uppercase text-xs tracking-widest transition-all shrink-0 h-[42px]"
+                           >
+                             <Sparkles className="w-4 h-4 mr-2" />
+                             Sync URL
+                           </Button>
+                         </div>
                        </div>
                        
-                       <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                       <div className="flex flex-wrap gap-2 justify-center md:justify-start pt-2">
                          <span className={cn(
                            "px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border",
                            roleType === "OWNER" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" :
@@ -238,6 +234,7 @@ const Settings = () => {
                              Google Authenticated
                            </span>
                          )}
+                         <p className="text-muted-foreground font-medium tracking-tight ml-2 my-auto">{user?.email}</p>
                        </div>
                      </div>
                    </div>
