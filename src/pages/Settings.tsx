@@ -23,11 +23,61 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const Settings = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile, resetPassword } = useAuth();
   const { startTutorial, selectedGenres, updateSelectedGenres } = useTutorial();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [userName, setUserName] = useState(user?.name || "");
 
+  // Profile Update Logic
+  const handleUpdateName = async () => {
+    if (!userName.trim()) return;
+    setIsUpdating(true);
+    try {
+      await updateProfile({ name: userName });
+      toast.success("Profile name updated.");
+    } catch (e) {
+      toast.error("Failed to update name.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    
+    setIsUpdating(true);
+    try {
+      const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+      const { storage } = await import("@/lib/firebase");
+      
+      const storageRef = ref(storage, `avatars/${user.email}_${Date.now()}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      
+      await updateProfile({ photoURL: url });
+      toast.success("Avatar updated successfully!");
+    } catch (e) {
+      console.error(e);
+      toast.error("Avatar upload failed.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    try {
+      await resetPassword();
+      toast.success("Password reset email sent!");
+    } catch (e) {
+      toast.error("Failed to send reset email.");
+    }
+  };
+
+  const isGoogleUser = user?.photoURL?.includes("googleusercontent.com");
+  // ... rest of the component ...
   const genres = [
     { id: 28, name: "Action", icon: "⚔️" },
     { id: 878, name: "Sci-Fi", icon: "🚀" },
@@ -127,17 +177,50 @@ const Settings = () => {
 
                {activeTab === "profile" && (
                  <div className="space-y-8 relative z-10">
-                   <div className="flex items-center gap-6">
-                     <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-4xl font-display font-bold text-primary">
-                       {user?.name?.substring(0, 2).toUpperCase()}
+                   <div className="flex flex-col md:flex-row items-center gap-8">
+                     <div className="relative group">
+                       <div className="w-32 h-32 rounded-3xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-4xl font-display font-bold text-primary overflow-hidden shadow-2xl transition-transform group-hover:scale-105">
+                         {user?.photoURL ? (
+                           <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                         ) : (
+                           user?.name?.substring(0, 2).toUpperCase()
+                         )}
+                       </div>
+                       <label className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-primary text-black flex items-center justify-center cursor-pointer hover:bg-white transition-colors shadow-xl">
+                         <SettingsIcon className="w-5 h-5" />
+                         <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} disabled={isUpdating} />
+                       </label>
                      </div>
-                     <div>
-                       <h2 className="text-2xl font-bold mb-1">{user?.name}</h2>
-                       <p className="text-muted-foreground">{user?.email}</p>
-                       <div className="flex gap-2 mt-3">
+                     
+                     <div className="flex-1 space-y-4 text-center md:text-left">
+                       <div>
+                         <div className="flex items-center gap-3 justify-center md:justify-start">
+                           <input 
+                             value={userName}
+                             onChange={(e) => setUserName(e.target.value)}
+                             className="text-2xl font-bold bg-transparent border-b border-white/20 focus:border-primary outline-none px-2 py-1 w-full max-w-[300px]"
+                           />
+                           <Button 
+                             size="sm" 
+                             onClick={handleUpdateName} 
+                             disabled={isUpdating || userName === user?.name}
+                             className="rounded-lg h-8 px-4"
+                           >
+                             Update
+                           </Button>
+                         </div>
+                         <p className="text-muted-foreground mt-1">{user?.email}</p>
+                       </div>
+                       
+                       <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                          <span className="px-3 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-wider rounded-full border border-green-500/20">
-                           Protocol Alpha-1 Active
+                           {user?.isAdmin ? "Owner Status Active" : "Member Protocol Active"}
                          </span>
+                         {isGoogleUser && (
+                           <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-full border border-primary/20">
+                             Google Authenticated
+                           </span>
+                         )}
                        </div>
                      </div>
                    </div>
@@ -145,25 +228,30 @@ const Settings = () => {
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4">
                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                            <CreditCard className="w-5 h-5" />
+                            <Globe className="w-5 h-5" />
                          </div>
                          <div>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Status</p>
-                            <p className="text-sm font-bold">Free Terminal Access</p>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Location</p>
+                            <p className="text-sm font-bold">{user?.location || "Detecting..."}</p>
                          </div>
                       </div>
                       <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4">
                          <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
-                            <MessageSquare className="w-5 h-5" />
+                            <Shield className="w-5 h-5" />
                          </div>
                          <div>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Support</p>
-                            <p className="text-sm font-bold">Jarvis Feedback</p>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">ISP Path</p>
+                            <p className="text-sm font-bold truncate max-w-[150px]">{user?.isp || "Identifying..."}</p>
                          </div>
                       </div>
                    </div>
 
-                   <div className="pt-6 border-t border-white/10">
+                   <div className="pt-6 border-t border-white/10 flex flex-wrap gap-4">
+                      {!isGoogleUser && (
+                        <Button onClick={handlePasswordReset} variant="outline" className="rounded-xl border-primary/20 text-primary hover:bg-primary/10">
+                           Reset Password Protocol
+                        </Button>
+                      )}
                       <Button onClick={logout} variant="outline" className="rounded-xl border-red-500/20 text-red-500 hover:bg-red-500/10">
                          Disconnect Hub Session
                       </Button>

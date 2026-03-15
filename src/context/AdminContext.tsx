@@ -27,16 +27,16 @@ export interface AdminUser {
   id: string;
   name: string;
   email: string;
-  location: string;
   device: string;
   os: string;
   browser: string;
-  isp: string;
   status: "online" | "offline";
   isAdmin: boolean;
   isVerified: boolean;
   countryCode: string;
   photoURL?: string;
+  location?: string;
+  isp?: string;
 }
 
 export interface ActivityEntry {
