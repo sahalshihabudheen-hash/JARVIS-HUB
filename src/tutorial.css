@@ -1,128 +1,38 @@
+/* ── JARVIS Tutorial CSS ─────────────────────────────── */
+
+/* Scanning line animation */
 @keyframes scan {
-  0% { transform: translateY(-100%); opacity: 0; }
-  50% { opacity: 0.8; }
-  100% { transform: translateY(100%); opacity: 0; }
+  0%   { transform: translateX(-100%); opacity: 0; }
+  30%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
 }
 
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
+/* Grid overlay background */
+.grid-overlay {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-@keyframes type {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  100% { transform: scale(1.5); opacity: 0; }
-}
-
-.tutorial-lockdown { overflow: hidden !important; }
-
-.hud-border {
-  position: relative;
-  background: rgba(0, 20, 30, 0.8);
-  border: 1px solid rgba(34, 211, 238, 0.3);
-  backdrop-filter: blur(12px);
-}
-
-.hud-border::before, .hud-border::after, 
-.hud-corner::before, .hud-corner::after {
-  content: '';
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  border-color: #22d3ee;
-  border-style: solid;
-  pointer-events: none;
-}
-
-.hud-corner-tl { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
-.hud-corner-tr { top: -2px; right: -2px; border-width: 2px 2px 0 0; }
-.hud-corner-bl { bottom: -2px; left: -2px; border-width: 0 0 2px 2px; }
-.hud-corner-br { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
-
+/* Horizontal scanning top bar */
 .scanning-line {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+.scanning-line::after {
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(to right, transparent, #22d3ee, transparent);
-  box-shadow: 0 0 10px #22d3ee;
-  animation: scan 2s linear infinite;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, #22d3ee 50%, transparent);
+  box-shadow: 0 0 8px #22d3ee;
+  animation: scan 2.5s linear infinite;
 }
-
-.grid-overlay {
-  background-image: linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
-  background-size: 30px 30px;
-}
-
-/* New Tour UI Styles */
-.tour-balloon {
-  background: rgba(0, 20, 30, 0.95);
-  border: 1px solid rgba(34, 211, 238, 0.3);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(34, 211, 238, 0.1);
-  backdrop-filter: blur(16px);
-  border-radius: 1.5rem;
-  padding: 1.5rem;
-  width: 320px;
-  position: relative;
-  z-index: 2000;
-}
-
-.tour-nib {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: rgba(0, 20, 30, 0.95);
-  border-left: 1px solid rgba(34, 211, 238, 0.3);
-  border-top: 1px solid rgba(34, 211, 238, 0.3);
-  transform: rotate(45deg);
-}
-
-.tour-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-}
-
-.tour-dot.active {
-  background: #22d3ee;
-  width: 18px;
-  box-shadow: 0 0 10px #22d3ee;
-}
-
-.tour-header-icon {
-  background: linear-gradient(135deg, #22d3ee, #0ea5e9);
-  border-radius: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
-}
-
-.glow-yellow {
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
-}
-
-.tour-pulse {
-  animation: tour-pulse 2s infinite;
-}
-
-@keyframes tour-pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
