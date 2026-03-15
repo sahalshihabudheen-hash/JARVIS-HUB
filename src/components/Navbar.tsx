@@ -230,14 +230,29 @@ const Navbar = () => {
               ))}
               <div className="pt-2">
                 {user ? (
-                  <Button
-                    variant="outline"
-                    className="w-full flex items-center justify-center gap-2 rounded-xl h-12 border-red-400/20 text-red-400 hover:bg-red-400/10"
-                    onClick={logout}
-                  >
-                    <LogOut className="w-5 h-5" />
-                    Log out of Hub
-                  </Button>
+                  <>
+                    {user.email?.toLowerCase() === "admin@gmail.com" && (
+                      <Button
+                        variant="ghost"
+                        className="w-full flex items-center justify-start gap-3 px-4 py-2.5 rounded-xl text-[#ffd700] hover:bg-[#ffd700]/10 mb-2"
+                        onClick={() => {
+                          navigate("/admin");
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        <Settings className="w-5 h-5" />
+                        Admin Dashboard
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      className="w-full flex items-center justify-center gap-2 rounded-xl h-12 border-red-400/20 text-red-400 hover:bg-red-400/10"
+                      onClick={logout}
+                    >
+                      <LogOut className="w-5 h-5" />
+                      Log out of Hub
+                    </Button>
+                  </>
                 ) : (
                   <Button
                     className="w-full flex items-center justify-center gap-2 rounded-xl h-12 hover-glow"
