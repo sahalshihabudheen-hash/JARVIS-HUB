@@ -27,8 +27,8 @@
 
 .hud-border {
   position: relative;
-  background: rgba(0, 20, 30, 0.8);
-  border: 1px solid rgba(34, 211, 238, 0.3);
+  background: rgba(13, 13, 13, 0.8);
+  border: 1px solid rgba(255, 215, 0, 0.3);
   backdrop-filter: blur(12px);
 }
 
@@ -38,7 +38,7 @@
   position: absolute;
   width: 15px;
   height: 15px;
-  border-color: #22d3ee;
+  border-color: #FFD700;
   border-style: solid;
   pointer-events: none;
 }
@@ -54,14 +54,14 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(to right, transparent, #22d3ee, transparent);
-  box-shadow: 0 0 10px #22d3ee;
+  background: linear-gradient(to right, transparent, #FFD700, transparent);
+  box-shadow: 0 0 10px #FFD700;
   animation: scan 2s linear infinite;
 }
 
 .grid-overlay {
-  background-image: linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(255, 215, 0, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 215, 0, 0.05) 1px, transparent 1px);
   background-size: 30px 30px;
 }
 

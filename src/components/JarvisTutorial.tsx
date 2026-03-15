@@ -42,7 +42,7 @@ const Spotlight = ({ x, y, width, height, padding = 15 }: { x: number, y: number
 
   return (
     <div className="fixed inset-0 z-[1400] pointer-events-none">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-[2px]" style={{
+      <div className="absolute inset-0 bg-black/85 backdrop-blur-[1px]" style={{
         clipPath: `polygon(
           0% 0%, 
           0% 100%, 
@@ -57,14 +57,16 @@ const Spotlight = ({ x, y, width, height, padding = 15 }: { x: number, y: number
         )`
       }} />
       <div 
-        className="absolute border-2 border-primary shadow-[0_0_30px_rgba(34,211,238,0.5)] rounded-2xl animate-pulse"
+        className="absolute border-2 border-[#FFD700] shadow-[0_0_40px_rgba(255,215,0,0.3)] rounded-2xl animate-pulse overflow-hidden"
         style={{
           top: rect.top,
           left: rect.left,
           width: rect.width,
           height: rect.height
         }}
-      />
+      >
+        <div className="scanning-line opacity-40" />
+      </div>
     </div>
   );
 };
@@ -88,7 +90,7 @@ const GenreButton = ({ genre }: { genre: any }) => {
       className={cn(
         "flex flex-col items-center gap-2 p-3 rounded-xl border transition-all duration-300 group relative overflow-hidden",
         isSelected 
-          ? "bg-primary/20 border-primary shadow-[0_0_20px_rgba(34,211,238,0.3)] scale-105" 
+          ? "bg-[#FFD700]/20 border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.3)] scale-105" 
           : "bg-white/5 border-white/10 hover:border-white/30"
       )}
     >
@@ -127,12 +129,6 @@ const JarvisTutorial = () => {
       icon: Layout
     },
     {
-      target: "hero-watch-btn",
-      title: "Direct Data Entry",
-      description: "My sensors indicate this is the most efficient initialization point. Use the primary link to start your visual stream immediately.",
-      icon: Cpu
-    },
-    {
       target: "navbar-search",
       title: "Global Intelligence",
       description: "Scan the entire HUB database. Search for titles, actors, or directors to find specific data points instantly.",
@@ -144,6 +140,12 @@ const JarvisTutorial = () => {
       description: "Select your preferred genre frequencies. I will prioritize these data streams in your personalized HUB layout.",
       icon: Cpu,
       interactive: "genres"
+    },
+    {
+      target: "hero-watch-btn",
+      title: "Direct Data Entry",
+      description: "My sensors indicate this is the most efficient initialization point. Use the primary link to start your visual stream immediately.",
+      icon: Cpu
     },
     {
       target: "watchlist-row",
@@ -254,9 +256,9 @@ const JarvisTutorial = () => {
         left: balloonLeft
       } : {}}
       >
-        <div className="tour-balloon border-primary/40 glow-yellow relative overflow-hidden">
+        <div className="tour-balloon border-[#FFD700]/40 glow-yellow relative overflow-hidden backdrop-blur-xl">
           {/* Scanning Line Effect */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary/30 scanning-line z-0" />
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#FFD700]/30 scanning-line z-0" />
 
           {/* Tour Nib (Arrow) */}
           {coords && (
@@ -269,33 +271,33 @@ const JarvisTutorial = () => {
           )}
           
           {/* Progress Indicator */}
-          <div className="absolute top-4 right-4 px-2 py-0.5 bg-primary/20 border border-primary/40 text-primary text-[10px] font-black rounded flex items-center gap-1 backdrop-blur-md z-10">
-            <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-[#FFD700]/10 border border-[#FFD700]/30 text-[#FFD700] text-[10px] font-black rounded flex items-center gap-1 backdrop-blur-md z-10 transition-all">
+            <span className="w-1 h-1 rounded-full bg-[#FFD700] animate-pulse" />
             {step + 1} / {steps.length}
           </div>
 
-          <div className="flex items-center gap-3 mb-6 relative z-10">
-            <div className="relative">
-              <div className="w-12 h-12 rounded-xl overflow-hidden border border-primary/50 bg-black/50 shadow-[0_0_15px_rgba(34,211,238,0.3)]">
-                <img src="/JARVIS2.gif" alt="JARVIS" className="w-full h-full object-cover scale-150" />
+          <div className="flex items-center gap-3 mb-5 relative z-10">
+            <div className="relative group">
+              <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-[#FFD700]/50 bg-black/50 shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:shadow-[0_0_30px_rgba(255,215,0,0.5)] transition-all duration-500">
+                <img src="/JARVIS2.gif" alt="JARVIS" className="w-full h-full object-cover scale-150 opacity-90" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-lg flex items-center justify-center shadow-lg border-2 border-[#0d0d0d]">
-                <Icon className="w-3 h-3 text-black" />
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#FFD700] rounded-lg flex items-center justify-center shadow-lg border-2 border-[#0d0d0d] animate-bounce-slow">
+                <Icon className="w-3.5 h-3.5 text-black" />
               </div>
             </div>
             <div>
-              <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Neural Interface</div>
-              <h3 className="text-lg font-display font-bold text-white tracking-tight leading-none mt-1">{currentStep.title}</h3>
+              <div className="text-[9px] font-black text-[#FFD700] uppercase tracking-[0.3em] opacity-80">Neural Interface</div>
+              <h3 className="text-xl font-display font-bold text-white tracking-tight leading-none mt-1 shadow-black text-shadow-sm">{currentStep.title}</h3>
             </div>
           </div>
 
-          <div className="relative mb-6 min-h-[4.5rem] z-10">
-            <p className="text-white/80 text-sm leading-relaxed">
+          <div className="relative mb-5 min-h-[4rem] z-10">
+            <div className="text-white/90 text-sm leading-relaxed font-medium">
               <Typewriter 
                 text={currentStep.description} 
                 onComplete={() => setIsTypingComplete(true)}
               />
-            </p>
+            </div>
           </div>
 
           {/* Interactive Genre Selection Section */}
@@ -314,13 +316,13 @@ const JarvisTutorial = () => {
           )}
 
           <div className="flex items-center justify-between gap-4 pt-4 border-t border-white/10 relative z-10">
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5 items-center">
               {steps.map((_, i) => (
                 <div 
                   key={i} 
                   className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                    i === step ? "bg-primary w-4 shadow-[0_0_8px_rgba(34,211,238,0.6)]" : "bg-white/10"
+                    "w-1.5 h-1.5 rounded-full transition-all duration-500",
+                    i === step ? "bg-[#FFD700] w-5 shadow-[0_0_12px_rgba(255,215,0,0.7)]" : "bg-white/10"
                   )}
                 />
               ))}
@@ -332,7 +334,7 @@ const JarvisTutorial = () => {
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setStep(step - 1)}
-                  className="text-white/60 hover:text-white hover:bg-white/10 text-[10px] uppercase tracking-wider px-3 h-8"
+                  className="text-white/40 hover:text-white hover:bg-white/5 text-[9px] font-black uppercase tracking-widest px-3 h-8 border border-white/5"
                 >
                   Back
                 </Button>
@@ -344,23 +346,23 @@ const JarvisTutorial = () => {
                     variant="ghost" 
                     size="sm" 
                     onClick={completeTutorial}
-                    className="text-white/40 hover:text-white/60 text-[10px] uppercase tracking-widest px-2"
+                    className="text-white/30 hover:text-white/50 text-[9px] font-black uppercase tracking-widest px-2"
                   >
                     Skip
                   </Button>
                   <Button 
                     onClick={nextStep}
                     size="sm"
-                    className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-widest px-4 h-8 glow-yellow transition-all duration-300"
+                    className="bg-[#FFD700] hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.15em] px-5 h-8 glow-yellow transition-all duration-300 transform active:scale-95"
                   >
-                    Next
+                    Next Step
                   </Button>
                 </div>
               ) : (
                 <Button 
                   onClick={completeTutorial}
                   size="sm"
-                  className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-widest px-6 h-8 glow-yellow"
+                  className="bg-[#FFD700] hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] px-8 h-8 glow-yellow shadow-[0_0_30px_rgba(255,215,0,0.4)]"
                 >
                   Initialize Hub
                 </Button>
