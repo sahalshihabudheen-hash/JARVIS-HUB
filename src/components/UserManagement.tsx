@@ -20,7 +20,7 @@ import { useAdmin } from "@/context/AdminContext";
 import { cn } from "@/lib/utils";
 
 const UserManagement = () => {
-  const { users, refreshData, toggleAdmin } = useAdmin();
+  const { users, refreshData, toggleAdmin, deleteUser } = useAdmin();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
@@ -235,8 +235,11 @@ const UserManagement = () => {
                     <span className="text-lg">📍</span>
                     <p>{u.location?.split(',')[0] || "Unknown City"}</p>
                   </div>
-                  <p className="text-[10px] text-white/30 truncate pl-8 uppercase tracking-wider font-bold">
+                  <p className="text-[10px] text-white/30 truncate pl-8 uppercase tracking-wider font-bold mb-0.5">
                     {u.isp || u.location?.split(',')[1] || "Detecting ISP..."}
+                  </p>
+                  <p className="text-[9px] text-cyan-400/60 font-mono pl-8 uppercase tracking-widest font-bold">
+                    IP: {u.ip || "Detecting..."}
                   </p>
                 </div>
 
@@ -262,7 +265,7 @@ const UserManagement = () => {
               </div>
 
               {/* Actions Panel */}
-              <div className="flex items-center gap-2 pr-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+              <div className="flex items-center gap-2 pr-2 transition-all duration-300">
                  {/* Only Owner can toggle other admins */}
                  {type !== "OWNER" && (
                    <Button 
@@ -278,7 +281,12 @@ const UserManagement = () => {
                    </Button>
                  )}
                  
-                 <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white/5 hover:bg-red-500/10 text-white/20 hover:text-red-500 transition-all">
+                 <Button 
+                   variant="ghost" 
+                   size="icon" 
+                   onClick={() => deleteUser(u.email)}
+                   className="w-10 h-10 rounded-xl bg-white/5 hover:bg-red-500/10 text-white/20 hover:text-red-500 transition-all"
+                 >
                     <Trash2 className="w-4 h-4" />
                  </Button>
                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-xl grayscale hover:grayscale-0 transition-all cursor-default">

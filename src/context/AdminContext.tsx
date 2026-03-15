@@ -21,6 +21,7 @@ interface AdminContextType {
   users: AdminUser[];
   refreshData: () => void;
   toggleAdmin: (userId: string, currentStatus: boolean) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
 }
 
 export interface AdminUser {
@@ -37,6 +38,7 @@ export interface AdminUser {
   photoURL?: string;
   location?: string;
   isp?: string;
+  ip?: string;
 }
 
 export interface ActivityEntry {
@@ -144,8 +146,21 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const deleteUser = async (userId: string) => {
+    try {
+      const userDocId = userId.replace(/\./g, "_");
+      const { doc, deleteDoc } = await import("firebase/firestore");
+      await deleteDoc(doc(db, "users", userDocId));
+      toast.success(`User ${userId} deleted from system`, { icon: "🗑️" });
+      refreshData();
+    } catch (err) {
+      console.error("Delete User Error:", err);
+      toast.error("Failed to delete user");
+    }
+  };
+
   return (
-    <AdminContext.Provider value={{ branding, updateBranding, activityLog, addActivity, users, refreshData, toggleAdmin }}>
+    <AdminContext.Provider value={{ branding, updateBranding, activityLog, addActivity, users, refreshData, toggleAdmin, deleteUser }}>
       {children}
     </AdminContext.Provider>
   );

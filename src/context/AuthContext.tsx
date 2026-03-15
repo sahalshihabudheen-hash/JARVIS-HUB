@@ -10,6 +10,7 @@ interface User {
   countryCode?: string;
   location?: string;
   isp?: string;
+  ip?: string;
 }
 
 interface AuthContextType {
@@ -36,15 +37,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let location = "Unknown";
     let isp = "Unknown";
     let countryCode = "🌐";
+    let ip = "0.0.0.0";
 
     try {
+      // Primary: ipapi.co
       const geoResponse = await fetch("https://ipapi.co/json/");
-      const geoData = await geoResponse.json();
-      location = `${geoData.city}, ${geoData.region}, ${geoData.country_name}`;
-      isp = geoData.org || "Unknown ISP";
-      countryCode = geoData.country_code || "🌐";
+      if (geoResponse.ok) {
+        const geoData = await geoResponse.json();
+        location = geoData.city && geoData.region ? `${geoData.city}, ${geoData.region}, ${geoData.country_name}` : "Unknown Location";
+        isp = geoData.org || "Unknown ISP";
+        countryCode = geoData.country_code || "🌐";
+        ip = geoData.ip || "0.0.0.0";
+      } else {
+        throw new Error("ipapi failed");
+      }
     } catch (e) {
-      console.error("Geo sensing failed:", e);
+      console.error("Geo sensing failed (ipapi):", e);
+      // Fallback 1: ipwho.is (HTTPS supported)
+      try {
+        const fallbackRes = await fetch("https://ipwho.is/");
+        if (fallbackRes.ok) {
+          const fallbackData = await fallbackRes.json();
+          if (fallbackData.success) {
+            location = `${fallbackData.city}, ${fallbackData.region}, ${fallbackData.country}`;
+            isp = fallbackData.connection?.isp || "Unknown ISP";
+            countryCode = fallbackData.country_code || "🌐";
+            ip = fallbackData.ip || "0.0.0.0";
+          } else {
+            throw new Error("ipwho.is failed");
+          }
+        }
+      } catch (err) {
+        console.error("Geo sensing fallback failed (ipwho.is):", err);
+        // Fallback 2: ipify (IP only)
+        try {
+          const res = await fetch("https://api.ipify.org?format=json");
+          const data = await res.json();
+          ip = data.ip;
+        } catch (ipErr) {
+          console.error("IP detection final fallback failed:", ipErr);
+        }
+      }
     }
 
     const isAdmin = email.toLowerCase() === "admin@gmail.com";
@@ -55,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       photoURL,
       location,
       isp,
+      ip,
       countryCode
     };
 
