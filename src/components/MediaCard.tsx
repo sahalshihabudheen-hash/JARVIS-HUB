@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { Play, Star } from "lucide-react";
 import { MediaItem, getImageUrl } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
-import { TutorialPointer } from "./JarvisTutorial";
 import { useTutorial } from "@/context/TutorialContext";
 
 interface MediaCardProps {

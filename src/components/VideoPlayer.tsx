@@ -5,7 +5,6 @@ import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers"
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
-import { TutorialPointer } from "./JarvisTutorial";
 import { useTutorial } from "@/context/TutorialContext";
 
 interface VideoPlayerProps {
@@ -54,13 +53,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           </div>
           
           <div className="flex flex-wrap gap-2 relative">
-            <TutorialPointer 
-              activeStep={4}
-              onAction={nextStep}
-              title="Protocol 3: Bandwidth Optimization"
-              description="If a primary stream loop fails, switch to an alternative Mirror node to restore bandwidth."
-              className="bottom-full left-1/2 -translate-x-1/2 mb-2"
-            />
+
             {videoServers.map((s) => (
               <Button
                 key={s.id}
@@ -102,13 +95,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
               if (isActive && step === 3) nextStep();
             }}
           >
-            <TutorialPointer 
-              activeStep={3}
-              onAction={nextStep}
-              title="Protocol 2: Secure Start"
-              description="Player APIs are often unstable. My initializer will neutralize pop-up scripts before launch."
-              className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            />
+
             <div className="text-center animate-pulse-glow">
               <div className="w-20 h-20 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 mx-auto shadow-[0_0_30px_rgba(34,211,238,0.4)]">
                 <div className="w-16 h-16 rounded-full border border-primary flex items-center justify-center bg-primary/5">
@@ -133,14 +120,9 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
 
       {/* Shield Controls */}
       <div className="flex justify-center relative">
-        <TutorialPointer 
-          activeStep={5}
-          onAction={nextStep}
-          title="Protocol 4: Stealth Shield"
-          description="Maintain 'Locked' status for maximum ad-interception. Toggle only when manual player control is required."
-          className="bottom-full left-1/2 -translate-x-1/2 mb-4"
-        />
+
         <Button
+          id="shield-toggle-btn"
           variant={shieldActive ? "default" : "outline"}
           size="sm"
           onClick={() => {

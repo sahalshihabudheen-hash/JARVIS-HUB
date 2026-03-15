@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { X, ChevronRight, ChevronLeft, Activity, Search, Layout, Heart, Settings as SettingsIcon, ShieldAlert, Cpu } from "lucide-react";
 import { Button } from "./ui/button";
@@ -97,15 +98,18 @@ const GenreButton = ({ genre }: { genre: any }) => {
   );
 };
 
+
+
 const JarvisTutorial = () => {
   const { isActive, step, nextStep, setStep, completeTutorial, startTutorial } = useTutorial();
   const { user } = useAuth();
+  const location = useLocation();
   const [isTypingComplete, setIsTypingComplete] = useState(false);
   const [coords, setCoords] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
 
   const steps = [
     {
-      target: null,
+      target: null, // Global intro
       title: "System Initialization",
       description: "Welcome to JARVIS HUB. Protocol Alpha-1 is now active. I am J.A.R.V.I.S., your local intelligence unit. I will guide you through your new command center.",
       icon: Activity
@@ -123,13 +127,19 @@ const JarvisTutorial = () => {
       icon: Layout
     },
     {
+      target: "hero-watch-btn",
+      title: "Direct Data Entry",
+      description: "My sensors indicate this is the most efficient initialization point. Use the primary link to start your visual stream immediately.",
+      icon: Cpu
+    },
+    {
       target: "navbar-search",
       title: "Global Intelligence",
       description: "Scan the entire HUB database. Search for titles, actors, or directors to find specific data points instantly.",
       icon: Search
     },
     {
-      target: null,
+      target: null, // Interactive genre selection
       title: "Priority Calibration",
       description: "Select your preferred genre frequencies. I will prioritize these data streams in your personalized HUB layout.",
       icon: Cpu,
@@ -142,9 +152,9 @@ const JarvisTutorial = () => {
       icon: Heart
     },
     {
-      target: null,
+      target: "shield-toggle-btn",
       title: "Stealth Protocol",
-      description: "I recommend using a Stealth Shield (Ad Blocker) or the Brave Sector. Most mirrors contain aggressive pop-up scripts that I cannot fully neutralize.",
+      description: "Maintain 'Locked' status for maximum ad-interception. Toggle only when manual player control is required.",
       icon: ShieldAlert
     },
     {
@@ -161,13 +171,22 @@ const JarvisTutorial = () => {
     }
   ];
 
+  // Auto-start logic refined
   useEffect(() => {
-    if (!user) return;
+    // Only attempt to start if we are logged in, NOT on auth page, and tutorial not complete
+    if (!user || location.pathname === "/auth") return;
+    
     const hasSeenTutorial = localStorage.getItem("jarvis_tutorial_complete");
     if (!hasSeenTutorial && !isActive) {
-      setTimeout(() => startTutorial(), 3000);
+      const timer = setTimeout(() => {
+        // Double check condition before starting
+        if (!localStorage.getItem("jarvis_tutorial_complete")) {
+           startTutorial();
+        }
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [user, location.pathname, isActive, startTutorial]);
 
   useEffect(() => {
     setIsTypingComplete(false);
@@ -192,7 +211,8 @@ const JarvisTutorial = () => {
     }
   }, [step, isActive]);
 
-  if (!user || !isActive) return null;
+  // Strict render check
+  if (!user || !isActive || location.pathname === "/auth") return null;
 
   const currentStep = steps[step];
   const Icon = currentStep.icon;

@@ -4,7 +4,6 @@ import { Play, Info, Star } from "lucide-react";
 import { MediaItem, getBackdropUrl } from "@/lib/tmdb";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import { TutorialPointer } from "./JarvisTutorial";
 import { useTutorial } from "@/context/TutorialContext";
 
 interface HeroSectionProps {
@@ -150,14 +149,8 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
           {/* Buttons */}
           <div className="flex flex-wrap gap-3">
             <Link to={watchPath} className="relative">
-              <TutorialPointer 
-                activeStep={2}
-                onAction={nextStep}
-                title="Protocol 1: Direct Entry"
-                description="My sensors indicate this access point is the most efficient path. Initialize the secure stream now."
-                className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-              />
               <Button 
+                id="hero-watch-btn"
                 size="lg" 
                 className="hover-glow"
                 onClick={() => {
@@ -169,7 +162,12 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
               </Button>
             </Link>
             <Link to={linkPath}>
-              <Button size="lg" variant="outline" className="border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/40 transition-all duration-300">
+              <Button 
+                id="hero-more-info-btn"
+                size="lg" 
+                variant="outline" 
+                className="border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/40 transition-all duration-300"
+              >
                 <Info className="w-5 h-5 mr-2" />
                 More Info
               </Button>
