@@ -20,7 +20,7 @@ import { useAdmin } from "@/context/AdminContext";
 import { cn } from "@/lib/utils";
 
 const UserManagement = () => {
-  const { users, refreshData } = useAdmin();
+  const { users, refreshData, toggleAdmin } = useAdmin();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
@@ -57,8 +57,22 @@ const UserManagement = () => {
     { id: 'vpn', label: 'VPN', count: stats.vpn, icon: Shield },
   ];
 
+  const getUserType = (u: any) => {
+    if (u.email === "admin@gmail.com") return "OWNER";
+    if (u.isAdmin) return "ADMIN";
+    return "MEMBER";
+  };
+
+  const getTypeStyles = (type: string) => {
+    switch (type) {
+      case "OWNER": return { color: "cyan", glow: "rgba(6,182,212,0.15)", border: "border-cyan-500/20", text: "text-cyan-400" };
+      case "ADMIN": return { color: "yellow", glow: "rgba(234,179,8,0.15)", border: "border-yellow-500/20", text: "text-yellow-400" };
+      default: return { color: "green", glow: "rgba(34,197,94,0.15)", border: "border-green-500/10", text: "text-green-400" };
+    }
+  };
+
   return (
-    <div className="space-y-8 animate-fade-in max-w-6xl mx-auto">
+    <div className="space-y-8 animate-fade-in max-w-6xl mx-auto pb-20">
       {/* Header Info */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -127,114 +141,133 @@ const UserManagement = () => {
 
       {/* Users Detailed List */}
       <div className="space-y-4">
-        {filteredUsers.map((u) => (
-          <div 
-            key={u.id} 
-            className={cn(
-              "group relative flex items-center gap-4 bg-[#111]/40 backdrop-blur-xl border p-5 py-4 rounded-3xl transition-all duration-500 hover:scale-[1.01]",
-              u.isAdmin 
-                ? "border-cyan-500/20 shadow-[0_0_20px_rgba(6,182,212,0.05)] hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:border-cyan-500/40" 
-                : "border-green-500/10 shadow-[0_0_20px_rgba(34,197,94,0.02)] hover:shadow-[0_0_30px_rgba(34,197,94,0.1)] hover:border-green-500/30"
-            )}
-          >
-            {/* Owner/Member Vertical Accent */}
-            <div className={cn(
-              "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 rounded-r-full transition-all",
-              u.isAdmin ? "bg-cyan-500 shadow-[0_0_15px_#06b6d4]" : "bg-green-500 shadow-[0_0_15px_#22c55e]"
-            )} />
+        {filteredUsers.map((u) => {
+          const type = getUserType(u);
+          const styles = getTypeStyles(type);
 
-            {/* User Meta (Avatar + Status) */}
-            <div className="relative shrink-0 ml-2">
+          return (
+            <div 
+              key={u.id} 
+              className={cn(
+                "group relative flex items-center gap-4 bg-[#111]/40 backdrop-blur-xl border p-5 py-4 rounded-3xl transition-all duration-500 hover:scale-[1.01]",
+                styles.border,
+                `hover:shadow-[0_0_30px_${styles.glow}]`
+              )}
+            >
+              {/* Vertical Accent */}
               <div className={cn(
-                "w-14 h-14 rounded-2xl flex items-center justify-center border overflow-hidden transition-transform duration-500 group-hover:rotate-3",
-                u.isAdmin ? "border-cyan-500/30 bg-cyan-500/5" : "border-green-500/20 bg-green-500/5"
-              )}>
-                {u.photoURL ? (
-                  <img src={u.photoURL} alt={u.name} className="w-full h-full object-cover" />
-                ) : (
-                  <span className={cn(
-                    "text-lg font-black",
-                    u.isAdmin ? "text-cyan-400" : "text-green-400"
-                  )}>
-                    {(u.name?.[0] || u.email[0]).toUpperCase()}
-                  </span>
-                )}
-              </div>
-              <div className={cn(
-                "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-4 border-[#0a0a0a]",
-                u.status === "online" ? "bg-green-500 shadow-[0_0_10px_#22c55e]" : "bg-white/10"
+                "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 rounded-r-full transition-all",
+                u.isAdmin ? (type === "OWNER" ? "bg-cyan-500 shadow-[0_0_15px_#06b6d4]" : "bg-yellow-500 shadow-[0_0_15px_#eab308]") : "bg-green-500 shadow-[0_0_15px_#22c55e]"
               )} />
-            </div>
 
-            {/* Info Grid */}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-              
-              {/* Identity */}
-              <div className="md:col-span-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="text-[16px] font-black text-white tracking-tight leading-tight">
-                    {u.name || u.email.split('@')[0]}
-                  </h4>
-                  {u.photoURL && <Badge className="bg-primary/20 text-primary border-none text-[8px] h-4 px-1">GOOGLE</Badge>}
+              {/* User Meta (Avatar + Status) */}
+              <div className="relative shrink-0 ml-2">
+                <div className={cn(
+                  "w-14 h-14 rounded-2xl flex items-center justify-center border overflow-hidden transition-transform duration-500 group-hover:rotate-3",
+                  styles.border,
+                  `bg-${styles.color}-500/5`
+                )}>
+                  {u.photoURL ? (
+                    <img src={u.photoURL} alt={u.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className={cn(
+                      "text-lg font-black",
+                      styles.text
+                    )}>
+                      {(u.name?.[0] || u.email[0]).toUpperCase()}
+                    </span>
+                  )}
                 </div>
-                <p className="text-[12px] text-white/40 font-medium truncate">{u.email}</p>
-                <div className="flex items-center gap-2 mt-2">
-                   {u.isAdmin ? (
-                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[9px] font-black uppercase tracking-widest">
-                       <Shield className="w-3 h-3" /> OWNER
-                     </span>
-                   ) : (
-                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-green-500/10 text-green-400 border border-green-500/20 text-[9px] font-black uppercase tracking-widest">
-                       MEMBER
-                     </span>
-                   )}
-                </div>
+                <div className={cn(
+                  "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-4 border-[#0a0a0a]",
+                  u.status === "online" ? "bg-green-500 shadow-[0_0_10px_#22c55e]" : "bg-white/10"
+                )} />
               </div>
 
-              {/* Geo & ISP */}
-              <div className="md:col-span-3">
-                <div className="flex items-center gap-2.5 text-[13px] text-white/80 font-bold mb-1">
-                  <span className="text-lg">📍</span>
-                  <p>{u.location?.split(',')[0] || "Unknown City"}</p>
-                </div>
-                <p className="text-[10px] text-white/30 truncate pl-8 uppercase tracking-wider font-bold">
-                  {u.isp || u.location?.split(',')[1] || "Detecting ISP..."}
-                </p>
-              </div>
-
-              {/* Hardware */}
-              <div className="md:col-span-3">
-                <div className="flex items-center gap-2.5 text-[13px] text-white/80 font-bold mb-1">
-                  {u.device === "Phone" ? <Smartphone className="w-4 h-4 text-white/40" /> : <Monitor className="w-4 h-4 text-white/40" />}
-                  <p>{u.device}</p>
-                </div>
-                <p className="text-[10px] text-white/30 pl-7 font-bold uppercase tracking-widest">
-                  {u.os?.split(' ')[0]} • {u.browser?.split('/')[0]}
-                </p>
-              </div>
-
-              {/* Metrics */}
-              <div className="md:col-span-3 flex items-center justify-end pr-4">
-                  <div className="text-right">
-                    <p className="text-[10px] text-white/20 font-black uppercase tracking-tighter mb-1">Last Interaction</p>
-                    <p className="text-[12px] text-white/60 font-bold">Just now</p>
+              {/* Info Grid */}
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                
+                {/* Identity */}
+                <div className="md:col-span-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="text-[16px] font-black text-white tracking-tight leading-tight">
+                      {u.name || u.email.split('@')[0]}
+                    </h4>
+                    {u.photoURL && <Badge className="bg-primary/20 text-primary border-none text-[8px] h-4 px-1">GOOGLE</Badge>}
                   </div>
+                  <p className="text-[12px] text-white/40 font-medium truncate">{u.email}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                     <span className={cn(
+                       "flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[9px] font-black uppercase tracking-widest",
+                       styles.text,
+                       styles.border,
+                       `bg-${styles.color}-500/10`
+                     )}>
+                       {type === "OWNER" && <Shield className="w-3 h-3" />} {type}
+                     </span>
+                  </div>
+                </div>
+
+                {/* Geo & ISP */}
+                <div className="md:col-span-3">
+                  <div className="flex items-center gap-2.5 text-[13px] text-white/80 font-bold mb-1">
+                    <span className="text-lg">📍</span>
+                    <p>{u.location?.split(',')[0] || "Unknown City"}</p>
+                  </div>
+                  <p className="text-[10px] text-white/30 truncate pl-8 uppercase tracking-wider font-bold">
+                    {u.isp || u.location?.split(',')[1] || "Detecting ISP..."}
+                  </p>
+                </div>
+
+                {/* Hardware */}
+                <div className="md:col-span-3">
+                  <div className="flex items-center gap-2.5 text-[13px] text-white/80 font-bold mb-1">
+                    {u.device === "Phone" ? <Smartphone className="w-4 h-4 text-white/40" /> : <Monitor className="w-4 h-4 text-white/40" />}
+                    <p>{u.device}</p>
+                  </div>
+                  <p className="text-[10px] text-white/30 pl-7 font-bold uppercase tracking-widest">
+                    {u.os?.split(' ')[0]} • {u.browser?.split('/')[0]}
+                  </p>
+                </div>
+
+                {/* Metrics */}
+                <div className="md:col-span-3 flex items-center justify-end pr-4">
+                    <div className="text-right">
+                      <p className="text-[10px] text-white/20 font-black uppercase tracking-tighter mb-1">Last Interaction</p>
+                      <p className="text-[12px] text-white/60 font-bold">Just now</p>
+                    </div>
+                </div>
+
+              </div>
+
+              {/* Actions Panel */}
+              <div className="flex items-center gap-2 pr-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                 {/* Only Owner can toggle other admins */}
+                 {type !== "OWNER" && (
+                   <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => toggleAdmin(u.email, u.isAdmin)}
+                    className={cn(
+                      "w-10 h-10 rounded-xl bg-white/5 transition-all hover:bg-yellow-500/10 hover:text-yellow-500",
+                      u.isAdmin ? "text-yellow-500" : "text-white/20"
+                    )}
+                   >
+                      <Shield className="w-4 h-4" />
+                   </Button>
+                 )}
+                 
+                 <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white/5 hover:bg-red-500/10 text-white/20 hover:text-red-500 transition-all">
+                    <Trash2 className="w-4 h-4" />
+                 </Button>
+                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-xl grayscale hover:grayscale-0 transition-all cursor-default">
+                   {u.countryCode === "IN" ? "🇮🇳" : "🌐"}
+                 </div>
               </div>
 
             </div>
-
-            {/* Actions Panel */}
-            <div className="flex items-center gap-2 pr-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-               <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white/5 hover:bg-red-500/10 text-white/20 hover:text-red-500 transition-all">
-                  <Trash2 className="w-4 h-4" />
-               </Button>
-               <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-xl grayscale hover:grayscale-0 transition-all cursor-default">
-                 {u.countryCode === "IN" ? "🇮🇳" : "🌐"}
-               </div>
-            </div>
-
-          </div>
-        ))}
+          );
+        })}
 
         {filteredUsers.length === 0 && (
           <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-white/5 rounded-[40px] bg-white/[0.01]">

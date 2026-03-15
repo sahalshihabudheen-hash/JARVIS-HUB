@@ -20,6 +20,7 @@ interface AdminContextType {
   // Users
   users: AdminUser[];
   refreshData: () => void;
+  toggleAdmin: (userId: string, currentStatus: boolean) => Promise<void>;
 }
 
 export interface AdminUser {
@@ -129,8 +130,22 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   };
 
+  const toggleAdmin = async (userId: string, currentStatus: boolean) => {
+    try {
+      const userDocId = userId.replace(/\./g, "_");
+      const { doc, updateDoc } = await import("firebase/firestore");
+      await updateDoc(doc(db, "users", userDocId), {
+        isAdmin: !currentStatus
+      });
+      toast.success(`Permissions updated for ${userId}`, { icon: "🔐" });
+    } catch (err) {
+      console.error("Toggle Admin Error:", err);
+      toast.error("Failed to update permissions");
+    }
+  };
+
   return (
-    <AdminContext.Provider value={{ branding, updateBranding, activityLog, addActivity, users, refreshData }}>
+    <AdminContext.Provider value={{ branding, updateBranding, activityLog, addActivity, users, refreshData, toggleAdmin }}>
       {children}
     </AdminContext.Provider>
   );
