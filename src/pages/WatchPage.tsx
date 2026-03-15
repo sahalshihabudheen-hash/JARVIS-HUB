@@ -1,10 +1,11 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { getMovieDetails, getTVDetails, getSeasonDetails } from "@/lib/tmdb";
 
 const WatchPage = () => {
@@ -64,16 +65,27 @@ const WatchPage = () => {
             Back to Details
           </Button>
 
-          {/* Title */}
-          <div className="mb-4">
-            <h1 className="text-2xl md:text-3xl font-display font-bold">
-              {title}
-            </h1>
-            {isTV && currentEpisode && (
-              <p className="text-muted-foreground mt-1">
-                Season {seasonNum}, Episode {episodeNum}: {currentEpisode.name}
-              </p>
-            )}
+          {/* Title and Download */}
+          <div className="mb-4 flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-display font-bold">
+                {title}
+              </h1>
+              {isTV && currentEpisode && (
+                <p className="text-muted-foreground mt-1">
+                  Season {seasonNum}, Episode {episodeNum}: {currentEpisode.name}
+                </p>
+              )}
+            </div>
+            
+            <Button 
+              variant="outline" 
+              className="shrink-0 bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 text-white transition-all shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+              onClick={() => toast.info("To download: Play the video, and look for the download icon (⬇) inside the player controls at the bottom right.", { duration: 6000 })}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download
+            </Button>
           </div>
 
           {/* Player */}
