@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTutorial } from "@/context/TutorialContext";
@@ -17,7 +17,8 @@ import {
   MessageSquare,
   Lock,
   Eye,
-  Bell
+  Bell,
+  Camera
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -28,17 +29,24 @@ const Settings = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
   const [isUpdating, setIsUpdating] = useState(false);
-  const [userName, setUserName] = useState(user?.name || "");
+  const [userName, setUserName] = useState("");
+
+  // Sync username when user object is available
+  useEffect(() => {
+    if (user?.name && !userName) {
+      setUserName(user.name);
+    }
+  }, [user]);
 
   // Profile Update Logic
   const handleUpdateName = async () => {
-    if (!userName.trim()) return;
+    if (!userName.trim() || userName === user?.name) return;
     setIsUpdating(true);
     try {
-      await updateProfile({ name: userName });
-      toast.success("Profile name updated.");
+      await updateProfile({ name: userName.trim() });
+      toast.success("Identity updated in JARVIS database.");
     } catch (e) {
-      toast.error("Failed to update name.");
+      toast.error("Failed to sync new identity.");
     } finally {
       setIsUpdating(false);
     }
@@ -49,18 +57,21 @@ const Settings = () => {
     if (!file || !user) return;
     
     setIsUpdating(true);
+    const loadingToast = toast.loading("Uploading new avatar...");
     try {
       const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
       const { storage } = await import("@/lib/firebase");
       
-      const storageRef = ref(storage, `avatars/${user.email}_${Date.now()}`);
+      const storageRef = ref(storage, `avatars/${user.email.replace(/\./g, "_")}_${Date.now()}`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
       
       await updateProfile({ photoURL: url });
-      toast.success("Avatar updated successfully!");
+      toast.dismiss(loadingToast);
+      toast.success("Avatar synchronized!");
     } catch (e) {
       console.error(e);
+      toast.dismiss(loadingToast);
       toast.error("Avatar upload failed.");
     } finally {
       setIsUpdating(false);
@@ -70,14 +81,15 @@ const Settings = () => {
   const handlePasswordReset = async () => {
     try {
       await resetPassword();
-      toast.success("Password reset email sent!");
+      toast.success("Password reset protocol sent to your email.");
     } catch (e) {
-      toast.error("Failed to send reset email.");
+      toast.error("Security protocol failed.");
     }
   };
 
   const isGoogleUser = user?.photoURL?.includes("googleusercontent.com");
-  // ... rest of the component ...
+  const roleType = user?.email === "admin@gmail.com" ? "OWNER" : (user?.isAdmin ? "ADMIN" : "MEMBER");
+
   const genres = [
     { id: 28, name: "Action", icon: "⚔️" },
     { id: 878, name: "Sci-Fi", icon: "🚀" },
@@ -105,24 +117,6 @@ const Settings = () => {
     localStorage.removeItem("user_regional_focus");
     updateSelectedGenres([]);
     toast.success("Protocol data wiped successfully.");
-  };
-
-  const regionalOptions = [
-    { id: "auto", name: "Auto-Detect", icon: <Globe className="w-4 h-4" /> },
-    { id: "kerala", name: "Kerala (Malayalam)", icon: "🥥" },
-    { id: "tamilnadu", name: "Tamil Nadu (Tamil)", icon: "🕉️" },
-    { id: "karnataka", name: "Karnataka (Kannada)", icon: "🏰" },
-    { id: "maharashtra", name: "Maharashtra (Marathi)", icon: "🚩" },
-    { id: "bengal", name: "West Bengal (Bengali)", icon: "🐅" },
-    { id: "north_india", name: "North India (Hindi)", icon: "🕉️" },
-  ];
-
-  const currentFocus = localStorage.getItem("user_regional_focus") || "auto";
-
-  const setRegionalFocus = (id: string) => {
-    localStorage.setItem("user_regional_focus", id);
-    toast.success(`Regional focus set to ${id.replace('_', ' ')}`);
-    window.location.reload(); // Reload to refresh queries
   };
 
   const tabs = [
@@ -186,8 +180,8 @@ const Settings = () => {
                            user?.name?.substring(0, 2).toUpperCase()
                          )}
                        </div>
-                       <label className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-primary text-black flex items-center justify-center cursor-pointer hover:bg-white transition-colors shadow-xl">
-                         <SettingsIcon className="w-5 h-5" />
+                       <label className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-primary text-black flex items-center justify-center cursor-pointer hover:bg-white transition-colors shadow-xl group">
+                         <Camera className="w-5 h-5 transition-transform group-hover:scale-110" />
                          <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} disabled={isUpdating} />
                        </label>
                      </div>
@@ -198,23 +192,28 @@ const Settings = () => {
                            <input 
                              value={userName}
                              onChange={(e) => setUserName(e.target.value)}
-                             className="text-2xl font-bold bg-transparent border-b border-white/20 focus:border-primary outline-none px-2 py-1 w-full max-w-[300px]"
+                             placeholder="Set your identity..."
+                             className="text-2xl font-bold bg-transparent border-b-2 border-white/10 focus:border-primary outline-none px-2 py-1 w-full max-w-[300px] transition-all"
                            />
                            <Button 
-                             size="sm" 
                              onClick={handleUpdateName} 
-                             disabled={isUpdating || userName === user?.name}
-                             className="rounded-lg h-8 px-4"
+                             disabled={isUpdating || !userName.trim() || userName === user?.name}
+                             className="rounded-xl px-6 bg-primary text-black hover:bg-white font-black uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:shadow-[0_0_20px_rgba(34,211,238,0.5)] transition-all"
                            >
-                             Update
+                             {isUpdating ? "Syncing..." : "Update"}
                            </Button>
                          </div>
-                         <p className="text-muted-foreground mt-1">{user?.email}</p>
+                         <p className="text-muted-foreground mt-2 font-medium tracking-tight h-5">{user?.email}</p>
                        </div>
                        
                        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                         <span className="px-3 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-wider rounded-full border border-green-500/20">
-                           {user?.isAdmin ? "Owner Status Active" : "Member Protocol Active"}
+                         <span className={cn(
+                           "px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border",
+                           roleType === "OWNER" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" :
+                           roleType === "ADMIN" ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" :
+                           "bg-green-500/10 text-green-400 border-green-500/20"
+                         )}>
+                           {roleType} STATUS ACTIVE
                          </span>
                          {isGoogleUser && (
                            <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-full border border-primary/20">
@@ -225,23 +224,24 @@ const Settings = () => {
                      </div>
                    </div>
 
+                   {/* Status Grid - Simplified */}
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4">
                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                            <Globe className="w-5 h-5" />
+                            <Shield className="w-5 h-5" />
                          </div>
                          <div>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Location</p>
-                            <p className="text-sm font-bold">{user?.location || "Detecting..."}</p>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Shield Status</p>
+                            <p className="text-sm font-bold">Protocol Pulse Active</p>
                          </div>
                       </div>
                       <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4">
                          <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
-                            <Shield className="w-5 h-5" />
+                            <Eye className="w-5 h-5" />
                          </div>
                          <div>
-                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">ISP Path</p>
-                            <p className="text-sm font-bold truncate max-w-[150px]">{user?.isp || "Identifying..."}</p>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Presence</p>
+                            <p className="text-sm font-bold">Online & Encrypted</p>
                          </div>
                       </div>
                    </div>
