@@ -55,9 +55,10 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           
           <div className="flex flex-wrap gap-2 relative">
             <TutorialPointer 
-              activeStep={3}
+              activeStep={4}
+              onAction={nextStep}
               title="Protocol 3: Bandwidth Optimization"
-              description="If a stream fails or is slow, try switching to a different Mirror server."
+              description="If a primary stream loop fails, switch to an alternative Mirror node to restore bandwidth."
               className="bottom-full left-1/2 -translate-x-1/2 mb-2"
             />
             {videoServers.map((s) => (
@@ -67,7 +68,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
                 size="sm"
                 onClick={() => {
                   handleServerChange(s.id);
-                  if (isActive && step === 3) nextStep();
+                  if (isActive && step === 4) nextStep();
                 }}
                 className={cn(
                   "rounded-full px-4 transition-all duration-300",
@@ -98,13 +99,14 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
             onClick={() => {
               setShowOverlay(false);
               setShieldActive(true); // Automatically engage shield after first click
-              if (isActive && step === 2) nextStep();
+              if (isActive && step === 3) nextStep();
             }}
           >
             <TutorialPointer 
-              activeStep={2}
+              activeStep={3}
+              onAction={nextStep}
               title="Protocol 2: Secure Start"
-              description="Click here to neutralize potential ad popups and initialize the player."
+              description="Player APIs are often unstable. My initializer will neutralize pop-up scripts before launch."
               className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             />
             <div className="text-center animate-pulse-glow">
@@ -132,9 +134,10 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
       {/* Shield Controls */}
       <div className="flex justify-center relative">
         <TutorialPointer 
-          activeStep={4}
+          activeStep={5}
+          onAction={nextStep}
           title="Protocol 4: Stealth Shield"
-          description="While watching, keep the shield LOCKED to block all ad interactions. Toggle it to unlock player controls."
+          description="Maintain 'Locked' status for maximum ad-interception. Toggle only when manual player control is required."
           className="bottom-full left-1/2 -translate-x-1/2 mb-4"
         />
         <Button
@@ -142,7 +145,7 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
           size="sm"
           onClick={() => {
             setShieldActive(!shieldActive);
-            if (isActive && step === 4) nextStep();
+            if (isActive && step === 5) nextStep();
           }}
           className={cn(
             "rounded-full px-6 transition-all duration-500",

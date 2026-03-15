@@ -151,16 +151,17 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
           <div className="flex flex-wrap gap-3">
             <Link to={watchPath} className="relative">
               <TutorialPointer 
-                activeStep={1}
+                activeStep={2}
+                onAction={nextStep}
                 title="Protocol 1: Direct Entry"
-                description="Click 'Watch Now' to launch the secure stream immediately."
+                description="My sensors indicate this access point is the most efficient path. Initialize the secure stream now."
                 className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
               />
               <Button 
                 size="lg" 
                 className="hover-glow"
                 onClick={() => {
-                  if (isActive && step === 1) nextStep();
+                  if (isActive && step === 2) nextStep();
                 }}
               >
                 <Play className="w-5 h-5 mr-2 fill-current" />

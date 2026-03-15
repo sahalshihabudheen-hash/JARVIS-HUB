@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { X, ShieldAlert } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import MediaRow from "@/components/MediaRow";
@@ -37,6 +38,7 @@ const GENRE_LABELS: Record<number, string> = {
 const Index = () => {
   const { user } = useAuth();
   const { selectedGenres } = useTutorial();
+  const navigate = useNavigate();
   const [location, setLocation] = useState<{ 
     country: string; 
     country_name: string; 
@@ -247,10 +249,10 @@ const Index = () => {
         <HeroSection items={trending || []} isLoading={trendingLoading} />
         
         <div className="container mx-auto -mt-20 relative z-10">
-          <ContinueWatching />
+          <div id="watchlist-row">
+            <ContinueWatching />
+          </div>
           
-          {(location?.region || manualFocus !== "auto") && (
-            <>
               <MediaRow
                 title={isKeralaFocus ? "🔥 Malayalam Blockbusters" : `🔥 Top in ${regionLabel}`}
                 items={regionalNow?.results || []}
@@ -263,8 +265,6 @@ const Index = () => {
                 mediaType="movie"
                 isLoading={regionalUpcomingLoading}
               />
-            </>
-          )}
 
           {/* Worldwide row moved up for better global context after local focus */}
           <MediaRow

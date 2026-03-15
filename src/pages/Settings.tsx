@@ -172,52 +172,25 @@ const Settings = () => {
                {activeTab === "calibration" && (
                  <div className="space-y-8 relative z-10">
                    <div>
-                     <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 flex items-center gap-2">
+                     <h3 className="text-xl font-bold uppercase tracking-tighter mb-2 flex items-center gap-2">
                         <RefreshCcw className="w-5 h-5 text-primary" />
-                        Interactive Training
+                        System Re-Initialization
                      </h3>
                      <p className="text-muted-foreground text-sm mb-6">
                         Re-initialize the JARVIS assistant to refresh your knowledge of the terminal's security protocols.
                      </p>
-                     <Button 
+                      <Button 
                         onClick={() => {
                           startTutorial();
-                          toast.success("Training sequence initialized.");
+                          toast.success("Tutorial re-initialized.");
                         }}
-                        className="rounded-xl px-6 hover-glow"
+                        className="rounded-xl px-8 py-6 hover-glow text-lg font-bold uppercase tracking-tighter"
                       >
-                        Launch JARVIS Assistant
-                        <ChevronRight className="w-4 h-4 ml-2" />
+                        Replay Tutorial
+                        <ChevronRight className="w-5 h-5 ml-2" />
                      </Button>
                    </div>
 
-                  <div className="pt-8 border-t border-white/10">
-                     <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 flex items-center gap-2">
-                        <Globe className="w-5 h-5 text-primary" />
-                        Regional Intelligence Calibration
-                     </h3>
-                     <p className="text-muted-foreground text-sm mb-6">
-                        Manually override the hub's location protocols to focus on a specific regional cinema database.
-                     </p>
-                     
-                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {regionalOptions.map((opt) => (
-                           <button
-                             key={opt.id}
-                             onClick={() => setRegionalFocus(opt.id)}
-                             className={cn(
-                               "flex items-center gap-3 p-4 rounded-xl border transition-all duration-300",
-                               currentFocus === opt.id 
-                                 ? "bg-primary/20 border-primary text-primary" 
-                                 : "bg-white/5 border-white/5 hover:bg-white/10 text-muted-foreground"
-                             )}
-                           >
-                             <span className="text-xl">{opt.icon}</span>
-                             <span className="text-[10px] font-bold uppercase tracking-widest">{opt.name}</span>
-                           </button>
-                        ))}
-                     </div>
-                   </div>
 
                    <div className="pt-8 border-t border-white/10">
                      <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 flex items-center gap-2">

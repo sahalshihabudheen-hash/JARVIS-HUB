@@ -43,7 +43,6 @@ const App = () => (
       <TutorialProvider>
         <TooltipProvider>
           <Toaster />
-          <Toaster />
           <Sonner />
           <BrowserRouter>
             <JarvisTutorial />
