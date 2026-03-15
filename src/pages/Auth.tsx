@@ -11,6 +11,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [socialLoading, setSocialLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -23,21 +24,26 @@ const Auth = () => {
   };
 
   const handleSocialLogin = async () => {
+    if (socialLoading) return; // prevent double-click
+    setSocialLoading(true);
     try {
-      toast.info("Connecting to Google secure servers...");
-      // Import dynamically to avoid loading firebase if user doesn't click
       const { signInWithPopup } = await import("firebase/auth");
       const { auth, googleProvider } = await import("@/lib/firebase");
-      
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      
       login(user.email || "unknown@google.com");
-      toast.success(`Access Granted. Welcome, ${user.displayName || "User"}!`);
+      toast.success(`Welcome, ${user.displayName || "User"}!`);
       navigate("/");
     } catch (error: any) {
+      // Silently ignore when user closes the popup or clicks again
+      if (error?.code === "auth/cancelled-popup-request" ||
+          error?.code === "auth/popup-closed-by-user") {
+        return;
+      }
       console.error("Google login error:", error);
-      toast.error(`Access Denied: ${error.message || "Connection failed"}`);
+      toast.error("Google sign-in failed. Please try again.");
+    } finally {
+      setSocialLoading(false);
     }
   };
 
@@ -117,11 +123,12 @@ const Auth = () => {
           <div className="flex justify-center">
             <Button
               variant="outline"
-              className="w-full bg-white/5 border-white/10 hover:bg-white/10 rounded-xl h-12 hover-glow transition-all"
-              onClick={() => handleSocialLogin()}
+              className="w-full bg-white/5 border-white/10 hover:bg-white/10 rounded-xl h-12 hover-glow transition-all disabled:opacity-50"
+              onClick={handleSocialLogin}
+              disabled={socialLoading}
             >
               <Chrome className="w-5 h-5 mr-3 text-primary" />
-              Continue with Google
+              {socialLoading ? "Signing in..." : "Continue with Google"}
             </Button>
           </div>
 
