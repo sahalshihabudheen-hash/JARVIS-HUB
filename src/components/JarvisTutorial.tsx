@@ -90,7 +90,7 @@ const GenreButton = ({ genre }: { genre: any }) => {
       className={cn(
         "flex flex-col items-center gap-2 p-3 rounded-xl border transition-all duration-300 group relative overflow-hidden",
         isSelected 
-          ? "bg-[#FFD700]/20 border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.3)] scale-105" 
+          ? "bg-primary/20 border-primary shadow-[0_0_20px_rgba(34,211,238,0.3)] scale-105" 
           : "bg-white/5 border-white/10 hover:border-white/30"
       )}
     >
@@ -256,9 +256,9 @@ const JarvisTutorial = () => {
         left: balloonLeft
       } : {}}
       >
-        <div className="tour-balloon border-[#FFD700]/40 glow-yellow relative overflow-hidden backdrop-blur-xl">
+        <div className="tour-balloon border-primary/40 shadow-[0_0_30px_rgba(34,211,238,0.2)] relative overflow-hidden backdrop-blur-xl">
           {/* Scanning Line Effect */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#FFD700]/30 scanning-line z-0" />
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-primary/30 scanning-line z-0" />
 
           {/* Tour Nib (Arrow) */}
           {coords && (
@@ -271,22 +271,22 @@ const JarvisTutorial = () => {
           )}
           
           {/* Progress Indicator */}
-          <div className="absolute top-4 right-4 px-2 py-0.5 bg-[#FFD700]/10 border border-[#FFD700]/30 text-[#FFD700] text-[10px] font-black rounded flex items-center gap-1 backdrop-blur-md z-10 transition-all">
-            <span className="w-1 h-1 rounded-full bg-[#FFD700] animate-pulse" />
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-primary/10 border border-primary/30 text-primary text-[10px] font-black rounded flex items-center gap-1 backdrop-blur-md z-10 transition-all">
+            <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
             {step + 1} / {steps.length}
           </div>
 
           <div className="flex items-center gap-3 mb-5 relative z-10">
             <div className="relative group">
-              <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-[#FFD700]/50 bg-black/50 shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:shadow-[0_0_30px_rgba(255,215,0,0.5)] transition-all duration-500">
+              <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-primary/50 bg-black/50 shadow-[0_0_20px_rgba(34,211,238,0.3)] group-hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-500">
                 <img src="/JARVIS2.gif" alt="JARVIS" className="w-full h-full object-cover scale-150 opacity-90" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#FFD700] rounded-lg flex items-center justify-center shadow-lg border-2 border-[#0d0d0d] animate-bounce-slow">
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-lg flex items-center justify-center shadow-lg border-2 border-[#0d0d0d] animate-bounce-slow">
                 <Icon className="w-3.5 h-3.5 text-black" />
               </div>
             </div>
             <div>
-              <div className="text-[9px] font-black text-[#FFD700] uppercase tracking-[0.3em] opacity-80">Neural Interface</div>
+              <div className="text-[9px] font-black text-primary uppercase tracking-[0.3em] opacity-80">Neural Interface</div>
               <h3 className="text-xl font-display font-bold text-white tracking-tight leading-none mt-1 shadow-black text-shadow-sm">{currentStep.title}</h3>
             </div>
           </div>
@@ -322,8 +322,8 @@ const JarvisTutorial = () => {
                   key={i} 
                   className={cn(
                     "w-1.5 h-1.5 rounded-full transition-all duration-500",
-                    i === step ? "bg-[#FFD700] w-5 shadow-[0_0_12px_rgba(255,215,0,0.7)]" : "bg-white/10"
-                  )}
+                    i === step ? "bg-primary w-5 shadow-[0_0_12px_rgba(34,211,238,0.7)]" : "bg-white/10"
+                    )}
                 />
               ))}
             </div>
@@ -353,7 +353,7 @@ const JarvisTutorial = () => {
                   <Button 
                     onClick={nextStep}
                     size="sm"
-                    className="bg-[#FFD700] hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.15em] px-5 h-8 glow-yellow transition-all duration-300 transform active:scale-95"
+                    className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.15em] px-5 h-8 shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all duration-300 transform active:scale-95"
                   >
                     Next Step
                   </Button>
@@ -362,7 +362,7 @@ const JarvisTutorial = () => {
                 <Button 
                   onClick={completeTutorial}
                   size="sm"
-                  className="bg-[#FFD700] hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] px-8 h-8 glow-yellow shadow-[0_0_30px_rgba(255,215,0,0.4)]"
+                  className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] px-8 h-8 shadow-[0_0_30px_rgba(34,211,238,0.6)]"
                 >
                   Initialize Hub
                 </Button>

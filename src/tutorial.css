@@ -27,8 +27,8 @@
 
 .hud-border {
   position: relative;
-  background: rgba(13, 13, 13, 0.8);
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  background: rgba(0, 20, 30, 0.8);
+  border: 1px solid rgba(34, 211, 238, 0.3);
   backdrop-filter: blur(12px);
 }
 
@@ -38,7 +38,7 @@
   position: absolute;
   width: 15px;
   height: 15px;
-  border-color: #FFD700;
+  border-color: #22d3ee;
   border-style: solid;
   pointer-events: none;
 }
@@ -54,22 +54,22 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(to right, transparent, #FFD700, transparent);
-  box-shadow: 0 0 10px #FFD700;
+  background: linear-gradient(to right, transparent, #22d3ee, transparent);
+  box-shadow: 0 0 10px #22d3ee;
   animation: scan 2s linear infinite;
 }
 
 .grid-overlay {
-  background-image: linear-gradient(rgba(255, 215, 0, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 215, 0, 0.05) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
   background-size: 30px 30px;
 }
 
 /* New Tour UI Styles */
 .tour-balloon {
-  background: rgba(13, 13, 13, 0.95);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.1);
+  background: rgba(0, 20, 30, 0.95);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(34, 211, 238, 0.1);
   backdrop-filter: blur(16px);
   border-radius: 1.5rem;
   padding: 1.5rem;
@@ -82,9 +82,9 @@
   position: absolute;
   width: 20px;
   height: 20px;
-  background: rgba(13, 13, 13, 0.95);
-  border-left: 1px solid rgba(255, 215, 0, 0.3);
-  border-top: 1px solid rgba(255, 215, 0, 0.3);
+  background: rgba(0, 20, 30, 0.95);
+  border-left: 1px solid rgba(34, 211, 238, 0.3);
+  border-top: 1px solid rgba(34, 211, 238, 0.3);
   transform: rotate(45deg);
 }
 
@@ -97,23 +97,23 @@
 }
 
 .tour-dot.active {
-  background: #FFD700;
+  background: #22d3ee;
   width: 18px;
-  box-shadow: 0 0 10px #FFD700;
+  box-shadow: 0 0 10px #22d3ee;
 }
 
 .tour-header-icon {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
+  background: linear-gradient(135deg, #22d3ee, #0ea5e9);
   border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
 }
 
 .glow-yellow {
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
 }
 
 .tour-pulse {
