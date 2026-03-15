@@ -65,9 +65,27 @@ const UserManagement = () => {
 
   const getTypeStyles = (type: string) => {
     switch (type) {
-      case "OWNER": return { color: "cyan", glow: "rgba(6,182,212,0.15)", border: "border-cyan-500/20", text: "text-cyan-400" };
-      case "ADMIN": return { color: "yellow", glow: "rgba(234,179,8,0.15)", border: "border-yellow-500/20", text: "text-yellow-400" };
-      default: return { color: "green", glow: "rgba(34,197,94,0.15)", border: "border-green-500/10", text: "text-green-400" };
+      case "OWNER": return { 
+        color: "cyan", 
+        glow: "rgba(6,182,212,0.15)", 
+        border: "border-cyan-500/20", 
+        text: "text-cyan-400",
+        gradient: "from-cyan-400 via-cyan-300 to-blue-500"
+      };
+      case "ADMIN": return { 
+        color: "yellow", 
+        glow: "rgba(234,179,8,0.15)", 
+        border: "border-yellow-500/20", 
+        text: "text-yellow-400",
+        gradient: "from-yellow-400 via-yellow-300 to-orange-500"
+      };
+      default: return { 
+        color: "green", 
+        glow: "rgba(34,197,94,0.15)", 
+        border: "border-green-500/10", 
+        text: "text-green-400",
+        gradient: "from-green-400 via-emerald-400 to-teal-500"
+      };
     }
   };
 
@@ -190,8 +208,11 @@ const UserManagement = () => {
                 {/* Identity */}
                 <div className="md:col-span-3">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="text-[16px] font-black text-white tracking-tight leading-tight">
-                      {u.name || u.email.split('@')[0]}
+                    <h4 className={cn(
+                      "text-[16px] font-black tracking-tight leading-tight bg-gradient-to-r bg-clip-text text-transparent",
+                      styles.gradient
+                    )}>
+                      {u.name || (u.email && u.email.split('@')[0])}
                     </h4>
                     {u.photoURL && <Badge className="bg-primary/20 text-primary border-none text-[8px] h-4 px-1">GOOGLE</Badge>}
                   </div>
