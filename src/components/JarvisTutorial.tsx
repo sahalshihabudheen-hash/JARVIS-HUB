@@ -86,14 +86,14 @@ const GenreButton = ({ genre }: { genre: { id: number; name: string; icon: strin
         );
       }}
       className={cn(
-        "flex flex-col items-center gap-1.5 p-2.5 rounded-xl border transition-all duration-200",
+        "flex items-center justify-start gap-4 px-4 py-3 rounded-[14px] border transition-all duration-200",
         isSelected
-          ? "bg-primary/20 border-primary shadow-[0_0_12px_rgba(34,211,238,0.3)]"
-          : "bg-white/5 border-white/10 hover:border-white/25 hover:bg-white/8"
+          ? "bg-[#1f2937]/80 border-primary/50 text-white shadow-[0_0_15px_rgba(34,211,238,0.15)] ring-1 ring-primary/30"
+          : "bg-[#111111]/80 border-white/10 hover:bg-[#1a1a1a] hover:border-white/20 text-white/80"
       )}
     >
-      <span className="text-lg">{genre.icon}</span>
-      <span className="text-[9px] font-bold uppercase tracking-wider text-white/80">{genre.name}</span>
+      <span className="text-xl shrink-0 opacity-90">{genre.icon}</span>
+      <span className="text-[13px] font-medium tracking-wide">{genre.name}</span>
     </button>
   );
 };
@@ -348,13 +348,16 @@ const JarvisTutorial = () => {
 
             {/* Genre Selector */}
             {currentStep.interactive === "genres" && typingDone && (
-              <div className="grid grid-cols-5 gap-2 mb-4">
+              <div className="grid grid-cols-2 gap-3 mb-4">
                 {[
                   { id: 28, name: "Action", icon: "⚔️" },
                   { id: 878, name: "Sci-Fi", icon: "🚀" },
                   { id: 27, name: "Horror", icon: "👻" },
                   { id: 35, name: "Comedy", icon: "😂" },
                   { id: 53, name: "Thriller", icon: "🔪" },
+                  { id: 10749, name: "Romance", icon: "❤️" },
+                  { id: 18, name: "Drama", icon: "🎭" },
+                  { id: 16, name: "Animation", icon: "🎨" },
                 ].map((g) => (
                   <GenreButton key={g.id} genre={g} />
                 ))}
