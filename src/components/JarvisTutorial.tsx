@@ -108,6 +108,55 @@ const JarvisTutorial = () => {
   const location = useLocation();
   const [isTypingComplete, setIsTypingComplete] = useState(false);
   const [coords, setCoords] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
+  
+  const bgMusic = useRef<HTMLAudioElement | null>(null);
+  const clickSound = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    bgMusic.current = new Audio("https://assets.mixkit.co/music/preview/mixkit-sci-fi-ambient-loop-96.mp3");
+    bgMusic.current.loop = true;
+    bgMusic.current.volume = 0.15;
+
+    clickSound.current = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-tech-break-click-1140.mp3");
+    clickSound.current.volume = 0.4;
+
+    return () => {
+      if (bgMusic.current) {
+        bgMusic.current.pause();
+        bgMusic.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isActive && bgMusic.current) {
+      bgMusic.current.play().catch(e => console.log("Audio play blocked by browser", e));
+    } else if (!isActive && bgMusic.current) {
+      bgMusic.current.pause();
+    }
+  }, [isActive]);
+
+  const playClick = () => {
+    if (clickSound.current) {
+      clickSound.current.currentTime = 0;
+      clickSound.current.play().catch(() => {});
+    }
+  };
+
+  const handleNext = () => {
+    playClick();
+    nextStep();
+  };
+
+  const handleBack = () => {
+    playClick();
+    setStep(step - 1);
+  };
+
+  const handleSkip = () => {
+    playClick();
+    completeTutorial();
+  };
 
   const steps = [
     {
@@ -219,12 +268,12 @@ const JarvisTutorial = () => {
   const currentStep = steps[step];
   const Icon = currentStep.icon;
 
-  const isBelow = coords ? (coords.y + coords.height + 400 < window.innerHeight) : false;
+  const isBelow = coords ? (coords.y + coords.height + 450 < window.innerHeight) : false;
   const balloonTop = coords 
-    ? (isBelow ? coords.y + coords.height + 30 : coords.y - 340)
+    ? (isBelow ? coords.y + coords.height + 40 : coords.y - 380)
     : 0;
   const balloonLeft = coords
-    ? Math.min(Math.max(20, coords.x + coords.width/2 - 160), window.innerWidth - 340)
+    ? Math.min(Math.max(20, coords.x + coords.width/2 - 175), window.innerWidth - 370)
     : 0;
 
   return createPortal(
@@ -256,7 +305,7 @@ const JarvisTutorial = () => {
         left: balloonLeft
       } : {}}
       >
-        <div className="tour-balloon border-primary/40 shadow-[0_0_30px_rgba(34,211,238,0.2)] relative overflow-hidden backdrop-blur-xl">
+        <div className="tour-balloon border-primary/40 shadow-[0_0_40px_rgba(34,211,238,0.2)] relative overflow-hidden backdrop-blur-xl">
           {/* Scanning Line Effect */}
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-primary/30 scanning-line z-0" />
 
@@ -321,20 +370,20 @@ const JarvisTutorial = () => {
                 <div 
                   key={i} 
                   className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-all duration-500",
-                    i === step ? "bg-primary w-5 shadow-[0_0_12px_rgba(34,211,238,0.7)]" : "bg-white/10"
+                    "w-1 h-1 rounded-full transition-all duration-500",
+                    i === step ? "bg-primary w-4 shadow-[0_0_8px_rgba(34,211,238,0.7)]" : "bg-white/10"
                     )}
                 />
               ))}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {step > 0 && (
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => setStep(step - 1)}
-                  className="text-white/40 hover:text-white hover:bg-white/5 text-[9px] font-black uppercase tracking-widest px-3 h-8 border border-white/5"
+                  onClick={handleBack}
+                  className="text-white/40 hover:text-white hover:bg-white/5 text-[9px] font-black uppercase tracking-widest px-3 h-7 border border-white/5"
                 >
                   Back
                 </Button>
@@ -345,26 +394,26 @@ const JarvisTutorial = () => {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    onClick={completeTutorial}
+                    onClick={handleSkip}
                     className="text-white/30 hover:text-white/50 text-[9px] font-black uppercase tracking-widest px-2"
                   >
                     Skip
                   </Button>
                   <Button 
-                    onClick={nextStep}
+                    onClick={handleNext}
                     size="sm"
-                    className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.15em] px-5 h-8 shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all duration-300 transform active:scale-95"
+                    className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.1em] px-4 h-7 shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all duration-300 transform active:scale-95"
                   >
-                    Next Step
+                    Next
                   </Button>
                 </div>
               ) : (
                 <Button 
-                  onClick={completeTutorial}
+                  onClick={handleSkip}
                   size="sm"
-                  className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] px-8 h-8 shadow-[0_0_30px_rgba(34,211,238,0.6)]"
+                  className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-[0.1em] px-6 h-7 shadow-[0_0_30px_rgba(34,211,238,0.6)]"
                 >
-                  Initialize Hub
+                  Initialize
                 </Button>
               )}
             </div>
