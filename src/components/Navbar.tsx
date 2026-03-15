@@ -15,6 +15,7 @@ import {
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { LogOut, Settings } from "lucide-react";
 import { useTutorial } from "@/context/TutorialContext";
+import { useAdmin } from "@/context/AdminContext";
 
 const Navbar = () => {
   const { isActive: isTutorialActive } = useTutorial();
@@ -24,6 +25,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { branding } = useAdmin();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -64,12 +66,12 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" id="navbar-logo" className="flex items-center gap-2 group">
             <img 
-              src="/JARVIS2.gif" 
-              alt="JARVIS Logo" 
+              src={branding.appLogo} 
+              alt="App Logo" 
               className="w-10 h-10 md:w-12 md:h-12 object-cover rounded-full group-hover:shadow-[0_0_15px_hsl(var(--primary))] transition-all duration-300"
             />
             <span className="text-xl md:text-2xl font-display font-bold tracking-tighter text-gradient group-hover:drop-shadow-[0_0_8px_hsl(var(--primary))] transition-all hidden sm:block">
-              JARVIS<span className="text-foreground ml-1">HUB</span>
+              {branding.appName}
             </span>
           </Link>
 

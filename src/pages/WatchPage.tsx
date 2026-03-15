@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronLeft, ChevronRight, Download } from "lucide-react";
@@ -7,6 +8,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getMovieDetails, getTVDetails, getSeasonDetails } from "@/lib/tmdb";
+import { useAuth } from "@/context/AuthContext";
+import { useAdmin } from "@/context/AdminContext";
 
 const WatchPage = () => {
   const { type, id, season, episode } = useParams<{
@@ -16,6 +19,8 @@ const WatchPage = () => {
     episode?: string;
   }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { addActivity } = useAdmin();
   
   const mediaId = parseInt(id || "0");
   const seasonNum = parseInt(season || "1");
@@ -47,6 +52,20 @@ const WatchPage = () => {
   const hasNextEpisode = episodes.some(e => e.episode_number === episodeNum + 1);
   const hasPrevEpisode = episodeNum > 1;
   const validSeasons = show?.seasons?.filter(s => s.season_number > 0) || [];
+
+  // Log activity when content loads
+  useEffect(() => {
+    if (content && user && user.email) {
+      addActivity({
+        userEmail: user.email,
+        mediaTitle: isTV && currentEpisode 
+          ? `${title} (S${seasonNum}, Ep${episodeNum}: ${currentEpisode.name})`
+          : title,
+        mediaType: type as "movie" | "tv",
+        mediaPoster: `https://image.tmdb.org/t/p/w200${content.poster_path}`
+      });
+    }
+  }, [content?.id, episodeNum, user]); // Only log when media ID or episode changes
 
   return (
     <div className="min-h-screen bg-background">

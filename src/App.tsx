@@ -17,7 +17,9 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import { TutorialProvider } from "./context/TutorialContext";
+import { AdminProvider } from "./context/AdminContext";
 import JarvisTutorial from "./components/JarvisTutorial";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,13 +41,14 @@ const ProtectedLayout = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TutorialProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <JarvisTutorial />
+    <AdminProvider>
+      <AuthProvider>
+        <TutorialProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <JarvisTutorial />
             <Routes>
               <Route path="/auth" element={<Auth />} />
               
@@ -62,6 +65,7 @@ const App = () => (
                 <Route path="/watch/:type/:id" element={<WatchPage />} />
                 <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/admin" element={<Admin />} />
               </Route>
   
               <Route path="*" element={<NotFound />} />
@@ -70,6 +74,7 @@ const App = () => (
         </TooltipProvider>
       </TutorialProvider>
     </AuthProvider>
+    </AdminProvider>
   </QueryClientProvider>
 );
 
