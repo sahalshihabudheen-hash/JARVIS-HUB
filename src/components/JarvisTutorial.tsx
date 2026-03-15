@@ -115,8 +115,8 @@ const JarvisTutorial = () => {
     bgMusicRef.current.loop = true;
     bgMusicRef.current.volume = 0.12;
 
-    clickSfxRef.current = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-tech-click-1140.mp3");
-    clickSfxRef.current.volume = 0.5;
+    clickSfxRef.current = new Audio("/meme-click.mp3");
+    clickSfxRef.current.volume = 0.8;
 
     return () => {
       bgMusicRef.current?.pause();
