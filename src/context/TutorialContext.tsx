@@ -19,18 +19,13 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
 
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem("jarvis_tutorial_complete");
-    const isReturningFromAction = localStorage.getItem("jarvis_tutorial_step");
     const savedGenres = localStorage.getItem("user_selected_genres");
-    
     if (savedGenres) {
       setSelectedGenres(JSON.parse(savedGenres));
     }
-
-    if (isReturningFromAction) {
-      setIsActive(true);
-      setStepState(parseInt(isReturningFromAction));
-    }
+    // Always start fresh — don't auto-resume tutorial on page reload
+    // (PS2 intro must play first on new sessions)
+    localStorage.removeItem("jarvis_tutorial_step");
   }, []);
 
   const startTutorial = () => {

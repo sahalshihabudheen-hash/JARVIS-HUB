@@ -137,15 +137,24 @@ const JarvisTutorial = () => {
   // ── Auto-start: show PS2 intro first, then tutorial ──
   useEffect(() => {
     if (!user || location.pathname === "/auth") return;
-    if (localStorage.getItem("jarvis_tutorial_complete") || isActive || showPS2Intro) return;
-    // Trigger PS2 intro immediately after login
+    if (localStorage.getItem("jarvis_tutorial_complete")) return;
+    if (isActive) return;
+
+    // If PS2 intro already seen this session, start tutorial directly
+    if (sessionStorage.getItem("ps2_intro_seen")) {
+      const t = setTimeout(() => startTutorial(), 800);
+      return () => clearTimeout(t);
+    }
+
+    // Show PS2 intro (first time per session)
     const t = setTimeout(() => {
       if (!localStorage.getItem("jarvis_tutorial_complete")) {
         setShowPS2Intro(true);
       }
-    }, 800);
+    }, 600);
     return () => clearTimeout(t);
-  }, [user, location.pathname, isActive, startTutorial, showPS2Intro]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, location.pathname]);
 
   // ── Tutorial Steps ──
   const steps = [
@@ -182,6 +191,7 @@ const JarvisTutorial = () => {
     return (
       <PS2Intro
         onComplete={() => {
+          sessionStorage.setItem("ps2_intro_seen", "true");
           setShowPS2Intro(false);
           startTutorial();
         }}
