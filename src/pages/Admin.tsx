@@ -40,8 +40,6 @@ const Admin = () => {
   const tabs = [
     { id: "users", label: "Users", icon: Users },
     { id: "activity", label: "Activity", icon: ActivityIcon },
-    { id: "games", label: "Games", icon: Gamepad2, badge: "1" },
-    { id: "keys", label: "Keys", icon: Key },
     { id: "maint", label: "Maint.", icon: Wrench },
     { id: "app", label: "App", icon: Settings },
   ];
@@ -90,11 +88,6 @@ const Admin = () => {
             >
               <tab.icon className={cn("w-4 h-4", activeTab === tab.id ? "text-[#ffd700]" : "text-inherit")} />
               <span className="text-sm font-medium">{tab.label}</span>
-              {tab.badge && (
-                <span className="bg-green-500 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  {tab.badge}
-                </span>
-              )}
               {activeTab === tab.id && (
                 <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-8 h-1 bg-[#ffd700] rounded-full shadow-[0_0_10px_#ffd700]" />
               )}
@@ -275,7 +268,7 @@ const Admin = () => {
           )}
 
           {/* Placeholder for other tabs */}
-          {["playlists", "games", "keys", "maint"].includes(activeTab) && (
+          {["playlists", "maint"].includes(activeTab) && (
             <div className="flex flex-col items-center justify-center py-40 bg-[#111] border border-white/5 rounded-3xl animate-fade-in">
               <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
                 <Wrench className="w-10 h-10 text-white/20" />

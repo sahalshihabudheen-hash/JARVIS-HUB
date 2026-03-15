@@ -126,103 +126,122 @@ const UserManagement = () => {
       </div>
 
       {/* Users Detailed List */}
-      <div className="space-y-1.5">
+      <div className="space-y-4">
         {filteredUsers.map((u) => (
-          <div key={u.id} className="group flex items-center gap-4 bg-[#111]/60 backdrop-blur-md border border-white/5 p-4 py-3 rounded-2xl hover:bg-[#111] hover:border-white/10 transition-all">
-            
+          <div 
+            key={u.id} 
+            className={cn(
+              "group relative flex items-center gap-4 bg-[#111]/40 backdrop-blur-xl border p-5 py-4 rounded-3xl transition-all duration-500 hover:scale-[1.01]",
+              u.isAdmin 
+                ? "border-cyan-500/20 shadow-[0_0_20px_rgba(6,182,212,0.05)] hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:border-cyan-500/40" 
+                : "border-green-500/10 shadow-[0_0_20px_rgba(34,197,94,0.02)] hover:shadow-[0_0_30px_rgba(34,197,94,0.1)] hover:border-green-500/30"
+            )}
+          >
+            {/* Owner/Member Vertical Accent */}
+            <div className={cn(
+              "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 rounded-r-full transition-all",
+              u.isAdmin ? "bg-cyan-500 shadow-[0_0_15px_#06b6d4]" : "bg-green-500 shadow-[0_0_15px_#22c55e]"
+            )} />
+
             {/* User Meta (Avatar + Status) */}
-            <div className="relative shrink-0">
-              <div className="w-[50px] h-[50px] rounded-full bg-[#1a1c23] flex items-center justify-center border border-white/10 overflow-hidden ring-1 ring-white/5">
-                {u.name ? (
-                  <span className="text-sm font-black text-white/80">{u.name[0]}</span>
+            <div className="relative shrink-0 ml-2">
+              <div className={cn(
+                "w-14 h-14 rounded-2xl flex items-center justify-center border overflow-hidden transition-transform duration-500 group-hover:rotate-3",
+                u.isAdmin ? "border-cyan-500/30 bg-cyan-500/5" : "border-green-500/20 bg-green-500/5"
+              )}>
+                {u.photoURL ? (
+                  <img src={u.photoURL} alt={u.name} className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-sm font-black text-white/30">{u.email[0].toUpperCase()}</span>
+                  <span className={cn(
+                    "text-lg font-black",
+                    u.isAdmin ? "text-cyan-400" : "text-green-400"
+                  )}>
+                    {(u.name?.[0] || u.email[0]).toUpperCase()}
+                  </span>
                 )}
               </div>
               <div className={cn(
-                "absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-[#0a0a0a]",
-                u.status === "online" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-white/20"
+                "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-4 border-[#0a0a0a]",
+                u.status === "online" ? "bg-green-500 shadow-[0_0_10px_#22c55e]" : "bg-white/10"
               )} />
             </div>
 
-            {/* Grid Layout for Info */}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            {/* Info Grid */}
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
               
               {/* Identity */}
               <div className="md:col-span-3">
-                <h4 className="text-[14px] font-black text-white/90 leading-none">
-                  {u.name || u.email.split('@')[0].toUpperCase()}
-                </h4>
-                <p className="text-[11px] text-red-500 font-medium mt-1 truncate max-w-[140px]">{u.email}</p>
-                <span className={cn(
-                  "text-[10px] font-bold mt-1 block",
-                  u.status === "online" ? "text-green-500" : "text-white/20"
-                )}>
-                  {u.status === "online" ? "Online now" : "Offline"}
-                </span>
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="text-[16px] font-black text-white tracking-tight leading-tight">
+                    {u.name || u.email.split('@')[0]}
+                  </h4>
+                  {u.photoURL && <Badge className="bg-primary/20 text-primary border-none text-[8px] h-4 px-1">GOOGLE</Badge>}
+                </div>
+                <p className="text-[12px] text-white/40 font-medium truncate">{u.email}</p>
+                <div className="flex items-center gap-2 mt-2">
+                   {u.isAdmin ? (
+                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[9px] font-black uppercase tracking-widest">
+                       <Shield className="w-3 h-3" /> OWNER
+                     </span>
+                   ) : (
+                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-green-500/10 text-green-400 border border-green-500/20 text-[9px] font-black uppercase tracking-widest">
+                       MEMBER
+                     </span>
+                   )}
+                </div>
               </div>
 
-              {/* Location */}
+              {/* Geo & ISP */}
               <div className="md:col-span-3">
-                <div className="flex items-start gap-2 text-[12px] text-white/70 font-bold">
-                  <span className="opacity-30 mt-0.5">📍</span> 
-                  <div>
-                    <p>{u.location?.split(',')[0] || "Unknown"}{u.location?.split(',')[1] ? `, ${u.location.split(',')[1]}` : ""}</p>
-                    <p className="text-[10px] text-white/30 font-normal mt-0.5">{u.location?.split(',')[2] || "Analyzing..."}</p>
-                  </div>
+                <div className="flex items-center gap-2.5 text-[13px] text-white/80 font-bold mb-1">
+                  <span className="text-lg">📍</span>
+                  <p>{u.location?.split(',')[0] || "Unknown City"}</p>
                 </div>
-                <p className="text-[10px] text-white/30 mt-1 flex items-center gap-1 pl-4">
-                  <span className="text-[8px] opacity-40 italic">▸</span> {u.isp || "Detecting ISP..."}
+                <p className="text-[10px] text-white/30 truncate pl-8 uppercase tracking-wider font-bold">
+                  {u.isp || u.location?.split(',')[1] || "Detecting ISP..."}
                 </p>
               </div>
 
-              {/* Device */}
+              {/* Hardware */}
               <div className="md:col-span-3">
-                <div className="flex items-center gap-2 text-[12px] text-white/70 font-bold">
-                  {u.device === "Phone" ? <Smartphone className="w-3.5 h-3.5 opacity-30" /> : <Monitor className="w-3.5 h-3.5 opacity-30" />}
-                  {u.device}
+                <div className="flex items-center gap-2.5 text-[13px] text-white/80 font-bold mb-1">
+                  {u.device === "Phone" ? <Smartphone className="w-4 h-4 text-white/40" /> : <Monitor className="w-4 h-4 text-white/40" />}
+                  <p>{u.device}</p>
                 </div>
-                <p className="text-[10px] text-white/30 mt-1 pl-5 font-medium">{u.os} • {u.browser}</p>
+                <p className="text-[10px] text-white/30 pl-7 font-bold uppercase tracking-widest">
+                  {u.os?.split(' ')[0]} • {u.browser?.split('/')[0]}
+                </p>
               </div>
 
-              {/* Role & Badges */}
-              <div className="md:col-span-3 flex items-center gap-2 justify-end md:justify-start">
-                {u.isAdmin && (
-                  <div className="flex items-center gap-1 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-full px-2 py-0.5">
-                    <Shield className="w-2.5 h-2.5" />
-                    <span className="text-[9px] font-black uppercase tracking-tighter">Admin</span>
+              {/* Metrics */}
+              <div className="md:col-span-3 flex items-center justify-end pr-4">
+                  <div className="text-right">
+                    <p className="text-[10px] text-white/20 font-black uppercase tracking-tighter mb-1">Last Interaction</p>
+                    <p className="text-[12px] text-white/60 font-bold">Just now</p>
                   </div>
-                )}
-                {u.isVerified && (
-                  <div className="bg-green-500/10 text-green-500 border border-green-500/20 rounded-full px-2 py-0.5">
-                    <span className="text-[9px] font-black uppercase tracking-tighter">Verified</span>
-                  </div>
-                )}
               </div>
+
             </div>
 
-            {/* Right Actions */}
-            <div className="flex items-center gap-3 pr-2">
-              <button className="text-[11px] font-bold text-red-500/60 hover:text-red-500 transition-colors uppercase tracking-widest">
-                Revoke
-              </button>
-              <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg text-white/20 hover:text-white hover:bg-white/5">
-                <Key className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg text-red-500/20 hover:text-red-500 hover:bg-red-500/5">
-                <Trash2 className="w-4 h-4" />
-              </Button>
-              
-              {/* Flag Mockup */}
-              <div className="w-[32px] h-[22px] bg-black/40 rounded border border-white/5 flex items-center justify-center text-[12px] grayscale hover:grayscale-0 transition-all ml-2">
-                🇮🇳
-              </div>
+            {/* Actions Panel */}
+            <div className="flex items-center gap-2 pr-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+               <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white/5 hover:bg-red-500/10 text-white/20 hover:text-red-500 transition-all">
+                  <Trash2 className="w-4 h-4" />
+               </Button>
+               <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-xl grayscale hover:grayscale-0 transition-all cursor-default">
+                 {u.countryCode === "IN" ? "🇮🇳" : "🌐"}
+               </div>
             </div>
+
           </div>
         ))}
+
         {filteredUsers.length === 0 && (
-          <div className="text-center py-20 border-2 border-dashed border-white/5 rounded-3xl">
-            <p className="text-white/20 text-sm">No users found matching your search.</p>
+          <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-white/5 rounded-[40px] bg-white/[0.01]">
+            <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
+               <Users className="w-8 h-8 text-white/10" />
+            </div>
+            <p className="text-white/20 text-sm font-bold uppercase tracking-widest">No active users located</p>
           </div>
         )}
       </div>

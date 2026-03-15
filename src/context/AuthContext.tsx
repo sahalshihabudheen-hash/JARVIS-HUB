@@ -6,11 +6,12 @@ interface User {
   email: string;
   name?: string;
   isAdmin?: boolean;
+  photoURL?: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, name?: string) => Promise<void>;
+  login: (email: string, name?: string, photoURL?: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -26,12 +27,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = async (email: string, name?: string) => {
+  const login = async (email: string, name?: string, photoURL?: string) => {
     const isAdmin = email.toLowerCase() === "admin@gmail.com";
     const userData: User = { 
       email: email.toLowerCase(), 
       name: name || email.split("@")[0],
-      isAdmin 
+      isAdmin,
+      photoURL
     };
 
     // Save/Update in Firestore
@@ -57,7 +59,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem("jarvis_user", JSON.stringify(userData));
     } catch (error) {
       console.error("Error saving user to Firestore:", error);
-      // Still allow login even if Firestore fails
       setUser(userData);
       localStorage.setItem("jarvis_user", JSON.stringify(userData));
     }

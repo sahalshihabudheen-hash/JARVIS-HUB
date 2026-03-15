@@ -34,7 +34,8 @@ export interface AdminUser {
   status: "online" | "offline";
   isAdmin: boolean;
   isVerified: boolean;
-  countryCode: string; // e.g., "IN"
+  countryCode: string;
+  photoURL?: string;
 }
 
 export interface ActivityEntry {
