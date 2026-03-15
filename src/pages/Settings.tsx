@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const Settings = () => {
   const { user, logout, updateProfile, resetPassword } = useAuth();
@@ -56,24 +58,40 @@ const Settings = () => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     
+    // Size check: 2MB limit
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("File exceeds 2MB limit. GIFs can be heavy!");
+      return;
+    }
+
     setIsUpdating(true);
-    const loadingToast = toast.loading("Uploading new avatar...");
+    const toastId = toast.loading("Initializing secure upload...");
+    
     try {
-      const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
-      const { storage } = await import("@/lib/firebase");
-      
       const storageRef = ref(storage, `avatars/${user.email.replace(/\./g, "_")}_${Date.now()}`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      
-      await updateProfile({ photoURL: url });
-      toast.dismiss(loadingToast);
-      toast.success("Avatar synchronized!");
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          toast.loading(`Syncing data: ${Math.round(progress)}%`, { id: toastId });
+        },
+        (error) => {
+          console.error("Storage Error:", error);
+          toast.error("Upload denied. Storage protocols may be restricted.", { id: toastId });
+          setIsUpdating(false);
+        },
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          await updateProfile({ photoURL: url });
+          toast.success("Avatar synchronized successfully!", { id: toastId });
+          setIsUpdating(false);
+        }
+      );
     } catch (e) {
-      console.error(e);
-      toast.dismiss(loadingToast);
-      toast.error("Avatar upload failed.");
-    } finally {
+      console.error("Initiation Error:", e);
+      toast.error("Failed to initiate upload.", { id: toastId });
       setIsUpdating(false);
     }
   };
