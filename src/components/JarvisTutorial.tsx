@@ -154,15 +154,15 @@ const JarvisTutorial = () => {
 
   // ── Tutorial Steps ──
   const steps = [
-    { target: null,             title: "System Initialization",  description: "Welcome to JARVIS HUB. Protocol Alpha-1 is now active. I am J.A.R.V.I.S. — your local intelligence unit. I will guide you through your new command center.", icon: Activity },
-    { target: "navbar-logo",    title: "The HUB Core",           description: "This is your central neural link. Tapping here will always return you to the main dashboard sector.", icon: Activity },
-    { target: "navbar-links",   title: "Sector Navigation",      description: "Access specialized streams: Movies, TV Shows, and Anime. Each sector is optimized for high-fidelity content delivery.", icon: Layout },
-    { target: "navbar-search",  title: "Global Intelligence",    description: "Scan the entire HUB database. Search for titles, actors, or directors to find specific data points instantly.", icon: Search },
-    { target: null,             title: "Priority Calibration",   description: "Select your preferred genre frequencies. I will prioritize these data streams in your personalized layout.", icon: Cpu, interactive: "genres" },
-    { target: "hero-watch-btn", title: "Direct Data Entry",      description: "My sensors indicate this is the most efficient initialization point. Use the primary link to start your visual stream immediately.", icon: Cpu },
-    { target: "watchlist-row",  title: "Tactical Watchlist",     description: "Mark your targets for future surveillance. Use the heart icon on any media card to add it to your priority watchlist.", icon: Heart },
-    { target: "settings-btn",   title: "Deep Configuration",     description: "Fine-tune your experience. Adjust regional focus, UI theme protocols, and security settings here.", icon: SettingsIcon },
-    { target: null,             title: "Authorization Verified", description: "Calibration complete. All systems green. You are now authorized for full HUB immersion. Terminating assistant mode...", icon: ShieldAlert },
+    { target: null,             title: "Welcome",              description: "Hey there! I'm JARVIS, your AI assistant. Let me quickly show you around JARVIS HUB so you can start streaming right away.", icon: Activity },
+    { target: "navbar-logo",    title: "Home",                 description: "This is the JARVIS HUB logo. Click it anytime to go back to the home page.", icon: Activity },
+    { target: "navbar-links",   title: "Browse",               description: "Use these tabs to explore Movies, TV Shows, Anime, and your Watchlist.", icon: Layout },
+    { target: "navbar-search",  title: "Search",               description: "Looking for something specific? Search for any movie, show, actor, or director here.", icon: Search },
+    { target: null,             title: "Pick Your Genres",     description: "Select the genres you love! I'll personalize your home page based on what you pick.", icon: Cpu, interactive: "genres" },
+    { target: "hero-watch-btn", title: "Watch Now",            description: "Hit this button to start watching instantly. It's the fastest way to jump into a movie or show.", icon: Cpu },
+    { target: "watchlist-row",  title: "Your Watchlist",       description: "Tap the heart icon on any movie or show to save it to your watchlist for later.", icon: Heart },
+    { target: "settings-btn",   title: "Settings",             description: "Customize your experience — change your region, manage preferences, and more.", icon: SettingsIcon },
+    { target: null,             title: "You're All Set!",      description: "That's everything! Enjoy JARVIS HUB. I'll be here if you need me. Happy streaming!", icon: ShieldAlert },
   ];
 
   // ── Element tracking ──

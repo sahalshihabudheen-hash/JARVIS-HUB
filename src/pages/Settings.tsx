@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTutorial } from "@/context/TutorialContext";
 import Navbar from "@/components/Navbar";
@@ -24,6 +25,7 @@ import { toast } from "sonner";
 const Settings = () => {
   const { user, logout } = useAuth();
   const { startTutorial, selectedGenres, updateSelectedGenres } = useTutorial();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
 
   const genres = [
@@ -181,8 +183,11 @@ const Settings = () => {
                      </p>
                       <Button 
                         onClick={() => {
-                          startTutorial();
-                          toast.success("Tutorial re-initialized.");
+                          localStorage.removeItem("jarvis_tutorial_complete");
+                          toast.success("Navigating home — tutorial will start shortly.");
+                          navigate("/");
+                          // Force page reload so module-level intro flag resets
+                          setTimeout(() => window.location.reload(), 100);
                         }}
                         className="rounded-xl px-8 py-6 hover-glow text-lg font-bold uppercase tracking-tighter"
                       >
