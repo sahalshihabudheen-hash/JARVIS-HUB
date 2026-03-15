@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import "@/tutorial.css";
 
-const Typewriter = ({ text, speed = 20, onComplete }: { text: string; speed?: number; onComplete?: () => void }) => {
+const Typewriter = ({ text, speed = 15, onComplete }: { text: string; speed?: number; onComplete?: () => void }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [index, setIndex] = useState(0);
 
@@ -32,7 +32,7 @@ const Typewriter = ({ text, speed = 20, onComplete }: { text: string; speed?: nu
   return <span>{displayedText}</span>;
 };
 
-const Spotlight = ({ x, y, width, height, padding = 10 }: { x: number, y: number, width: number, height: number, padding?: number }) => {
+const Spotlight = ({ x, y, width, height, padding = 15 }: { x: number, y: number, width: number, height: number, padding?: number }) => {
   const rect = {
     top: y - padding,
     left: x - padding,
@@ -254,42 +254,53 @@ const JarvisTutorial = () => {
         left: balloonLeft
       } : {}}
       >
-        <div className="tour-balloon border-primary/40 glow-yellow relative">
-          {/* Progress Indicator */}
-          <div className="absolute -top-3 -right-3 px-3 py-1 bg-primary text-black text-[10px] font-black rounded-full shadow-lg z-10">
-            {step + 1}/{steps.length}
-          </div>
+        <div className="tour-balloon border-primary/40 glow-yellow relative overflow-hidden">
+          {/* Scanning Line Effect */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary/30 scanning-line z-0" />
 
           {/* Tour Nib (Arrow) */}
           {coords && (
             <div 
               className={cn(
-                "tour-nib z-[-1]",
+                "tour-nib z-[1]",
                 isBelow ? "-top-2 left-1/2 -translate-x-1/2 rotate-45" : "-bottom-2 left-1/2 -translate-x-1/2 rotate-[225deg]"
               )}
             />
           )}
+          
+          {/* Progress Indicator */}
+          <div className="absolute top-4 right-4 px-2 py-0.5 bg-primary/20 border border-primary/40 text-primary text-[10px] font-black rounded flex items-center gap-1 backdrop-blur-md z-10">
+            <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
+            {step + 1} / {steps.length}
+          </div>
 
-          <div className="flex items-start gap-4 mb-4">
-            <div className="tour-header-icon bg-primary/20 border border-primary/40">
-              <Icon className="w-5 h-5 text-primary" />
+          <div className="flex items-center gap-3 mb-6 relative z-10">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl overflow-hidden border border-primary/50 bg-black/50 shadow-[0_0_15px_rgba(34,211,238,0.3)]">
+                <img src="/JARVIS2.gif" alt="JARVIS" className="w-full h-full object-cover scale-150" />
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-lg flex items-center justify-center shadow-lg border-2 border-[#0d0d0d]">
+                <Icon className="w-3 h-3 text-black" />
+              </div>
             </div>
-            <div className="flex-1">
-              <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-1">J.A.R.V.I.S Unit-01</div>
-              <h3 className="text-lg font-display font-bold text-white tracking-tight">{currentStep.title}</h3>
+            <div>
+              <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Neural Interface</div>
+              <h3 className="text-lg font-display font-bold text-white tracking-tight leading-none mt-1">{currentStep.title}</h3>
             </div>
           </div>
 
-          <p className="text-white/80 text-sm leading-relaxed mb-6">
-            <Typewriter 
-              text={currentStep.description} 
-              onComplete={() => setIsTypingComplete(true)}
-            />
-          </p>
+          <div className="relative mb-6 min-h-[4.5rem] z-10">
+            <p className="text-white/80 text-sm leading-relaxed">
+              <Typewriter 
+                text={currentStep.description} 
+                onComplete={() => setIsTypingComplete(true)}
+              />
+            </p>
+          </div>
 
           {/* Interactive Genre Selection Section */}
           {currentStep.interactive === "genres" && isTypingComplete && (
-            <div className="grid grid-cols-5 gap-2 mb-6 animate-scale-in">
+            <div className="grid grid-cols-5 gap-2 mb-6 animate-scale-in relative z-10">
                 {[
                   { id: 28, name: "Action", icon: "⚔️" },
                   { id: 878, name: "Sci-Fi", icon: "🚀" },
@@ -302,12 +313,15 @@ const JarvisTutorial = () => {
             </div>
           )}
 
-          <div className="flex items-center justify-between gap-4 pt-4 border-t border-white/10">
-            <div className="flex gap-1">
+          <div className="flex items-center justify-between gap-4 pt-4 border-t border-white/10 relative z-10">
+            <div className="flex gap-1.5">
               {steps.map((_, i) => (
                 <div 
                   key={i} 
-                  className={cn("tour-dot", i === step && "active")}
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                    i === step ? "bg-primary w-4 shadow-[0_0_8px_rgba(34,211,238,0.6)]" : "bg-white/10"
+                  )}
                 />
               ))}
             </div>
@@ -318,9 +332,8 @@ const JarvisTutorial = () => {
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setStep(step - 1)}
-                  className="text-white/60 hover:text-white hover:bg-white/10 text-xs px-3 h-9"
+                  className="text-white/60 hover:text-white hover:bg-white/10 text-[10px] uppercase tracking-wider px-3 h-8"
                 >
-                  <ChevronLeft className="w-4 h-4 mr-1" />
                   Back
                 </Button>
               )}
@@ -338,19 +351,18 @@ const JarvisTutorial = () => {
                   <Button 
                     onClick={nextStep}
                     size="sm"
-                    className="bg-primary hover:bg-white text-black font-bold text-xs px-4 h-9 glow-yellow"
+                    className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-widest px-4 h-8 glow-yellow transition-all duration-300"
                   >
                     Next
-                    <ChevronRight className="w-4 h-4 ml-1" />
                   </Button>
                 </div>
               ) : (
                 <Button 
                   onClick={completeTutorial}
                   size="sm"
-                  className="bg-primary hover:bg-white text-black font-bold text-xs px-6 h-9 glow-yellow"
+                  className="bg-primary hover:bg-white text-black font-black text-[10px] uppercase tracking-widest px-6 h-8 glow-yellow"
                 >
-                  Enter Hub
+                  Initialize Hub
                 </Button>
               )}
             </div>

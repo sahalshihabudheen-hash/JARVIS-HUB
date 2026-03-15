@@ -58,7 +58,7 @@ const Navbar = () => {
         isScrolled
           ? "bg-background/40 backdrop-blur-xl border-white/10 shadow-lg shadow-black/20"
           : "bg-background/20 backdrop-blur-md border-white/5",
-        isTutorialActive && "opacity-50 pointer-events-none filter grayscale-[0.5]"
+        isTutorialActive && "pointer-events-none"
       )}>
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
