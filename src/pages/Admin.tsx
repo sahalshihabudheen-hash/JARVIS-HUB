@@ -3,12 +3,15 @@ import { CopyIcon as Copyright, Image as ImageIcon, Save, Activity as ActivityIc
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Navigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAdmin } from "@/context/AdminContext";
+import { useAuth } from "@/context/AuthContext";
 
 const Admin = () => {
   const { branding, updateBranding, activityLog } = useAdmin();
+  const { user } = useAuth();
   
   const [appName, setAppName] = useState(branding.appName);
   const [tagline, setTagline] = useState(branding.tagline);
@@ -37,6 +40,10 @@ const Admin = () => {
       });
     }
   };
+
+  if (user?.email?.toLowerCase() !== "admin@gmail.com") {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-sans">

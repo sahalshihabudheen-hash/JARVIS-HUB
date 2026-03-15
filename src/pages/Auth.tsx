@@ -17,6 +17,15 @@ const Auth = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Custom admin logic
+    if (email.toLowerCase() === "admin@gmail.com") {
+      if (password !== "jarvisadmin") {
+        toast.error("Access Denied: Invalid admin credentials");
+        return;
+      }
+    }
+
     // Simulate authentication
     login(email);
     toast.success(isLogin ? "Welcome back to JARVIS HUB!" : "Account created successfully!");
