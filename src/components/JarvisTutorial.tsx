@@ -72,7 +72,6 @@ const Spotlight = ({ x, y, w, h }: { x: number; y: number; w: number; h: number 
   );
 };
 
-// ─── Genre Button ──────────────────────────────────────────────────────────────
 const GenreButton = ({ genre }: { genre: { id: number; name: string; icon: string } }) => {
   const { selectedGenres, updateSelectedGenres } = useTutorial();
   const isSelected = selectedGenres.includes(genre.id);
@@ -86,14 +85,36 @@ const GenreButton = ({ genre }: { genre: { id: number; name: string; icon: strin
         );
       }}
       className={cn(
-        "flex items-center justify-start gap-4 px-4 py-3 rounded-[14px] border transition-all duration-200",
+        "group relative overflow-hidden flex items-center justify-start gap-3 px-3 py-2.5 rounded-[16px] border transition-all duration-300 transform hover:-translate-y-0.5 active:scale-[0.97]",
         isSelected
-          ? "bg-[#1f2937]/80 border-primary/50 text-white shadow-[0_0_15px_rgba(34,211,238,0.15)] ring-1 ring-primary/30"
-          : "bg-[#111111]/80 border-white/10 hover:bg-[#1a1a1a] hover:border-white/20 text-white/80"
+          ? "bg-gradient-to-br from-primary/20 to-primary/5 border-primary/50 text-white shadow-[0_0_20px_rgba(34,211,238,0.2)]"
+          : "bg-[#111]/80 backdrop-blur-md border-white/5 hover:bg-[#1a1c23]/90 hover:border-primary/30 hover:shadow-[0_4px_20px_rgba(34,211,238,0.1)] text-white/70"
       )}
     >
-      <span className="text-xl shrink-0 opacity-90">{genre.icon}</span>
-      <span className="text-[13px] font-medium tracking-wide">{genre.name}</span>
+      {/* Glow background behind whole button when selected */}
+      {isSelected && (
+        <div className="absolute inset-0 bg-primary/10 rounded-[16px] blur-xl opacity-50" />
+      )}
+      
+      {/* Icon container */}
+      <div className={cn(
+        "relative z-10 flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 shrink-0",
+        isSelected ? "bg-primary/20 shadow-[0_0_12px_rgba(34,211,238,0.4)]" : "bg-white/5 group-hover:bg-primary/10"
+      )}>
+        <span className="text-xl opacity-90 group-hover:scale-110 transition-transform duration-300">{genre.icon}</span>
+      </div>
+
+      <span className={cn(
+        "relative z-10 text-[13px] font-bold tracking-wide transition-colors duration-300",
+        isSelected ? "text-white" : "group-hover:text-white"
+      )}>
+        {genre.name}
+      </span>
+
+      {/* Pulsing indicator dot when selected */}
+      {isSelected && (
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(34,211,238,0.9)] animate-pulse" />
+      )}
     </button>
   );
 };
@@ -204,8 +225,8 @@ const JarvisTutorial = () => {
   const total = steps.length;
 
   // ── Balloon position ──
-  const BALLOON_W = 340;
-  const BALLOON_H = 380;
+  const BALLOON_W = 380;
+  const BALLOON_H = 430;
   const balloonStyle: React.CSSProperties = {};
   let nibPos = "bottom"; // nib points up from balloon top
 
@@ -292,11 +313,11 @@ const JarvisTutorial = () => {
 
         {/* Card */}
         <div
-          className="rounded-2xl border border-primary/30 overflow-hidden"
+          className="rounded-[24px] border border-primary/40 overflow-hidden"
           style={{
-            background: "rgba(8, 20, 35, 0.97)",
-            boxShadow: "0 8px 48px rgba(0,0,0,0.8), 0 0 24px rgba(34,211,238,0.15)",
-            backdropFilter: "blur(20px)",
+            background: "linear-gradient(145deg, rgba(8, 20, 35, 0.98) 0%, rgba(4, 10, 18, 0.95) 100%)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(34,211,238,0.2), inset 0 1px 0 rgba(255,255,255,0.1)",
+            backdropFilter: "blur(30px)",
           }}
         >
           {/* Top scanning accent */}
