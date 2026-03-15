@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueries } from "@tanstack/react-query";
 import { X, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -195,15 +195,15 @@ const Index = () => {
   });
 
   // Dynamic rows based on tutorial choices
-  const personalizedQueries = selectedGenres
-    .filter(id => ![28, 878, 53, 16].includes(id)) // Filter already included ones
-    .map(id => {
-      return useQuery({
+  const personalizedQueries = useQueries({
+    queries: selectedGenres
+      .filter(id => ![28, 878, 53, 16].includes(id)) // Filter already included ones
+      .map(id => ({
         queryKey: ["genre", id],
         queryFn: () => discoverMovies({ with_genres: id.toString() }),
         enabled: selectedGenres.includes(id),
-      });
-    });
+      }))
+  });
 
   const [showAdWarning, setShowAdWarning] = useState(false);
 
