@@ -138,6 +138,14 @@ const Navbar = () => {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-white/10" />
+                    
+                    {user.email?.toLowerCase() === "admin@gmail.com" && (
+                      <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer text-[#ffd700] hover:bg-[#ffd700]/10 focus:text-[#ffd700]">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Admin Dashboard
+                      </DropdownMenuItem>
+                    )}
+
                     <DropdownMenuItem onClick={() => navigate("/watchlist")} className="cursor-pointer hover:bg-white/5">
                       <Heart className="mr-2 h-4 w-4" />
                       Watchlist

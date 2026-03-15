@@ -161,7 +161,7 @@ const JarvisTutorial = () => {
 
   // ── Auto-start: PS2 intro on every page load when user is logged in ──
   useEffect(() => {
-    if (!user || location.pathname === "/auth") return;
+    if (!user || location.pathname === "/auth" || location.pathname === "/admin") return;
     if (introShownThisLoad || isActive || showPS2Intro) return;
 
     // Show intro shortly after arriving at home (gives page time to render)
@@ -201,7 +201,7 @@ const JarvisTutorial = () => {
     }
   }, [step, isActive]);
 
-  if (!user || location.pathname === "/auth") return null;
+  if (!user || location.pathname === "/auth" || location.pathname === "/admin") return null;
 
   // Show PS2 intro before tutorial
   if (showPS2Intro) {
