@@ -17,10 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAdmin } from "@/context/AdminContext";
+import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 
 const UserManagement = () => {
   const { users, refreshData, toggleAdmin, deleteUser } = useAdmin();
+  const { user: currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
@@ -169,6 +171,7 @@ const UserManagement = () => {
               className={cn(
                 "group relative flex items-center gap-4 bg-[#111]/40 backdrop-blur-xl border p-5 py-4 rounded-3xl transition-all duration-500 hover:scale-[1.01]",
                 styles.border,
+                type !== "MEMBER" ? `shadow-[0_0_20px_${styles.glow}]` : "",
                 `hover:shadow-[0_0_30px_${styles.glow}]`
               )}
             >
@@ -238,9 +241,11 @@ const UserManagement = () => {
                   <p className="text-[10px] text-white/30 truncate pl-8 uppercase tracking-wider font-bold mb-0.5">
                     {u.isp || u.location?.split(',')[1] || "Detecting ISP..."}
                   </p>
-                  <p className="text-[9px] text-cyan-400/60 font-mono pl-8 uppercase tracking-widest font-bold">
-                    IP: {u.ip || "Detecting..."}
-                  </p>
+                  {currentUser?.email === "admin@gmail.com" && (
+                    <p className="text-[9px] text-cyan-400/60 font-mono pl-8 uppercase tracking-widest font-bold">
+                      IP: {u.ip || "Detecting..."}
+                    </p>
+                  )}
                 </div>
 
                 {/* Hardware */}
