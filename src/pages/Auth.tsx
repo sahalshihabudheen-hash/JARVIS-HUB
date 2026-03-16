@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
+import emailjs from '@emailjs/browser';
 import Footer from "@/components/Footer";
 
 const Auth = () => {
@@ -23,23 +24,46 @@ const Auth = () => {
   const { login } = useAuth();
 
   const generateAndSendOTP = async () => {
-    // Generate 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     setVerificationCode(code);
-    
     setIsVerifying(true);
+
+    // EmailJS Configuration
+    // To go live: 1. Sign up at emailjs.com 2. Replace placeholders below
+    const SERVICE_ID = "service_default"; // Replace with your Service ID
+    const TEMPLATE_ID = "template_otp";   // Replace with your Template ID
+    const PUBLIC_KEY = "YOUR_PUBLIC_KEY"; // Replace with your Public Key
+
+    const sendEmail = async () => {
+      try {
+        await emailjs.send(
+          SERVICE_ID,
+          TEMPLATE_ID,
+          {
+            to_email: email,
+            otp_code: code,
+            app_name: "JARVIS HUB",
+            user_name: email.split('@')[0]
+          },
+          PUBLIC_KEY
+        );
+        return true;
+      } catch (err) {
+        console.error("EmailJS Error:", err);
+        throw err;
+      }
+    };
     
-    // JARVIS UI Simulation of sending
     toast.promise(
-      new Promise((resolve) => setTimeout(resolve, 1500)),
+      sendEmail(),
       {
         loading: 'JARVIS: Dispatching Encrypted OTP to your email...',
         success: 'JARVIS: Verification Code sent to your terminal.',
-        error: 'Failed to dispatch security code.',
+        error: 'Failed to dispatch security code. Check console for details.',
       }
     );
 
-    // LOG FOR TESTING (Since we don't have user's EmailJS keys yet)
+    // FALLBACK: Log to console so user can always test/debug
     console.log("----------------------------");
     console.log(`JARVIS SECURITY CODE: ${code}`);
     console.log("----------------------------");
