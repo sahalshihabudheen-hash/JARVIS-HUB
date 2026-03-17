@@ -145,8 +145,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Save/Update in Firestore
     try {
+      const { getDoc } = await import("firebase/firestore");
       const userRef = doc(db, "users", email.toLowerCase().replace(/\./g, "_"));
       
+      // Check existing admin status to prevent overwriting manual admins
+      let finalUserData = { ...userData };
+      const existingDoc = await getDoc(userRef);
+      if (existingDoc.exists() && existingDoc.data().isAdmin) {
+        finalUserData.isAdmin = true;
+      }
+
       // Get device info
       const ua = navigator.userAgent;
       let device = "Desktop PC";
@@ -154,15 +162,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (/Tablet|iPad/i.test(ua)) device = "Tablet";
 
       await setDoc(userRef, {
-        ...userData,
+        ...finalUserData,
         lastSeen: serverTimestamp(),
         status: "online",
         device,
         browser: navigator.userAgent.split(" ").slice(-1)[0],
       }, { merge: true });
 
-      setUser(userData);
-      localStorage.setItem("jarvis_user", JSON.stringify(userData));
+      setUser(finalUserData);
+      localStorage.setItem("jarvis_user", JSON.stringify(finalUserData));
     } catch (error) {
       console.error("Error saving user to Firestore:", error);
       setUser(userData);
