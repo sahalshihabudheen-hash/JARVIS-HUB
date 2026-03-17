@@ -175,15 +175,15 @@ const JarvisTutorial = () => {
 
   // ── Tutorial Steps ──
   const steps = [
-    { target: null,             title: "Welcome",              description: "Hey there! I'm JARVIS, your AI assistant. Let me quickly show you around JARVIS HUB so you can start streaming right away.", icon: Activity },
-    { target: "navbar-logo",    title: "Home",                 description: "This is the JARVIS HUB logo. Click it anytime to go back to the home page.", icon: Activity },
-    { target: "navbar-links",   title: "Browse",               description: "Use these tabs to explore Movies, TV Shows, Anime, and your Watchlist.", icon: Layout },
-    { target: "navbar-search",  title: "Search",               description: "Looking for something specific? Search for any movie, show, actor, or director here.", icon: Search },
-    { target: null,             title: "Pick Your Genres",     description: "Select the genres you love! I'll personalize your home page based on what you pick.", icon: Cpu, interactive: "genres" },
-    { target: "hero-watch-btn", title: "Watch Now",            description: "Hit this button to start watching instantly. It's the fastest way to jump into a movie or show.", icon: Cpu },
-    { target: "watchlist-row",  title: "Your Watchlist",       description: "Tap the heart icon on any movie or show to save it to your watchlist for later.", icon: Heart },
-    { target: "settings-btn",   title: "Settings",             description: "Customize your experience — change your region, manage preferences, and more.", icon: SettingsIcon },
-    { target: null,             title: "You're All Set!",      description: "That's everything! Enjoy JARVIS HUB. I'll be here if you need me. Happy streaming!", icon: ShieldAlert },
+    { target: null,             title: "Welcome",              description: "Greetings! I'm here to guide you through your new MOVIE HUB. Let me quickly show you how to navigate so you can start streaming right away.", icon: Activity },
+    { target: "navbar-logo",    title: "Home",                 description: "This is your home portal. Click the MOVIE HUB logo anytime to return to your main dashboard.", icon: Activity },
+    { target: "navbar-links",   title: "Browse",               description: "Use these navigation links to explore Movies, TV Shows, and your Watch history.", icon: Layout },
+    { target: "navbar-search",  title: "Search",               description: "Looking for something specific? Search for any movie, series, actor, or director here.", icon: Search },
+    { target: null,             title: "Pick Your Genres",     description: "Select the movie genres you love! Your home page will be personalized to your taste.", icon: Cpu, interactive: "genres" },
+    { target: "hero-watch-btn", title: "Watch Now",            description: "Hit this button to start watching instantly. It is the fastest way to dive into a movie or show.", icon: Cpu },
+    { target: "watchlist-row",  title: "Your Watchlist",       description: "Tap the icon on any movie or show to save it to your local watchlist for later viewing.", icon: Heart },
+    { target: "settings-btn",   title: "Settings",             description: "Customize your portal — change your region focus, manage account info, and more.", icon: SettingsIcon },
+    { target: null,             title: "You're All Set!",      description: "That's everything! Enjoy MOVIE HUB. We hope you have an incredible streaming experience. Happy watching!", icon: ShieldAlert },
   ];
 
   // ── Element tracking ──
@@ -275,11 +275,11 @@ const JarvisTutorial = () => {
         </div>
       )}
 
-      {/* ── JARVIS Avatar (bottom-right, only on non-target steps) ── */}
+      {/* ── Guide Avatar (bottom-right, only on non-target steps) ── */}
       {!coords && (
         <div className="absolute bottom-10 right-10 flex flex-col items-center gap-2 animate-fade-in z-[1600]">
           <div className="w-20 h-20 rounded-full border-2 border-primary/60 overflow-hidden shadow-[0_0_25px_rgba(34,211,238,0.4)] bg-black">
-            <img src="/JARVIS2.gif" alt="JARVIS" className="w-full h-full object-cover" />
+            <img src="/JARVIS2.gif" alt="Movie Hub" className="w-full h-full object-cover" />
           </div>
           <div className="text-[9px] font-black text-primary uppercase tracking-[0.25em]">Online</div>
         </div>
@@ -344,7 +344,7 @@ const JarvisTutorial = () => {
             <div className="flex items-center gap-3 mb-4">
               <div className="relative shrink-0">
                 <div className="w-12 h-12 rounded-xl border-2 border-primary/40 overflow-hidden bg-black/60 shadow-[0_0_15px_rgba(34,211,238,0.3)]">
-                  <img src="/JARVIS2.gif" alt="JARVIS" className="w-full h-full object-cover scale-125" />
+                  <img src="/JARVIS2.gif" alt="Movie Hub Guide" className="w-full h-full object-cover scale-125" />
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-lg flex items-center justify-center border-2 border-[#080f1a]">
                   <Icon className="w-2.5 h-2.5 text-black" />
@@ -429,7 +429,7 @@ const JarvisTutorial = () => {
                     onClick={handleSkip}
                     className="h-8 px-5 text-[10px] font-black uppercase tracking-wider bg-primary text-black hover:bg-white transition-all shadow-[0_0_20px_rgba(34,211,238,0.5)] active:scale-95"
                   >
-                    Initialize ✓
+                    Start Watching ✓
                   </Button>
                 )}
               </div>

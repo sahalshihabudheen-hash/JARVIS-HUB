@@ -72,7 +72,7 @@ const History = () => {
             <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
               <HistoryIcon className="w-10 h-10 text-muted-foreground opacity-20" />
             </div>
-            <h2 className="text-xl font-bold mb-2">No history protocols found</h2>
+            <h2 className="text-xl font-bold mb-2">No watch history found</h2>
             <p className="text-muted-foreground mb-8">You haven't watched anything yet.</p>
             <Button asChild className="rounded-full px-8 hover-glow transition-all">
               <Link to="/">Explore Content</Link>

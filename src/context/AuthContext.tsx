@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Detect if user became admin
           if (!isInitial && !user.isAdmin && data.isAdmin) {
              import("sonner").then(({ toast }) => {
-               toast("JARVIS: PROMOTED TO ADMIN", {
+               toast("MOVIE HUB: PROMOTED TO ADMIN", {
                  description: "Access your new Admin Dashboard via the profile icon in the top right corner.",
                  icon: "🤖",
                  duration: 8000

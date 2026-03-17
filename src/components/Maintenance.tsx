@@ -43,7 +43,7 @@ const Maintenance = () => {
         </h1>
         
         <p className="text-xl md:text-2xl font-medium text-white/70 mb-8 italic">
-          JARVIS is working faster than you think
+          We're working on it — Movie Hub will be back soon
         </p>
         
         <div className="w-full space-y-4 mb-12">

@@ -28,7 +28,7 @@ const Auth = () => {
 
     // Authenticate
     await login(email);
-    toast.success(isLogin ? "Welcome back to JARVIS HUB!" : "Account created successfully!");
+    toast.success(isLogin ? "Welcome back to MOVIE HUB!" : "Account created successfully!");
     navigate("/");
   };
 
@@ -79,7 +79,7 @@ const Auth = () => {
               className="w-16 h-16 object-cover rounded-full mb-4 shadow-[0_0_20px_hsl(var(--primary)/0.4)] animate-pulse"
             />
             <h1 className="text-3xl font-display font-bold tracking-tighter mb-2">
-              JARVIS<span className="text-blue-500 ml-1">HUB</span>
+              MOVIE<span className="text-blue-500 ml-1">HUB</span>
             </h1>
             <p className="text-muted-foreground text-sm">
               {isLogin ? "Access your secure media hub" : "Initialize your viewer credentials"}
@@ -92,7 +92,7 @@ const Auth = () => {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   type="email"
-                  placeholder="Intelligence ID (Email)"
+                  placeholder="Email Address"
                   className="pl-10 bg-white/5 border-white/10 focus:border-blue-500 transition-all rounded-xl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -124,7 +124,7 @@ const Auth = () => {
               <span className="w-full border-t border-white/10"></span>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">External Auth Protocols</span>
+              <span className="bg-background px-2 text-muted-foreground">External Sign In</span>
             </div>
           </div>
 

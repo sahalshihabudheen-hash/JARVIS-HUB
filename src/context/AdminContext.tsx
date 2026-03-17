@@ -54,11 +54,11 @@ export interface ActivityEntry {
 }
 
 const defaultBranding: AppBranding = {
-  appName: "JARVIS HUB",
+  appName: "MOVIE HUB",
   appLogo: "/JARVIS2.gif",
-  tagline: "ADVANCED MEDIA INTERFACE",
-  copyrightText: "© 2026 JARVIS HUB",
-  poweredBy: "Powered by AI",
+  tagline: "PREMIUM MEDIA PORTAL",
+  copyrightText: "© 2026 MOVIE HUB",
+  poweredBy: "Powered by Hub Engine",
 };
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
@@ -70,7 +70,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
 
   const refreshData = async () => {
-    toast.success("Syncing with JARVIS database...", { icon: "🔄" });
+    toast.success("Syncing with Movie database...", { icon: "🔄" });
     try {
       const q = query(collection(db, "users"), orderBy("lastSeen", "desc"));
       const snapshot = await getDocs(q);

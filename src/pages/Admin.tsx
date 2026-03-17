@@ -319,7 +319,7 @@ const Admin = () => {
                 <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 flex items-start gap-3">
                   <Settings className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
                   <p className="text-[11px] text-blue-400/80 font-medium leading-relaxed">
-                    Maintenance mode is synced in real-time via JARVIS Neural Core. Once toggled, all active sessions worldwide will be redirected instantly without requiring a page refresh.
+                    Maintenance mode is synced in real-time. Once toggled, all active sessions worldwide will be redirected instantly without requiring a page refresh.
                   </p>
                 </div>
               </div>
