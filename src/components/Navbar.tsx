@@ -56,15 +56,15 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 p-3 md:p-4">
+    <nav className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6">
       <div className={cn(
-        "container mx-auto px-4 md:px-6 rounded-2xl transition-all duration-300 border",
+        "container mx-auto px-6 md:px-10 rounded-[2rem] transition-all duration-500 border",
         isScrolled
-          ? "bg-background/40 backdrop-blur-xl border-white/10 shadow-lg shadow-black/20"
-          : "bg-background/20 backdrop-blur-md border-white/5",
+          ? "bg-background/40 backdrop-blur-2xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] shadow-black/40"
+          : "bg-background/20 backdrop-blur-xl border-white/5",
         isTutorialActive && "pointer-events-none"
       )}>
-        <div className="flex items-center justify-between h-14 md:h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" id="navbar-logo" className="flex items-center gap-3 group shrink-0">
             <div className="relative">
@@ -86,51 +86,52 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div id="navbar-links" className="hidden md:flex items-center gap-1 lg:gap-2">
+          <div id="navbar-links" className="hidden lg:flex items-center gap-3 xl:gap-5">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  "flex items-center gap-2 text-[11px] lg:text-[13px] font-bold uppercase tracking-widest px-3 lg:px-4 py-2 rounded-full transition-all duration-300",
+                  "flex items-center gap-2 text-[11px] xl:text-[12px] font-black uppercase tracking-[0.2em] px-3 xl:px-4 py-2 rounded-full transition-all duration-300",
                   location.pathname === link.to
                     ? "bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-white/10"
                     : link.to === "/admin" 
                       ? "text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
-                      : "text-white/50 hover:text-white hover:bg-white/5"
+                      : "text-white/40 hover:text-white hover:bg-white/5"
                 )}
               >
-                {link.icon && <link.icon className="w-4 h-4" />}
-                <span className={cn(link.to === "/" && "lg:block")}>{link.label}</span>
+                {link.icon && <link.icon className="w-3.5 h-3.5" />}
+                <span className="hidden xl:block">{link.label}</span>
+                {location.pathname === link.to && <span className="xl:hidden">{link.label}</span>}
               </Link>
             ))}
           </div>
 
           {/* Search and Mobile Menu */}
-          <div className="flex items-center gap-2 md:gap-4">
-            <form onSubmit={handleSearch} id="navbar-search" className="hidden md:flex items-center group">
+          <div className="flex items-center gap-3 lg:gap-6">
+            <form onSubmit={handleSearch} id="navbar-search" className="hidden xl:flex items-center group">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-blue-500 transition-colors" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search Neural Database..."
-                  className="w-32 lg:w-44 xl:w-64 pl-11 pr-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[13px] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
+                  placeholder="Neural Database..."
+                  className="w-48 xl:w-72 pl-11 pr-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[12px] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
                 />
               </div>
             </form>
             
             {user ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 lg:gap-5">
                 <Button
                   variant="ghost"
                   size="icon"
                   id="settings-btn"
-                  className="hidden md:flex rounded-full hover:bg-white/10"
+                  className="hidden xl:flex rounded-full hover:bg-white/10 w-11 h-11"
                   onClick={() => navigate("/settings")}
                 >
-                  <Settings className="w-5 h-5" />
+                  <Settings className="w-5 h-5 text-white/40" />
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -179,20 +180,20 @@ const Navbar = () => {
                 </DropdownMenu>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3 lg:gap-5">
                 <Button
                   variant="ghost"
                   size="icon"
                   id="settings-btn-alt"
-                  className="hidden md:flex rounded-full hover:bg-white/10"
+                  className="hidden xl:flex rounded-full hover:bg-white/10 w-11 h-11"
                   onClick={() => navigate("/settings")}
                 >
-                  <Settings className="w-5 h-5" />
+                  <Settings className="w-5 h-5 text-white/40" />
                 </Button>
                 <Button
                   variant="default"
                   size="sm"
-                  className="hidden md:flex items-center gap-2 rounded-full px-4 hover-glow"
+                  className="hidden md:flex items-center gap-2 rounded-full px-6 h-10 hover-glow font-black text-[12px] uppercase tracking-[0.1em]"
                   onClick={() => navigate("/auth")}
                 >
                   <User className="w-4 h-4" />
@@ -201,35 +202,33 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Mobile Settings Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => navigate("/settings")}
-            >
-              <Settings className="w-5 h-5" />
-            </Button>
-
-            {/* Mobile Search Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => navigate("/search")}
-            >
-              <Search className="w-5 h-5" />
-            </Button>
-
-            {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </Button>
+            {/* Mobile Controls */}
+            <div className="flex items-center gap-1 md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 rounded-full text-white/40 hover:text-white"
+                onClick={() => navigate("/settings")}
+              >
+                <Settings className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 rounded-full text-white/40 hover:text-white"
+                onClick={() => navigate("/search")}
+              >
+                <Search className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 rounded-full text-white/40 hover:text-white"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
+            </div>
           </div>
         </div>
 
