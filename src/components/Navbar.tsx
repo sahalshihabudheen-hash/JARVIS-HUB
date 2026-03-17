@@ -56,9 +56,9 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 p-4 md:p-6">
+    <nav className="fixed top-0 left-0 right-0 z-50 p-4 lg:p-6 flex justify-center">
       <div className={cn(
-        "container mx-auto px-6 md:px-10 rounded-[2rem] transition-all duration-500 border",
+        "w-full max-w-[1440px] px-4 md:px-8 rounded-[2rem] transition-all duration-500 border",
         isScrolled
           ? "bg-background/40 backdrop-blur-2xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] shadow-black/40"
           : "bg-background/20 backdrop-blur-xl border-white/5",
@@ -86,7 +86,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div id="navbar-links" className="hidden lg:flex items-center gap-2 xl:gap-5 ml-8 xl:ml-12">
+          <div id="navbar-links" className="hidden lg:flex items-center gap-2 xl:gap-4 ml-4 xl:ml-8">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
@@ -117,7 +117,7 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Neural Database..."
-                  className="w-48 xl:w-72 pl-11 pr-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[12px] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
+                  className="w-40 xl:w-60 pl-11 pr-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[12px] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
                 />
               </div>
             </form>
