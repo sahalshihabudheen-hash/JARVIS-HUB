@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield } from "lucide-react";
+import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -51,6 +51,7 @@ const Navbar = () => {
     { to: "/tv", label: "TV Shows", icon: Tv },
     { to: "/anime", label: "Anime", icon: Sparkles },
     { to: "/watchlist", label: "Watchlist", icon: Heart },
+    { to: "/history", label: "History", icon: History },
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
@@ -152,6 +153,10 @@ const Navbar = () => {
                     <DropdownMenuItem onClick={() => navigate("/watchlist")} className="cursor-pointer hover:bg-white/5">
                       <Heart className="mr-2 h-4 w-4" />
                       Watchlist
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/history")} className="cursor-pointer hover:bg-white/5">
+                      <History className="mr-2 h-4 w-4" />
+                      Watch History
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer hover:bg-white/5">
                       <Settings className="mr-2 h-4 w-4" />
