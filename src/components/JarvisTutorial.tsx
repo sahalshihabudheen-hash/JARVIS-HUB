@@ -9,9 +9,8 @@ import { cn } from "@/lib/utils";
 import "@/tutorial.css";
 import PS2Intro from "./PS2Intro";
 
-// Module-level flag — resets on every full page reload (not SPA navigation)
-// This makes the intro play every time the user loads/reloads the page
-let introShownThisLoad = false;
+// Session-persistent flag — survives refreshes, but resets when tab/window is closed
+let introShownThisLoad = typeof window !== 'undefined' ? !!sessionStorage.getItem("jarvis_intro_shown") : false;
 
 // ─── Typewriter Effect ─────────────────────────────────────────────────────────
 const Typewriter = ({ text, speed = 18, onComplete }: { text: string; speed?: number; onComplete?: () => void }) => {
@@ -167,6 +166,7 @@ const JarvisTutorial = () => {
     // Show intro shortly after arriving at home (gives page time to render)
     const t = setTimeout(() => {
       introShownThisLoad = true;   // prevent double-trigger within same load
+      sessionStorage.setItem("jarvis_intro_shown", "true");
       setShowPS2Intro(true);
     }, 400);
     return () => clearTimeout(t);
