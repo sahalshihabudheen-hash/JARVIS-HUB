@@ -58,13 +58,13 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 p-4 lg:p-6 flex justify-center">
       <div className={cn(
-        "w-full max-w-[1440px] px-4 md:px-8 rounded-[2rem] transition-all duration-500 border",
+        "w-[98%] max-w-[1700px] px-4 md:px-10 rounded-[2.5rem] transition-all duration-500 border",
         isScrolled
           ? "bg-background/40 backdrop-blur-2xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] shadow-black/40"
           : "bg-background/20 backdrop-blur-xl border-white/5",
         isTutorialActive && "pointer-events-none"
       )}>
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-18 md:h-22">
           {/* Logo */}
           <Link to="/" id="navbar-logo" className="flex items-center gap-3 group shrink-0">
             <div className="relative">
@@ -92,7 +92,7 @@ const Navbar = () => {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  "flex items-center gap-2 text-[11px] xl:text-[12px] font-black uppercase tracking-[0.2em] px-3 xl:px-4 py-2 rounded-full transition-all duration-300",
+                  "flex items-center gap-2 text-[10px] xl:text-[11px] font-black uppercase tracking-[0.15em] px-2 xl:px-3 py-2 rounded-full transition-all duration-300",
                   location.pathname === link.to
                     ? "bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-white/10"
                     : link.to === "/admin" 
