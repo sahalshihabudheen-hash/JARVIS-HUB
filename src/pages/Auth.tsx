@@ -129,15 +129,20 @@ const Auth = () => {
           </div>
 
           <div className="flex justify-center">
-            <Button
-              variant="outline"
-              className="w-full bg-white/5 border-white/10 hover:bg-white/10 rounded-xl h-12 hover-glow transition-all disabled:opacity-50"
+            <button
               onClick={handleSocialLogin}
               disabled={socialLoading}
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-white/90 text-zinc-800 h-12 rounded-full font-medium shadow-xl transition-all disabled:opacity-50 group px-6 border border-zinc-300"
             >
-              <Chrome className="w-5 h-5 mr-3 text-blue-400" />
-              {socialLoading ? "Signing in..." : "Continue with Google"}
-            </Button>
+              <img 
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                alt="Google" 
+                className="w-5 h-5" 
+              />
+              <span className="text-base">
+                {socialLoading ? "Signing in..." : "Sign up with Google"}
+              </span>
+            </button>
           </div>
 
           <div className="mt-8 text-center text-sm">
