@@ -22,16 +22,16 @@ const Maintenance = () => {
       
       {/* Background Ambience */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-500 rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500 rounded-full blur-[120px]" />
       </div>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-lg w-full flex flex-col items-center">
         {/* Animated Icon */}
         <div className="relative mb-12">
-          <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full scale-150 animate-pulse" />
-          <div className="w-24 h-24 rounded-full bg-yellow-500/10 border-2 border-yellow-500/20 flex items-center justify-center relative backdrop-blur-sm">
-            <Settings className="w-12 h-12 text-yellow-500 animate-spin-slow" />
+          <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full scale-150 animate-pulse" />
+          <div className="w-24 h-24 rounded-full bg-blue-500/10 border-2 border-blue-500/20 flex items-center justify-center relative backdrop-blur-sm">
+            <Settings className="w-12 h-12 text-blue-500 animate-spin-slow" />
           </div>
         </div>
 
@@ -51,7 +51,7 @@ const Maintenance = () => {
           
           {/* Progress Bar Container */}
           <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden relative border border-white/5">
-            <div className="absolute top-0 bottom-0 left-0 w-[65%] bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.5)] animate-progress-glow" />
+            <div className="absolute top-0 bottom-0 left-0 w-[65%] bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] animate-progress-glow" />
           </div>
         </div>
 
@@ -61,8 +61,8 @@ const Maintenance = () => {
       </div>
       
       {/* Visual Accents */}
-      <div className="absolute bottom-10 left-10 w-32 h-32 border-l border-b border-yellow-500/10" />
-      <div className="absolute top-10 right-10 w-32 h-32 border-r border-t border-yellow-500/10" />
+      <div className="absolute bottom-10 left-10 w-32 h-32 border-l border-b border-blue-500/10" />
+      <div className="absolute top-10 right-10 w-32 h-32 border-r border-t border-blue-500/10" />
     </div>
   );
 };

@@ -270,8 +270,8 @@ const Admin = () => {
           {activeTab === "maint" && (
             <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 md:p-8 shadow-2xl animate-fade-in max-w-2xl mx-auto">
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-                  <Wrench className="text-yellow-500 w-5 h-5" />
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Wrench className="text-blue-500 w-5 h-5" />
                 </div>
                 <div>
                   <h2 className="text-xl font-bold tracking-tight text-white/90">Maintenance Protocols</h2>
@@ -283,17 +283,17 @@ const Admin = () => {
                 <div className={cn(
                   "p-6 rounded-2xl border transition-all duration-500",
                   isMaintenanceMode 
-                    ? "bg-yellow-500/10 border-yellow-500/20 shadow-[0_0_20px_rgba(234,179,8,0.05)]" 
+                    ? "bg-blue-500/10 border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.05)]" 
                     : "bg-black/20 border-white/5"
                 )}>
                   <div className="flex items-center justify-between gap-6">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className={cn("font-bold text-lg", isMaintenanceMode ? "text-yellow-500" : "text-white")}>
+                        <h3 className={cn("font-bold text-lg", isMaintenanceMode ? "text-blue-500" : "text-white")}>
                           System Maintenance
                         </h3>
                         {isMaintenanceMode && (
-                          <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_8px_#eab308]" />
+                          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3b82f6]" />
                         )}
                       </div>
                       <p className="text-sm text-white/40 leading-relaxed">
@@ -305,7 +305,7 @@ const Admin = () => {
                       onClick={toggleMaintenanceMode}
                       className={cn(
                         "relative w-16 h-8 rounded-full transition-all duration-300 overflow-hidden shrink-0",
-                        isMaintenanceMode ? "bg-yellow-500 shadow-[0_0_15px_#eab308]" : "bg-white/10"
+                        isMaintenanceMode ? "bg-blue-500 shadow-[0_0_15px_#3b82f6]" : "bg-white/10"
                       )}
                     >
                       <div className={cn(
