@@ -98,7 +98,6 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
           className="absolute inset-0" 
           style={{
             background: `
-              radial-gradient(circle at 50% 120%, rgba(10, 30, 80, 0.4) 0%, transparent 60%),
               radial-gradient(circle at 10% 10%, rgba(20, 50, 150, 0.1) 0%, transparent 40%)
             `
           }} 
@@ -134,29 +133,6 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
         ))}
       </div>
 
-      {/* ── Ground Horizon Grid ── */}
-      <div 
-        className="absolute bottom-0 left-0 right-0 h-[45vh] transition-all duration-[3000ms] ease-out"
-        style={{
-          opacity: showGrid ? 0.25 : 0,
-          perspective: "800px",
-          perspectiveOrigin: "50% 0%"
-        }}
-      >
-        <div 
-          className="absolute inset-0"
-          style={{
-            background: `
-              linear-gradient(rgba(34, 211, 238, 0) 0%, rgba(34, 211, 238, 0.4) 100%),
-              repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(34, 211, 238, 0.2) 41px),
-              repeating-linear-gradient(0deg, transparent 0, transparent 40px, rgba(34, 211, 238, 0.2) 41px)
-            `,
-            transform: "rotateX(60deg) translateY(-20%)",
-            transformOrigin: "center top",
-            filter: "drop-shadow(0 0 15px rgba(34, 211, 238, 0.5))"
-          }}
-        />
-      </div>
 
       {/* ── Central Beacon Glow ── */}
       <div 
