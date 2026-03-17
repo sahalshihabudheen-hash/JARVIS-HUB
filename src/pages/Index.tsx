@@ -263,7 +263,7 @@ const Index = () => {
           </div>
           
               <MediaRow
-                title={isKeralaFocus ? `🔥 Malayalam Blockbusters in ${cityLabel || "Kerala"}` : `🔥 Top in ${cityLabel || regionLabel}`}
+                title={isKeralaFocus ? `🔥 Malayalam Blockbusters in ${regionLabel}` : `🔥 Top in ${regionLabel}`}
                 items={regionalNow?.results || []}
                 mediaType="movie"
                 isLoading={regionalLoading}
