@@ -126,6 +126,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
 
+    // Correct BSNL ISP name if detected as NIB
+    if (isp?.toUpperCase().includes("NATIONAL INTERNET BACKBONE")) {
+      isp = "BSNL Internet";
+    }
+
     const isAdmin = email.toLowerCase() === "admin@gmail.com";
     const userData: User = { 
       email: email.toLowerCase(), 
