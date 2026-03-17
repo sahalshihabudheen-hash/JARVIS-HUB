@@ -86,7 +86,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div id="navbar-links" className="hidden lg:flex items-center gap-3 xl:gap-5">
+          <div id="navbar-links" className="hidden lg:flex items-center gap-2 xl:gap-5 ml-8 xl:ml-12">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
@@ -128,7 +128,7 @@ const Navbar = () => {
                   variant="ghost"
                   size="icon"
                   id="settings-btn"
-                  className="hidden xl:flex rounded-full hover:bg-white/10 w-11 h-11"
+                  className="hidden lg:flex rounded-full hover:bg-white/10 w-10 h-10 lg:w-11 lg:h-11"
                   onClick={() => navigate("/settings")}
                 >
                   <Settings className="w-5 h-5 text-white/40" />
@@ -185,7 +185,7 @@ const Navbar = () => {
                   variant="ghost"
                   size="icon"
                   id="settings-btn-alt"
-                  className="hidden xl:flex rounded-full hover:bg-white/10 w-11 h-11"
+                  className="hidden lg:flex rounded-full hover:bg-white/10 w-10 h-10 lg:w-11 lg:h-11"
                   onClick={() => navigate("/settings")}
                 >
                   <Settings className="w-5 h-5 text-white/40" />
@@ -193,7 +193,7 @@ const Navbar = () => {
                 <Button
                   variant="default"
                   size="sm"
-                  className="hidden md:flex items-center gap-2 rounded-full px-6 h-10 hover-glow font-black text-[12px] uppercase tracking-[0.1em]"
+                  className="hidden lg:flex items-center gap-2 rounded-full px-5 lg:px-6 h-10 hover-glow font-black text-[12px] uppercase tracking-[0.1em]"
                   onClick={() => navigate("/auth")}
                 >
                   <User className="w-4 h-4" />
@@ -203,7 +203,7 @@ const Navbar = () => {
             )}
 
             {/* Mobile Controls */}
-            <div className="flex items-center gap-1 md:hidden">
+            <div className="flex items-center gap-1 lg:hidden">
               <Button
                 variant="ghost"
                 size="icon"
@@ -234,7 +234,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-3 border-t border-white/10 animate-fade-in">
+          <div className="lg:hidden py-3 border-t border-white/10 animate-fade-in">
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
