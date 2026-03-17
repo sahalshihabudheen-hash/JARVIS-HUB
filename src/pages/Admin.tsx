@@ -24,7 +24,7 @@ import UserManagement from "@/components/UserManagement";
 import { cn } from "@/lib/utils";
 
 const Admin = () => {
-  const { branding, updateBranding, activityLog } = useAdmin();
+  const { branding, updateBranding, activityLog, isMaintenanceMode, toggleMaintenanceMode } = useAdmin();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("app");
   
@@ -267,8 +267,67 @@ const Admin = () => {
             </div>
           )}
 
+          {activeTab === "maint" && (
+            <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 md:p-8 shadow-2xl animate-fade-in max-w-2xl mx-auto">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                  <Wrench className="text-yellow-500 w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold tracking-tight text-white/90">Maintenance Protocols</h2>
+                  <p className="text-sm text-white/40 mt-1">Control system-wide access and upgrades</p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className={cn(
+                  "p-6 rounded-2xl border transition-all duration-500",
+                  isMaintenanceMode 
+                    ? "bg-yellow-500/10 border-yellow-500/20 shadow-[0_0_20px_rgba(234,179,8,0.05)]" 
+                    : "bg-black/20 border-white/5"
+                )}>
+                  <div className="flex items-center justify-between gap-6">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className={cn("font-bold text-lg", isMaintenanceMode ? "text-yellow-500" : "text-white")}>
+                          System Maintenance
+                        </h3>
+                        {isMaintenanceMode && (
+                          <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_8px_#eab308]" />
+                        )}
+                      </div>
+                      <p className="text-sm text-white/40 leading-relaxed">
+                        When active, all non-admin users will see the "Under Maintenance" screen. Administrators will still have full access to the interface to perform tests or updates.
+                      </p>
+                    </div>
+                    
+                    <button 
+                      onClick={toggleMaintenanceMode}
+                      className={cn(
+                        "relative w-16 h-8 rounded-full transition-all duration-300 overflow-hidden shrink-0",
+                        isMaintenanceMode ? "bg-yellow-500 shadow-[0_0_15px_#eab308]" : "bg-white/10"
+                      )}
+                    >
+                      <div className={cn(
+                        "absolute top-1 bottom-1 w-6 bg-white rounded-full transition-all duration-300 shadow-lg",
+                        isMaintenanceMode ? "left-9" : "left-1"
+                      )} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 flex items-start gap-3">
+                  <Settings className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                  <p className="text-[11px] text-blue-400/80 font-medium leading-relaxed">
+                    Maintenance mode is synced in real-time via JARVIS Neural Core. Once toggled, all active sessions worldwide will be redirected instantly without requiring a page refresh.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Placeholder for other tabs */}
-          {["playlists", "maint"].includes(activeTab) && (
+          {["playlists"].includes(activeTab) && (
             <div className="flex flex-col items-center justify-center py-40 bg-[#111] border border-white/5 rounded-3xl animate-fade-in">
               <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
                 <Wrench className="w-10 h-10 text-white/20" />

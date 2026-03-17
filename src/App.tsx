@@ -20,6 +20,8 @@ import { TutorialProvider } from "./context/TutorialContext";
 import { AdminProvider } from "./context/AdminContext";
 import JarvisTutorial from "./components/JarvisTutorial";
 import Admin from "./pages/Admin";
+import Maintenance from "./components/Maintenance";
+import { useAdmin } from "./context/AdminContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,7 +37,14 @@ import { useAuth } from "./context/AuthContext";
 
 const ProtectedLayout = () => {
   const { user } = useAuth();
+  const { isMaintenanceMode } = useAdmin();
+
   if (!user) return <Navigate to="/auth" replace />;
+  
+  if (isMaintenanceMode && !user.isAdmin) {
+    return <Maintenance />;
+  }
+
   return <Outlet />;
 };
 

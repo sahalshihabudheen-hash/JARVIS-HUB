@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { db } from "@/lib/firebase";
-import { collection, onSnapshot, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, limit, getDocs, doc } from "firebase/firestore";
 
 interface AppBranding {
   appName: string;
@@ -23,6 +23,8 @@ interface AdminContextType {
   toggleAdmin: (userId: string, currentStatus: boolean) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
   resetUserPassword: (email: string) => Promise<void>;
+  isMaintenanceMode: boolean;
+  toggleMaintenanceMode: () => Promise<void>;
 }
 
 export interface AdminUser {
@@ -65,6 +67,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [branding, setBranding] = useState<AppBranding>(defaultBranding);
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
 
   const refreshData = async () => {
     toast.success("Syncing with JARVIS database...", { icon: "🔄" });
@@ -112,9 +115,18 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setActivityLog(fetchedAct);
     });
 
+    // Real-time Maintenance Mode
+    const maintenanceRef = doc(db, "settings", "maintenance");
+    const unsubMaintenance = onSnapshot(maintenanceRef, (doc) => {
+      if (doc.exists()) {
+        setIsMaintenanceMode(doc.data().active || false);
+      }
+    });
+
     return () => {
       unsubscribe();
       unsubAct();
+      unsubMaintenance();
     };
   }, []);
 
@@ -180,8 +192,34 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const toggleMaintenanceMode = async () => {
+    try {
+      const { doc, setDoc } = await import("firebase/firestore");
+      const maintenanceRef = doc(db, "settings", "maintenance");
+      await setDoc(maintenanceRef, { active: !isMaintenanceMode }, { merge: true });
+      toast.success(`Maintenance mode ${!isMaintenanceMode ? "activated" : "deactivated"}`, { 
+        icon: !isMaintenanceMode ? "🚧" : "✅"
+      });
+    } catch (err) {
+      console.error("Maintenance Toggle Error:", err);
+      toast.error("Failed to toggle maintenance mode");
+    }
+  };
+
   return (
-    <AdminContext.Provider value={{ branding, updateBranding, activityLog, addActivity, users, refreshData, toggleAdmin, deleteUser, resetUserPassword }}>
+    <AdminContext.Provider value={{ 
+      branding, 
+      updateBranding, 
+      activityLog, 
+      addActivity, 
+      users, 
+      refreshData, 
+      toggleAdmin, 
+      deleteUser, 
+      resetUserPassword,
+      isMaintenanceMode,
+      toggleMaintenanceMode
+    }}>
       {children}
     </AdminContext.Provider>
   );
