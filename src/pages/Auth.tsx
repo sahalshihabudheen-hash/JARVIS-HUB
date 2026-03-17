@@ -56,7 +56,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <div className="fixed top-0 left-0 bg-red-600 text-white p-2 z-[99999] text-[10px] font-bold">AUTH MOUNTED</div>
       {/* Background Glows */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
@@ -76,7 +77,7 @@ const Auth = () => {
             <img 
               src="/JARVIS2.gif" 
               alt="JARVIS Logo" 
-              className="w-16 h-16 object-cover rounded-full mb-4 shadow-[0_0_20px_rgba(3b,130,246,0.3)] animate-pulse"
+              className="w-16 h-16 object-cover rounded-full mb-4 shadow-[0_0_20px_hsl(var(--primary)/0.4)] animate-pulse"
             />
             <h1 className="text-3xl font-display font-bold tracking-tighter mb-2">
               JARVIS<span className="text-blue-500 ml-1">HUB</span>
@@ -149,9 +150,6 @@ const Auth = () => {
             </button>
           </div>
         </div>
-      </div>
-      <div className="absolute bottom-0 w-full">
-        <Footer />
       </div>
     </div>
   );

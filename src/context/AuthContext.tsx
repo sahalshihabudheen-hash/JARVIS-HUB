@@ -27,10 +27,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("jarvis_user");
-    if (savedUser) {
-      const parsed = JSON.parse(savedUser);
-      setUser(parsed);
+    try {
+      const savedUser = localStorage.getItem("jarvis_user");
+      if (savedUser && savedUser !== "undefined") {
+        const parsed = JSON.parse(savedUser);
+        setUser(parsed);
+      }
+    } catch (e) {
+      console.error("Auth hydration failed:", e);
+      localStorage.removeItem("jarvis_user");
     }
   }, []);
 
@@ -38,33 +43,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (!user?.email) return;
 
+    let unsubscribe: () => void;
     const userDocId = user.email.replace(/\./g, "_");
-    const { onSnapshot, doc } = require("firebase/firestore");
     
-    let isInitial = true;
-    const unsubscribe = onSnapshot(doc(db, "users", userDocId), (snapshot: any) => {
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        
-        // Detect if user became admin
-        if (!isInitial && !user.isAdmin && data.isAdmin) {
-          const { toast } = require("sonner");
-          toast("JARVIS: PROMOTED TO ADMIN", {
-            description: "Access your new Admin Dashboard via the profile icon in the top right corner. You now have full control over the hub.",
-            icon: "🤖",
-            duration: 8000
-          });
+    // Dynamic import to keep everything tidy
+    import("firebase/firestore").then(({ onSnapshot, doc: fsDoc }) => {
+      let isInitial = true;
+      unsubscribe = onSnapshot(fsDoc(db, "users", userDocId), (snapshot: any) => {
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          
+          // Detect if user became admin
+          if (!isInitial && !user.isAdmin && data.isAdmin) {
+             import("sonner").then(({ toast }) => {
+               toast("JARVIS: PROMOTED TO ADMIN", {
+                 description: "Access your new Admin Dashboard via the profile icon in the top right corner.",
+                 icon: "🤖",
+                 duration: 8000
+               });
+             });
+          }
+          
+          const currentDataStr = JSON.stringify(data);
+          const userDataStr = JSON.stringify(user);
+
+          if (currentDataStr !== userDataStr) {
+            setUser(prev => ({ ...prev, ...data }));
+            localStorage.setItem("jarvis_user", JSON.stringify({ ...user, ...data }));
+          }
         }
-        
-        if (JSON.stringify(data) !== JSON.stringify(user)) {
-          setUser(prev => ({ ...prev, ...data }));
-          localStorage.setItem("jarvis_user", JSON.stringify({ ...user, ...data }));
-        }
-      }
-      isInitial = false;
+        isInitial = false;
+      });
     });
 
-    return () => unsubscribe();
+    return () => { if (unsubscribe) unsubscribe(); };
   }, [user?.email]);
 
   const login = async (email: string, name?: string, photoURL?: string) => {

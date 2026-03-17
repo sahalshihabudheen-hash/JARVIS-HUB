@@ -81,9 +81,14 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem("jarvis_admin_branding");
-    if (saved) {
-      setBranding({ ...defaultBranding, ...JSON.parse(saved) });
+    try {
+      const saved = localStorage.getItem("jarvis_admin_branding");
+      if (saved && saved !== "undefined") {
+        setBranding({ ...defaultBranding, ...JSON.parse(saved) });
+      }
+    } catch (e) {
+      console.error("Admin hydration failed:", e);
+      localStorage.removeItem("jarvis_admin_branding");
     }
 
     // Real-time Users from Firestore

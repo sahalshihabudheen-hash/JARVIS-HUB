@@ -45,12 +45,12 @@ const App = () => (
       <AuthProvider>
         <TutorialProvider>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
             <BrowserRouter>
               <JarvisTutorial />
-            <Routes>
-              <Route path="/auth" element={<Auth />} />
+              <Toaster />
+              <Sonner />
+              <Routes>
+                <Route path="/auth" element={<Auth />} />
               
               {/* Protected Routes */}
               <Route element={<ProtectedLayout />}>

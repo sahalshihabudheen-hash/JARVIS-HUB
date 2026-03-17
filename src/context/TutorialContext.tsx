@@ -19,9 +19,14 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
 
   useEffect(() => {
-    const savedGenres = localStorage.getItem("user_selected_genres");
-    if (savedGenres) {
-      setSelectedGenres(JSON.parse(savedGenres));
+    try {
+      const savedGenres = localStorage.getItem("user_selected_genres");
+      if (savedGenres && savedGenres !== "undefined") {
+        setSelectedGenres(JSON.parse(savedGenres));
+      }
+    } catch (e) {
+      console.error("Tutorial hydration failed:", e);
+      localStorage.removeItem("user_selected_genres");
     }
     // Always start fresh — don't auto-resume tutorial on page reload
     // (PS2 intro must play first on new sessions)
