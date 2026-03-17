@@ -26,14 +26,28 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
+  const isActuallyOnline = (u: any) => {
+    if (u.status !== "online") return false;
+    if (!u.lastSeen) return false;
+    
+    try {
+      // FireStore timestamp to JS Date
+      const lastSeenDate = u.lastSeen?.toDate ? u.lastSeen.toDate() : new Date(u.lastSeen);
+      const diffMs = new Date().getTime() - lastSeenDate.getTime();
+      return diffMs < 180000; // 3 minutes threshold
+    } catch (e) {
+      return u.status === "online";
+    }
+  };
+
   const filteredUsers = users.filter(u => {
     const matchesSearch = u.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         u.location.toLowerCase().includes(searchTerm.toLowerCase());
+                         (u.location && u.location.toLowerCase().includes(searchTerm.toLowerCase()));
     
     if (filter === "all") return matchesSearch;
-    if (filter === "online") return matchesSearch && u.status === "online";
-    if (filter === "offline") return matchesSearch && u.status === "offline";
+    if (filter === "online") return matchesSearch && isActuallyOnline(u);
+    if (filter === "offline") return matchesSearch && !isActuallyOnline(u);
     if (filter === "phone") return matchesSearch && u.device === "Phone";
     if (filter === "desktop") return matchesSearch && u.device === "Desktop PC";
     return matchesSearch;
@@ -41,8 +55,8 @@ const UserManagement = () => {
 
   const stats = {
     total: users.length,
-    online: users.filter(u => u.status === "online").length,
-    offline: users.filter(u => u.status === "offline").length,
+    online: users.filter(u => isActuallyOnline(u)).length,
+    offline: users.filter(u => !isActuallyOnline(u)).length,
     phone: users.filter(u => u.device === "Phone").length,
     desktop: users.filter(u => u.device === "Desktop PC").length,
     laptop: users.filter(u => u.device === "Laptop").length,
@@ -181,7 +195,7 @@ const UserManagement = () => {
                       </span>
                     )}
                   </div>
-                  {u.status === "online" && (
+                  {isActuallyOnline(u) && (
                     <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-500 border-2 border-[#111] shadow-[0_0_8px_#22c55e]" />
                   )}
                 </div>
@@ -190,7 +204,7 @@ const UserManagement = () => {
                     {u.name || u.email.split('@')[0]}
                   </h4>
                   <p className="text-[12px] text-white/40 mt-0.5">{u.email}</p>
-                  {u.status === "online" ? (
+                  {isActuallyOnline(u) ? (
                     <p className="text-[11px] text-green-500/80 font-medium mt-0.5 flex items-center gap-1.5">
                       <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
                       Online now

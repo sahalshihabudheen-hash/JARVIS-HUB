@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 const Admin = () => {
   const { branding, updateBranding, activityLog, isMaintenanceMode, toggleMaintenanceMode } = useAdmin();
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("app");
+  const [activeTab, setActiveTab] = useState("users");
   
   // App Branding State
   const [appName, setAppName] = useState(branding.appName);
