@@ -74,7 +74,7 @@ const Admin = () => {
       <main className="container max-w-6xl mx-auto pt-28 pb-20 px-4">
         
         {/* Navigation Tabs Bar */}
-        <div className="bg-[#1a1a1a]/80 backdrop-blur-md border border-white/5 p-1.5 rounded-2xl mb-12 flex flex-wrap gap-1 shadow-2xl sticky top-24 z-40">
+        <div className="bg-[#1a1a1a]/80 backdrop-blur-md border border-white/5 p-1.5 rounded-2xl mb-12 flex flex-wrap justify-center gap-1 shadow-2xl sticky top-24 z-40">
           {tabs.map((tab) => (
             <button
               key={tab.id}

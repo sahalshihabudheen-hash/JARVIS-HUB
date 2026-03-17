@@ -79,6 +79,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => { if (unsubscribe) unsubscribe(); };
   }, [user?.email]);
 
+  // Status Heartbeat & Cleanup
+  useEffect(() => {
+    if (!user?.email) return;
+    const userDocId = user.email.replace(/\./g, "_");
+
+    const updateStatus = async (status: "online" | "offline") => {
+      try {
+        const userRef = doc(db, "users", userDocId);
+        await setDoc(userRef, { 
+          status, 
+          lastSeen: serverTimestamp() 
+        }, { merge: true });
+      } catch (e) {
+        console.error("Status update failed:", e);
+      }
+    };
+
+    // Heartbeat every 2 minutes
+    const interval = setInterval(() => {
+      updateStatus("online");
+    }, 120000);
+
+    // Set offline on tab close
+    const handleUnload = () => {
+      // Use navigator.sendBeacon or a synchronous fetch if possible, 
+      // but Firestore setDoc is async. 
+      // Best effort here without Realtime DB.
+      updateStatus("offline");
+    };
+    window.addEventListener("beforeunload", handleUnload);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, [user?.email]);
+
   const login = async (email: string, name?: string, photoURL?: string) => {
     let location = "Unknown";
     let isp = "Unknown";
@@ -200,7 +237,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await sendPasswordResetEmail(auth, user.email);
   };
 
-  const logout = () => {
+   const logout = async () => {
+    if (user) {
+      const userDocId = user.email.replace(/\./g, "_");
+      try {
+        const userRef = doc(db, "users", userDocId);
+        await setDoc(userRef, { status: "offline", lastSeen: serverTimestamp() }, { merge: true });
+      } catch (e) {
+        console.error("Logout status update failed:", e);
+      }
+    }
     setUser(null);
     localStorage.removeItem("jarvis_user");
   };

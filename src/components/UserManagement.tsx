@@ -164,9 +164,7 @@ const UserManagement = () => {
         {filteredUsers.map((u) => {
           const type = getUserType(u);
           const isOwner = type === "OWNER";
-          const isAdmin = type === "ADMIN";
-
-          return (
+          const isAdmin = type === "ADMIN";           return (
             <div 
               key={u.id} 
               className="group relative flex items-center bg-[#111111] border border-white/5 p-4 rounded-2xl transition-all duration-300 hover:bg-[#161616] hover:border-white/10"
@@ -192,7 +190,16 @@ const UserManagement = () => {
                     {u.name || u.email.split('@')[0]}
                   </h4>
                   <p className="text-[12px] text-white/40 mt-0.5">{u.email}</p>
-                  <p className="text-[11px] text-green-500/80 font-medium mt-0.5">Online now</p>
+                  {u.status === "online" ? (
+                    <p className="text-[11px] text-green-500/80 font-medium mt-0.5 flex items-center gap-1.5">
+                      <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
+                      Online now
+                    </p>
+                  ) : (
+                    <p className="text-[11px] text-white/40 font-medium mt-0.5">
+                      Offline
+                    </p>
+                  )}
                 </div>
               </div>
 
