@@ -210,7 +210,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
             style={{ opacity: fullLogo ? 1 : 0, transform: fullLogo ? "translateY(0)" : "translateY(10px)" }}
           >
             <span className="w-8 md:w-12 h-px bg-white/10" />
-            Personal Intelligence Hub
+            Premium Movie Experience
             <span className="w-8 md:w-12 h-px bg-white/10" />
           </div>
         </div>
