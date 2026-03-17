@@ -77,7 +77,7 @@ const Navbar = () => {
             </div>
             <div className="flex flex-col -space-y-1.5 hidden sm:flex">
               <span className="text-xl md:text-2xl font-display font-black tracking-tighter text-white group-hover:text-blue-400 transition-colors">
-                MOVIE
+                JARVIS
               </span>
               <span className="text-xs md:text-sm font-display font-black tracking-[0.3em] text-blue-500 group-hover:text-white transition-colors">
                 HUB

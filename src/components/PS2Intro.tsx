@@ -166,7 +166,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
 
       {/* ── Central Beacon Glow ── */}
 
-      {/* ── MOVIE HUB Center Logo ── */}
+      {/* ── JARVIS HUB Center Logo ── */}
       <div 
         className="absolute inset-0 flex flex-col items-center justify-center gap-6 md:gap-8"
         style={{
@@ -187,7 +187,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
               transform: fullLogo ? "rotate(0)" : "rotate(-12deg)"
             }}
           >
-            <img src="/JARVIS2.gif" alt="Movie Hub Logo" className="w-full h-full object-cover scale-110" />
+            <img src="/JARVIS2.gif" alt="JARVIS Core" className="w-full h-full object-cover scale-110" />
             
             {/* Holographic Scanline Over Image */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%] pointer-events-none" />
@@ -202,7 +202,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
               textShadow: fullLogo ? "0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(34, 211, 238, 0.4)" : "none"
             }}
           >
-            <span className="text-white">MOVIE</span>
+            <span className="text-white">JARVIS</span>
             <span className="text-cyan-400 ml-2">HUB</span>
           </h1>
           <div 
@@ -210,7 +210,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
             style={{ opacity: fullLogo ? 1 : 0, transform: fullLogo ? "translateY(0)" : "translateY(10px)" }}
           >
             <span className="w-8 md:w-12 h-px bg-white/10" />
-            Premium Movie Experience
+            Personal Intelligence Hub
             <span className="w-8 md:w-12 h-px bg-white/10" />
           </div>
         </div>

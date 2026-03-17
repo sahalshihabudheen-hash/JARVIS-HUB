@@ -5,12 +5,12 @@ import { useTutorial } from "@/context/TutorialContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import {
-  User,
-  Shield,
-  RefreshCcw,
-  Trash2,
-  ChevronRight,
+import { 
+  User, 
+  Shield, 
+  RefreshCcw, 
+  Trash2, 
+  ChevronRight, 
   Globe,
   Settings as SettingsIcon,
   CreditCard,
@@ -45,7 +45,7 @@ const Settings = () => {
     setIsUpdating(true);
     try {
       await updateProfile({ name: userName.trim() });
-      toast.success("Profile updated in database.");
+      toast.success("Identity synchronized in JARVIS database.");
     } catch (e) {
       toast.error("Failed to sync new identity.");
     } finally {
@@ -55,16 +55,17 @@ const Settings = () => {
 
   const handleUrlUpdate = async () => {
     if (!avatarUrl.trim()) return;
-
+    
     setIsUpdating(true);
     const toastId = toast.loading("Syncing external avatar link...");
     try {
-      if (!avatarUrl.startsWith("http")) {
+      // Basic validation
+      if (!avatarUrl.startsWith('http')) {
         throw new Error("Invalid URL protocol");
       }
-
+      
       await updateProfile({ photoURL: avatarUrl });
-      toast.success("Avatar updated successfully!", { id: toastId });
+      toast.success("External avatar protocol established!", { id: toastId });
       setAvatarUrl("");
     } catch (e) {
       toast.error("Invalid URL or connection failed.", { id: toastId });
@@ -76,9 +77,9 @@ const Settings = () => {
   const handlePasswordReset = async () => {
     try {
       await resetPassword();
-      toast.success("Password reset email sent.");
+      toast.success("Password reset protocol sent to your email.");
     } catch (e) {
-      toast.error("Failed to send reset email.");
+      toast.error("Security protocol failed.");
     }
   };
 
@@ -100,7 +101,7 @@ const Settings = () => {
 
   const toggleGenre = (genreId: number) => {
     if (selectedGenres.includes(genreId)) {
-      updateSelectedGenres(selectedGenres.filter((id) => id !== genreId));
+      updateSelectedGenres(selectedGenres.filter(id => id !== genreId));
     } else {
       updateSelectedGenres([...selectedGenres, genreId]);
     }
@@ -111,12 +112,12 @@ const Settings = () => {
     localStorage.removeItem("jarvis_tutorial_complete");
     localStorage.removeItem("user_regional_focus");
     updateSelectedGenres([]);
-    toast.success("App data cleared successfully.");
+    toast.success("Protocol data wiped successfully.");
   };
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
-    { id: "setup", label: "Setup", icon: RefreshCcw },
+    { id: "calibration", label: "Calibration", icon: RefreshCcw },
     { id: "security", label: "Security", icon: Shield },
     { id: "general", label: "General", icon: SettingsIcon },
   ];
@@ -133,12 +134,13 @@ const Settings = () => {
                 Central <span className="text-primary">Settings</span>
               </h1>
               <p className="text-muted-foreground text-lg">
-                Manage your account settings and preferences.
+                Manage your terminal configuration and security protocols.
               </p>
             </div>
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
+            {/* Sidebar Tabs */}
             <aside className="space-y-2">
               {tabs.map((tab) => (
                 <button
@@ -157,251 +159,257 @@ const Settings = () => {
               ))}
             </aside>
 
+            {/* Content Area */}
             <div className="glass border-white/10 rounded-3xl p-6 md:p-10 min-h-[500px] animate-fade-in relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
-                <SettingsIcon className="w-64 h-64" />
-              </div>
+               <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
+                  <SettingsIcon className="w-64 h-64" />
+               </div>
 
-              {activeTab === "profile" && (
-                <div className="space-y-8 relative z-10">
-                  <div className="flex flex-col md:flex-row items-center gap-8">
-                    <div className="shrink-0">
-                      <div className="w-32 h-32 rounded-3xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-4xl font-display font-bold text-primary overflow-hidden shadow-2xl transition-transform hover:scale-105 duration-500">
-                        {user?.photoURL ? (
-                          <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
-                        ) : (
-                          user?.name?.substring(0, 2).toUpperCase()
-                        )}
-                      </div>
-                    </div>
+               {activeTab === "profile" && (
+                 <div className="space-y-8 relative z-10">
+                   <div className="flex flex-col md:flex-row items-center gap-8">
+                     <div className="shrink-0">
+                       <div className="w-32 h-32 rounded-3xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-4xl font-display font-bold text-primary overflow-hidden shadow-2xl transition-transform hover:scale-105 duration-500">
+                         {user?.photoURL ? (
+                           <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                         ) : (
+                           user?.name?.substring(0, 2).toUpperCase()
+                         )}
+                       </div>
+                     </div>
+                     
+                     <div className="flex-1 space-y-6 w-full">
+                       {/* Name Sync */}
+                       <div className="space-y-2">
+                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Identity Tag</p>
+                         <div className="flex items-center gap-3">
+                           <input 
+                             value={userName}
+                             onChange={(e) => setUserName(e.target.value)}
+                             placeholder="Set your identity..."
+                             className="text-2xl font-bold bg-transparent border-b-2 border-white/10 focus:border-primary outline-none px-2 py-1 flex-1 transition-all"
+                           />
+                           <Button 
+                             onClick={handleUpdateName} 
+                             disabled={isUpdating || !userName.trim() || userName === user?.name}
+                             className="rounded-xl px-6 bg-primary text-black hover:bg-white font-black uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-all shrink-0"
+                           >
+                             Update
+                           </Button>
+                         </div>
+                       </div>
 
-                    <div className="flex-1 space-y-6 w-full">
-                      <div className="space-y-2">
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Identity Tag</p>
-                        <div className="flex items-center gap-3">
-                          <input
-                            value={userName}
-                            onChange={(e) => setUserName(e.target.value)}
-                            placeholder="Set your identity..."
-                            className="text-2xl font-bold bg-transparent border-b-2 border-white/10 focus:border-primary outline-none px-2 py-1 flex-1 transition-all"
-                          />
-                          <Button
-                            onClick={handleUpdateName}
-                            disabled={isUpdating || !userName.trim() || userName === user?.name}
-                            className="rounded-xl px-6 bg-primary text-black hover:bg-white font-black uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-all shrink-0"
-                          >
-                            Update
-                          </Button>
-                        </div>
-                      </div>
+                       {/* GIF Link Sync */}
+                       <div className="space-y-2">
+                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Avatar Link (GIF/PNG)</p>
+                         <div className="flex items-center gap-3">
+                           <input 
+                             value={avatarUrl}
+                             onChange={(e) => setAvatarUrl(e.target.value)}
+                             placeholder="Paste your GIF or Image link here..."
+                             className="text-sm font-medium bg-white/5 border border-white/10 rounded-xl focus:border-primary outline-none px-4 py-2.5 flex-1 transition-all placeholder:text-white/20"
+                           />
+                           <Button 
+                             onClick={handleUrlUpdate} 
+                             disabled={isUpdating || !avatarUrl.trim()}
+                             className="rounded-xl px-4 bg-white/5 border border-white/10 text-white hover:bg-white hover:text-black font-black uppercase text-xs tracking-widest transition-all shrink-0 h-[42px]"
+                           >
+                             <Sparkles className="w-4 h-4 mr-2" />
+                             Sync URL
+                           </Button>
+                         </div>
+                       </div>
+                       
+                       <div className="flex flex-wrap gap-2 justify-center md:justify-start pt-2">
+                         <span className={cn(
+                           "px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border",
+                           roleType === "OWNER" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" :
+                           roleType === "ADMIN" ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" :
+                           "bg-green-500/10 text-green-400 border-green-500/20"
+                         )}>
+                           {roleType} STATUS ACTIVE
+                         </span>
+                         {isGoogleUser && (
+                           <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-full border border-primary/20">
+                             Google Authenticated
+                           </span>
+                         )}
+                         <p className="text-muted-foreground font-medium tracking-tight ml-2 my-auto">{user?.email}</p>
+                       </div>
+                     </div>
+                   </div>
 
-                      <div className="space-y-2">
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Avatar Link (GIF/PNG)</p>
-                        <div className="flex items-center gap-3">
-                          <input
-                            value={avatarUrl}
-                            onChange={(e) => setAvatarUrl(e.target.value)}
-                            placeholder="Paste your GIF or Image link here..."
-                            className="text-sm font-medium bg-white/5 border border-white/10 rounded-xl focus:border-primary outline-none px-4 py-2.5 flex-1 transition-all placeholder:text-white/20"
-                          />
-                          <Button
-                            onClick={handleUrlUpdate}
-                            disabled={isUpdating || !avatarUrl.trim()}
-                            className="rounded-xl px-4 bg-white/5 border border-white/10 text-white hover:bg-white hover:text-black font-black uppercase text-xs tracking-widest transition-all shrink-0 h-[42px]"
-                          >
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            Sync URL
-                          </Button>
-                        </div>
+                   {/* Status Grid - Simplified */}
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4">
+                         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                            <Shield className="w-5 h-5" />
+                         </div>
+                         <div>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Shield Status</p>
+                            <p className="text-sm font-bold">Protocol Pulse Active</p>
+                         </div>
                       </div>
+                      <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4">
+                         <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                            <Eye className="w-5 h-5" />
+                         </div>
+                         <div>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Presence</p>
+                            <p className="text-sm font-bold">Online & Encrypted</p>
+                         </div>
+                      </div>
+                   </div>
 
-                      <div className="flex flex-wrap gap-2 justify-center md:justify-start pt-2">
-                        <span className={cn(
-                          "px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border",
-                          roleType === "OWNER" ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" :
-                            roleType === "ADMIN" ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" :
-                              "bg-green-500/10 text-green-400 border-green-500/20"
-                        )}>
-                          {roleType} STATUS ACTIVE
-                        </span>
-                        {isGoogleUser && (
-                          <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-full border border-primary/20">
-                            Google Authenticated
-                          </span>
-                        )}
-                        <p className="text-muted-foreground font-medium tracking-tight ml-2 my-auto">{user?.email}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                        <Shield className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Security</p>
-                        <p className="text-sm font-bold">Connection Secure</p>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
-                        <Eye className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold italic">Presence</p>
-                        <p className="text-sm font-bold">Online & Encrypted</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6 border-t border-white/10 flex flex-wrap gap-4">
-                    {!isGoogleUser && (
-                      <Button onClick={handlePasswordReset} variant="outline" className="rounded-xl border-primary/20 text-primary hover:bg-primary/10">
-                        Reset Password
+                   <div className="pt-6 border-t border-white/10 flex flex-wrap gap-4">
+                      {!isGoogleUser && (
+                        <Button onClick={handlePasswordReset} variant="outline" className="rounded-xl border-primary/20 text-primary hover:bg-primary/10">
+                           Reset Password Protocol
+                        </Button>
+                      )}
+                      <Button onClick={logout} variant="outline" className="rounded-xl border-red-500/20 text-red-500 hover:bg-red-500/10">
+                         Disconnect Hub Session
                       </Button>
-                    )}
-                    <Button onClick={logout} variant="outline" className="rounded-xl border-red-500/20 text-red-500 hover:bg-red-500/10">
-                      Sign Out
-                    </Button>
-                  </div>
-                </div>
-              )}
+                   </div>
+                 </div>
+               )}
 
-              {activeTab === "setup" && (
-                <div className="space-y-8 relative z-10">
-                  <div>
-                    <h3 className="text-xl font-bold uppercase tracking-tighter mb-2 flex items-center gap-2">
-                      <RefreshCcw className="w-5 h-5 text-primary" />
-                      Setup & Preferences
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-6">
-                      Re-run the setup guide to refresh your knowledge of how to use the movie portal features.
-                    </p>
-                    <Button
-                      onClick={() => {
-                        localStorage.removeItem("jarvis_tutorial_complete");
-                        toast.success("Navigating home — setup will start shortly.");
-                        navigate("/");
-                        setTimeout(() => window.location.reload(), 100);
-                      }}
-                      className="rounded-xl px-8 py-6 hover-glow text-lg font-bold uppercase tracking-tighter"
-                    >
-                      Replay Setup Guide
-                      <ChevronRight className="w-5 h-5 ml-2" />
-                    </Button>
-                  </div>
-
-                  <div className="pt-8 border-t border-white/10">
-                    <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 flex items-center gap-2">
-                      ⭐ Genre Preferences
-                      <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full ml-2">Dynamic</span>
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-6">
-                      Update your favorite genres to customize your home dashboard.
-                    </p>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                      {genres.map((g) => (
-                        <button
-                          key={g.id}
-                          onClick={() => toggleGenre(g.id)}
-                          className={cn(
-                            "flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300",
-                            selectedGenres.includes(g.id)
-                              ? "bg-primary/20 border-primary shadow-[0_0_20px_rgba(34,211,238,0.2)]"
-                              : "bg-white/5 border-white/10 hover:border-white/20"
-                          )}
-                        >
-                          <span className="text-2xl">{g.icon}</span>
-                          <span className="text-[10px] font-bold uppercase tracking-widest">{g.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === "security" && (
-                <div className="space-y-8 relative z-10">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
-                      <div className="flex items-center gap-4">
-                        <Lock className="w-5 h-5 text-primary" />
-                        <div>
-                          <p className="font-bold">Ad Blocker</p>
-                          <p className="text-xs text-muted-foreground text-balance">Protects you from unwanted popups during playback.</p>
-                        </div>
-                      </div>
-                      <div className="w-12 h-6 bg-primary/20 rounded-full border border-primary/40 flex items-center px-1">
-                        <div className="w-4 h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)] ml-auto" />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
-                      <div className="flex items-center gap-4">
-                        <Eye className="w-5 h-5 text-primary" />
-                        <div>
-                          <p className="font-bold">History Cleaner</p>
-                          <p className="text-xs text-muted-foreground">Automatically clears watch history on session end.</p>
-                        </div>
-                      </div>
-                      <div className="w-12 h-6 bg-white/10 rounded-full border border-white/20 flex items-center px-1">
-                        <div className="w-4 h-4 bg-white/40 rounded-full" />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
-                      <div className="flex items-center gap-4">
-                        <Globe className="w-5 h-5 text-primary" />
-                        <div>
-                          <p className="font-bold">Regional Focus</p>
-                          <p className="text-xs text-muted-foreground">Currently showing results based on: {localStorage.getItem("user_location") || "Auto"}</p>
-                        </div>
-                      </div>
-                      <div className="w-12 h-6 bg-primary/20 rounded-full border border-primary/40 flex items-center px-1">
-                        <div className="w-4 h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)] ml-auto" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === "general" && (
-                <div className="space-y-8 relative z-10">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
-                      <div className="flex items-center gap-4">
-                        <Bell className="w-5 h-5 text-primary" />
-                        <div>
-                          <p className="font-bold">Notifications</p>
-                          <p className="text-xs text-muted-foreground">Important updates and app messages.</p>
-                        </div>
-                      </div>
-                      <div className="w-12 h-6 bg-primary/20 rounded-full border border-primary/40 flex items-center px-1">
-                        <div className="w-4 h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)] ml-auto" />
-                      </div>
-                    </div>
-
-                    <div className="pt-6 border-t border-white/10">
-                      <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 text-red-400">
-                        ⚠️ Danger Zone
-                      </h3>
-                      <p className="text-muted-foreground text-sm mb-6">
-                        Clearing app data will reset your setup progress and delete all settings.
-                      </p>
-                      <Button
-                        onClick={clearData}
-                        variant="destructive"
-                        className="rounded-xl px-6 bg-red-500/20 border border-red-500/40 text-red-500 hover:bg-red-500/30"
+               {activeTab === "calibration" && (
+                 <div className="space-y-8 relative z-10">
+                   <div>
+                     <h3 className="text-xl font-bold uppercase tracking-tighter mb-2 flex items-center gap-2">
+                        <RefreshCcw className="w-5 h-5 text-primary" />
+                        System Re-Initialization
+                     </h3>
+                     <p className="text-muted-foreground text-sm mb-6">
+                        Re-initialize the JARVIS assistant to refresh your knowledge of the terminal's security protocols.
+                     </p>
+                      <Button 
+                        onClick={() => {
+                          localStorage.removeItem("jarvis_tutorial_complete");
+                          toast.success("Navigating home — tutorial will start shortly.");
+                          navigate("/");
+                          // Force page reload so module-level intro flag resets
+                          setTimeout(() => window.location.reload(), 100);
+                        }}
+                        className="rounded-xl px-8 py-6 hover-glow text-lg font-bold uppercase tracking-tighter"
                       >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Clear All App Data
-                      </Button>
+                        Replay Tutorial
+                        <ChevronRight className="w-5 h-5 ml-2" />
+                     </Button>
+                   </div>
+
+
+                   <div className="pt-8 border-t border-white/10">
+                     <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 flex items-center gap-2">
+                        ⭐ Genre Calibration
+                        <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full ml-2">Dynamic</span>
+                     </h3>
+                     <p className="text-muted-foreground text-sm mb-6">
+                        Update your preferred data streams to re-configure your home dashboard.
+                     </p>
+                     
+                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                        {genres.map((g) => (
+                           <button
+                             key={g.id}
+                             onClick={() => toggleGenre(g.id)}
+                             className={cn(
+                               "flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300",
+                               selectedGenres.includes(g.id) 
+                                 ? "bg-primary/20 border-primary shadow-[0_0_20px_rgba(34,211,238,0.2)]" 
+                                 : "bg-white/5 border-white/10 hover:border-white/20"
+                             )}
+                           >
+                             <span className="text-2xl">{g.icon}</span>
+                             <span className="text-[10px] font-bold uppercase tracking-widest">{g.name}</span>
+                           </button>
+                         ))}
+                     </div>
+                   </div>
+                 </div>
+               )}
+
+               {activeTab === "security" && (
+                 <div className="space-y-8 relative z-10">
+                   <div className="space-y-6">
+                      <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
+                         <div className="flex items-center gap-4">
+                            <Lock className="w-5 h-5 text-primary" />
+                            <div>
+                               <p className="font-bold">Stealth Shield</p>
+                               <p className="text-xs text-muted-foreground text-balance">Anti-redirection script active during playback.</p>
+                            </div>
+                         </div>
+                         <div className="w-12 h-6 bg-primary/20 rounded-full border border-primary/40 flex items-center px-1">
+                            <div className="w-4 h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)] ml-auto" />
+                         </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
+                         <div className="flex items-center gap-4">
+                            <Eye className="w-5 h-5 text-primary" />
+                            <div>
+                               <p className="font-bold">Privacy Scrubber</p>
+                               <p className="text-xs text-muted-foreground">Automatically clears watch history on session end.</p>
+                            </div>
+                         </div>
+                         <div className="w-12 h-6 bg-white/10 rounded-full border border-white/20 flex items-center px-1">
+                            <div className="w-4 h-4 bg-white/40 rounded-full" />
+                         </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
+                         <div className="flex items-center gap-4">
+                            <Globe className="w-5 h-5 text-primary" />
+                            <div>
+                               <p className="font-bold">Location Masking</p>
+                               <p className="text-xs text-muted-foreground">Currently showing results based on: {localStorage.getItem("user_location") || "Auto"}</p>
+                            </div>
+                         </div>
+                         <div className="w-12 h-6 bg-primary/20 rounded-full border border-primary/40 flex items-center px-1">
+                            <div className="w-4 h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)] ml-auto" />
+                         </div>
+                      </div>
+                   </div>
+                 </div>
+               )}
+
+               {activeTab === "general" && (
+                 <div className="space-y-8 relative z-10">
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
+                           <div className="flex items-center gap-4">
+                              <Bell className="w-5 h-5 text-primary" />
+                              <div>
+                                 <p className="font-bold">System Notifications</p>
+                                 <p className="text-xs text-muted-foreground">Protocol alerts and JARVIS messages.</p>
+                              </div>
+                           </div>
+                           <div className="w-12 h-6 bg-primary/20 rounded-full border border-primary/40 flex items-center px-1">
+                              <div className="w-4 h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)] ml-auto" />
+                           </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-white/10">
+                           <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 text-red-400">
+                              ⚠️ Danger Zone
+                           </h3>
+                           <p className="text-muted-foreground text-sm mb-6">
+                              Wiping terminal data will reset your training progress and delete all cached preferences.
+                           </p>
+                           <Button 
+                              onClick={clearData}
+                              variant="destructive"
+                              className="rounded-xl px-6 bg-red-500/20 border border-red-500/40 text-red-500 hover:bg-red-500/30"
+                           >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Wipe All Terminal Data
+                           </Button>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              )}
+                 </div>
+               )}
             </div>
           </div>
         </div>

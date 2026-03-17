@@ -23,16 +23,16 @@ import { useAuth } from "@/context/AuthContext";
 import { useTutorial } from "@/context/TutorialContext";
 
 const GENRE_LABELS: Record<number, string> = {
-  28: "Action Movies",
-  878: "Sci-Fi & Fantasy",
-  27: "Horror & Thriller",
-  35: "Comedy & Fun",
-  53: "Thriller & Suspense",
-  10749: "Romance & Drama",
-  18: "Social & Life",
-  16: "Animation & Kids",
-  14: "Mystical Fantasy",
-  9648: "Mystery & Crime",
+  28: "Combat & Action Protocols",
+  878: "Cybernetic & Sci-Fi Realities",
+  27: "Dark & Horror Encounters",
+  35: "Humor & Comedy Modules",
+  53: "Infiltration & Thriller Operations",
+  10749: "Diplomacy & Romance Files",
+  18: "Social & Drama Simulations",
+  16: "Holographic & Animated Data",
+  14: "Mystical & Fantasy Realms",
+  9648: "Encrypted & Mystery Logs",
 };
 
 const Index = () => {
@@ -236,7 +236,7 @@ const Index = () => {
               <div>
                 <h3 className="font-display font-semibold text-lg text-foreground mb-1">Heads up!</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  It is recommended to use an ad blocker or Brave browser. You might see ads while playing your favorite movie — those ads come from the API's server side and not from us at MOVIE HUB.
+                  It is recommended to use an ad blocker or Brave browser. You might see ads while playing your favorite movie — those ads come from the API's server side and not from us at JARVIS HUB.
                 </p>
               </div>
             </div>
