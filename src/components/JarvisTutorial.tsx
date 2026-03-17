@@ -10,8 +10,29 @@ import "@/tutorial.css";
 import PS2Intro from "./PS2Intro";
 
 // Session flag to determine if we should play the startup sequence
-// This is set to 'true' in AuthContext ONLY when a user successfully logs in
-const isIntroNeeded = () => typeof window !== 'undefined' && sessionStorage.getItem("jarvis_intro_needed") === "true";
+// Returns true if: User just opened the tab (navigate/back_forward) AND hasn't seen intro yet in this tab.
+// Returns false if: User performed a 'reload' (refresh).
+const shouldShowStartup = (isLoggedIn: boolean) => {
+  if (typeof window === 'undefined') return false;
+  
+  const hasSeenInTab = sessionStorage.getItem("jarvis_intro_played") === "true";
+  if (hasSeenInTab) return false;
+
+  try {
+    const navEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+    if (navEntries.length > 0 && navEntries[0].type === 'reload') {
+      // If they refreshed while logged in, skip the intro for this tab session.
+      if (isLoggedIn) {
+        sessionStorage.setItem("jarvis_intro_played", "true");
+        return false;
+      }
+    }
+  } catch (e) {
+    console.error("Nav timing check failed", e);
+  }
+
+  return true;
+};
 
 // ─── Typewriter Effect ─────────────────────────────────────────────────────────
 const Typewriter = ({ text, speed = 18, onComplete }: { text: string; speed?: number; onComplete?: () => void }) => {
@@ -162,11 +183,11 @@ const JarvisTutorial = () => {
   // ── Auto-start: PS2 intro on every page load when user is logged in ──
   useEffect(() => {
     if (!user || location.pathname === "/auth" || location.pathname === "/admin") return;
-    if (!isIntroNeeded() || isActive || showPS2Intro) return;
+    if (!shouldShowStartup(!!user) || isActive || showPS2Intro) return;
 
     // Show intro shortly after arriving at home (gives page time to render)
     const t = setTimeout(() => {
-      sessionStorage.removeItem("jarvis_intro_needed"); // Clear so it won't repeat on refresh
+      sessionStorage.setItem("jarvis_intro_played", "true");
       setShowPS2Intro(true);
     }, 400);
     return () => clearTimeout(t);
