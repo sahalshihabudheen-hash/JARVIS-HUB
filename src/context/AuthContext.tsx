@@ -25,20 +25,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
+  const [user, setUser] = useState<User | null>(() => {
     try {
-      const savedUser = localStorage.getItem("jarvis_user");
-      if (savedUser && savedUser !== "undefined") {
-        const parsed = JSON.parse(savedUser);
-        setUser(parsed);
+      const savedUser = typeof window !== 'undefined' ? localStorage.getItem("jarvis_user") : null;
+      if (savedUser && savedUser !== "undefined" && savedUser !== "null") {
+        return JSON.parse(savedUser);
       }
     } catch (e) {
       console.error("Auth hydration failed:", e);
-      localStorage.removeItem("jarvis_user");
     }
-  }, []);
+    return null;
+  });
+
+  // Hydration is now handled synchronously in useState initializer.
 
   // Real-time user data listener
   useEffect(() => {
