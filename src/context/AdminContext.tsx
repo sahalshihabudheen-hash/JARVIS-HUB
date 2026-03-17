@@ -22,6 +22,7 @@ interface AdminContextType {
   refreshData: () => void;
   toggleAdmin: (userId: string, currentStatus: boolean) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
+  resetUserPassword: (email: string) => Promise<void>;
 }
 
 export interface AdminUser {
@@ -164,8 +165,23 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const resetUserPassword = async (email: string) => {
+    try {
+      const { auth } = await import("@/lib/firebase");
+      const { sendPasswordResetEmail } = await import("firebase/auth");
+      await sendPasswordResetEmail(auth, email);
+      toast.success(`Password reset email sent to ${email}`, { 
+        icon: "📧",
+        description: "User should check their inbox/spam folder."
+      });
+    } catch (err) {
+      console.error("Reset Password Error:", err);
+      toast.error("Failed to send reset email");
+    }
+  };
+
   return (
-    <AdminContext.Provider value={{ branding, updateBranding, activityLog, addActivity, users, refreshData, toggleAdmin, deleteUser }}>
+    <AdminContext.Provider value={{ branding, updateBranding, activityLog, addActivity, users, refreshData, toggleAdmin, deleteUser, resetUserPassword }}>
       {children}
     </AdminContext.Provider>
   );

@@ -21,7 +21,7 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 
 const UserManagement = () => {
-  const { users, refreshData, toggleAdmin, deleteUser } = useAdmin();
+  const { users, refreshData, toggleAdmin, deleteUser, resetUserPassword } = useAdmin();
   const { user: currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -258,7 +258,12 @@ const UserManagement = () => {
                   </Button>
                 )}
                 
-                <Button variant="ghost" size="icon" className="w-9 h-9 rounded-full text-white/20 hover:text-white hover:bg-white/5">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => resetUserPassword(u.email)}
+                  className="w-9 h-9 rounded-full text-white/20 hover:text-blue-400 hover:bg-blue-400/10 transition-colors"
+                >
                   <Key className="w-4 h-4" />
                 </Button>
                 
