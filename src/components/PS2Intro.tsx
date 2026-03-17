@@ -251,13 +251,6 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
         </span>
       </div>
 
-      {/* ── Skip Link (Bottom Right) ── */}
-      <button 
-        onClick={() => { audioRef.current?.pause(); setVisible(false); onComplete(); }}
-        className="absolute bottom-8 right-8 md:bottom-12 md:right-12 text-[10px] font-black uppercase tracking-[0.2em] text-white/20 hover:text-cyan-400 transition-colors pointer-events-auto"
-      >
-        Skip sequence 
-      </button>
 
       {/* ── CRT Static Overlay (Subtle) ── */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
