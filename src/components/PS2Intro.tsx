@@ -216,16 +216,6 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
         </div>
       </div>
 
-      {/* ── Status Text (Bottom Left) ── */}
-      <div 
-        className="absolute bottom-8 left-8 md:bottom-12 md:left-12 flex items-center gap-3 transition-opacity duration-1000"
-        style={{ opacity: riseTowers ? 0.3 : 0 }}
-      >
-        <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_10px_#22d3ee]" />
-        <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono text-cyan-500/80">
-          Syncing Neural Protocols...
-        </span>
-      </div>
 
 
       {/* ── CRT Static Overlay (Subtle) ── */}
