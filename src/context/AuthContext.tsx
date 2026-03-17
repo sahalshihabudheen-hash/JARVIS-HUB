@@ -65,13 +65,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
              });
           }
           
-          const currentDataStr = JSON.stringify(data);
-          const userDataStr = JSON.stringify(user);
-
-          if (currentDataStr !== userDataStr) {
-            setUser(prev => ({ ...prev, ...data }));
-            localStorage.setItem("jarvis_user", JSON.stringify({ ...user, ...data }));
-          }
+          // Only update state, avoid triggering recursive effects if data is same
+          setUser(prev => {
+            if (!prev) return data;
+            const updated = { ...prev, ...data };
+            if (JSON.stringify(prev) !== JSON.stringify(updated)) {
+               localStorage.setItem("jarvis_user", JSON.stringify(updated));
+               return updated;
+            }
+            return prev;
+          });
         }
         isInitial = false;
       });
@@ -102,12 +105,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateStatus("online");
     }, 120000);
 
-    // Set offline on tab close
+    // Set offline best-effort on tab close
     const handleUnload = () => {
-      // Use navigator.sendBeacon or a synchronous fetch if possible, 
-      // but Firestore setDoc is async. 
-      // Best effort here without Realtime DB.
-      updateStatus("offline");
+      // Use firestore directly to avoid complex async in unload
+      const userRef = doc(db, "users", userDocId);
+      setDoc(userRef, { status: "offline" }, { merge: true });
     };
     window.addEventListener("beforeunload", handleUnload);
 
