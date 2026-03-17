@@ -1,315 +1,273 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-// ─── Audio timing (tuned to ps2_start_up.mp3) ────────────────────────────────
+// ─── Refined Animation Timing (Synced precisely with ps2_start_up.mp3) ────────────────
 const T = {
-  GLOW_START:   800,
-  TOWERS_START: 4000,
-  LOGO_APPEAR:  7400,
-  LOGO_FULL:   10200,
-  FADE_OUT:    12000,
-  DONE:        13600,
+  STARS_BRIGHT: 300,
+  GLOW_INIT:    1200,
+  GRID_FADE:    2800,
+  TOWERS_RISE:  3800,
+  LOGO_HOLO:    7400,
+  LOGO_SOLID:  10200,
+  FADE_SHUT:   12500,
+  TERM_LINK:   13800,
 };
 
-// ─── Stars ───────────────────────────────────────────────────────────────────
-interface Star { x: number; y: number; size: number; opacity: number; twinkle: number }
-function buildStars(n: number): Star[] {
+// ─── Static Data Builders ────────────────────────────────────────────────────────────
+function buildStars(n: number) {
   return Array.from({ length: n }, () => ({
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: 0.6 + Math.random() * 1.8,
-    opacity: 0.15 + Math.random() * 0.75,
-    twinkle: 2 + Math.random() * 6,
+    s: 0.5 + Math.random() * 2,
+    o: 0.1 + Math.random() * 0.9,
+    d: Math.random() * 5, // twinkle speed
   }));
 }
-const STARS = buildStars(240);
 
-// ─── Towers ───────────────────────────────────────────────────────────────────
-interface Tower {
-  x: number; delay: number; height: number; width: number;
-  hue: number; sat: number; lit: number; opacity: number;
-}
-function buildTowers(count: number): Tower[] {
-  const out: Tower[] = [];
-  for (let i = 0; i < count; i++) {
-    const cluster = Math.floor(Math.random() * 5);
-    const baseX = (cluster / 5) * 90 + 5;
-    out.push({
-      x: baseX + (Math.random() - 0.5) * 20,
-      delay: Math.random() * 3400,
-      height: 5 + Math.random() * 72,
-      width: 2 + Math.random() * 10,
-      hue: 200 + Math.random() * 50,   // dark indigo → blue
-      sat: 60 + Math.random() * 35,
-      lit: 18 + Math.random() * 28,
-      opacity: 0.25 + Math.random() * 0.65,
-    });
-  }
-  return out;
-}
-const TOWERS = buildTowers(180);
-
-// ─── Particles ────────────────────────────────────────────────────────────────
-interface Particle { x: number; y: number; size: number; speed: number; opacity: number }
-function buildParticles(n: number): Particle[] {
-  return Array.from({ length: n }, () => ({
-    x: Math.random() * 100,
-    y: 20 + Math.random() * 80,
-    size: 1 + Math.random() * 2,
-    speed: 8 + Math.random() * 18,
-    opacity: 0.1 + Math.random() * 0.4,
+function buildTowers(count: number) {
+  return Array.from({ length: count }, (_, i) => ({
+    x: (i / count) * 100 + (Math.random() - 0.5) * 4,
+    h: 5 + Math.random() * 75,
+    w: 1.5 + Math.random() * 8,
+    delay: Math.random() * 3200,
+    hue: 195 + Math.random() * 45, // electric blue → deep purple
+    opacity: 0.15 + Math.random() * 0.7,
   }));
 }
-const PARTICLES = buildParticles(40);
 
-// ─── Component ────────────────────────────────────────────────────────────────
+const STARS = buildStars(280);
+const TOWERS = buildTowers(220);
+
+// ─── Component ───────────────────────────────────────────────────────────────────────
 const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const onCompleteRef = useRef(onComplete);
   const [phase, setPhase] = useState(0);
   const [visible, setVisible] = useState(true);
 
-  // Keep ref current so we always call the latest callback
-  useEffect(() => { onCompleteRef.current = onComplete; });
-
-  // Empty deps — runs ONCE on mount only, never on re-renders
   useEffect(() => {
     const audio = new Audio("/ps2_start_up.mp3");
     audio.volume = 1.0;
     audioRef.current = audio;
+    
+    // Play sound immediately
     audio.play().catch(() => {});
-    const timers = [
-      setTimeout(() => setPhase(1), T.GLOW_START),
-      setTimeout(() => setPhase(2), T.TOWERS_START),
-      setTimeout(() => setPhase(3), T.LOGO_APPEAR),
-      setTimeout(() => setPhase(4), T.LOGO_FULL),
-      setTimeout(() => setPhase(5), T.FADE_OUT),
-      setTimeout(() => { audio.pause(); setVisible(false); onCompleteRef.current(); }, T.DONE),
-    ];
-    return () => { timers.forEach(clearTimeout); audio.pause(); };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const skip = () => { audioRef.current?.pause(); setVisible(false); onComplete(); };
+    // Phase schedule
+    const timers = [
+      setTimeout(() => setPhase(1), T.STARS_BRIGHT),
+      setTimeout(() => setPhase(2), T.GLOW_INIT),
+      setTimeout(() => setPhase(3), T.GRID_FADE),
+      setTimeout(() => setPhase(4), T.TOWERS_RISE),
+      setTimeout(() => setPhase(5), T.LOGO_HOLO),
+      setTimeout(() => setPhase(6), T.LOGO_SOLID),
+      setTimeout(() => setPhase(7), T.FADE_SHUT),
+      setTimeout(() => { 
+        setVisible(false); 
+        onComplete(); 
+      }, T.TERM_LINK),
+    ];
+
+    return () => {
+      timers.forEach(clearTimeout);
+      audio.pause();
+    };
+  }, [onComplete]);
 
   if (!visible) return null;
 
-  const showGlow   = phase >= 1;
-  const showTowers = phase >= 2;
-  const showLogo   = phase >= 3;
-  const fullGlow   = phase >= 4;
-  const fading     = phase >= 5;
+  // Booleans for cleaner JSX
+  const showGlow   = phase >= 2;
+  const showGrid   = phase >= 3;
+  const riseTowers = phase >= 4;
+  const showLogo   = phase >= 5;
+  const fullLogo   = phase >= 6;
+  const fading     = phase >= 7;
 
   return createPortal(
-    <div style={{
-      position: "fixed", inset: 0, zIndex: 9999,
-      background: "#010208", overflow: "hidden",
-      opacity: fading ? 0 : 1,
-      transition: fading ? "opacity 1.5s ease-in-out" : "none",
-      cursor: "none",
-    }}>
+    <div 
+      className="fixed inset-0 z-[99999] overflow-hidden bg-black select-none pointer-events-auto"
+      style={{ 
+        opacity: fading ? 0 : 1,
+        transition: "opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1)",
+        cursor: "none"
+      }}
+    >
+      {/* ── Background: Deep Infinite Space ── */}
+      <div className="absolute inset-0 bg-[#010206]">
+        <div 
+          className="absolute inset-0" 
+          style={{
+            background: `
+              radial-gradient(circle at 50% 120%, rgba(10, 30, 80, 0.4) 0%, transparent 60%),
+              radial-gradient(circle at 10% 10%, rgba(20, 50, 150, 0.1) 0%, transparent 40%)
+            `
+          }} 
+        />
+      </div>
 
-      {/* ── Deep purple-blue nebula (visible from frame 1) ── */}
-      <div style={{
-        position: "absolute", inset: 0,
-        background: `
-          radial-gradient(ellipse 120% 80% at 25% 75%, rgba(20,5,80,0.85) 0%, transparent 52%),
-          radial-gradient(ellipse 100% 60% at 80% 25%, rgba(0,15,90,0.8) 0%, transparent 50%),
-          radial-gradient(ellipse 80% 80% at 55% 55%, rgba(4,8,38,1) 0%, #010208 100%)
-        `,
-      }} />
+      {/* ── Nebula Energy Field ── */}
+      <div 
+        className="absolute inset-0 opacity-40 mix-blend-screen animate-pulse"
+        style={{
+          background: "radial-gradient(circle at 50% 45%, rgba(40, 100, 255, 0.15) 0%, transparent 70%)",
+          filter: "blur(120px)"
+        }}
+      />
 
-      {/* ── Starfield — twinkling from frame 1 ── */}
-      {STARS.map((s, i) => (
-        <div key={i} style={{
-          position: "absolute",
-          left: `${s.x}%`, top: `${s.y}%`,
-          width: s.size, height: s.size,
-          borderRadius: "50%",
-          background: "#fff",
-          opacity: s.opacity,
-          animation: `starTwinkle ${s.twinkle}s ease-in-out infinite`,
-          animationDelay: `${(i * 0.07) % s.twinkle}s`,
-        }} />
-      ))}
-
-
-      {/* ── Centre glow pulse (appears at 0.8s, expands at 4s) ── */}
-      {showGlow && (
-        <div style={{
-          position: "absolute", left: "50%", top: "52%",
-          width: showTowers ? 700 : 60,
-          height: showTowers ? 400 : 60,
-          transform: "translate(-50%,-50%)",
-          borderRadius: "50%",
-          background: "radial-gradient(ellipse, rgba(20,80,200,0.25) 0%, transparent 70%)",
-          transition: "width 2s ease, height 2s ease, opacity 2s ease",
-          opacity: showTowers ? 0.8 : 0.45,
-          pointerEvents: "none",
-        }} />
-      )}
-
-      {/* ── Rising towers ── */}
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0, height: "100%",
-        perspective: "900px", perspectiveOrigin: "50% 100%",
-      }}>
-        {TOWERS.map((t, i) => (
-          <div key={i} style={{
-            position: "absolute",
-            left: `${t.x}%`, bottom: 0,
-            width: t.width,
-            height: showTowers ? `${t.height}vh` : "0",
-            background: `linear-gradient(
-              to top,
-              hsla(${t.hue},${t.sat}%,${t.lit + 12}%,${t.opacity}) 0%,
-              hsla(${t.hue},${t.sat}%,${t.lit}%,${t.opacity * 0.5}) 65%,
-              transparent 100%
-            )`,
-            boxShadow: showTowers
-              ? `0 0 ${4 + t.opacity * 10}px hsla(${t.hue},75%,55%,${t.opacity * 0.35})`
-              : "none",
-            transition: `height ${1.1 + t.delay / 2200}s cubic-bezier(0.16,1,0.3,1) ${t.delay}ms`,
-            borderRadius: "1px 1px 0 0",
-          }} />
+      {/* ── Parallax Starfield ── */}
+      <div className="absolute inset-0 pointer-events-none">
+        {STARS.map((s, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white shadow-[0_0_8px_white]"
+            style={{
+              left: `${s.x}%`,
+              top: `${s.y}%`,
+              width: s.s,
+              height: s.s,
+              opacity: phase > 0 ? s.o : 0,
+              transition: `opacity ${1 + Math.random() * 2}s ease`,
+              animation: `ps2StarFade ${s.d + 1}s ease-in-out infinite alternate`,
+              animationDelay: `${i * 0.05}s`
+            }}
+          />
         ))}
       </div>
 
-      {/* ── Ground haze ── */}
-      {showTowers && (
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: "20vh",
-          background: "linear-gradient(to top, rgba(3,12,55,0.75) 0%, transparent 100%)",
-          pointerEvents: "none",
-        }} />
-      )}
+      {/* ── Ground Horizon Grid ── */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-[45vh] transition-all duration-[3000ms] ease-out"
+        style={{
+          opacity: showGrid ? 0.25 : 0,
+          perspective: "800px",
+          perspectiveOrigin: "50% 0%"
+        }}
+      >
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(rgba(34, 211, 238, 0) 0%, rgba(34, 211, 238, 0.4) 100%),
+              repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(34, 211, 238, 0.2) 41px),
+              repeating-linear-gradient(0deg, transparent 0, transparent 40px, rgba(34, 211, 238, 0.2) 41px)
+            `,
+            transform: "rotateX(60deg) translateY(-20%)",
+            transformOrigin: "center top",
+            filter: "drop-shadow(0 0 15px rgba(34, 211, 238, 0.5))"
+          }}
+        />
+      </div>
 
-      {/* ── Floating particles ── */}
-      {showTowers && PARTICLES.map((p, i) => (
-        <div key={i} style={{
-          position: "absolute",
-          left: `${p.x}%`, bottom: `${p.y}%`,
-          width: p.size, height: p.size,
-          borderRadius: "50%",
-          background: `rgba(100,180,255,${p.opacity})`,
-          animation: `particleFloat ${p.speed}s linear infinite`,
-          animationDelay: `${-(i * 0.4) % p.speed}s`,
-          pointerEvents: "none",
-        }} />
-      ))}
+      {/* ── Central Beacon Glow ── */}
+      <div 
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-[3s]"
+        style={{
+          width: showGlow ? "min(120vw, 1400px)" : 0,
+          height: showGlow ? "min(80vh, 1000px)" : 0,
+          opacity: showGlow ? 0.6 : 0,
+          background: "radial-gradient(ellipse at center, rgba(34, 211, 238, 0.15) 0%, transparent 68%)",
+          filter: "blur(60px)"
+        }}
+      />
 
-      {/* ── CRT scanlines ── */}
-      {showTowers && (
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px)",
-        }} />
-      )}
+      {/* ── Monolithic Towers (The Classic PS2 Vibe) ── */}
+      <div className="absolute bottom-0 left-0 right-0 h-full overflow-hidden">
+        {TOWERS.map((t, i) => (
+          <div
+            key={i}
+            className="absolute bottom-0 rounded-t-[2px] border-x border-white/5"
+            style={{
+              left: `${t.x}%`,
+              width: t.w,
+              height: riseTowers ? `${t.h}vh` : 0,
+              background: `linear-gradient(to top, hsla(${t.hue}, 80%, 40%, ${t.opacity}) 0%, hsla(${t.hue}, 80%, 20%, ${t.opacity * 0.4}) 70%, transparent 100%)`,
+              boxShadow: riseTowers ? `0 0 25px hsla(${t.hue}, 100%, 50%, 0.15)` : "none",
+              transition: `height ${1.2 + t.delay/2000}s cubic-bezier(0.16, 1, 0.3, 1) ${t.delay}ms`,
+            }}
+          />
+        ))}
+      </div>
 
-      {/* ── JARVIS HUB Logo reveal ── */}
-      {showLogo && (
-        <div style={{
-          position: "absolute", inset: 0,
-          display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center", gap: 18,
-          animation: "ps2FadeUp 1.6s cubic-bezier(0.22,1,0.36,1) forwards",
-          pointerEvents: "none",
-        }}>
-          <div style={{
-            width: 86, height: 86, borderRadius: "50%", overflow: "hidden",
-            border: `2px solid rgba(255,255,255,${fullGlow ? 0.9 : 0.4})`,
-            boxShadow: fullGlow
-              ? "0 0 40px rgba(255,255,255,0.5), 0 0 80px rgba(34,211,238,0.35)"
-              : "0 0 14px rgba(255,255,255,0.15)",
-            transition: "box-shadow 1.2s ease, border 1.2s ease",
-          }}>
-            <img src="/JARVIS2.gif" alt="JARVIS"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          </div>
+      {/* ── Dark Ground Overlay ── */}
+      <div className="absolute bottom-0 left-0 right-0 h-[25vh] bg-gradient-to-t from-black to-transparent opacity-80" />
 
-          <div style={{ textAlign: "center" }}>
-            {/* JARVIS = white   HUB = electric cyan */}
-            <div style={{
-              fontFamily: "'Outfit','Inter',sans-serif",
-              fontSize: 60, fontWeight: 900,
-              letterSpacing: "-0.02em", lineHeight: 1,
-            }}>
-              <span style={{
-                color: "#ffffff",
-                textShadow: fullGlow
-                  ? "0 0 30px rgba(255,255,255,0.9), 0 0 60px rgba(255,255,255,0.4)"
-                  : "0 0 8px rgba(255,255,255,0.25)",
-                transition: "text-shadow 1.2s ease",
-              }}>JARVIS</span>
-              <span style={{
-                color: "#00e5ff",
-                textShadow: fullGlow
-                  ? "0 0 30px rgba(0,229,255,1), 0 0 65px rgba(0,229,255,0.55)"
-                  : "0 0 8px rgba(0,229,255,0.25)",
-                transition: "text-shadow 1.2s ease",
-              }}>HUB</span>
-            </div>
-
-            {/* Subtitle — silver, clearly different from towers or text */}
-            <div style={{
-              fontFamily: "'Inter',sans-serif",
-              fontSize: 10, fontWeight: 600,
-              letterSpacing: "0.55em", textTransform: "uppercase",
-              marginTop: 12,
-              color: fullGlow ? "rgba(190,215,225,0.8)" : "rgba(190,215,225,0.3)",
-              transition: "color 1.2s ease",
-            }}>
-              Movie Hub
-            </div>
+      {/* ── JARVIS HUB Center Logo ── */}
+      <div 
+        className="absolute inset-0 flex flex-col items-center justify-center gap-6 md:gap-8"
+        style={{
+          opacity: showLogo ? 1 : 0,
+          transform: showLogo ? "translateY(0) scale(1)" : "translateY(40px) scale(0.9)",
+          transition: "all 2s cubic-bezier(0.2, 0.8, 0.2, 1)",
+          pointerEvents: "none"
+        }}
+      >
+        {/* Holographic Ring */}
+        <div className="relative group">
+          <div className="absolute inset-0 rounded-full bg-blue-500/30 blur-2xl animate-pulse" />
+          <div 
+            className="relative w-24 h-24 md:w-32 md:h-32 rounded-full border-[3px] border-white/20 overflow-hidden shadow-2xl transition-all duration-[1.5s]"
+            style={{
+              borderColor: fullLogo ? "rgba(34, 211, 238, 0.8)" : "rgba(255,255,255,0.2)",
+              boxShadow: fullLogo ? "0 0 50px rgba(34, 211, 238, 0.5), inset 0 0 20px rgba(34, 211, 238, 0.3)" : "none",
+              transform: fullLogo ? "rotate(0)" : "rotate(-12deg)"
+            }}
+          >
+            <img src="/JARVIS2.gif" alt="JARVIS Core" className="w-full h-full object-cover scale-110" />
+            
+            {/* Holographic Scanline Over Image */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%] pointer-events-none" />
           </div>
         </div>
-      )}
 
-      {/* ── "Initializing..." blink ── */}
-      {showTowers && !showLogo && (
-        <div style={{
-          position: "absolute", bottom: 24, left: 26,
-          fontSize: 9, fontFamily: "Inter,sans-serif",
-          letterSpacing: "0.2em", textTransform: "uppercase",
-          color: "rgba(34,211,238,0.3)",
-          animation: "blink 1.2s step-end infinite",
-        }}>
-          Initializing...
+        {/* Brand Text */}
+        <div className="text-center">
+          <h1 
+            className="font-display font-black tracking-tighter text-[min(16vw,84px)] leading-none transition-all duration-[1.5s]"
+            style={{
+              textShadow: fullLogo ? "0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(34, 211, 238, 0.4)" : "none"
+            }}
+          >
+            <span className="text-white">JARVIS</span>
+            <span className="text-cyan-400 ml-2">HUB</span>
+          </h1>
+          <div 
+            className="mt-4 flex items-center justify-center gap-4 text-[10px] md:text-sm font-bold tracking-[0.6em] uppercase text-white/40 transition-all duration-[1.5s]"
+            style={{ opacity: fullLogo ? 1 : 0, transform: fullLogo ? "translateY(0)" : "translateY(10px)" }}
+          >
+            <span className="w-8 md:w-12 h-px bg-white/10" />
+            Personal Intelligence Hub
+            <span className="w-8 md:w-12 h-px bg-white/10" />
+          </div>
         </div>
-      )}
+      </div>
 
-      {/* ── Skip ── */}
-      <button onClick={skip} style={{
-        position: "absolute", bottom: 22, right: 26,
-        background: "none", border: "none",
-        color: "rgba(255,255,255,0.18)",
-        fontSize: 10, fontFamily: "Inter,sans-serif",
-        letterSpacing: "0.18em", textTransform: "uppercase",
-        cursor: "pointer", pointerEvents: "auto",
-        transition: "color 0.3s",
-      }}
-        onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
-        onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.18)")}
-      >Skip ›</button>
+      {/* ── Status Text (Bottom Left) ── */}
+      <div 
+        className="absolute bottom-8 left-8 md:bottom-12 md:left-12 flex items-center gap-3 transition-opacity duration-1000"
+        style={{ opacity: riseTowers ? 0.3 : 0 }}
+      >
+        <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_10px_#22d3ee]" />
+        <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono text-cyan-500/80">
+          Syncing Neural Protocols...
+        </span>
+      </div>
 
-      {/* ── Keyframes ── */}
+      {/* ── Skip Link (Bottom Right) ── */}
+      <button 
+        onClick={() => { audioRef.current?.pause(); setVisible(false); onComplete(); }}
+        className="absolute bottom-8 right-8 md:bottom-12 md:right-12 text-[10px] font-black uppercase tracking-[0.2em] text-white/20 hover:text-cyan-400 transition-colors pointer-events-auto"
+      >
+        Skip sequence 
+      </button>
+
+      {/* ── CRT Static Overlay (Subtle) ── */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+      {/* ── Styles ── */}
       <style>{`
-        @keyframes ps2FadeUp {
-          from { opacity:0; transform:translateY(22px) scale(0.96); }
-          to   { opacity:1; transform:translateY(0)    scale(1);    }
-        }
-        @keyframes starTwinkle {
-          0%,100% { opacity: var(--base-op, 0.5); }
-          50%      { opacity: 0.1; }
-        }
-        @keyframes particleFloat {
-          0%   { transform:translateY(0);     opacity:0;   }
-          10%  { opacity:1; }
-          90%  { opacity:0.4; }
-          100% { transform:translateY(-80vh); opacity:0;   }
-        }
-        @keyframes blink {
-          0%,100% { opacity:1; }
-          50%     { opacity:0; }
+        @keyframes ps2StarFade {
+          from { opacity: 0.2; transform: scale(0.95); }
+          to   { opacity: 0.9; transform: scale(1.05); }
         }
       `}</style>
     </div>,
