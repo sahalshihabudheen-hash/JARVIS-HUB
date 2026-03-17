@@ -43,6 +43,7 @@ const Index = () => {
     country: string; 
     country_name: string; 
     region: string;
+    city: string;
     languages: string;
   } | null>(null);
 
@@ -219,6 +220,7 @@ const Index = () => {
 
   const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
   const regionLabel = manualFocus !== "auto" ? manualFocus : (location?.region || "");
+  const cityLabel = location?.city || "";
   const isKeralaFocus = regionLabel.toLowerCase().includes("kerala");
   
   return (
@@ -246,7 +248,14 @@ const Index = () => {
       )}
       
       <main>
-        <HeroSection items={trending || []} isLoading={trendingLoading} />
+        <HeroSection 
+          items={
+            regionalNow?.results && regionalNow.results.length > 0 
+              ? [...regionalNow.results.slice(0, 5), ...(trending || [])] 
+              : (trending || [])
+          } 
+          isLoading={trendingLoading || regionalLoading} 
+        />
         
         <div className="container mx-auto -mt-20 relative z-10">
           <div id="watchlist-row">
@@ -254,7 +263,7 @@ const Index = () => {
           </div>
           
               <MediaRow
-                title={isKeralaFocus ? "🔥 Malayalam Blockbusters" : `🔥 Top in ${regionLabel}`}
+                title={isKeralaFocus ? `🔥 Malayalam Blockbusters in ${cityLabel || "Kerala"}` : `🔥 Top in ${cityLabel || regionLabel}`}
                 items={regionalNow?.results || []}
                 mediaType="movie"
                 isLoading={regionalLoading}
