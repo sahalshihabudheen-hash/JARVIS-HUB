@@ -5,9 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { REGEXP_ONLY_DIGITS } from "input-otp";
-import emailjs from '@emailjs/browser';
 import Footer from "@/components/Footer";
 
 const Auth = () => {
@@ -15,59 +12,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [socialLoading, setSocialLoading] = useState(false);
-  const [otpStep, setOtpStep] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
-  const [userInputOtp, setUserInputOtp] = useState("");
-  const [isVerifying, setIsVerifying] = useState(false);
-  
   const navigate = useNavigate();
   const { login } = useAuth();
-
-  const generateAndSendOTP = async () => {
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setVerificationCode(code);
-    setIsVerifying(true);
-
-    // EmailJS Configuration
-    // To go live: 1. Sign up at emailjs.com 2. Replace placeholders below
-    const SERVICE_ID = "service_default"; // Replace with your Service ID
-    const TEMPLATE_ID = "template_otp";   // Replace with your Template ID
-    const PUBLIC_KEY = "YOUR_PUBLIC_KEY"; // Replace with your Public Key
-
-    const sendEmail = async () => {
-      try {
-        await emailjs.send(
-          SERVICE_ID,
-          TEMPLATE_ID,
-          {
-            to_email: email,
-            otp_code: code,
-            app_name: "JARVIS HUB",
-            user_name: email.split('@')[0]
-          },
-          PUBLIC_KEY
-        );
-        return true;
-      } catch (err) {
-        console.error("EmailJS Error:", err);
-        throw err;
-      }
-    };
-    
-    toast.promise(
-      sendEmail(),
-      {
-        loading: 'JARVIS: Dispatching Encrypted OTP to your email...',
-        success: 'JARVIS: Verification Code sent to your terminal.',
-        error: 'Failed to dispatch security code. Check console for details.',
-      }
-    );
-
-    // FALLBACK: Log to console so user can always test/debug
-    console.log("----------------------------");
-    console.log(`JARVIS SECURITY CODE: ${code}`);
-    console.log("----------------------------");
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,35 +24,12 @@ const Auth = () => {
         toast.error("Access Denied: Invalid admin credentials");
         return;
       }
-      // Admins bypass OTP
-      await login(email);
-      toast.success("Welcome back to JARVIS HUB!");
-      navigate("/");
-      return;
     }
 
-    if (!isLogin && !otpStep) {
-      // Start registration flow with OTP
-      await generateAndSendOTP();
-      setOtpStep(true);
-      return;
-    }
-
-    // Authenticate (Login or finishing signup)
+    // Authenticate
     await login(email);
     toast.success(isLogin ? "Welcome back to JARVIS HUB!" : "Account created successfully!");
     navigate("/");
-  };
-
-  const verifyOTPAndLogin = async () => {
-    if (userInputOtp === verificationCode) {
-      setIsVerifying(false);
-      await login(email);
-      toast.success("Identity Verified. Account Initialized.");
-      navigate("/");
-    } else {
-      toast.error("Invalid Security Code. Please retry.");
-    }
   };
 
   const handleSocialLogin = async () => {
@@ -121,7 +44,6 @@ const Auth = () => {
       toast.success(`Welcome, ${user.displayName || "User"}!`);
       navigate("/");
     } catch (error: any) {
-      // Silently ignore when user closes the popup or clicks again
       if (error?.code === "auth/cancelled-popup-request" ||
           error?.code === "auth/popup-closed-by-user") {
         return;
@@ -154,95 +76,48 @@ const Auth = () => {
             <img 
               src="/JARVIS2.gif" 
               alt="JARVIS Logo" 
-              className="w-16 h-16 object-cover rounded-full mb-4 shadow-[0_0_20px_rgba(34,211,238,0.3)] animate-pulse"
+              className="w-16 h-16 object-cover rounded-full mb-4 shadow-[0_0_20px_rgba(3b,130,246,0.3)] animate-pulse"
             />
             <h1 className="text-3xl font-display font-bold tracking-tighter mb-2">
-              JARVIS<span className="text-primary ml-1">HUB</span>
+              JARVIS<span className="text-blue-500 ml-1">HUB</span>
             </h1>
             <p className="text-muted-foreground text-sm">
               {isLogin ? "Access your secure media hub" : "Initialize your viewer credentials"}
             </p>
           </div>
 
-          {otpStep ? (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="text-center">
-                <h2 className="text-lg font-bold mb-2">VERIFY IDENTITY</h2>
-                <p className="text-xs text-muted-foreground">
-                  A 6-digit security code has been sent to <br/>
-                  <span className="text-blue-400 font-bold">{email}</span>
-                </p>
-              </div>
-
-              <div className="flex justify-center">
-                <InputOTP
-                  maxLength={6}
-                  value={userInputOtp}
-                  onChange={(value) => setUserInputOtp(value)}
-                  pattern={REGEXP_ONLY_DIGITS}
-                >
-                  <InputOTPGroup className="gap-2">
-                    <InputOTPSlot index={0} className="rounded-xl border-white/10 bg-white/5 w-11 h-12" />
-                    <InputOTPSlot index={1} className="rounded-xl border-white/10 bg-white/5 w-11 h-12" />
-                    <InputOTPSlot index={2} className="rounded-xl border-white/10 bg-white/5 w-11 h-12" />
-                    <InputOTPSlot index={3} className="rounded-xl border-white/10 bg-white/5 w-11 h-12" />
-                    <InputOTPSlot index={4} className="rounded-xl border-white/10 bg-white/5 w-11 h-12" />
-                    <InputOTPSlot index={5} className="rounded-xl border-white/10 bg-white/5 w-11 h-12" />
-                  </InputOTPGroup>
-                </InputOTP>
-              </div>
-
-              <div className="space-y-3">
-                <Button 
-                  onClick={verifyOTPAndLogin}
-                  className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold"
-                  disabled={userInputOtp.length !== 6}
-                >
-                  Confirm Protocols
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  onClick={() => setOtpStep(false)}
-                  className="w-full text-xs text-muted-foreground hover:text-white"
-                >
-                  Back to Registration
-                </Button>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="email"
+                  placeholder="Intelligence ID (Email)"
+                  className="pl-10 bg-white/5 border-white/10 focus:border-blue-500 transition-all rounded-xl"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    placeholder="Intelligence ID (Email)"
-                    className="pl-10 bg-white/5 border-white/10 focus:border-blue-500 transition-all rounded-xl"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
+            <div className="space-y-2">
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="password"
+                  placeholder="Security Key (Password)"
+                  className="pl-10 bg-white/5 border-white/10 focus:border-blue-500 transition-all rounded-xl"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
-              <div className="space-y-2">
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    type="password"
-                    placeholder="Security Key (Password)"
-                    className="pl-10 bg-white/5 border-white/10 focus:border-blue-500 transition-all rounded-xl"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+            </div>
 
-              <Button type="submit" className="w-full h-12 rounded-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white hover-glow transition-all">
-                {isLogin ? "Initialize Access" : "Create Protocols"}
-              </Button>
-            </form>
-          )}
+            <Button type="submit" className="w-full h-12 rounded-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white hover-glow transition-all">
+              {isLogin ? "Initialize Access" : "Create Protocols"}
+            </Button>
+          </form>
 
           <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
@@ -268,7 +143,7 @@ const Auth = () => {
           <div className="mt-8 text-center text-sm">
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-muted-foreground hover:text-primary transition-colors underline underline-offset-4"
+              className="text-muted-foreground hover:text-blue-500 transition-colors underline underline-offset-4"
             >
               {isLogin ? "Need a new access ID?" : "Already have credentials? Access here"}
             </button>

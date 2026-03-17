@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, Film, Tv, Sparkles, Heart, User } from "lucide-react";
+import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -51,6 +51,7 @@ const Navbar = () => {
     { to: "/tv", label: "TV Shows", icon: Tv },
     { to: "/anime", label: "Anime", icon: Sparkles },
     { to: "/watchlist", label: "Watchlist", icon: Heart },
+    ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
   return (
@@ -85,7 +86,9 @@ const Navbar = () => {
                   "flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full transition-all duration-200",
                   location.pathname === link.to
                     ? "bg-white/15 text-foreground backdrop-blur-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-white/10"
+                    : link.to === "/admin" 
+                      ? "text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/10"
                 )}
               >
                 {link.icon && <link.icon className="w-4 h-4" />}
@@ -229,7 +232,9 @@ const Navbar = () => {
                     "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200",
                     location.pathname === link.to
                       ? "bg-white/15 text-foreground"
-                      : "text-muted-foreground hover:bg-white/10 hover:text-foreground"
+                      : link.to === "/admin"
+                        ? "text-blue-400 hover:bg-blue-400/10"
+                        : "text-muted-foreground hover:bg-white/10 hover:text-foreground"
                   )}
                 >
                   {link.icon && <link.icon className="w-5 h-5" />}
@@ -239,19 +244,6 @@ const Navbar = () => {
               <div className="pt-2">
                 {user ? (
                   <>
-                    {(user.email?.toLowerCase() === "admin@gmail.com" || user.isAdmin) && (
-                      <Button
-                        variant="ghost"
-                        className="w-full flex items-center justify-start gap-3 px-4 py-2.5 rounded-xl text-blue-400 hover:bg-blue-400/10 mb-2"
-                        onClick={() => {
-                          navigate("/admin");
-                          setIsMobileMenuOpen(false);
-                        }}
-                      >
-                        <Settings className="w-5 h-5" />
-                        Admin Dashboard
-                      </Button>
-                    )}
                     <Button
                       variant="outline"
                       className="w-full flex items-center justify-center gap-2 rounded-xl h-12 border-red-400/20 text-red-400 hover:bg-red-400/10"
