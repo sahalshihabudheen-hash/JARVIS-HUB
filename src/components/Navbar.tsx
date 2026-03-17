@@ -86,13 +86,13 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div id="navbar-links" className="hidden lg:flex items-center gap-2">
+          <div id="navbar-links" className="hidden md:flex items-center gap-1 lg:gap-2">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  "flex items-center gap-2 text-[13px] font-bold uppercase tracking-widest px-4 py-2 rounded-full transition-all duration-300",
+                  "flex items-center gap-2 text-[11px] lg:text-[13px] font-bold uppercase tracking-widest px-3 lg:px-4 py-2 rounded-full transition-all duration-300",
                   location.pathname === link.to
                     ? "bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-white/10"
                     : link.to === "/admin" 
@@ -101,7 +101,7 @@ const Navbar = () => {
                 )}
               >
                 {link.icon && <link.icon className="w-4 h-4" />}
-                <span>{link.label}</span>
+                <span className={cn(link.to === "/" && "lg:block")}>{link.label}</span>
               </Link>
             ))}
           </div>
@@ -116,7 +116,7 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search Neural Database..."
-                  className="w-44 xl:w-64 pl-11 pr-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[13px] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
+                  className="w-32 lg:w-44 xl:w-64 pl-11 pr-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[13px] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
                 />
               </div>
             </form>
