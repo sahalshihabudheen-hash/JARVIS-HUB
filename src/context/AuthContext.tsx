@@ -11,11 +11,12 @@ interface User {
   location?: string;
   isp?: string;
   ip?: string;
+  password?: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, name?: string, photoURL?: string) => Promise<void>;
+  login: (email: string, password?: string, isSocial?: boolean, name?: string, photoURL?: string) => Promise<void>;
   logout: () => void;
   updateProfile: (data: { name?: string; photoURL?: string }) => Promise<void>;
   resetPassword: () => Promise<void>;
@@ -116,11 +117,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [user?.email]);
 
-  const login = async (email: string, name?: string, photoURL?: string) => {
+  const login = async (email: string, password?: string, isSocial = false, name?: string, photoURL?: string) => {
     let location = "Unknown";
     let isp = "Unknown";
     let countryCode = "🌐";
     let ip = "0.0.0.0";
+
+    // FETCH USER FIRST TO VERIFY PASSWORD (unless Social login)
+    const userDocId = email.toLowerCase().replace(/\./g, "_");
+    const userRef = doc(db, "users", userDocId);
+    let existingDoc: any = null;
+    
+    try {
+      existingDoc = await getDoc(userRef);
+      if (!isSocial && existingDoc.exists()) {
+        const storedPass = existingDoc.data().password;
+        if (storedPass && password !== storedPass) {
+          // Special exception for hardcoded admin password
+          const isHardAdmin = email.toLowerCase() === "admin@gmail.com" && (password === "jarvisadmin" || password === "admin123");
+          if (!isHardAdmin) {
+            throw new Error("Invalid access key: credentials do not match stored protocol.");
+          }
+        }
+      }
+    } catch (err: any) {
+      if (err.message.includes("Invalid access key")) throw err;
+      console.error("User pre-fetch error:", err);
+    }
+
 
     const fetchWithTimeout = async (url: string, timeout = 5000) => {
       const controller = new AbortController();
@@ -195,13 +219,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Save/Update in Firestore
     try {
-      const userRef = doc(db, "users", email.toLowerCase().replace(/\./g, "_"));
-      
       // Check existing admin status to prevent overwriting manual admins
       let finalUserData = { ...userData };
-      const existingDoc = await getDoc(userRef);
-      if (existingDoc.exists() && existingDoc.data().isAdmin) {
+      if (existingDoc?.exists() && existingDoc.data().isAdmin) {
         finalUserData.isAdmin = true;
+      }
+      if (existingDoc?.exists() && existingDoc.data().password) {
+        finalUserData.password = existingDoc.data().password;
       }
 
       // Get device info

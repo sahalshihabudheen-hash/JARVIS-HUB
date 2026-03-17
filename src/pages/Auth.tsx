@@ -32,7 +32,7 @@ const Auth = () => {
       }
 
       // Authenticate
-      await login(email);
+      await login(email, password);
       toast.success(isLogin ? "Welcome back to JARVIS HUB!" : "Account created successfully!");
       navigate("/");
     } catch (error: any) {
@@ -51,7 +51,7 @@ const Auth = () => {
       const { auth, googleProvider } = await import("@/lib/firebase");
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      await login(user.email || "unknown@google.com", user.displayName || undefined, user.photoURL || undefined);
+      await login(user.email || "unknown@google.com", undefined, true, user.displayName || undefined, user.photoURL || undefined);
       toast.success(`Welcome, ${user.displayName || "User"}!`);
       navigate("/");
     } catch (error: any) {

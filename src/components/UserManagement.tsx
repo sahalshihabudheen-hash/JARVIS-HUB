@@ -21,19 +21,21 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 
 const UserManagement = () => {
-  const { users, refreshData, toggleAdmin, deleteUser, resetUserPassword } = useAdmin();
+  const { users, refreshData, toggleAdmin, deleteUser, resetUserPassword, setUserPassword } = useAdmin();
   const { user: currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
+  const [editingPassword, setEditingPassword] = useState<{ email: string, value: string } | null>(null);
 
   const isActuallyOnline = (u: any) => {
     if (u.status !== "online") return false;
-    if (!u.lastSeen) return false;
+    if (u.email === currentUser?.email) return true;
+    if (!u.lastSeen) return true;
     
     try {
       // FireStore timestamp to JS Date
       const lastSeenDate = u.lastSeen?.toDate ? u.lastSeen.toDate() : new Date(u.lastSeen);
-      const diffMs = new Date().getTime() - lastSeenDate.getTime();
+      const diffMs = Math.abs(new Date().getTime() - lastSeenDate.getTime());
       return diffMs < 180000; // 3 minutes threshold
     } catch (e) {
       return u.status === "online";
@@ -278,29 +280,78 @@ const UserManagement = () => {
                     </div>
                   </Button>
                 )}
-                
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => resetUserPassword(u.email)}
-                  className="w-9 h-9 rounded-full text-white/20 hover:text-blue-400 hover:bg-blue-400/10 transition-colors"
-                >
-                  <Key className="w-4 h-4" />
-                </Button>
-                
-                {u.email !== currentUser?.email && !isOwner && (
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => deleteUser(u.email)}
-                    className="w-9 h-9 rounded-full text-white/20 hover:text-red-500 hover:bg-red-500/10"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
+                                {/* Action Buttons */}
+                <div className="flex items-center gap-1">
+                  {/* Manual Password Set (Owner Only) */}
+                  {currentUser?.email === "admin@gmail.com" && (
+                    <div className="relative group/pass">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => setEditingPassword(editingPassword?.email === u.email ? null : { email: u.email, value: u.password || "" })}
+                        className={cn(
+                          "w-9 h-9 rounded-full transition-all",
+                          editingPassword?.email === u.email ? "bg-blue-500 text-white" : "text-white/20 hover:text-blue-400 hover:bg-blue-400/10"
+                        )}
+                      >
+                        <Key className="w-4 h-4" />
+                      </Button>
 
-                <div className="w-10 h-10 flex items-center justify-center opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
-                  {u.countryCode === "IN" || !u.countryCode ? "🇮🇳" : "🌐"}
+                      {editingPassword?.email === u.email && (
+                        <div className="absolute right-0 top-full mt-2 w-48 p-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 animate-in fade-in slide-in-from-top-2">
+                          <Input 
+                            autoFocus
+                            placeholder="Static Key/Pass"
+                            value={editingPassword.value}
+                            onChange={(e) => setEditingPassword({ ...editingPassword, value: e.target.value })}
+                            className="h-8 text-xs bg-black/40 border-white/5 mb-2 focus:border-blue-500"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                setUserPassword(u.email, editingPassword.value);
+                                setEditingPassword(null);
+                              }
+                            }}
+                          />
+                          <Button 
+                            className="w-full h-7 text-[10px] font-bold uppercase bg-blue-600 hover:bg-blue-500"
+                            onClick={() => {
+                              setUserPassword(u.email, editingPassword.value);
+                              setEditingPassword(null);
+                            }}
+                          >
+                            Set Key
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Standard Password Reset (Other Admins) */}
+                  {currentUser?.email !== "admin@gmail.com" && (
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => resetUserPassword(u.email)}
+                      className="w-9 h-9 rounded-full text-white/20 hover:text-blue-400 hover:bg-blue-400/10 transition-colors"
+                    >
+                      <Key className="w-4 h-4" />
+                    </Button>
+                  )}
+                  
+                  {u.email !== currentUser?.email && !isOwner && (
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => deleteUser(u.email)}
+                      className="w-9 h-9 rounded-full text-white/20 hover:text-red-500 hover:bg-red-500/10"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+
+                <div className="w-10 h-10 flex items-center justify-center opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-default text-xl">
+                  {u.countryCode === "IN" || !u.countryCode ? "🇮🇳" : u.countryCode.replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397))}
                 </div>
               </div>
             </div>

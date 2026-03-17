@@ -23,6 +23,7 @@ interface AdminContextType {
   toggleAdmin: (userId: string, currentStatus: boolean) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
   resetUserPassword: (email: string) => Promise<void>;
+  setUserPassword: (email: string, newPassword: string) => Promise<void>;
   isMaintenanceMode: boolean;
   toggleMaintenanceMode: () => Promise<void>;
 }
@@ -42,6 +43,7 @@ export interface AdminUser {
   location?: string;
   isp?: string;
   ip?: string;
+  password?: string;
 }
 
 export interface ActivityEntry {
@@ -105,7 +107,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setUsers(fetchedUsers);
     });
 
-    // Real-time Activity (if you have an activity collection, for now keeping local or empty)
+    // Real-time Activity
     const qAct = query(collection(db, "activity"), orderBy("timestamp", "desc"), limit(20));
     const unsubAct = onSnapshot(qAct, (snapshot) => {
       const fetchedAct = snapshot.docs.map(doc => ({
@@ -117,9 +119,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Real-time Maintenance Mode
     const maintenanceRef = doc(db, "settings", "maintenance");
-    const unsubMaintenance = onSnapshot(maintenanceRef, (doc) => {
-      if (doc.exists()) {
-        setIsMaintenanceMode(doc.data().active || false);
+    const unsubMaintenance = onSnapshot(maintenanceRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setIsMaintenanceMode(docSnap.data().active || false);
       }
     });
 
@@ -144,8 +146,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
     
     setActivityLog(prev => {
-      const newLog = [newEntry, ...prev].slice(0, 50); // Keep last 50
-      localStorage.setItem("jarvis_admin_activity", JSON.stringify(newLog));
+      const newLog = [newEntry, ...prev].slice(0, 50);
       return newLog;
     });
   };
@@ -153,8 +154,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const toggleAdmin = async (userId: string, currentStatus: boolean) => {
     try {
       const userDocId = userId.replace(/\./g, "_");
-      const { doc, updateDoc } = await import("firebase/firestore");
-      await updateDoc(doc(db, "users", userDocId), {
+      const { doc: fsDoc, updateDoc } = await import("firebase/firestore");
+      await updateDoc(fsDoc(db, "users", userDocId), {
         isAdmin: !currentStatus
       });
       toast.success(`Permissions updated for ${userId}`, { icon: "🔐" });
@@ -167,8 +168,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const deleteUser = async (userId: string) => {
     try {
       const userDocId = userId.replace(/\./g, "_");
-      const { doc, deleteDoc } = await import("firebase/firestore");
-      await deleteDoc(doc(db, "users", userDocId));
+      const { doc: fsDoc, deleteDoc } = await import("firebase/firestore");
+      await deleteDoc(fsDoc(db, "users", userDocId));
       toast.success(`User ${userId} deleted from system`, { icon: "🗑️" });
       refreshData();
     } catch (err) {
@@ -192,10 +193,27 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const setUserPassword = async (email: string, newPass: string) => {
+    try {
+      const userDocId = email.replace(/\./g, "_");
+      const { doc: fsDoc, updateDoc } = await import("firebase/firestore");
+      await updateDoc(fsDoc(db, "users", userDocId), {
+        password: newPass
+      });
+      toast.success(`System Key updated for ${email}`, { 
+        icon: "🔑",
+        description: `New key: ${newPass}. Share this with the user.`
+      });
+    } catch (err) {
+      console.error("Set Password Error:", err);
+      toast.error("Failed to set manual password");
+    }
+  };
+
   const toggleMaintenanceMode = async () => {
     try {
-      const { doc, setDoc } = await import("firebase/firestore");
-      const maintenanceRef = doc(db, "settings", "maintenance");
+      const { doc: fsDoc, setDoc } = await import("firebase/firestore");
+      const maintenanceRef = fsDoc(db, "settings", "maintenance");
       await setDoc(maintenanceRef, { active: !isMaintenanceMode }, { merge: true });
       toast.success(`Maintenance mode ${!isMaintenanceMode ? "activated" : "deactivated"}`, { 
         icon: !isMaintenanceMode ? "🚧" : "✅"
@@ -217,6 +235,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       toggleAdmin, 
       deleteUser, 
       resetUserPassword,
+      setUserPassword,
       isMaintenanceMode,
       toggleMaintenanceMode
     }}>
