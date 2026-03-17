@@ -206,6 +206,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isp = "BSNL Internet";
     }
 
+    // Set flag for Intro animation (only for fresh logins)
+    sessionStorage.setItem("jarvis_intro_needed", "true");
+
     const isAdmin = email.toLowerCase() === "admin@gmail.com";
     const userData: User = { 
       email: email.toLowerCase(), 

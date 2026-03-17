@@ -9,8 +9,9 @@ import { cn } from "@/lib/utils";
 import "@/tutorial.css";
 import PS2Intro from "./PS2Intro";
 
-// Session-persistent flag — survives refreshes, but resets when tab/window is closed
-let introShownThisLoad = typeof window !== 'undefined' ? !!sessionStorage.getItem("jarvis_intro_shown") : false;
+// Session flag to determine if we should play the startup sequence
+// This is set to 'true' in AuthContext ONLY when a user successfully logs in
+const isIntroNeeded = () => typeof window !== 'undefined' && sessionStorage.getItem("jarvis_intro_needed") === "true";
 
 // ─── Typewriter Effect ─────────────────────────────────────────────────────────
 const Typewriter = ({ text, speed = 18, onComplete }: { text: string; speed?: number; onComplete?: () => void }) => {
@@ -161,12 +162,11 @@ const JarvisTutorial = () => {
   // ── Auto-start: PS2 intro on every page load when user is logged in ──
   useEffect(() => {
     if (!user || location.pathname === "/auth" || location.pathname === "/admin") return;
-    if (introShownThisLoad || isActive || showPS2Intro) return;
+    if (!isIntroNeeded() || isActive || showPS2Intro) return;
 
     // Show intro shortly after arriving at home (gives page time to render)
     const t = setTimeout(() => {
-      introShownThisLoad = true;   // prevent double-trigger within same load
-      sessionStorage.setItem("jarvis_intro_shown", "true");
+      sessionStorage.removeItem("jarvis_intro_needed"); // Clear so it won't repeat on refresh
       setShowPS2Intro(true);
     }, 400);
     return () => clearTimeout(t);
