@@ -56,8 +56,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      <div className="fixed top-0 left-0 bg-red-600 text-white p-2 z-[99999] text-[10px] font-bold">AUTH MOUNTED</div>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Glows */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
