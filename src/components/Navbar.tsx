@@ -116,7 +116,7 @@ const Navbar = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Neural Database..."
+                  placeholder="Search Movies"
                   className="w-40 xl:w-60 pl-11 pr-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[12px] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
                 />
               </div>
