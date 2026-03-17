@@ -11,25 +11,36 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
 
-    // Custom admin logic
-    if (email.toLowerCase() === "admin@gmail.com") {
-      if (password !== "jarvisadmin") {
-        toast.error("Access Denied: Invalid admin credentials");
-        return;
+    setLoading(true);
+    try {
+      // Custom admin logic
+      if (email.toLowerCase() === "admin@gmail.com") {
+        if (password !== "jarvisadmin" && password !== "admin123") {
+          toast.error("Access Denied: Invalid admin credentials");
+          setLoading(false);
+          return;
+        }
       }
-    }
 
-    // Authenticate
-    await login(email);
-    toast.success(isLogin ? "Welcome back to JARVIS HUB!" : "Account created successfully!");
-    navigate("/");
+      // Authenticate
+      await login(email);
+      toast.success(isLogin ? "Welcome back to JARVIS HUB!" : "Account created successfully!");
+      navigate("/");
+    } catch (error: any) {
+      console.error("Auth error:", error);
+      toast.error("Protocol failure: Unable to establish secure session. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSocialLogin = async () => {
@@ -114,8 +125,12 @@ const Auth = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-12 rounded-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white hover-glow transition-all">
-              {isLogin ? "Initialize Access" : "Create Protocols"}
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="w-full h-12 rounded-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white hover-glow transition-all disabled:opacity-50"
+            >
+              {loading ? "Establishing Protocol..." : (isLogin ? "Initialize Access" : "Create Protocols")}
             </Button>
           </form>
 

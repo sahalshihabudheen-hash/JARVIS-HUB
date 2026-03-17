@@ -122,9 +122,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let countryCode = "🌐";
     let ip = "0.0.0.0";
 
+    const fetchWithTimeout = async (url: string, timeout = 5000) => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(id);
+        return response;
+      } catch (e) {
+        clearTimeout(id);
+        throw e;
+      }
+    };
+
     try {
       // Primary: ipapi.co
-      const geoResponse = await fetch("https://ipapi.co/json/");
+      const geoResponse = await fetchWithTimeout("https://ipapi.co/json/");
       if (geoResponse.ok) {
         const geoData = await geoResponse.json();
         location = geoData.city && geoData.region ? `${geoData.city}, ${geoData.region}, ${geoData.country_name}` : "Unknown Location";
@@ -138,7 +151,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error("Geo sensing failed (ipapi):", e);
       // Fallback 1: ipwho.is (HTTPS supported)
       try {
-        const fallbackRes = await fetch("https://ipwho.is/");
+        const fallbackRes = await fetchWithTimeout("https://ipwho.is/");
         if (fallbackRes.ok) {
           const fallbackData = await fallbackRes.json();
           if (fallbackData.success) {
@@ -154,7 +167,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error("Geo sensing fallback failed (ipwho.is):", err);
         // Fallback 2: ipify (IP only)
         try {
-          const res = await fetch("https://api.ipify.org?format=json");
+          const res = await fetchWithTimeout("https://api.ipify.org?format=json");
           const data = await res.json();
           ip = data.ip;
         } catch (ipErr) {
@@ -182,7 +195,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Save/Update in Firestore
     try {
-      const { getDoc } = await import("firebase/firestore");
       const userRef = doc(db, "users", email.toLowerCase().replace(/\./g, "_"));
       
       // Check existing admin status to prevent overwriting manual admins
