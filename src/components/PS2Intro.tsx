@@ -188,8 +188,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
         ))}
       </div>
 
-      {/* ── Dark Ground Overlay ── */}
-      <div className="absolute bottom-0 left-0 right-0 h-[25vh] bg-gradient-to-t from-black to-transparent opacity-80" />
+      {/* ── Central Beacon Glow ── */}
 
       {/* ── JARVIS HUB Center Logo ── */}
       <div 
