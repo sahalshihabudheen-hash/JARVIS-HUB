@@ -31,28 +31,28 @@ export const videoServers: VideoServer[] = [
     getTVUrl: (tmdbId, season, episode) => `https://vidbinge.dev/embed/tv/${tmdbId}/${season}/${episode}`,
   },
   {
+    id: "vidsrcin",
+    name: "Indian Mirror",
+    getMovieUrl: (tmdbId) => `https://vidsrc.in/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.in/embed/tv/${tmdbId}/${season}/${episode}`,
+  },
+  {
+    id: "vidsrcstream",
+    name: "VidSrc.stream",
+    getMovieUrl: (tmdbId) => `https://vidsrc.stream/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.stream/embed/tv/${tmdbId}/${season}/${episode}`,
+  },
+  {
     id: "vidsrcme",
     name: "Vidsrc.me",
     getMovieUrl: (tmdbId, imdbId) => imdbId ? `https://vidsrc.me/embed/movie?imdb=${imdbId}` : `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`,
     getTVUrl: (tmdbId, season, episode, imdbId) => imdbId ? `https://vidsrc.me/embed/tv?imdb=${imdbId}&season=${season}&episode=${episode}` : `https://vidsrc.me/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`,
   },
   {
-    id: "2embed",
-    name: "2Embed UI",
-    getMovieUrl: (tmdbId) => `https://www.2embed.cc/embed/${tmdbId}`,
-    getTVUrl: (tmdbId, season, episode) => `https://www.2embed.cc/embedtv/${tmdbId}&s=${season}&e=${episode}`,
-  },
-  {
     id: "superembed",
     name: "SuperEmbed",
     getMovieUrl: (tmdbId, imdbId) => imdbId ? `https://multiembed.mov/?video_id=${imdbId}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`,
     getTVUrl: (tmdbId, season, episode, imdbId) => imdbId ? `https://multiembed.mov/?video_id=${imdbId}&s=${season}&e=${episode}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`,
-  },
-  {
-    id: "vidsrcin",
-    name: "Indian Mirror",
-    getMovieUrl: (tmdbId) => `https://vidsrc.in/embed/movie/${tmdbId}`,
-    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.in/embed/tv/${tmdbId}/${season}/${episode}`,
   },
   {
     id: "vidsrcxyz",
