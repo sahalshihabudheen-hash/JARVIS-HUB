@@ -271,13 +271,19 @@ const JarvisTutorial = () => {
   const total = steps.length;
 
   // ── Balloon position ──
-  const BALLOON_W = isMobile ? Math.min(320, window.innerWidth - 32) : 380;
+  const BALLOON_W = isMobile ? window.innerWidth - 32 : 380;
   // Reduce height on mobile to keep it compact
-  const BALLOON_H = currentStep.interactive === "genres" ? (isMobile ? 520 : 540) : (isMobile ? 320 : 430);
+  const BALLOON_H = currentStep.interactive === "genres" ? (isMobile ? 480 : 540) : (isMobile ? 240 : 430);
   const balloonStyle: React.CSSProperties = {};
   let nibPos = "bottom";
 
-  if (coords) {
+  if (isMobile) {
+    // Mobile: Always at bottom like a sheet
+    balloonStyle.bottom = 20;
+    balloonStyle.left = 16;
+    balloonStyle.right = 16;
+    nibPos = "none";
+  } else if (coords) {
     const spaceBelow = window.innerHeight - coords.y - coords.height;
     const spaceAbove = coords.y;
 
@@ -288,14 +294,8 @@ const JarvisTutorial = () => {
       balloonStyle.top = Math.max(10, coords.y - BALLOON_H - 16);
       nibPos = "bottom";
     } else {
-      // For mobile if no space, place at bottom or top with clamp
-      if (isMobile) {
-        balloonStyle.bottom = 20;
-        nibPos = "none";
-      } else {
-        balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
-        nibPos = "top";
-      }
+      balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
+      nibPos = "top";
     }
 
     // Clamp top to always be on-screen
@@ -419,7 +419,7 @@ const JarvisTutorial = () => {
 
             {/* Genre Selector */}
             {currentStep.interactive === "genres" && typingDone && (
-              <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="grid grid-cols-2 xs:grid-cols-3 gap-2 mb-4 max-h-[250px] overflow-y-auto pr-1">
                 {[
                   { id: 28, name: "Action", icon: "⚔️" },
                   { id: 878, name: "Sci-Fi", icon: "🚀" },
