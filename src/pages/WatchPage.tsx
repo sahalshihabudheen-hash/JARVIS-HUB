@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { getMovieDetails, getTVDetails, getSeasonDetails } from "@/lib/tmdb";
 import { useAuth } from "@/context/AuthContext";
 import { useAdmin } from "@/context/AdminContext";
+import { cn } from "@/lib/utils";
 
 const WatchPage = () => {
   const { type, id, season, episode } = useParams<{
@@ -23,6 +24,7 @@ const WatchPage = () => {
   const { user } = useAuth();
   const { addActivity } = useAdmin();
   const [showIntro, setShowIntro] = useState(true);
+  const [selectedLang, setSelectedLang] = useState<string | undefined>(undefined);
   
   const mediaId = parseInt(id || "0");
   const seasonNum = parseInt(season || "1");
@@ -140,6 +142,46 @@ const WatchPage = () => {
             </Button>
           </div>
 
+          {/* Language Selector */}
+          <div className="mb-6 flex flex-wrap items-center gap-3 p-4 glass border border-white/10 rounded-2xl">
+            <div className="flex items-center gap-2 mr-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">Signal Frequency:</span>
+            </div>
+            
+            {[
+              { id: "en", name: "English" },
+              { id: "hi", name: "Hindi" },
+              { id: "ml", name: "Malayalam" },
+              { id: "ta", name: "Tamil" }
+            ].map((lang) => (
+              <Button
+                key={lang.id}
+                size="sm"
+                variant={selectedLang === lang.id ? "default" : "outline"}
+                onClick={() => setSelectedLang(lang.id)}
+                className={cn(
+                  "rounded-full px-5 h-8 text-[10px] font-bold uppercase tracking-widest transition-all duration-300",
+                  selectedLang === lang.id ? "bg-primary text-black shadow-[0_0_20px_rgba(34,211,238,0.4)]" : "bg-white/5 border-white/10 hover:border-primary/50"
+                )}
+              >
+                {lang.name}
+              </Button>
+            ))}
+            
+            <Button
+              size="sm"
+              variant={!selectedLang ? "default" : "outline"}
+              onClick={() => setSelectedLang(undefined)}
+              className={cn(
+                "rounded-full px-5 h-8 text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ml-auto",
+                !selectedLang ? "bg-blue-500/20 text-blue-400 border-blue-500/50" : "bg-transparent border-white/10"
+              )}
+            >
+              Original Mix
+            </Button>
+          </div>
+
           {/* Player */}
           <VideoPlayer
             type={type as "movie" | "tv"}
@@ -147,7 +189,7 @@ const WatchPage = () => {
             imdbId={movie?.imdb_id || show?.external_ids?.imdb_id}
             season={seasonNum}
             episode={episodeNum}
-            lang={content?.original_language}
+            lang={selectedLang || content?.original_language}
           />
 
           {/* TV Navigation */}

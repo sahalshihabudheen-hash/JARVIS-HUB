@@ -115,8 +115,8 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
   const server = videoServers.find((s) => s.id === currentServer) || videoServers[0];
   const embedUrl =
     type === "movie"
-      ? server.getMovieUrl(tmdbId, imdbId)
-      : server.getTVUrl(tmdbId, season || 1, episode || 1, imdbId);
+      ? server.getMovieUrl(tmdbId, imdbId, lang)
+      : server.getTVUrl(tmdbId, season || 1, episode || 1, imdbId, lang);
 
   return (
     <div className="space-y-6">
