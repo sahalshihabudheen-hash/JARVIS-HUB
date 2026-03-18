@@ -244,8 +244,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Get device info
       const ua = navigator.userAgent;
       let device = "Desktop PC";
-      if (/Mobi|Android/i.test(ua)) device = "Phone";
-      if (/Tablet|iPad/i.test(ua)) device = "Tablet";
+      
+      // Detailed Detection
+      if (/smart-tv|smarttv|googletv|appletv|hbbtv|pov_tv|netcast.tv|webos|vizio|sharp-tv|tizen|philips-tv|sonydtv/i.test(ua)) {
+        device = "Smart TV";
+      } else if (/Xbox|PlayStation|Nintendo/i.test(ua)) {
+        device = "Console";
+      } else if (/Tablet|iPad|PlayBook|Kindle/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+        device = "Tablet";
+      } else if (/Mobi|Android|iPhone|BlackBerry/i.test(ua)) {
+        device = "Phone";
+      }
 
       // Session Tracking (Multi-device support)
       let deviceId = localStorage.getItem("jarvis_device_id");
@@ -254,8 +263,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem("jarvis_device_id", deviceId);
       }
 
-      const os = navigator.platform;
-      const browser = navigator.userAgent.split(" ").slice(-1)[0];
+      const os = navigator.userAgent.includes("Windows") ? "Windows" : 
+                 navigator.userAgent.includes("Mac") ? "MacOS" :
+                 navigator.userAgent.includes("Android") ? "Android" :
+                 navigator.userAgent.includes("iPhone") ? "iOS" :
+                 navigator.userAgent.includes("Linux") ? "Linux" : "Unknown OS";
+                 
+      const browser = ua.includes("Chrome") ? "Chrome" :
+                      ua.includes("Firefox") ? "Firefox" :
+                      ua.includes("Safari") ? "Safari" :
+                      ua.includes("Edge") ? "Edge" : "Other Browser";
+
       const sessionData = {
         device,
         os,

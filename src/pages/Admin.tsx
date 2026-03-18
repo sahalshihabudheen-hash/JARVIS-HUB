@@ -112,35 +112,41 @@ const Admin = () => {
                 </div>
               </div>
 
-              <div className="space-y-4 mt-8">
-                {activityLog.map((activity) => {
-                  const date = new Date(activity.timestamp);
-                  const now = new Date();
-                  const diffMs = now.getTime() - date.getTime();
-                  const diffMins = Math.floor(diffMs / 60000);
-                  const timeDisplay = diffMins < 1 ? "Just now" : diffMins < 60 ? `${diffMins}m ago` : `${Math.floor(diffMins/60)}h ago`;
+                {activityLog.length > 0 ? (
+                  activityLog.map((activity) => {
+                    const timestamp = activity.timestamp as any;
+                    const date = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp);
+                    const now = new Date();
+                    const diffMs = now.getTime() - date.getTime();
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const timeDisplay = isNaN(diffMins) ? "Recently" : diffMins < 1 ? "Just now" : diffMins < 60 ? `${diffMins}m ago` : `${Math.floor(diffMins/60)}h ago`;
 
-                  return (
-                    <div key={activity.id} className="flex items-center justify-between p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-white/10 transition-all group">
-                      <div className="flex items-center gap-5">
-                        <img 
-                          src={activity.mediaPoster} 
-                          alt={activity.mediaTitle} 
-                          className="w-14 h-14 object-cover rounded-xl shadow-lg group-hover:scale-105 transition-transform"
-                        />
-                        <div>
-                          <h4 className="text-[15px] font-bold text-white/90">{activity.mediaTitle}</h4>
-                          <p className="text-xs text-white/30 mt-0.5 capitalize">{activity.mediaType} Stream</p>
+                    return (
+                      <div key={activity.id} className="flex items-center justify-between p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-white/10 transition-all group animate-in slide-in-from-bottom-2">
+                        <div className="flex items-center gap-5">
+                          <img 
+                            src={activity.mediaPoster} 
+                            alt={activity.mediaTitle} 
+                            className="w-14 h-14 object-cover rounded-xl shadow-lg group-hover:scale-105 transition-transform"
+                          />
+                          <div>
+                            <h4 className="text-[15px] font-bold text-white/90">{activity.mediaTitle}</h4>
+                            <p className="text-xs text-white/30 mt-0.5 capitalize">{activity.mediaType} Stream</p>
+                          </div>
+                        </div>
+                        <div className="text-right flex flex-col items-end">
+                          <span className="text-[14px] font-bold text-blue-400 hover:underline cursor-pointer">{activity.userEmail}</span>
+                          <span className="text-[11px] text-white/20 mt-1 uppercase tracking-widest">{timeDisplay}</span>
                         </div>
                       </div>
-                      <div className="text-right flex flex-col items-end">
-                        <span className="text-[14px] font-bold text-blue-400 hover:underline cursor-pointer">{activity.userEmail}</span>
-                        <span className="text-[11px] text-white/20 mt-1 uppercase tracking-widest">{timeDisplay}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })
+                ) : (
+                   <div className="py-20 flex flex-col items-center justify-center opacity-20">
+                      <ActivityIcon className="w-10 h-10 mb-2" />
+                      <p className="text-xs font-bold uppercase tracking-widest">No activity logged in stream</p>
+                   </div>
+                )}
             </div>
           )}
 

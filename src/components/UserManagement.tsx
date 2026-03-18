@@ -11,7 +11,8 @@ import {
   Key, 
   RefreshCw, 
   Search,
-  ChevronDown
+  ChevronDown,
+  Gamepad2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -245,21 +246,36 @@ const UserManagement = () => {
                       const isSessionOnline = Math.abs(new Date().getTime() - sessionTime.getTime()) < 180000;
                       
                       return (
-                        <div key={id} className="space-y-0.5 border-l-2 border-white/5 pl-3">
-                          <div className="flex items-center gap-2 text-[12px] text-white/90 font-bold">
-                            {session.device === "Phone" ? (
-                              <Smartphone className={cn("w-3.5 h-3.5", isSessionOnline ? "text-blue-400" : "text-white/20")} />
-                            ) : (
-                              <Monitor className={cn("w-3.5 h-3.5", isSessionOnline ? "text-yellow-400" : "text-white/20")} />
-                            )}
-                            <p className={cn(isSessionOnline ? "text-white" : "text-white/40")}>
-                               {session.device || "Desktop PC"}
-                            </p>
-                            {isSessionOnline && <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />}
+                        <div key={id} className="space-y-1 py-1.5 first:pt-0 last:pb-0 border-b border-white/[0.03] last:border-0 group/session">
+                          <div className="flex items-center gap-2.5">
+                            <div className={cn(
+                              "w-8 h-8 rounded-lg flex items-center justify-center border transition-colors",
+                              isSessionOnline ? "bg-blue-500/10 border-blue-500/20" : "bg-white/5 border-white/5"
+                            )}>
+                              {session.device === "Phone" ? (
+                                <Smartphone className={cn("w-4 h-4", isSessionOnline ? "text-cyan-400" : "text-white/20")} />
+                              ) : session.device === "Smart TV" ? (
+                                <Monitor className={cn("w-4 h-4", isSessionOnline ? "text-orange-400" : "text-white/20")} />
+                              ) : session.device === "Console" ? (
+                                <Gamepad2 className={cn("w-4 h-4", isSessionOnline ? "text-purple-400" : "text-white/20")} />
+                              ) : session.device === "Tablet" ? (
+                                <Laptop className={cn("w-4 h-4", isSessionOnline ? "text-green-400" : "text-white/20")} />
+                              ) : (
+                                <Monitor className={cn("w-4 h-4", isSessionOnline ? "text-yellow-400" : "text-white/20")} />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className={cn("text-[12px] font-bold truncate", isSessionOnline ? "text-white" : "text-white/40")}>
+                                   {session.device || "Desktop PC"}
+                                </p>
+                                {isSessionOnline && <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e] animate-pulse" />}
+                              </div>
+                              <p className="text-[10px] text-white/20 font-bold uppercase tracking-wider truncate">
+                                {session.os || "OS"} • {session.browser || "Browser"}
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-[10px] text-white/20 font-medium pl-0">
-                            {session.os || "Unknown OS"} • {session.browser?.split('/')[0] || "Browser"}
-                          </p>
                         </div>
                       );
                     })
