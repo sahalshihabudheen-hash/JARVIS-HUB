@@ -80,16 +80,52 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
     <div className="space-y-6">
       {/* Control Panel (Top) */}
       <div className="glass border border-white/10 p-4 rounded-2xl space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Source Selection
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              If content is not found, try **Indian Mirror** (best for Malayalam) or **Vidsrc.to / Pro**.
-            </p>
+          {/* Source Selection Feedback */}
+          <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md mb-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3b82f6]" />
+                <h4 className="text-sm font-bold uppercase tracking-wider text-white/90">Signal Status: {videoServers.find(s => s.id === currentServer)?.name}</h4>
+              </div>
+              <p className="text-xs text-white/40 leading-relaxed max-w-md">
+                If the content is blocked or missing, try switching to **INDIAN Mirror** (best for Malayalam content) or use the specialized launch button to bypass browser security protocols.
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-3">
+              <Button 
+                variant="outline"
+                className="bg-transparent border-blue-500/30 hover:bg-blue-500/20 text-blue-400 font-bold h-11 px-6 rounded-xl flex items-center gap-2 group transition-all"
+                onClick={() => window.open(embedUrl, '_blank')}
+              >
+                <div className="w-2 h-2 rounded-full bg-blue-500 group-hover:animate-ping" />
+                LAUNCH EXTERNAL NODE
+              </Button>
+
+              <button 
+                onClick={() => setIsAutoSearching(!isAutoSearching)}
+                className={cn(
+                  "flex items-center gap-3 px-6 h-11 rounded-xl font-bold text-xs uppercase tracking-[0.2em] transition-all duration-500 border relative overflow-hidden group",
+                  isAutoSearching 
+                    ? "bg-red-500/10 border-red-500/50 text-red-500" 
+                    : "bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/50"
+                )}
+              >
+                {isAutoSearching ? (
+                  <>
+                    <RefreshCcw className="w-4 h-4 animate-spin" />
+                    STOP AUTO-SEARCHING
+                  </>
+                ) : (
+                  <>
+                    <RefreshCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-700" />
+                    STABILIZE SIGNAL (AUTO-SCAN)
+                  </>
+                )}
+              </button>
+            </div>
           </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           
           <div className="flex flex-col gap-2 relative w-full xl:w-auto">
             <div className="flex flex-wrap gap-1.5 backdrop-blur-md bg-white/5 p-2 rounded-xl border border-white/5">
