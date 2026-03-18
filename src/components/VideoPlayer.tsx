@@ -41,21 +41,25 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
 
   // Block popup ads from embedded video servers
   useEffect(() => {
+    setupProgressListener();
+    
     const originalOpen = window.open;
     window.open = (url?: string | URL, target?: string, ...rest: any[]) => {
-      // Block all new tabs opened by ad scripts
-      const blockedDomains = ['sexytalk', 'advert', 'click', 'popup', 'casino', 'betting', 'adult', 'porn', 'xxx'];
+      const blockedDomains = [
+        'sexytalk', 'adsterra', 'propellerads', 'popcash',
+        'popads', 'casino', 'betting', 'adult', 'porn', 'xxx',
+        'click.php', 'redirect', 'exoclick', 'trafficjunky'
+      ];
       const urlStr = String(url || '');
-      const isAd = blockedDomains.some(d => urlStr.includes(d)) || target === '_blank';
-      if (isAd) {
+      const isAdDomain = blockedDomains.some(d => urlStr.toLowerCase().includes(d));
+      if (isAdDomain) {
         console.warn('[JARVIS AD SHIELD] Blocked popup:', urlStr);
         return null;
       }
-      return originalOpen(url, target, ...rest);
+      return originalOpen(url as any, target, ...rest);
     };
     return () => { window.open = originalOpen; };
   }, []);
-
 
   // Auto-Search Mode Logic
   useEffect(() => {

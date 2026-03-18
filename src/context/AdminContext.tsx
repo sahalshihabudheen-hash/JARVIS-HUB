@@ -98,38 +98,57 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       localStorage.removeItem("jarvis_admin_branding");
     }
 
-    // Real-time Users from Firestore
-    const q = query(collection(db, "users"), orderBy("lastSeen", "desc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedUsers = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as any[];
-      setUsers(fetchedUsers);
-    });
+    let unsubscribe: (() => void) | null = null;
+    let unsubAct: (() => void) | null = null;
+    let unsubMaintenance: (() => void) | null = null;
 
-    // Real-time Activity
-    const qAct = query(collection(db, "activity"), orderBy("timestamp", "desc"), limit(20));
-    const unsubAct = onSnapshot(qAct, (snapshot) => {
-      const fetchedAct = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as any[];
-      setActivityLog(fetchedAct);
-    });
+    // Real-time Users from Firestore
+    try {
+      const q = query(collection(db, "users"), orderBy("lastSeen", "desc"));
+      unsubscribe = onSnapshot(q, 
+        (snapshot) => {
+          const fetchedUsers = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as any[];
+          setUsers(fetchedUsers);
+        },
+        (err) => console.error("Users listener error:", err)
+      );
+    } catch (e) { console.error("Failed to subscribe to users:", e); }
+
+    // Real-time Activity — may fail if collection doesn't exist yet
+    try {
+      const qAct = query(collection(db, "activity"), orderBy("timestamp", "desc"), limit(20));
+      unsubAct = onSnapshot(qAct, 
+        (snapshot) => {
+          const fetchedAct = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as any[];
+          setActivityLog(fetchedAct);
+        },
+        (err) => console.error("Activity listener error (check Firestore rules):", err)
+      );
+    } catch (e) { console.error("Failed to subscribe to activity:", e); }
 
     // Real-time Maintenance Mode
-    const maintenanceRef = doc(db, "settings", "maintenance");
-    const unsubMaintenance = onSnapshot(maintenanceRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setIsMaintenanceMode(docSnap.data().active || false);
-      }
-    });
+    try {
+      const maintenanceRef = doc(db, "settings", "maintenance");
+      unsubMaintenance = onSnapshot(maintenanceRef, 
+        (docSnap) => {
+          if (docSnap.exists()) {
+            setIsMaintenanceMode(docSnap.data().active || false);
+          }
+        },
+        (err) => console.error("Maintenance listener error:", err)
+      );
+    } catch (e) { console.error("Failed to subscribe to maintenance:", e); }
 
     return () => {
-      unsubscribe();
-      unsubAct();
-      unsubMaintenance();
+      if (unsubscribe) unsubscribe();
+      if (unsubAct) unsubAct();
+      if (unsubMaintenance) unsubMaintenance();
     };
   }, []);
 
