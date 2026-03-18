@@ -23,7 +23,10 @@ const WatchPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addActivity } = useAdmin();
-  const [showIntro, setShowIntro] = useState(true);
+  
+  // Use session storage to track if intro played for THIS specific movie in THIS session
+  const introSessionKey = `intro_played_${type}_${id}`;
+  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem(introSessionKey));
   const [selectedLang, setSelectedLang] = useState<string | undefined>(undefined);
   
   const mediaId = parseInt(id || "0");
@@ -103,7 +106,10 @@ const WatchPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {showIntro && <NetflixIntro onComplete={() => setShowIntro(false)} />}
+      {showIntro && <NetflixIntro onComplete={() => {
+        setShowIntro(false);
+        sessionStorage.setItem(introSessionKey, "true");
+      }} />}
       <Navbar />
 
       <main className="pt-20 pb-16">
@@ -150,6 +156,7 @@ const WatchPage = () => {
             season={seasonNum}
             episode={episodeNum}
             lang={selectedLang || content?.original_language}
+            onLangChange={(l) => setSelectedLang(l)}
           />
 
           {/* TV Navigation */}

@@ -15,9 +15,10 @@ interface VideoPlayerProps {
   season?: number;
   episode?: number;
   lang?: string;
+  onLangChange?: (lang: string) => void;
 }
 
-const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlayerProps) => {
+const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange }: VideoPlayerProps) => {
   const { isActive, step, nextStep } = useTutorial();
   const [currentServer, setCurrentServer] = useState(getDefaultServer());
   const containerRef = useRef<HTMLDivElement>(null);
@@ -148,14 +149,16 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
                   <button
                     key={l.id}
                     onClick={() => {
-                      // We'll update the URL by refreshing the player with the new lang
-                      // For now, since VideoPlayer takes lang as prop, we'll suggest parent to handle it
-                      // or just manage a local override
-                      window.location.search = `?lang=${l.id}`; // Hard refresh with lang query
+                      if (onLangChange) {
+                        onLangChange(l.id);
+                      } else {
+                        // Fallback for isolated use
+                        window.location.search = `?lang=${l.id}`;
+                      }
                     }}
                     className={cn(
                       "px-3 py-1 rounded-lg text-[10px] font-bold transition-all",
-                      lang === l.id ? "bg-primary text-black" : "bg-white/5 text-white/40 hover:text-white"
+                      lang === l.id ? "bg-primary text-black shadow-[0_0_15px_rgba(34,211,238,0.4)]" : "bg-white/5 text-white/40 hover:text-white"
                     )}
                   >
                     {l.name}
