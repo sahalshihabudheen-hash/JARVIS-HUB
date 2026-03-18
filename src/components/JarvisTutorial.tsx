@@ -219,6 +219,11 @@ const JarvisTutorial = () => {
       const el = document.getElementById(target);
       if (el) {
         const r = el.getBoundingClientRect();
+        // If element has 0 dimensions (e.g. empty row), treat as null target
+        if (r.width === 0 || r.height === 0) {
+          setCoords(null);
+          return;
+        }
         setCoords({ x: r.left, y: r.top, width: r.width, height: r.height });
       } else {
         setCoords(null);
@@ -233,7 +238,10 @@ const JarvisTutorial = () => {
     // Scroll to target if first time
     const target = steps[step]?.target;
     if (target) {
-      document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      const el = document.getElementById(target);
+      if (el && el.offsetHeight > 0) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     }
 
     return () => window.removeEventListener("resize", updateCoords);
@@ -312,7 +320,7 @@ const JarvisTutorial = () => {
 
       {/* ── Full dark backdrop for non-target steps ── */}
       {!coords && (
-        <div className="absolute inset-0 bg-black/88 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-black/85">
           <div className="absolute inset-0 grid-overlay opacity-10" />
         </div>
       )}

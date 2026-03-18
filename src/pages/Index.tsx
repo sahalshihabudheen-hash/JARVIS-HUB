@@ -229,7 +229,7 @@ const Index = () => {
 
       {/* Ad Blocker Warning Popup */}
       {showAdWarning && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 animate-fade-in">
           <div className="mx-4 max-w-md w-full bg-card/95 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-2xl">
             <div className="flex items-start gap-3 mb-4">
               <ShieldAlert className="w-6 h-6 text-yellow-400 shrink-0 mt-0.5" />

@@ -59,14 +59,16 @@ export interface SearchResult {
   total_results: number;
 }
 
-export const getImageUrl = (path: string | null, size: string = "w500"): string => {
+export const getImageUrl = (path: string | null, size: string = "w780"): string => {
   if (!path) return "https://via.placeholder.com/500x750?text=No+Image";
-  return `${TMDB_IMAGE_BASE}/${size}${path}`;
+  const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+  return `${TMDB_IMAGE_BASE}/${size}/${cleanPath}`;
 };
 
 export const getBackdropUrl = (path: string | null, size: string = "original"): string => {
   if (!path) return "";
-  return `${TMDB_IMAGE_BASE}/${size}${path}`;
+  const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+  return `${TMDB_IMAGE_BASE}/${size}/${cleanPath}`;
 };
 
 const fetchTMDB = async <T>(endpoint: string, params: Record<string, string> = {}): Promise<T> => {
