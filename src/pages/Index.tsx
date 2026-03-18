@@ -257,31 +257,67 @@ const Index = () => {
           isLoading={trendingLoading || regionalLoading} 
         />
         
-        <div className="container mx-auto -mt-20 relative z-10">
-          <div id="watchlist-row">
+        <div className="container mx-auto -mt-20 relative z-10 space-y-12">
+          <div id="watchlist-row pb-8">
             <ContinueWatching />
           </div>
+
+          {/* MALAYALAM CINEMA HUB - HIGH PRIORITY FOR KERALA USERS */}
+          {location?.country === "IN" && (
+            <div className="space-y-8 bg-blue-500/[0.02] border-y border-white/[0.02] py-10 -mx-4 px-4 overflow-hidden">
+               <div className="flex items-center gap-3 mb-2 px-4">
+                  <div className="w-2 h-8 bg-blue-500 rounded-full" />
+                  <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
+                    Malayalam <span className="text-blue-500">Cinema Hub</span>
+                  </h2>
+               </div>
+
+               <MediaRow
+                  title="🔥 Current Blockbusters (Kerala)"
+                  items={regionalNow?.results || []}
+                  mediaType="movie"
+                  isLoading={regionalLoading}
+                />
+                
+                <MediaRow
+                  title="💎 Malayalam Evergreens"
+                  items={regionalNow?.results?.slice().reverse() || []}
+                  mediaType="movie"
+                  isLoading={regionalLoading}
+                />
+
+                <MediaRow
+                  title="🆕 New Malayalam Releases"
+                  items={regionalUpcoming?.results || []}
+                  mediaType="movie"
+                  isLoading={regionalUpcomingLoading}
+                />
+            </div>
+          )}
           
-              <MediaRow
-                title={isKeralaFocus ? `🔥 Malayalam Blockbusters in ${regionLabel}` : `🔥 Top in ${regionLabel}`}
-                items={regionalNow?.results || []}
+          {/* SPECIAL COLLECTIONS SECTION */}
+          <div className="pt-8">
+             <div className="flex items-center gap-3 mb-6 px-4">
+                <div className="w-2 h-8 bg-yellow-500 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.3)]" />
+                <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
+                  Special <span className="text-yellow-500">Global Collections</span>
+                </h2>
+             </div>
+             
+             <MediaRow
+                title="🌍 worldwide Anticipated Operations"
+                items={worldwideUpcoming?.results || []}
                 mediaType="movie"
-                isLoading={regionalLoading}
-              />
-              <MediaRow
-                title={isKeralaFocus ? "🆕 Upcoming Malayalam Cinema" : `🆕 Upcoming in ${regionLabel}`}
-                items={regionalUpcoming?.results || []}
-                mediaType="movie"
-                isLoading={regionalUpcomingLoading}
+                isLoading={worldwideLoading}
               />
 
-          {/* Worldwide row moved up for better global context after local focus */}
-          <MediaRow
-            title="🌍 Worldwide Most Anticipated"
-            items={worldwideUpcoming?.results || []}
-            mediaType="movie"
-            isLoading={worldwideLoading}
-          />
+             <MediaRow
+                title="📈 Global Trending Streams"
+                items={trending || []}
+                mediaType="movie"
+                isLoading={trendingLoading}
+              />
+          </div>
 
           {/* Hide/De-prioritize broader India row if user wants strict local focus */}
           {!isKeralaFocus && (

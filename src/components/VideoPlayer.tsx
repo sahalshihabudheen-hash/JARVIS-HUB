@@ -20,6 +20,13 @@ interface VideoPlayerProps {
 const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlayerProps) => {
   const { isActive, step, nextStep } = useTutorial();
   const [currentServer, setCurrentServer] = useState(getDefaultServer());
+
+  useEffect(() => {
+    // For Malayalam content, prioritize Indian Mirror if no preference set
+    if (lang === 'ml' && !localStorage.getItem("preferredServer")) {
+       setCurrentServer("vidsrcin");
+    }
+  }, [lang]);
   const [showOverlay, setShowOverlay] = useState(true);
   const [shieldActive, setShieldActive] = useState(false);
   const [isAutoSearching, setIsAutoSearching] = useState(false);
