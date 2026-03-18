@@ -144,10 +144,10 @@ const History = () => {
                         </div>
                       )}
                       
-                      <Button asChild size="sm" className="w-full rounded-xl bg-white/5 border border-white/10 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all group/btn mt-2">
-                        <Link to={watchLink} className="flex items-center gap-2">
+                      <Button asChild size="sm" className="w-full rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary hover:text-primary-foreground hover:border-primary text-primary transition-all duration-300 group/btn mt-2 font-bold uppercase tracking-wider text-[11px]">
+                        <Link to={watchLink} className="flex items-center justify-center gap-2">
                           Resume Playback
-                          <Play className="w-3 h-3 fill-current" />
+                          <Play className="w-3 h-3 fill-current group-hover/btn:translate-x-0.5 transition-transform" />
                         </Link>
                       </Button>
                     </div>
