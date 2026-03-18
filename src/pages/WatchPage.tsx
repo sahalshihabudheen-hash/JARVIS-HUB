@@ -111,6 +111,7 @@ const WatchPage = () => {
           <VideoPlayer
             type={type as "movie" | "tv"}
             tmdbId={mediaId}
+            imdbId={movie?.imdb_id || show?.external_ids?.imdb_id}
             season={seasonNum}
             episode={episodeNum}
             lang={content?.original_language}

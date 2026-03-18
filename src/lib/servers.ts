@@ -1,8 +1,8 @@
 export interface VideoServer {
   id: string;
   name: string;
-  getMovieUrl: (tmdbId: number) => string;
-  getTVUrl: (tmdbId: number, season: number, episode: number) => string;
+  getMovieUrl: (tmdbId: number, imdbId?: string) => string;
+  getTVUrl: (tmdbId: number, season: number, episode: number, imdbId?: string) => string;
 }
 
 export const videoServers: VideoServer[] = [
@@ -33,8 +33,8 @@ export const videoServers: VideoServer[] = [
   {
     id: "vidsrcme",
     name: "Vidsrc.me",
-    getMovieUrl: (tmdbId) => `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`,
-    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.me/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`,
+    getMovieUrl: (tmdbId, imdbId) => imdbId ? `https://vidsrc.me/embed/movie?imdb=${imdbId}` : `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode, imdbId) => imdbId ? `https://vidsrc.me/embed/tv?imdb=${imdbId}&season=${season}&episode=${episode}` : `https://vidsrc.me/embed/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`,
   },
   {
     id: "2embed",
@@ -45,8 +45,8 @@ export const videoServers: VideoServer[] = [
   {
     id: "superembed",
     name: "SuperEmbed",
-    getMovieUrl: (tmdbId) => `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`,
-    getTVUrl: (tmdbId, season, episode) => `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`,
+    getMovieUrl: (tmdbId, imdbId) => imdbId ? `https://multiembed.mov/?video_id=${imdbId}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`,
+    getTVUrl: (tmdbId, season, episode, imdbId) => imdbId ? `https://multiembed.mov/?video_id=${imdbId}&s=${season}&e=${episode}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`,
   },
   {
     id: "vidsrcin",

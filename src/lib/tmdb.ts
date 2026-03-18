@@ -26,6 +26,11 @@ export interface MediaDetails extends MediaItem {
   status: string;
   tagline?: string;
   seasons?: Season[];
+  imdb_id?: string;
+  external_ids?: {
+    imdb_id?: string;
+    [key: string]: any;
+  };
 }
 
 export interface Season {
@@ -126,11 +131,11 @@ export const getNowPlayingMovies = async (page: number = 1, region?: string, wit
 };
 
 export const getMovieDetails = async (id: number): Promise<MediaDetails> => {
-  return fetchTMDB<MediaDetails>(`/movie/${id}`);
+  return fetchTMDB<MediaDetails>(`/movie/${id}`, { append_to_response: "external_ids" });
 };
 
 export const getTVDetails = async (id: number): Promise<MediaDetails> => {
-  return fetchTMDB<MediaDetails>(`/tv/${id}`);
+  return fetchTMDB<MediaDetails>(`/tv/${id}`, { append_to_response: "external_ids" });
 };
 
 export const getSeasonDetails = async (tvId: number, seasonNumber: number): Promise<{ episodes: Episode[] }> => {

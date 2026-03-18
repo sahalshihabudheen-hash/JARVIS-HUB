@@ -11,12 +11,13 @@ import { useTutorial } from "@/context/TutorialContext";
 interface VideoPlayerProps {
   type: "movie" | "tv";
   tmdbId: number;
+  imdbId?: string;
   season?: number;
   episode?: number;
   lang?: string;
 }
 
-const VideoPlayer = ({ type, tmdbId, season, episode, lang }: VideoPlayerProps) => {
+const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlayerProps) => {
   const { isActive, step, nextStep } = useTutorial();
   const [currentServer, setCurrentServer] = useState(getDefaultServer());
   const [showOverlay, setShowOverlay] = useState(true);
@@ -65,8 +66,8 @@ const VideoPlayer = ({ type, tmdbId, season, episode, lang }: VideoPlayerProps) 
   const server = videoServers.find((s) => s.id === currentServer) || videoServers[0];
   const embedUrl =
     type === "movie"
-      ? server.getMovieUrl(tmdbId)
-      : server.getTVUrl(tmdbId, season || 1, episode || 1);
+      ? server.getMovieUrl(tmdbId, imdbId)
+      : server.getTVUrl(tmdbId, season || 1, episode || 1, imdbId);
 
   return (
     <div className="space-y-6">
