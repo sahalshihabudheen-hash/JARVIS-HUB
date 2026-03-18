@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
 import { ShieldAlert, Play, RefreshCcw } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
@@ -20,6 +20,29 @@ interface VideoPlayerProps {
 const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlayerProps) => {
   const { isActive, step, nextStep } = useTutorial();
   const [currentServer, setCurrentServer] = useState(getDefaultServer());
+  const containerRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().catch(err => {
+        console.error(`Error trying to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  const sendPlayerCommand = (command: string) => {
+    if (!iframeRef.current?.contentWindow) return;
+    const win = iframeRef.current.contentWindow;
+    // Broadcast standard play/pause commands to the iframe
+    win.postMessage(command, '*');
+    win.postMessage({ type: command }, '*');
+    win.postMessage({ cmd: command }, '*');
+    win.postMessage({ event: 'command', func: command }, '*');
+    win.postMessage(JSON.stringify({ event: 'command', func: command }), '*');
+  };
 
   useEffect(() => {
     // For Malayalam content, prioritize Indian Mirror if no preference set
@@ -202,8 +225,12 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
       </div>
 
       {/* Video Player Container */}
-      <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 group">
+      <div 
+        ref={containerRef}
+        className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 group"
+      >
         <iframe
+          ref={iframeRef}
           key={`${currentServer}-${tmdbId}-${season}-${episode}`}
           src={embedUrl}
           className="absolute inset-0 w-full h-full"
@@ -221,7 +248,6 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
               if (isActive && step === 3) nextStep();
             }}
           >
-
             <div className="text-center animate-pulse-glow">
               <div className="w-20 h-20 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 mx-auto shadow-[0_0_30px_rgba(34,211,238,0.4)]">
                 <div className="w-16 h-16 rounded-full border border-primary flex items-center justify-center bg-primary/5">
@@ -241,6 +267,57 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
             className="absolute inset-0 z-40 bg-transparent cursor-default"
             title="Stealth Shield Active - No clicks allowed"
           />
+        )}
+        
+        {/* Remote Control Panel Overlay (visible specifically when shield is active or hovered) */}
+        {!showOverlay && (
+          <div className={cn(
+            "absolute bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/10 transition-all duration-300 shadow-xl",
+            shieldActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto"
+          )}>
+            <button
+              onClick={() => sendPlayerCommand('play')}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
+              title="Play (via Command)"
+            >
+              <Play className="w-5 h-5 text-white" />
+              <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">Play</span>
+            </button>
+            <button
+              onClick={() => sendPlayerCommand('pause')}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
+              title="Pause (via Command)"
+            >
+              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">Pause</span>
+            </button>
+            <div className="w-px h-5 bg-white/20 mx-1" />
+            <button
+              onClick={() => sendPlayerCommand('rewind')}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
+              title="Rewind 10s"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"/></svg>
+              <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">-10s</span>
+            </button>
+            <button
+              onClick={() => sendPlayerCommand('forward')}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
+              title="Forward 10s"
+            >
+               <svg className="w-5 h-5 text-white transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"/></svg>
+               <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">+10s</span>
+            </button>
+            <div className="w-px h-5 bg-white/20 mx-1" />
+            <button
+              onClick={toggleFullScreen}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
+              title="Toggle Fullscreen"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+              <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">Fullscreen</span>
+            </button>
+          </div>
         )}
       </div>
 
