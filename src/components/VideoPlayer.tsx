@@ -39,9 +39,23 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
     }
   }, [lang]);
 
+  // Block popup ads from embedded video servers
   useEffect(() => {
-    setupProgressListener();
+    const originalOpen = window.open;
+    window.open = (url?: string | URL, target?: string, ...rest: any[]) => {
+      // Block all new tabs opened by ad scripts
+      const blockedDomains = ['sexytalk', 'advert', 'click', 'popup', 'casino', 'betting', 'adult', 'porn', 'xxx'];
+      const urlStr = String(url || '');
+      const isAd = blockedDomains.some(d => urlStr.includes(d)) || target === '_blank';
+      if (isAd) {
+        console.warn('[JARVIS AD SHIELD] Blocked popup:', urlStr);
+        return null;
+      }
+      return originalOpen(url, target, ...rest);
+    };
+    return () => { window.open = originalOpen; };
   }, []);
+
 
   // Auto-Search Mode Logic
   useEffect(() => {
@@ -190,7 +204,9 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
           src={embedUrl}
           className="absolute inset-0 w-full h-full"
           allowFullScreen
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-storage-access-by-user-activation"
+          referrerPolicy="no-referrer"
         />
 
         {/* Ad-Block Overlay Shield (Initial) */}
