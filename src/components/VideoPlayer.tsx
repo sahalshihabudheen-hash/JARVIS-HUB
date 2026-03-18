@@ -209,8 +209,6 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
           className="absolute inset-0 w-full h-full"
           allowFullScreen
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-storage-access-by-user-activation"
-          referrerPolicy="no-referrer"
         />
 
         {/* Ad-Block Overlay Shield (Initial) */}
