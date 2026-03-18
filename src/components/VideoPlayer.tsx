@@ -272,49 +272,18 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
         {/* Remote Control Panel Overlay (visible specifically when shield is active or hovered) */}
         {!showOverlay && (
           <div className={cn(
-            "absolute bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/10 transition-all duration-300 shadow-xl",
+            "absolute bottom-4 right-4 z-50 flex items-center gap-3 px-4 py-2 rounded-xl bg-black/80 backdrop-blur-xl border border-white/10 transition-all duration-300 shadow-xl",
             shieldActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto"
           )}>
-            <button
-              onClick={() => sendPlayerCommand('play')}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
-              title="Play (via Command)"
-            >
-              <Play className="w-5 h-5 text-white" />
-              <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">Play</span>
-            </button>
-            <button
-              onClick={() => sendPlayerCommand('pause')}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
-              title="Pause (via Command)"
-            >
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-              <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">Pause</span>
-            </button>
-            <div className="w-px h-5 bg-white/20 mx-1" />
-            <button
-              onClick={() => sendPlayerCommand('rewind')}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
-              title="Rewind 10s"
-            >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"/></svg>
-              <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">-10s</span>
-            </button>
-            <button
-              onClick={() => sendPlayerCommand('forward')}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
-              title="Forward 10s"
-            >
-               <svg className="w-5 h-5 text-white transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"/></svg>
-               <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">+10s</span>
-            </button>
-            <div className="w-px h-5 bg-white/20 mx-1" />
+            <div className="text-[10px] text-white/50 uppercase tracking-wider font-semibold mr-2 hidden sm:block">
+              {shieldActive ? "Shield Active" : "Shield Standby"}
+            </div>
             <button
               onClick={toggleFullScreen}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors group/btn relative"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors group/btn relative bg-white/5 border border-white/10 hover:border-white/30"
               title="Toggle Fullscreen"
             >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
               <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap">Fullscreen</span>
             </button>
           </div>
