@@ -57,7 +57,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
 
   // Auto-set Indian Mirror for Malayalam content
   useEffect(() => {
-    if (lang === "ml" && currentServer === "vidlink") {
+    if (lang === "ml" && currentServer === "superembed") {
       setCurrentServer("vidsrcin");
       toast.info("Malayalam stream detected — Prioritizing Indian Mirror.");
     }
