@@ -53,19 +53,49 @@ const WatchPage = () => {
   const hasPrevEpisode = episodeNum > 1;
   const validSeasons = show?.seasons?.filter(s => s.season_number > 0) || [];
 
-  // Log activity when content loads
+  // Log activity and Add to Continue Watching History
   useEffect(() => {
-    if (content && user && user.email) {
-      addActivity({
-        userEmail: user.email,
-        mediaTitle: isTV && currentEpisode 
-          ? `${title} (S${seasonNum}, Ep${episodeNum}: ${currentEpisode.name})`
-          : title,
-        mediaType: type as "movie" | "tv",
-        mediaPoster: `https://image.tmdb.org/t/p/w200${content.poster_path}`
-      });
+    if (content) {
+      // 1. Log Admin Activity
+      if (user && user.email) {
+        addActivity({
+          userEmail: user.email,
+          mediaTitle: isTV && currentEpisode 
+            ? `${title} (S${seasonNum}, Ep${episodeNum}: ${currentEpisode.name})`
+            : title,
+          mediaType: type as "movie" | "tv",
+          mediaPoster: `https://image.tmdb.org/t/p/w200${content.poster_path}`
+        });
+      }
+
+      // 2. Force add to "Continue Watching" history (since non-Vidlink servers don't emit progress)
+      try {
+        const historyStr = localStorage.getItem("vidLinkProgress");
+        const historyObj = historyStr ? JSON.parse(historyStr) : {};
+        const historyKey = `${content.id}`;
+        
+        historyObj[historyKey] = {
+          ...historyObj[historyKey], // Preserve any real progress if it previously existed
+          id: content.id,
+          type: type as "movie" | "tv",
+          title: title,
+          poster_path: content.poster_path || "",
+          backdrop_path: content.backdrop_path || "",
+          last_season_watched: isTV ? String(seasonNum) : undefined,
+          last_episode_watched: isTV ? String(episodeNum) : undefined,
+          progress: historyObj[historyKey]?.progress || {
+            watched: 10, // 10% defaults so it appears in the list
+            duration: 100 
+          },
+          last_updated: Date.now()
+        };
+        
+        localStorage.setItem("vidLinkProgress", JSON.stringify(historyObj));
+      } catch (e) {
+        console.error("Failed to save history", e);
+      }
     }
-  }, [content?.id, episodeNum, user]); // Only log when media ID or episode changes
+  }, [content?.id, episodeNum, user, title, type, isTV, seasonNum, currentEpisode]);
 
   return (
     <div className="min-h-screen bg-background">
