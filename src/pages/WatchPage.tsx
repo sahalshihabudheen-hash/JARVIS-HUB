@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
-import NetflixIntro from "@/components/NetflixIntro";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -24,15 +23,12 @@ const WatchPage = () => {
   const { user } = useAuth();
   const { addActivity } = useAdmin();
   
-  // Use session storage to track if intro played for THIS specific movie in THIS session
-  const introSessionKey = `intro_played_${type}_${id}`;
-  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem(introSessionKey));
-  const [selectedLang, setSelectedLang] = useState<string | undefined>(undefined);
-  
   const mediaId = parseInt(id || "0");
   const seasonNum = parseInt(season || "1");
   const episodeNum = parseInt(episode || "1");
   const isTV = type === "tv";
+
+  const [selectedLang, setSelectedLang] = useState<string | undefined>(undefined);
 
   const { data: movie } = useQuery({
     queryKey: ["movie", mediaId],
@@ -106,10 +102,6 @@ const WatchPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {showIntro && <NetflixIntro onComplete={() => {
-        setShowIntro(false);
-        sessionStorage.setItem(introSessionKey, "true");
-      }} />}
       <Navbar />
 
       <main className="pt-20 pb-16">
