@@ -43,14 +43,18 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [phase, setPhase] = useState(0);
   const [visible, setVisible] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
 
-  useEffect(() => {
+  const startIntro = () => {
     const audio = new Audio("/ps2_start_up.mp3");
     audio.volume = 1.0;
     audioRef.current = audio;
-    
-    // Play sound immediately
-    audio.play().catch(() => {});
+    audio.play().catch((err) => console.error("Audio playback failed:", err));
+    setHasStarted(true);
+  };
+
+  useEffect(() => {
+    if (!hasStarted) return;
 
     // Phase schedule
     const timers = [
@@ -69,9 +73,9 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
 
     return () => {
       timers.forEach(clearTimeout);
-      audio.pause();
+      if (audioRef.current) audioRef.current.pause();
     };
-  }, [onComplete]);
+  }, [onComplete, hasStarted]);
 
   if (!visible) return null;
 
@@ -112,6 +116,39 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
           filter: "blur(120px)"
         }}
       />
+
+      {/* ── Initial Connection Overlay ── */}
+      {!hasStarted && (
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-black/60 pointer-events-auto backdrop-blur-sm animate-fade-in">
+          <div className="text-center space-y-8 max-w-sm px-6">
+            <div className="relative group">
+               <div className="absolute inset-0 bg-cyan-500/20 blur-3xl animate-pulse group-hover:bg-cyan-500/40" />
+               <div className="relative w-24 h-24 mx-auto rounded-3xl border border-white/10 flex items-center justify-center p-4 bg-white/5 backdrop-blur-xl group-hover:scale-110 transition-transform duration-500 cursor-pointer shadow-2xl" onClick={startIntro}>
+                 <img src="/JARVIS2.gif" alt="Initialize Core" className="w-full h-full object-contain brightness-125" />
+               </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h2 className="text-white font-display font-black tracking-tighter text-3xl uppercase leading-tight italic">
+                 Jarvis Terminal <span className="text-cyan-400">Offline</span>
+              </h2>
+              <p className="text-white/40 text-xs font-bold uppercase tracking-[0.3em] font-sans">
+                 Initialization Required To Sync Neural Audio Links
+              </p>
+            </div>
+
+            <button
+               onClick={startIntro}
+               className="group relative px-10 py-4 bg-transparent transition-all active:scale-95"
+            >
+               <div className="absolute inset-0 bg-white/5 border border-white/10 rounded-2xl group-hover:bg-cyan-400/10 group-hover:border-cyan-400/50 transition-all duration-300 shadow-[0_0_40px_rgba(0,0,0,0.5)]" />
+               <span className="relative text-white font-display font-black uppercase text-xs tracking-[0.8em] group-hover:text-cyan-400 transition-colors">
+                  Initialize Link
+               </span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Parallax Starfield ── */}
       <div className="absolute inset-0 pointer-events-none">
