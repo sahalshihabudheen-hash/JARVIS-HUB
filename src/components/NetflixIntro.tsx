@@ -12,22 +12,22 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
 
   useEffect(() => {
     // Stage 1: Absolute silence, then Logo fades in elegantly
-    const t1 = setTimeout(() => setPhase("logo-fade"), 800);
+    const t1 = setTimeout(() => setPhase("logo-fade"), 1500);
     
-    // Stage 2: The "Hit" - Sudden Zoom & Sound Peak
-    const t2 = setTimeout(() => setPhase("zoom-hit"), 3200);
+    // Stage 2: The "Buildup" - Faint light begins to emanate
+    const t2 = setTimeout(() => setPhase("zoom-hit"), 5000);
     
-    // Stage 3: The Spectrum - Rays flying like light speed
-    const t3 = setTimeout(() => setPhase("spectrum-peak"), 5200);
+    // Stage 3: The Peak - Spectrum rays at full intensity
+    const t3 = setTimeout(() => setPhase("spectrum-peak"), 8500);
     
-    // Stage 4: Outro Fade
-    const t4 = setTimeout(() => setPhase("outro"), 9500);
+    // Stage 4: Outro - Fading into the abyss
+    const t4 = setTimeout(() => setPhase("outro"), 13000);
     
     // Stage 5: Final Cleanup
     const t5 = setTimeout(() => {
       setVisible(false);
       onComplete();
-    }, 11500);
+    }, 15000);
 
     return () => {
       [t1, t2, t3, t4, t5].forEach(clearTimeout);
@@ -54,7 +54,7 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
 
       {/* 3. The Pro Spectrum Rays (Denser & More Organic) */}
       <div className={cn(
-        "absolute inset-0 flex items-center justify-center h-full w-full transition-all duration-[4s] cubic-bezier(0.2, 0, 0, 1)",
+        "absolute inset-0 flex items-center justify-center h-full w-full transition-all duration-[6s] cubic-bezier(0.2, 0, 0, 1)",
         phase === "spectrum-peak" ? "opacity-100 scale-150" : "opacity-0 scale-100"
       )}>
         {Array.from({ length: 85 }).map((_, i) => (
@@ -70,8 +70,8 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
               }, transparent)`,
               opacity: 0.1 + Math.random() * 0.6,
               transform: `translateY(${(Math.random() - 0.5) * 400}px) scaleX(${Math.random() * 4})`,
-              transition: 'all 5s cubic-bezier(0.1, 0.9, 0.2, 1)',
-              transitionDelay: `${i * 10}ms`
+              transition: 'all 8s cubic-bezier(0.1, 0.9, 0.2, 1)',
+              transitionDelay: `${i * 15}ms`
             }}
           />
         ))}
@@ -79,11 +79,11 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
 
       {/* 4. The Branding (Cinematic Zoom) */}
       <div className={cn(
-        "relative flex flex-col items-center transition-all duration-[2.5s] ease-[cubic-bezier(0.4, 0, 0.2, 1)]",
+        "relative flex flex-col items-center transition-all duration-[4s] ease-[cubic-bezier(0.1, 0.9, 0.2, 1)]",
         phase === "initial" ? "opacity-0 scale-90 blur-xl" :
         phase === "logo-fade" ? "opacity-100 scale-100 blur-none" :
-        phase === "zoom-hit" ? "scale-[12] opacity-0 blur-3xl" :
-        "scale-[20] opacity-0 blur-none"
+        phase === "zoom-hit" ? "scale-[15] opacity-0 blur-3xl" :
+        "scale-[25] opacity-0 blur-none"
       )}>
         <h1 className="text-8xl md:text-[14rem] font-display font-black tracking-[-0.05em] italic select-none">
           <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]">JARVIS</span>
