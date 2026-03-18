@@ -113,6 +113,7 @@ const WatchPage = () => {
             tmdbId={mediaId}
             season={seasonNum}
             episode={episodeNum}
+            lang={content?.original_language}
           />
 
           {/* TV Navigation */}

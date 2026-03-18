@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { getPopularMovies, getTopRatedMovies, getNowPlayingMovies, getUpcomingMovies, getMovieGenres, discoverMovies, getUserLocation } from "@/lib/tmdb";
 
-type Category = "popular" | "top_rated" | "now_playing" | "upcoming" | "genre";
+type Category = "popular" | "top_rated" | "now_playing" | "upcoming" | "genre" | "malayalam" | "hindi" | "tamil";
 
 const Movies = () => {
   const [category, setCategory] = useState<Category>("popular");
@@ -31,6 +31,9 @@ const Movies = () => {
       case "top_rated": return getTopRatedMovies(page);
       case "now_playing": return getNowPlayingMovies(page, location?.country);
       case "upcoming": return getUpcomingMovies(page, location?.country);
+      case "malayalam": return discoverMovies({ with_original_language: "ml", with_origin_country: "IN" }, page);
+      case "hindi": return discoverMovies({ with_original_language: "hi", with_origin_country: "IN" }, page);
+      case "tamil": return discoverMovies({ with_original_language: "ta", with_origin_country: "IN" }, page);
       default: return getPopularMovies(page, location?.country);
     }
   };
@@ -45,6 +48,9 @@ const Movies = () => {
     { key: "top_rated", label: "Top Rated" },
     { key: "now_playing", label: "Now Playing" },
     { key: "upcoming", label: "Upcoming" },
+    { key: "malayalam", label: "Malayalam" },
+    { key: "hindi", label: "Hindi" },
+    { key: "tamil", label: "Tamil" },
   ];
 
   return (

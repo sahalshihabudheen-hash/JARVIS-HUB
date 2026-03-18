@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
-import { ShieldAlert, Play } from "lucide-react";
+import { ShieldAlert, Play, RefreshCcw } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
@@ -12,23 +13,53 @@ interface VideoPlayerProps {
   tmdbId: number;
   season?: number;
   episode?: number;
+  lang?: string;
 }
 
-const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
+const VideoPlayer = ({ type, tmdbId, season, episode, lang }: VideoPlayerProps) => {
   const { isActive, step, nextStep } = useTutorial();
   const [currentServer, setCurrentServer] = useState(getDefaultServer());
   const [showOverlay, setShowOverlay] = useState(true);
   const [shieldActive, setShieldActive] = useState(false);
+  const [isAutoSearching, setIsAutoSearching] = useState(false);
+
+  // Auto-set Indian Mirror for Malayalam content
+  useEffect(() => {
+    if (lang === "ml" && currentServer === "vidlink") {
+      setCurrentServer("vidsrcin");
+      toast.info("Malayalam stream detected — Prioritizing Indian Mirror.");
+    }
+  }, [lang]);
 
   useEffect(() => {
     setupProgressListener();
   }, []);
+
+  // Auto-Search Mode Logic
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isAutoSearching && showOverlay) {
+      interval = setInterval(() => {
+        cycleMirror();
+      }, 10000); // Try next source every 10s
+    }
+    return () => clearInterval(interval);
+  }, [isAutoSearching, showOverlay, currentServer]);
 
   const handleServerChange = (serverId: string) => {
     setCurrentServer(serverId);
     setDefaultServer(serverId);
     setShowOverlay(true);
     setShieldActive(false);
+  };
+
+  const cycleMirror = () => {
+    const currentIndex = videoServers.findIndex((s) => s.id === currentServer);
+    const nextIndex = (currentIndex + 1) % videoServers.length;
+    handleServerChange(videoServers[nextIndex].id);
+    toast.success(`Scanning Mirror ${nextIndex + 1}: ${videoServers[nextIndex].name}`, {
+      duration: 2000
+    });
   };
 
   const server = videoServers.find((s) => s.id === currentServer) || videoServers[0];
@@ -48,29 +79,62 @@ const VideoPlayer = ({ type, tmdbId, season, episode }: VideoPlayerProps) => {
               Source Selection
             </h3>
             <p className="text-xs text-muted-foreground">
-              If "Content Not Found" appears, please click **Mirror 1** or **Mirror 2**.
+              If content is not found, try **Indian Mirror** (best for Malayalam) or **Vidsrc.to / Pro**.
             </p>
           </div>
           
-          <div className="flex flex-wrap gap-2 relative">
+          <div className="flex flex-col gap-2 relative w-full xl:w-auto">
+            <div className="flex flex-wrap gap-1.5 backdrop-blur-md bg-white/5 p-2 rounded-xl border border-white/5">
+              {videoServers.slice(0, 8).map((s) => (
+                <Button
+                  key={s.id}
+                  variant={s.id === currentServer ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    handleServerChange(s.id);
+                    if (isActive && step === 4) nextStep();
+                  }}
+                  className={cn(
+                    "rounded-md px-3 h-7 text-[10px] font-bold uppercase tracking-tight transition-all duration-300",
+                    s.id === currentServer ? "bg-primary text-black hover-glow" : "hover:bg-white/5 border-white/10"
+                  )}
+                >
+                  {s.name.split(' ')[0]}
+                </Button>
+              ))}
+            </div>
+            
+            <div className="flex flex-wrap gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+              {videoServers.slice(8).map((s) => (
+                <Button
+                  key={s.id}
+                  variant={s.id === currentServer ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleServerChange(s.id)}
+                  className={cn(
+                    "rounded-md px-2 h-6 text-[9px] font-bold uppercase tracking-tight transition-all duration-300",
+                    s.id === currentServer ? "bg-primary text-black" : "hover:bg-white/5 border-white/5"
+                  )}
+                >
+                  {s.name.includes('.') ? s.name.split('.')[1] : s.name.split(' ')[0]}
+                </Button>
+              ))}
+            </div>
 
-            {videoServers.map((s) => (
-              <Button
-                key={s.id}
-                variant={s.id === currentServer ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  handleServerChange(s.id);
-                  if (isActive && step === 4) nextStep();
-                }}
-                className={cn(
-                  "rounded-full px-4 transition-all duration-300",
-                  s.id === currentServer ? "hover-glow shadow-[0_0_15px_rgba(34,211,238,0.4)]" : "hover:bg-white/5"
-                )}
-              >
-                {s.name}
-              </Button>
-            ))}
+            <Button
+              onClick={() => setIsAutoSearching(!isAutoSearching)}
+              variant="outline"
+              size="sm"
+              className={cn(
+                "mt-2 w-full font-black uppercase text-[10px] tracking-widest h-9 transition-all duration-500",
+                isAutoSearching 
+                  ? "bg-red-500/20 border-red-500 text-red-500 hover:bg-red-500/30" 
+                  : "bg-primary/20 border-primary/40 text-primary hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(34,211,238,0.2)]"
+              )}
+            >
+              <RefreshCcw className={cn("w-3.5 h-3.5 mr-2", isAutoSearching && "animate-spin")} />
+              {isAutoSearching ? "STOP AUTO-SEARCHING" : "STABILIZE SIGNAL (AUTO-SCAN)"}
+            </Button>
           </div>
         </div>
       </div>

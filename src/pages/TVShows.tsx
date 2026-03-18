@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { getPopularTVShows, getTopRatedTVShows, getTVGenres, discoverTV } from "@/lib/tmdb";
 
-type Category = "popular" | "top_rated" | "genre";
+type Category = "popular" | "top_rated" | "genre" | "malayalam" | "hindi" | "tamil";
 
 const TVShows = () => {
   const [category, setCategory] = useState<Category>("popular");
@@ -20,10 +20,13 @@ const TVShows = () => {
 
   const fetchFn = () => {
     if (category === "genre" && selectedGenre) {
-      return discoverTV(selectedGenre, page);
+      return discoverTV({ with_genres: selectedGenre.toString() }, page);
     }
     switch (category) {
       case "top_rated": return getTopRatedTVShows(page);
+      case "malayalam": return discoverTV({ with_original_language: "ml", with_origin_country: "IN" }, page);
+      case "hindi": return discoverTV({ with_original_language: "hi", with_origin_country: "IN" }, page);
+      case "tamil": return discoverTV({ with_original_language: "ta", with_origin_country: "IN" }, page);
       default: return getPopularTVShows(page);
     }
   };
@@ -36,6 +39,9 @@ const TVShows = () => {
   const categories = [
     { key: "popular", label: "Popular" },
     { key: "top_rated", label: "Top Rated" },
+    { key: "malayalam", label: "Malayalam" },
+    { key: "hindi", label: "Hindi" },
+    { key: "tamil", label: "Tamil" },
   ];
 
   return (

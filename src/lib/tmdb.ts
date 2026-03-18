@@ -14,6 +14,7 @@ export interface MediaItem {
   first_air_date?: string;
   media_type?: "movie" | "tv";
   genre_ids?: number[];
+  original_language?: string;
 }
 
 export interface MediaDetails extends MediaItem {
@@ -158,9 +159,9 @@ export const discoverMovies = async (params: Record<string, string> = {}, page: 
   });
 };
 
-export const discoverTV = async (genreId: number, page: number = 1): Promise<SearchResult> => {
+export const discoverTV = async (params: Record<string, string> = {}, page: number = 1): Promise<SearchResult> => {
   return fetchTMDB<SearchResult>("/discover/tv", { 
-    with_genres: genreId.toString(), 
+    ...params,
     page: page.toString(),
     sort_by: "popularity.desc"
   });

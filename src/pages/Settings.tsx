@@ -359,17 +359,42 @@ const Settings = () => {
                          </div>
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
-                         <div className="flex items-center gap-4">
-                            <Globe className="w-5 h-5 text-primary" />
-                            <div>
-                               <p className="font-bold">Location Masking</p>
-                               <p className="text-xs text-muted-foreground">Currently showing results based on: {localStorage.getItem("user_location") || "Auto"}</p>
-                            </div>
-                         </div>
-                         <div className="w-12 h-6 bg-primary/20 rounded-full border border-primary/40 flex items-center px-1">
-                            <div className="w-4 h-4 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)] ml-auto" />
-                         </div>
+                      <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
+                          <div className="flex flex-col gap-4">
+                             <div className="flex items-center gap-4">
+                                <Globe className="w-5 h-5 text-primary" />
+                                <div>
+                                   <p className="font-bold">Regional Content Focus</p>
+                                   <p className="text-xs text-muted-foreground">Override auto-detection to see specific regional movies (Malayalam, Tamil, etc.)</p>
+                                </div>
+                             </div>
+                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                {[
+                                  { id: "auto", label: "Auto (IP)" },
+                                  { id: "kerala", label: "Malayalam" },
+                                  { id: "tamil", label: "Tamil" },
+                                  { id: "telugu", label: "Telugu" },
+                                  { id: "karnataka", label: "Kannada" },
+                                  { id: "maharashtra", label: "Marathi" },
+                                  { id: "bengal", label: "Bengali" },
+                                  { id: "hindi", label: "Hindi" },
+                                ].map((region) => (
+                                  <Button
+                                    key={region.id}
+                                    variant={localStorage.getItem("user_regional_focus") === region.id || (!localStorage.getItem("user_regional_focus") && region.id === "auto") ? "default" : "outline"}
+                                    size="sm"
+                                    className="text-[10px] font-bold uppercase tracking-widest h-8"
+                                    onClick={() => {
+                                      localStorage.setItem("user_regional_focus", region.id);
+                                      toast.success(`Protocol updated: Focus set to ${region.label}`);
+                                      window.location.reload(); // Quick way to refresh queries
+                                    }}
+                                  >
+                                    {region.label}
+                                  </Button>
+                                ))}
+                             </div>
+                          </div>
                       </div>
                    </div>
                  </div>
