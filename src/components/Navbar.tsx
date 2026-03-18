@@ -205,6 +205,7 @@ const Navbar = () => {
             {/* Mobile Controls */}
             <div className="flex items-center gap-1 lg:hidden">
               <Button
+                id="settings-btn-mobile"
                 variant="ghost"
                 size="icon"
                 className="w-10 h-10 rounded-full text-white/40 hover:text-white"
@@ -213,6 +214,7 @@ const Navbar = () => {
                 <Settings className="w-5 h-5" />
               </Button>
               <Button
+                id="search-btn-mobile"
                 variant="ghost"
                 size="icon"
                 className="w-10 h-10 rounded-full text-white/40 hover:text-white"
@@ -221,6 +223,7 @@ const Navbar = () => {
                 <Search className="w-5 h-5" />
               </Button>
               <Button
+                id="menu-btn-mobile"
                 variant="ghost"
                 size="icon"
                 className="w-10 h-10 rounded-full text-white/40 hover:text-white"

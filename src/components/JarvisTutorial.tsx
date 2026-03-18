@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import "@/tutorial.css";
 import PS2Intro from "./PS2Intro";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Session flag to determine if we should play the startup sequence
 // Returns true if: User just opened the tab (navigate/back_forward) AND hasn't seen intro yet in this tab.
@@ -106,7 +107,7 @@ const GenreButton = ({ genre }: { genre: { id: number; name: string; icon: strin
         );
       }}
       className={cn(
-        "group relative overflow-hidden flex items-center justify-start gap-3 px-3 py-2.5 rounded-[16px] border transition-all duration-300 transform hover:-translate-y-0.5 active:scale-[0.97]",
+        "group relative overflow-hidden flex items-center justify-start gap-2 md:gap-3 px-2 md:px-3 py-2 md:py-2.5 rounded-[12px] md:rounded-[16px] border transition-all duration-300 transform hover:-translate-y-0.5 active:scale-[0.97]",
         isSelected
           ? "bg-gradient-to-br from-primary/20 to-primary/5 border-primary/50 text-white shadow-[0_0_20px_rgba(34,211,238,0.2)]"
           : "bg-[#111]/80 backdrop-blur-md border-white/5 hover:bg-[#1a1c23]/90 hover:border-primary/30 hover:shadow-[0_4px_20px_rgba(34,211,238,0.1)] text-white/70"
@@ -119,14 +120,14 @@ const GenreButton = ({ genre }: { genre: { id: number; name: string; icon: strin
       
       {/* Icon container */}
       <div className={cn(
-        "relative z-10 flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-300 shrink-0",
+        "relative z-10 flex items-center justify-center w-7 h-7 md:w-9 md:h-9 rounded-lg md:rounded-xl transition-all duration-300 shrink-0",
         isSelected ? "bg-primary/20 shadow-[0_0_12px_rgba(34,211,238,0.4)]" : "bg-white/5 group-hover:bg-primary/10"
       )}>
-        <span className="text-xl opacity-90 group-hover:scale-110 transition-transform duration-300">{genre.icon}</span>
+        <span className="text-base md:text-xl opacity-90 group-hover:scale-110 transition-transform duration-300">{genre.icon}</span>
       </div>
 
       <span className={cn(
-        "relative z-10 text-[13px] font-bold tracking-wide transition-colors duration-300",
+        "relative z-10 text-[11px] md:text-[13px] font-bold tracking-wide transition-colors duration-300",
         isSelected ? "text-white" : "group-hover:text-white"
       )}>
         {genre.name}
@@ -145,6 +146,7 @@ const JarvisTutorial = () => {
   const { isActive, step, nextStep, setStep, completeTutorial, startTutorial } = useTutorial();
   const { user } = useAuth();
   const location = useLocation();
+  const isMobile = useIsMobile();
   const [typingDone, setTypingDone] = useState(false);
   const [coords, setCoords] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [showPS2Intro, setShowPS2Intro] = useState(false);
@@ -198,29 +200,44 @@ const JarvisTutorial = () => {
   const steps = [
     { target: null,             title: "Welcome",              description: "Hey there! I'm JARVIS, your AI assistant. Let me quickly show you around JARVIS HUB so you can start streaming right away.", icon: Activity },
     { target: "navbar-logo",    title: "Home",                 description: "This is the JARVIS HUB logo. Click it anytime to go back to the home page.", icon: Activity },
-    { target: "navbar-links",   title: "Browse",               description: "Use these tabs to explore Movies, TV Shows, Anime, and your Watchlist.", icon: Layout },
-    { target: "navbar-search",  title: "Search",               description: "Looking for something specific? Search for any movie, show, actor, or director here.", icon: Search },
+    { target: isMobile ? "menu-btn-mobile" : "navbar-links",   title: "Browse",               description: "Use these tabs to explore Movies, TV Shows, Anime, and your Watchlist.", icon: Layout },
+    { target: isMobile ? "search-btn-mobile" : "navbar-search",  title: "Search",               description: "Looking for something specific? Search for any movie, show, actor, or director here.", icon: Search },
     { target: null,             title: "Pick Your Genres",     description: "Select the genres you love! I'll personalize your home page based on what you pick.", icon: Cpu, interactive: "genres" },
     { target: "hero-watch-btn", title: "Watch Now",            description: "Hit this button to start watching instantly. It's the fastest way to jump into a movie or show.", icon: Cpu },
     { target: "watchlist-row",  title: "Your Watchlist",       description: "Tap the heart icon on any movie or show to save it to your watchlist for later.", icon: Heart },
-    { target: "settings-btn",   title: "Settings",             description: "Customize your experience — change your region, manage preferences, and more.", icon: SettingsIcon },
+    { target: isMobile ? "settings-btn-mobile" : "settings-btn",   title: "Settings",             description: "Customize your experience — change your region, manage preferences, and more.", icon: SettingsIcon },
     { target: null,             title: "You're All Set!",      description: "That's everything! Enjoy JARVIS HUB. I'll be here if you need me. Happy streaming!", icon: ShieldAlert },
   ];
 
   // ── Element tracking ──
   useEffect(() => {
     setTypingDone(false);
+    
+    const updateCoords = () => {
+      const target = steps[step]?.target;
+      if (!target) { setCoords(null); return; }
+      const el = document.getElementById(target);
+      if (el) {
+        const r = el.getBoundingClientRect();
+        setCoords({ x: r.left, y: r.top, width: r.width, height: r.height });
+      } else {
+        setCoords(null);
+      }
+    };
+
+    updateCoords();
+
+    // Re-calculate on resize
+    window.addEventListener("resize", updateCoords);
+    
+    // Scroll to target if first time
     const target = steps[step]?.target;
-    if (!target) { setCoords(null); return; }
-    const el = document.getElementById(target);
-    if (el) {
-      const r = el.getBoundingClientRect();
-      setCoords({ x: r.left, y: r.top, width: r.width, height: r.height });
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else {
-      setCoords(null);
+    if (target) {
+      document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [step, isActive]);
+
+    return () => window.removeEventListener("resize", updateCoords);
+  }, [step, isActive, isMobile]);
 
   if (!user || location.pathname === "/auth" || location.pathname === "/admin") return null;
 
@@ -246,27 +263,31 @@ const JarvisTutorial = () => {
   const total = steps.length;
 
   // ── Balloon position ──
-  const BALLOON_W = 380;
-  const BALLOON_H = 430;
+  const BALLOON_W = isMobile ? Math.min(320, window.innerWidth - 32) : 380;
+  // Reduce height on mobile to keep it compact
+  const BALLOON_H = currentStep.interactive === "genres" ? (isMobile ? 520 : 540) : (isMobile ? 320 : 430);
   const balloonStyle: React.CSSProperties = {};
-  let nibPos = "bottom"; // nib points up from balloon top
+  let nibPos = "bottom";
 
   if (coords) {
     const spaceBelow = window.innerHeight - coords.y - coords.height;
     const spaceAbove = coords.y;
 
     if (spaceBelow >= BALLOON_H + 20) {
-      // Place below target
       balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
       nibPos = "top";
     } else if (spaceAbove >= BALLOON_H + 20) {
-      // Place above target
       balloonStyle.top = Math.max(10, coords.y - BALLOON_H - 16);
       nibPos = "bottom";
     } else {
-      // fallback: force below with scroll-safe clamp
-      balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
-      nibPos = "top";
+      // For mobile if no space, place at bottom or top with clamp
+      if (isMobile) {
+        balloonStyle.bottom = 20;
+        nibPos = "none";
+      } else {
+        balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
+        nibPos = "top";
+      }
     }
 
     // Clamp top to always be on-screen
@@ -297,7 +318,7 @@ const JarvisTutorial = () => {
       )}
 
       {/* ── JARVIS Avatar (bottom-right, only on non-target steps) ── */}
-      {!coords && (
+      {!coords && !isMobile && (
         <div className="absolute bottom-10 right-10 flex flex-col items-center gap-2 animate-fade-in z-[1600]">
           <div className="w-20 h-20 rounded-full border-2 border-primary/60 overflow-hidden shadow-[0_0_25px_rgba(34,211,238,0.4)] bg-black">
             <img src="/JARVIS2.gif" alt="JARVIS" className="w-full h-full object-cover" />
@@ -344,43 +365,43 @@ const JarvisTutorial = () => {
           {/* Top scanning accent */}
           <div className="h-[2px] w-full scanning-line" />
 
-          <div className="p-5">
+          <div className={cn("p-4 md:p-5", isMobile && "max-h-[85vh] overflow-y-auto")}>
             {/* Step counter */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span className="text-primary text-[10px] font-black uppercase tracking-wider">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <div className="flex items-center gap-1.5 px-2 py-0.5 md:py-1 rounded-full bg-primary/10 border border-primary/20">
+                <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-primary text-[9px] md:text-[10px] font-black uppercase tracking-wider">
                   {step + 1} / {total}
                 </span>
               </div>
               <button
                 onClick={handleSkip}
-                className="text-white/20 hover:text-white/50 text-[10px] font-bold uppercase tracking-widest transition-colors"
+                className="text-white/20 hover:text-white/50 text-[9px] md:text-[10px] font-bold uppercase tracking-widest transition-colors"
               >
                 Skip Tour
               </button>
             </div>
 
             {/* Header */}
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-3 md:mb-4">
               <div className="relative shrink-0">
-                <div className="w-12 h-12 rounded-xl border-2 border-primary/40 overflow-hidden bg-black/60 shadow-[0_0_15px_rgba(34,211,238,0.3)]">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl border-2 border-primary/40 overflow-hidden bg-black/60 shadow-[0_0_15px_rgba(34,211,238,0.3)]">
                   <img src="/JARVIS2.gif" alt="JARVIS" className="w-full h-full object-cover scale-125" />
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-lg flex items-center justify-center border-2 border-[#080f1a]">
-                  <Icon className="w-2.5 h-2.5 text-black" />
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-primary rounded-lg flex items-center justify-center border-2 border-[#080f1a]">
+                  <Icon className="w-2 md:w-2.5 h-2 md:h-2.5 text-black" />
                 </div>
               </div>
               <div>
-                <h3 className="text-base font-bold text-white leading-none tracking-tight">
+                <h3 className="text-sm md:text-base font-bold text-white leading-none tracking-tight">
                   {currentStep.title}
                 </h3>
               </div>
             </div>
 
             {/* Description */}
-            <div className="min-h-[72px] mb-4">
-              <p className="text-white/75 text-sm leading-relaxed">
+            <div className="min-h-[60px] md:min-h-[72px] mb-3 md:mb-4">
+              <p className="text-white/75 text-[13px] md:text-sm leading-relaxed">
                 <Typewriter
                   text={currentStep.description}
                   onComplete={() => setTypingDone(true)}
@@ -431,7 +452,7 @@ const JarvisTutorial = () => {
                     variant="ghost"
                     size="sm"
                     onClick={handleBack}
-                    className="h-8 px-3 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/5 border border-white/8"
+                    className="h-7 md:h-8 px-2 md:px-3 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/5 border border-white/8"
                   >
                     Back
                   </Button>
@@ -440,7 +461,7 @@ const JarvisTutorial = () => {
                   <Button
                     size="sm"
                     onClick={handleNext}
-                    className="h-8 px-5 text-[10px] font-black uppercase tracking-wider bg-primary text-black hover:bg-white transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)] active:scale-95"
+                    className="h-7 md:h-8 px-4 md:px-5 text-[9px] md:text-[10px] font-black uppercase tracking-wider bg-primary text-black hover:bg-white transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)] active:scale-95"
                   >
                     Next →
                   </Button>
@@ -448,7 +469,7 @@ const JarvisTutorial = () => {
                   <Button
                     size="sm"
                     onClick={handleSkip}
-                    className="h-8 px-5 text-[10px] font-black uppercase tracking-wider bg-primary text-black hover:bg-white transition-all shadow-[0_0_20px_rgba(34,211,238,0.5)] active:scale-95"
+                    className="h-7 md:h-8 px-4 md:px-5 text-[9px] md:text-[10px] font-black uppercase tracking-wider bg-primary text-black hover:bg-white transition-all shadow-[0_0_20px_rgba(34,211,238,0.5)] active:scale-95"
                   >
                     Initialize ✓
                   </Button>

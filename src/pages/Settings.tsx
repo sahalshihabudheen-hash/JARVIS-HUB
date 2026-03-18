@@ -287,10 +287,10 @@ const Settings = () => {
                       <Button 
                         onClick={() => {
                           localStorage.removeItem("jarvis_tutorial_complete");
-                          toast.success("Navigating home — tutorial will start shortly.");
+                          sessionStorage.removeItem("jarvis_intro_played");
+                          startTutorial();
                           navigate("/");
-                          // Force page reload so module-level intro flag resets
-                          setTimeout(() => window.location.reload(), 100);
+                          toast.success("Navigating home — re-initializing JARVIS protocols.");
                         }}
                         className="rounded-xl px-8 py-6 hover-glow text-lg font-bold uppercase tracking-tighter"
                       >
