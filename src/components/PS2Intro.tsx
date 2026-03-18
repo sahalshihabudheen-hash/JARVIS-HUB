@@ -129,10 +129,10 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
             
             <div className="space-y-4">
               <h2 className="text-white font-display font-black tracking-tighter text-3xl uppercase leading-tight italic">
-                 Jarvis Terminal <span className="text-cyan-400">Offline</span>
+                 Jarvis <span className="text-cyan-400">Hub</span>
               </h2>
               <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.4em] font-sans">
-                 Synchronize Audio Protocols to Continue
+                 Click to Continue
               </p>
             </div>
 
