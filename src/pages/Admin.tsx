@@ -102,51 +102,104 @@ const Admin = () => {
 
           {activeTab === "activity" && (
             <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 md:p-8 shadow-2xl animate-fade-in max-w-4xl mx-auto">
-              <div className="flex items-center gap-4 mb-6 relative">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                  <ActivityIcon className="text-blue-500 w-5 h-5" />
+              <div className="flex items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <ActivityIcon className="text-blue-500 w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold tracking-tight text-white/90">Live Activity Stream</h2>
+                    <p className="text-sm text-white/40 mt-0.5">Real-time viewing log from all users</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold tracking-tight text-white/90">Viewing Activity</h2>
-                  <p className="text-sm text-white/40 mt-1">See what users are watching</p>
-                </div>
+                {activityLog.length > 0 && (
+                  <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest">
+                    {activityLog.length} entries
+                  </div>
+                )}
               </div>
 
+              <div className="space-y-3">
                 {activityLog.length > 0 ? (
                   activityLog.map((activity) => {
                     const timestamp = activity.timestamp as any;
-                    const date = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp);
+                    const date = timestamp?.toDate ? timestamp.toDate() : (timestamp ? new Date(timestamp) : null);
                     const now = new Date();
-                    const diffMs = now.getTime() - date.getTime();
+                    const diffMs = date ? now.getTime() - date.getTime() : NaN;
                     const diffMins = Math.floor(diffMs / 60000);
-                    const timeDisplay = isNaN(diffMins) ? "Recently" : diffMins < 1 ? "Just now" : diffMins < 60 ? `${diffMins}m ago` : `${Math.floor(diffMins/60)}h ago`;
+                    const timeDisplay = isNaN(diffMins) 
+                      ? "Recently" 
+                      : diffMins < 1 
+                        ? "Just now" 
+                        : diffMins < 60 
+                          ? `${diffMins}m ago` 
+                          : diffMins < 1440 
+                            ? `${Math.floor(diffMins/60)}h ago`
+                            : `${Math.floor(diffMins/1440)}d ago`;
+                    const fullTime = date ? date.toLocaleString("en-IN", { 
+                      dateStyle: "medium", timeStyle: "short" 
+                    }) : "Unknown time";
 
                     return (
-                      <div key={activity.id} className="flex items-center justify-between p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-white/10 transition-all group animate-in slide-in-from-bottom-2">
-                        <div className="flex items-center gap-5">
-                          <img 
-                            src={activity.mediaPoster} 
-                            alt={activity.mediaTitle} 
-                            className="w-14 h-14 object-cover rounded-xl shadow-lg group-hover:scale-105 transition-transform"
-                          />
-                          <div>
-                            <h4 className="text-[15px] font-bold text-white/90">{activity.mediaTitle}</h4>
-                            <p className="text-xs text-white/30 mt-0.5 capitalize">{activity.mediaType} Stream</p>
-                          </div>
+                      <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-blue-500/20 hover:bg-white/[0.03] transition-all group">
+                        {/* Poster */}
+                        <div className="w-14 h-20 rounded-xl overflow-hidden bg-white/5 shrink-0 border border-white/5 shadow-lg group-hover:scale-105 transition-transform">
+                          {activity.mediaPoster ? (
+                            <img 
+                              src={activity.mediaPoster} 
+                              alt={activity.mediaTitle} 
+                              className="w-full h-full object-cover"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <ActivityIcon className="w-5 h-5 text-white/10" />
+                            </div>
+                          )}
                         </div>
-                        <div className="text-right flex flex-col items-end">
-                          <span className="text-[14px] font-bold text-blue-400 hover:underline cursor-pointer">{activity.userEmail}</span>
-                          <span className="text-[11px] text-white/20 mt-1 uppercase tracking-widest">{timeDisplay}</span>
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-[15px] font-bold text-white truncate">{activity.mediaTitle}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className={cn(
+                              "text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border",
+                              activity.mediaType === "movie" 
+                                ? "bg-blue-500/10 border-blue-500/30 text-blue-400" 
+                                : "bg-purple-500/10 border-purple-500/30 text-purple-400"
+                            )}>
+                              {activity.mediaType}
+                            </span>
+                            <span className="text-xs text-white/30 font-medium truncate">{activity.userEmail}</span>
+                          </div>
+                          <p className="text-[10px] text-white/20 mt-1 font-mono" title={fullTime}>{fullTime}</p>
+                        </div>
+
+                        {/* Time badge */}
+                        <div className="shrink-0 text-right">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/5">
+                            <div className={cn(
+                              "w-1.5 h-1.5 rounded-full",
+                              diffMins < 5 ? "bg-green-500 animate-pulse" : "bg-white/20"
+                            )} />
+                            <span className="text-[11px] font-bold text-white/50 uppercase tracking-widest">{timeDisplay}</span>
+                          </div>
                         </div>
                       </div>
                     );
                   })
                 ) : (
-                   <div className="py-20 flex flex-col items-center justify-center opacity-20">
-                      <ActivityIcon className="w-10 h-10 mb-2" />
-                      <p className="text-xs font-bold uppercase tracking-widest">No activity logged in stream</p>
-                   </div>
+                  <div className="py-20 flex flex-col items-center justify-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center">
+                      <ActivityIcon className="w-7 h-7 text-white/10" />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-white/20 uppercase tracking-widest">No Activity Yet</p>
+                      <p className="text-xs text-white/10 mt-1">Activity will appear here when users start watching content</p>
+                    </div>
+                  </div>
                 )}
+              </div>
             </div>
           )}
 

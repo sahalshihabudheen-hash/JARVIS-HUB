@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { db } from "@/lib/firebase";
-import { collection, onSnapshot, query, orderBy, limit, getDocs, doc } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, limit, getDocs, doc, addDoc, serverTimestamp } from "firebase/firestore";
 
 interface AppBranding {
   appName: string;
@@ -16,7 +16,7 @@ interface AdminContextType {
   updateBranding: (newBranding: Partial<AppBranding>) => void;
   // Activity
   activityLog: ActivityEntry[];
-  addActivity: (entry: Omit<ActivityEntry, "id" | "timestamp">) => void;
+  addActivity: (entry: Omit<ActivityEntry, "id" | "timestamp">) => Promise<void>;
   // Users
   users: AdminUser[];
   refreshData: () => void;
@@ -139,17 +139,23 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem("jarvis_admin_branding", JSON.stringify(updated));
   };
 
-  const addActivity = (entry: Omit<ActivityEntry, "id" | "timestamp">) => {
-    const newEntry: ActivityEntry = {
-      ...entry,
-      id: Math.random().toString(36).substr(2, 9),
-      timestamp: new Date().toISOString(),
-    };
-    
-    setActivityLog(prev => {
-      const newLog = [newEntry, ...prev].slice(0, 50);
-      return newLog;
-    });
+  const addActivity = async (entry: Omit<ActivityEntry, "id" | "timestamp">) => {
+    try {
+      // Write to Firestore so it persists and shows in admin panel
+      await addDoc(collection(db, "activity"), {
+        ...entry,
+        timestamp: serverTimestamp(),
+      });
+    } catch (err) {
+      console.error("Failed to write activity to Firestore:", err);
+      // Fallback: add to local state only
+      const newEntry: ActivityEntry = {
+        ...entry,
+        id: Math.random().toString(36).substr(2, 9),
+        timestamp: new Date().toISOString(),
+      };
+      setActivityLog(prev => [newEntry, ...prev].slice(0, 50));
+    }
   };
 
   const toggleAdmin = async (userId: string, currentStatus: boolean) => {
