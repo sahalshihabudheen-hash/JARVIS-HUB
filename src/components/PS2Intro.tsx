@@ -93,7 +93,6 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
       style={{ 
         opacity: fading ? 0 : 1,
         transition: "opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1)",
-        cursor: "none"
       }}
     >
       {/* ── Background: Deep Infinite Space ── */}
@@ -132,8 +131,8 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
               <h2 className="text-white font-display font-black tracking-tighter text-3xl uppercase leading-tight italic">
                  Jarvis Terminal <span className="text-cyan-400">Offline</span>
               </h2>
-              <p className="text-white/40 text-xs font-bold uppercase tracking-[0.3em] font-sans">
-                 Initialization Required To Sync Neural Audio Links
+              <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.4em] font-sans">
+                 Synchronize Audio Protocols to Continue
               </p>
             </div>
 
@@ -142,8 +141,8 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
                className="group relative px-10 py-4 bg-transparent transition-all active:scale-95"
             >
                <div className="absolute inset-0 bg-white/5 border border-white/10 rounded-2xl group-hover:bg-cyan-400/10 group-hover:border-cyan-400/50 transition-all duration-300 shadow-[0_0_40px_rgba(0,0,0,0.5)]" />
-               <span className="relative text-white font-display font-black uppercase text-xs tracking-[0.8em] group-hover:text-cyan-400 transition-colors">
-                  Initialize Link
+               <span className="relative text-white font-display font-black uppercase text-[10px] tracking-[0.8em] group-hover:text-cyan-400 transition-colors">
+                  Click to Continue
                </span>
             </button>
           </div>
