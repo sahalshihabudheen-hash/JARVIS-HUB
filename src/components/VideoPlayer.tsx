@@ -134,37 +134,45 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang }: VideoPlaye
               </p>
             </div>
             
-            <div className="flex flex-wrap items-center gap-3">
-              <Button 
-                variant="outline"
-                className="bg-transparent border-blue-500/30 hover:bg-blue-500/20 text-blue-400 font-bold h-11 px-6 rounded-xl flex items-center gap-2 group transition-all"
-                onClick={() => window.open(embedUrl, '_blank')}
-              >
-                <div className="w-2 h-2 rounded-full bg-blue-500 group-hover:animate-ping" />
-                LAUNCH EXTERNAL NODE
-              </Button>
+            <div className="flex flex-col gap-3">
+              {/* Added Language Picker integrated into Control Panel */}
+              <div className="flex flex-wrap items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/5">
+                <span className="text-[9px] font-black uppercase text-white/30 tracking-widest mr-2 ml-1">AUDIO TRACK:</span>
+                {[
+                  { id: "en", name: "EN" },
+                  { id: "hi", name: "HI" },
+                  { id: "ml", name: "ML" },
+                  { id: "ta", name: "TA" },
+                  { id: "te", name: "TE" }
+                ].map((l) => (
+                  <button
+                    key={l.id}
+                    onClick={() => {
+                      // We'll update the URL by refreshing the player with the new lang
+                      // For now, since VideoPlayer takes lang as prop, we'll suggest parent to handle it
+                      // or just manage a local override
+                      window.location.search = `?lang=${l.id}`; // Hard refresh with lang query
+                    }}
+                    className={cn(
+                      "px-3 py-1 rounded-lg text-[10px] font-bold transition-all",
+                      lang === l.id ? "bg-primary text-black" : "bg-white/5 text-white/40 hover:text-white"
+                    )}
+                  >
+                    {l.name}
+                  </button>
+                ))}
+              </div>
 
-              <button 
-                onClick={() => setIsAutoSearching(!isAutoSearching)}
-                className={cn(
-                  "flex items-center gap-3 px-6 h-11 rounded-xl font-bold text-xs uppercase tracking-[0.2em] transition-all duration-500 border relative overflow-hidden group",
-                  isAutoSearching 
-                    ? "bg-red-500/10 border-red-500/50 text-red-500" 
-                    : "bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/50"
-                )}
-              >
-                {isAutoSearching ? (
-                  <>
-                    <RefreshCcw className="w-4 h-4 animate-spin" />
-                    STOP AUTO-SEARCHING
-                  </>
-                ) : (
-                  <>
-                    <RefreshCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-700" />
-                    STABILIZE SIGNAL (AUTO-SCAN)
-                  </>
-                )}
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button 
+                  variant="outline"
+                  className="bg-transparent border-blue-500/30 hover:bg-blue-500/20 text-blue-400 font-bold h-11 px-6 rounded-xl flex items-center gap-2 group transition-all"
+                  onClick={() => window.open(embedUrl, '_blank')}
+                >
+                  <div className="w-2 h-2 rounded-full bg-blue-500 group-hover:animate-ping" />
+                  LAUNCH EXTERNAL NODE
+                </Button>
+              </div>
             </div>
           </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
