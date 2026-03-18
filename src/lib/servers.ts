@@ -11,7 +11,7 @@ export const videoServers: VideoServer[] = [
     name: "SuperEmbed (Best/Clean)",
     getMovieUrl: (tmdbId, imdbId, lang) => {
       const base = imdbId ? `https://multiembed.mov/?video_id=${imdbId}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`;
-      return lang ? `${base}&lang=${lang}` : base;
+      return lang ? `${base}&lang=${lang === 'ml' ? 'ml' : lang}` : base;
     },
     getTVUrl: (tmdbId, season, episode, imdbId, lang) => {
       const base = imdbId ? `https://multiembed.mov/?video_id=${imdbId}&s=${season}&e=${episode}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`;
@@ -21,8 +21,8 @@ export const videoServers: VideoServer[] = [
   {
     id: "vidsrcin",
     name: "Indian Mirror (Stable)",
-    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.in/embed/movie/${tmdbId}${lang ? `/${lang}` : ""}`,
-    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.in/embed/tv/${tmdbId}/${season}/${episode}${lang ? `/${lang}` : ""}`,
+    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.in/embed/movie/${tmdbId}${lang ? `?ds_lang=${lang}` : ""}`,
+    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.in/embed/tv/${tmdbId}/${season}/${episode}${lang ? `?ds_lang=${lang}` : ""}`,
   },
   {
     id: "moviesapi",
@@ -33,20 +33,20 @@ export const videoServers: VideoServer[] = [
   {
     id: "vidsrcvip",
     name: "VIP Mirror (Less Ads)",
-    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.vip/embed/movie/${tmdbId}${lang ? `/${lang}` : ""}`,
-    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.vip/embed/tv/${tmdbId}/${season}/${episode}${lang ? `/${lang}` : ""}`,
+    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.vip/embed/movie/${tmdbId}${lang ? `?lang=${lang}` : ""}`,
+    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.vip/embed/tv/${tmdbId}/${season}/${episode}${lang ? `?lang=${lang}` : ""}`,
   },
   {
     id: "vidsrcpro",
     name: "VidSrc Pro",
-    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.pro/embed/movie/${tmdbId}${lang ? `/${lang}` : ""}`,
-    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.pro/embed/tv/${tmdbId}/${season}/${episode}${lang ? `/${lang}` : ""}`,
+    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.pro/embed/movie/${tmdbId}${lang ? `?lang=${lang}` : ""}`,
+    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.pro/embed/tv/${tmdbId}/${season}/${episode}${lang ? `?lang=${lang}` : ""}`,
   },
   {
     id: "vidsrccc",
     name: "VidSrc.cc",
-    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.cc/v2/embed/movie/${tmdbId}${lang ? `/${lang}` : ""}`,
-    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.cc/v2/embed/tv/${tmdbId}/${season}/${episode}${lang ? `/${lang}` : ""}`,
+    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.cc/v2/embed/movie/${tmdbId}${lang ? `?lang=${lang}` : ""}`,
+    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.cc/v2/embed/tv/${tmdbId}/${season}/${episode}${lang ? `?lang=${lang}` : ""}`,
   },
   {
     id: "vidsrcme",

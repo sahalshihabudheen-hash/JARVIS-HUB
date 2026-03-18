@@ -151,8 +151,15 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                     onClick={() => {
                       if (onLangChange) {
                         onLangChange(l.id);
+                        
+                        // Force switch to Indian Mirror for ML/HI/TA/TE as it's more reliable for these
+                        if (["hi", "ml", "ta", "te"].includes(l.id) && currentServer !== "vidsrcin") {
+                          handleServerChange("vidsrcin");
+                          toast.info(`Switching to Indian Mirror for ${l.name} audio track...`);
+                        } else {
+                          toast.success(`Switching to ${l.name} audio track...`);
+                        }
                       } else {
-                        // Fallback for isolated use
                         window.location.search = `?lang=${l.id}`;
                       }
                     }}
