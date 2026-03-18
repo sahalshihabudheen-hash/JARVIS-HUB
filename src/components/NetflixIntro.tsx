@@ -72,46 +72,75 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
         ))}
       </div>
 
-      {/* Sequential Letter Animation (The Netflix Code Style) */}
+      {/* The Cinematic Branding (Geometric Unfolding) */}
       <div className={cn(
         "relative flex items-center justify-center transition-all duration-[4s] ease-[cubic-bezier(0.1, 0.9, 0.2, 1)]",
-        phase === "zoom" ? "scale-[20] opacity-0 blur-3xl" : "scale-100"
-      )}>
+        phase === "zoom" ? "scale-[20] opacity-0 blur-3xl translate-z-[500px]" : "scale-100 translate-z-0"
+      )} style={{ perspective: '1000px' }}>
         {letters.map((char, i) => (
           <div
             key={i}
             className={cn(
-              "relative text-8xl md:text-[14rem] font-display font-black tracking-[-0.05em] italic select-none inline-block",
-              phase === "initial" ? "opacity-0 translate-y-12" : "opacity-100 translate-y-0"
+              "relative font-display font-black tracking-[-0.05em] italic select-none",
+              phase === "initial" ? "opacity-0 scale-y-0" : "opacity-100 scale-y-100"
             )}
             style={{
-              transition: 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
-              transitionDelay: `${i * 120 + 1500}ms`,
-              marginRight: char === " " ? "4rem" : "-1rem"
+              fontSize: 'min(18vw, 14rem)',
+              transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transitionDelay: `${i * 150 + 1200}ms`,
+              marginRight: char === " " ? "4rem" : "-1rem",
+              transformOrigin: i % 2 === 0 ? "top" : "bottom"
             }}
           >
-            {/* The Main Letter */}
-            <span className={cn(
-              "relative z-10",
-              i < 6 ? "text-white" : "text-cyan-400"
-            )}
-            style={{
-               textShadow: i < 6 ? '0 0 30px rgba(255,255,255,0.4)' : '0 0 50px rgba(34,211,238,0.5)'
-            }}>
-              {char}
-            </span>
-
-            {/* Cinematic Shadow (Unfolding effect) */}
+            {/* 1. The Under-Shadow (N1-shadow type) */}
             <div 
-              className="absolute inset-0 text-black opacity-30 blur-[2px] z-0"
+              className="absolute inset-0 text-black z-0"
               style={{
-                transform: 'skewX(-20deg) scaleY(1.2) translateY(5px)',
-                transition: 'opacity 1s ease',
+                transform: 'scaleX(1.1) skewX(-15deg) translate(-10px, 5px)',
+                opacity: phase === "initial" ? 0 : 0.6,
+                filter: 'blur(8px)',
+                transition: 'opacity 1.5s ease',
                 transitionDelay: `${i * 150 + 1800}ms`
               }}
             >
               {char}
             </div>
+
+            {/* 2. The Internal Shadow-Wipe (Diagonal Geometry) */}
+            <div 
+              className="absolute inset-0 z-[5] overflow-hidden"
+              style={{
+                clipPath: 'polygon(0 0, 100% 0, 100% 100%)',
+                opacity: phase === "initial" ? 0 : 0.4,
+                transition: 'opacity 1s ease',
+                transitionDelay: `${i * 150 + 2200}ms`
+              }}
+            >
+              <div className="absolute inset-0 bg-black blur-[15px]" style={{ transform: 'translateX(-20%) rotate(-10deg)' }} />
+            </div>
+
+            {/* 3. The Main Geometry (E1-base/T1 style) */}
+            <span className={cn(
+              "relative z-10 transition-all duration-1000",
+              i < 6 ? "text-white" : "text-cyan-400"
+            )}
+            style={{
+               transitionDelay: `${i * 150 + 1500}ms`,
+               filter: phase === "letters" ? 'brightness(1.5) drop-shadow(0 0 40px currentColor)' : 'brightness(1) drop-shadow(0 0 20px currentColor)'
+            }}>
+              {char}
+            </span>
+
+            {/* 4. The Top Reflection (F1 style) */}
+            <div 
+               className="absolute top-0 left-0 w-full h-[20%] bg-white/20 blur-[1px] z-20 pointer-events-none"
+               style={{
+                 transformOrigin: 'top',
+                 transform: phase === "initial" ? 'scaleY(0)' : 'scaleY(1)',
+                 transition: 'transform 0.5s ease',
+                 transitionDelay: `${i * 150 + 2500}ms`
+               }}
+            />
           </div>
         ))}
       </div>
