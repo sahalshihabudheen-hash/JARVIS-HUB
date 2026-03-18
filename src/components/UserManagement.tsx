@@ -237,15 +237,43 @@ const UserManagement = () => {
                   </div>
                 </div>
 
-                {/* Device & OS */}
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2 text-[13px] text-white/90 font-bold">
-                    {u.device === "Phone" ? <Smartphone className="w-4 h-4 text-blue-500" /> : <Monitor className="w-4 h-4 text-yellow-500" />}
-                    <p>{u.device || "Desktop PC"}</p>
-                  </div>
-                  <p className="text-[11px] text-white/40 font-medium pl-6">
-                    {u.os || "Windows 10/11 Desktop"} • {u.browser?.split('/')[0] || "Firefox"}
-                  </p>
+                {/* Device & OS (Multi-Session Support) */}
+                <div className="space-y-2">
+                  {u.sessions ? (
+                    Object.entries(u.sessions).map(([id, session]: [string, any]) => {
+                      const sessionTime = new Date(session.lastSeen);
+                      const isSessionOnline = Math.abs(new Date().getTime() - sessionTime.getTime()) < 180000;
+                      
+                      return (
+                        <div key={id} className="space-y-0.5 border-l-2 border-white/5 pl-3">
+                          <div className="flex items-center gap-2 text-[12px] text-white/90 font-bold">
+                            {session.device === "Phone" ? (
+                              <Smartphone className={cn("w-3.5 h-3.5", isSessionOnline ? "text-blue-400" : "text-white/20")} />
+                            ) : (
+                              <Monitor className={cn("w-3.5 h-3.5", isSessionOnline ? "text-yellow-400" : "text-white/20")} />
+                            )}
+                            <p className={cn(isSessionOnline ? "text-white" : "text-white/40")}>
+                               {session.device || "Desktop PC"}
+                            </p>
+                            {isSessionOnline && <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />}
+                          </div>
+                          <p className="text-[10px] text-white/20 font-medium pl-0">
+                            {session.os || "Unknown OS"} • {session.browser?.split('/')[0] || "Browser"}
+                          </p>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2 text-[13px] text-white/90 font-bold">
+                        {u.device === "Phone" ? <Smartphone className="w-4 h-4 text-blue-500" /> : <Monitor className="w-4 h-4 text-yellow-500" />}
+                        <p>{u.device || "Desktop PC"}</p>
+                      </div>
+                      <p className="text-[11px] text-white/40 font-medium pl-6">
+                        {u.os || "Windows 10/11 Desktop"} • {u.browser?.split('/')[0] || "Firefox"}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Status Badges */}

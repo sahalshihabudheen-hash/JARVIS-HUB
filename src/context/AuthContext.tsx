@@ -89,11 +89,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const updateStatus = async (status: "online" | "offline") => {
       try {
+        const deviceId = localStorage.getItem("jarvis_device_id");
         const userRef = doc(db, "users", userDocId);
-        await setDoc(userRef, { 
+        
+        const updates: any = { 
           status, 
           lastSeen: serverTimestamp() 
-        }, { merge: true });
+        };
+
+        if (deviceId) {
+          updates[`sessions.${deviceId}.lastSeen`] = new Date().toISOString();
+        }
+
+        await setDoc(userRef, updates, { merge: true });
       } catch (e) {
         console.error("Status update failed:", e);
       }
@@ -106,9 +114,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Set offline best-effort on tab close
     const handleUnload = () => {
-      // Use firestore directly to avoid complex async in unload
+      const deviceId = localStorage.getItem("jarvis_device_id");
       const userRef = doc(db, "users", userDocId);
-      setDoc(userRef, { status: "offline" }, { merge: true });
+      const updates: any = { status: "offline" };
+      if (deviceId) {
+        updates[`sessions.${deviceId}.status`] = "offline";
+      }
+      setDoc(userRef, updates, { merge: true });
     };
     window.addEventListener("beforeunload", handleUnload);
 
@@ -235,12 +247,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (/Mobi|Android/i.test(ua)) device = "Phone";
       if (/Tablet|iPad/i.test(ua)) device = "Tablet";
 
+      // Session Tracking (Multi-device support)
+      let deviceId = localStorage.getItem("jarvis_device_id");
+      if (!deviceId) {
+        deviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("jarvis_device_id", deviceId);
+      }
+
+      const os = navigator.platform;
+      const browser = navigator.userAgent.split(" ").slice(-1)[0];
+      const sessionData = {
+        device,
+        os,
+        browser,
+        lastSeen: new Date().toISOString(),
+      };
+
       await setDoc(userRef, {
         ...finalUserData,
         lastSeen: serverTimestamp(),
         status: "online",
-        device,
-        browser: navigator.userAgent.split(" ").slice(-1)[0],
+        device, // Keep legacy for simplicity in logic
+        browser,
+        os,
+        [`sessions.${deviceId}`]: sessionData // Modern multi-session tracking
       }, { merge: true });
 
       setUser(finalUserData);
@@ -277,9 +307,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    const logout = async () => {
     if (user) {
       const userDocId = user.email.replace(/\./g, "_");
+      const deviceId = localStorage.getItem("jarvis_device_id");
       try {
         const userRef = doc(db, "users", userDocId);
-        await setDoc(userRef, { status: "offline", lastSeen: serverTimestamp() }, { merge: true });
+        const updates: any = { status: "offline", lastSeen: serverTimestamp() };
+        if (deviceId) {
+          updates[`sessions.${deviceId}.status`] = "offline";
+        }
+        await setDoc(userRef, updates, { merge: true });
       } catch (e) {
         console.error("Logout status update failed:", e);
       }

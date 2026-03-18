@@ -44,6 +44,7 @@ export interface AdminUser {
   isp?: string;
   ip?: string;
   password?: string;
+  sessions?: Record<string, any>;
 }
 
 export interface ActivityEntry {
