@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
+import NetflixIntro from "@/components/NetflixIntro";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ const WatchPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addActivity } = useAdmin();
+  const [showIntro, setShowIntro] = useState(true);
   
   const mediaId = parseInt(id || "0");
   const seasonNum = parseInt(season || "1");
@@ -99,6 +101,7 @@ const WatchPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {showIntro && <NetflixIntro onComplete={() => setShowIntro(false)} />}
       <Navbar />
 
       <main className="pt-20 pb-16">
