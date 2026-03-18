@@ -224,16 +224,16 @@ const UserManagement = () => {
               <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center px-4">
                 
                 {/* Geo & ISP */}
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2 text-[13px] text-white/90 font-bold">
-                    <span className="text-white/20">📍</span>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-[14px] text-white font-bold">
+                    <span>📍</span>
                     <p>{u.location?.split(',')[0] || "Malappuram"}, {u.location?.split(',')[1] || "Kerala"}</p>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] text-white/40 font-medium pl-5">
+                  <div className="flex items-center gap-2 text-[12px] text-white/60 font-medium pl-6">
                     <p>India</p>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] text-white/20 font-bold pl-5 uppercase tracking-wider">
-                    <Activity className="w-3 h-3 opacity-50" />
+                  <div className="flex items-center gap-2 text-[11px] text-cyan-400/80 font-bold pl-6 uppercase tracking-wider">
+                    <Activity className="w-3 h-3" />
                     {u.isp || "BSNL Internet"}
                   </div>
                 </div>
@@ -245,37 +245,40 @@ const UserManagement = () => {
                       const sessionTime = new Date(session.lastSeen);
                       const isSessionOnline = Math.abs(new Date().getTime() - sessionTime.getTime()) < 180000;
                       
+                      const deviceColor = session.device === "Phone" ? "text-cyan-400" : session.device === "Smart TV" ? "text-orange-400" : session.device === "Console" ? "text-purple-400" : session.device === "Tablet" ? "text-green-400" : "text-yellow-400";
+                      const deviceBorder = session.device === "Phone" ? "border-cyan-500/30 bg-cyan-500/10" : session.device === "Smart TV" ? "border-orange-500/30 bg-orange-500/10" : session.device === "Console" ? "border-purple-500/30 bg-purple-500/10" : session.device === "Tablet" ? "border-green-500/30 bg-green-500/10" : "border-yellow-500/30 bg-yellow-500/10";
+
                       return (
                         <div key={id} className={cn(
-                          "relative group/session border rounded-xl px-3 py-2 transition-all duration-300",
-                          isSessionOnline ? "bg-white/5 border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.05)]" : "bg-white/[0.02] border-white/5 opacity-60"
+                          "relative group/session border rounded-xl px-3 py-2.5 transition-all duration-300",
+                          isSessionOnline ? `${deviceBorder} shadow-[0_0_15px_rgba(59,130,246,0.08)]` : "bg-white/[0.03] border-white/10"
                         )}>
                           <div className="flex items-center gap-3">
                             <div className={cn(
-                              "w-7 h-7 rounded-lg flex items-center justify-center border",
-                              isSessionOnline ? "bg-blue-500/20 border-blue-500/30" : "bg-white/5 border-white/10"
+                              "w-8 h-8 rounded-lg flex items-center justify-center border shrink-0",
+                              isSessionOnline ? deviceBorder : "bg-white/5 border-white/10"
                             )}>
                               {session.device === "Phone" ? (
-                                <Smartphone className={cn("w-3.5 h-3.5", isSessionOnline ? "text-cyan-400" : "text-white/20")} />
+                                <Smartphone className={cn("w-4 h-4", isSessionOnline ? "text-cyan-400" : "text-white/30")} />
                               ) : session.device === "Smart TV" ? (
-                                <Monitor className={cn("w-3.5 h-3.5", isSessionOnline ? "text-orange-400" : "text-white/20")} />
+                                <Monitor className={cn("w-4 h-4", isSessionOnline ? "text-orange-400" : "text-white/30")} />
                               ) : session.device === "Console" ? (
-                                <Gamepad2 className={cn("w-3.5 h-3.5", isSessionOnline ? "text-purple-400" : "text-white/20")} />
+                                <Gamepad2 className={cn("w-4 h-4", isSessionOnline ? "text-purple-400" : "text-white/30")} />
                               ) : session.device === "Tablet" ? (
-                                <Laptop className={cn("w-3.5 h-3.5", isSessionOnline ? "text-green-400" : "text-white/20")} />
+                                <Laptop className={cn("w-4 h-4", isSessionOnline ? "text-green-400" : "text-white/30")} />
                               ) : (
-                                <Monitor className={cn("w-3.5 h-3.5", isSessionOnline ? "text-yellow-400" : "text-white/20")} />
+                                <Monitor className={cn("w-4 h-4", isSessionOnline ? "text-yellow-400" : "text-white/30")} />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
                                <div className="flex items-center gap-2">
-                                  <p className="text-[11px] font-black uppercase tracking-wider text-white">
-                                    {session.device || "Terminal"}
+                                  <p className={cn("text-[13px] font-black uppercase tracking-wide", isSessionOnline ? deviceColor : "text-white/50")}>
+                                    {session.device || "Desktop PC"}
                                   </p>
                                   {isSessionOnline && <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e] animate-pulse" />}
                                </div>
-                               <p className="text-[9px] text-white/30 font-bold uppercase truncate">
-                                 {session.os || "Unknown"} • {session.browser || "Unknown"}
+                               <p className="text-[10px] text-white/40 font-semibold uppercase tracking-wider truncate">
+                                 {session.os || "Unknown OS"} · {session.browser || "Unknown Browser"}
                                </p>
                             </div>
                           </div>
@@ -283,12 +286,27 @@ const UserManagement = () => {
                       );
                     })
                   ) : (
-                    <div className="border border-white/5 bg-white/[0.01] rounded-xl px-3 py-2 opacity-50 grayscale italic">
+                    <div className={cn(
+                      "border rounded-xl px-3 py-2.5",
+                      u.device === "Phone" ? "border-cyan-500/20 bg-cyan-500/5" : "border-yellow-500/20 bg-yellow-500/5"
+                    )}>
                       <div className="flex items-center gap-3">
-                        {u.device === "Phone" ? <Smartphone className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
+                        <div className={cn(
+                          "w-8 h-8 rounded-lg flex items-center justify-center border shrink-0",
+                          u.device === "Phone" ? "border-cyan-500/30 bg-cyan-500/10" : "border-yellow-500/30 bg-yellow-500/10"
+                        )}>
+                          {u.device === "Phone" 
+                            ? <Smartphone className="w-4 h-4 text-cyan-400" /> 
+                            : <Monitor className="w-4 h-4 text-yellow-400" />}
+                        </div>
                         <div>
-                           <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">Legacy Protocol</p>
-                           <p className="text-[9px] text-white/20">{u.device || "Unknown Device"}</p>
+                          <p className={cn(
+                            "text-[13px] font-black uppercase tracking-wide",
+                            u.device === "Phone" ? "text-cyan-400" : "text-yellow-400"
+                          )}>
+                            {u.device === "Phone" ? "📱 Phone" : u.device === "Smart TV" ? "📺 Smart TV" : u.device === "Console" ? "🎮 Console" : u.device === "Tablet" ? "📱 Tablet" : "🖥️ Desktop PC"}
+                          </p>
+                          <p className="text-[10px] text-white/40 font-semibold">{u.os || ""} · {u.browser?.split('/')[0] || ""}</p>
                         </div>
                       </div>
                     </div>
