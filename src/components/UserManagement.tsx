@@ -44,9 +44,17 @@ const UserManagement = () => {
   };
 
   const filteredUsers = users.filter(u => {
-    const matchesSearch = u.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (u.location && u.location.toLowerCase().includes(searchTerm.toLowerCase()));
+    if (!u || !u.email) return false;
+    
+    const name = u.name || "";
+    const email = u.email || "";
+    const location = u.location || "";
+    const isp = u.isp || "";
+
+    const matchesSearch = email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         isp.toLowerCase().includes(searchTerm.toLowerCase());
     
     if (filter === "all") return matchesSearch;
     if (filter === "online") return matchesSearch && isActuallyOnline(u);
@@ -191,10 +199,10 @@ const UserManagement = () => {
                 <div className="relative">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-white/5 flex items-center justify-center overflow-hidden">
                     {u.photoURL ? (
-                      <img src={u.photoURL} alt={u.name} className="w-full h-full object-cover" />
+                      <img src={u.photoURL} alt={u.name || "User"} className="w-full h-full object-cover" />
                     ) : (
                       <span className="text-lg font-bold text-blue-400">
-                        {(u.name?.[0] || u.email[0]).toUpperCase()}
+                        {(u.name?.[0] || u.email?.[0] || "?").toUpperCase()}
                       </span>
                     )}
                   </div>
@@ -204,9 +212,9 @@ const UserManagement = () => {
                 </div>
                 <div>
                   <h4 className="text-[15px] font-bold text-white leading-tight flex items-center gap-2">
-                    {u.name || u.email.split('@')[0]}
+                    {u.name || (u.email ? u.email.split('@')[0] : "Unknown User")}
                   </h4>
-                  <p className="text-[12px] text-white/40 mt-0.5">{u.email}</p>
+                  <p className="text-[12px] text-white/40 mt-0.5">{u.email || "No Protocol ID"}</p>
                   {isActuallyOnline(u) ? (
                     <p className="text-[11px] text-green-500/80 font-medium mt-0.5 flex items-center gap-1.5">
                       <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />

@@ -122,6 +122,7 @@ const Admin = () => {
               <div className="space-y-3">
                 {activityLog.length > 0 ? (
                   activityLog.map((activity) => {
+                    if (!activity) return null;
                     const timestamp = activity.timestamp as any;
                     const date = timestamp?.toDate ? timestamp.toDate() : (timestamp ? new Date(timestamp) : null);
                     const now = new Date();
@@ -136,7 +137,7 @@ const Admin = () => {
                           : diffMins < 1440 
                             ? `${Math.floor(diffMins/60)}h ago`
                             : `${Math.floor(diffMins/1440)}d ago`;
-                    const fullTime = date ? date.toLocaleString("en-IN", { 
+                    const fullTime = date && !isNaN(date.getTime()) ? date.toLocaleString("en-IN", { 
                       dateStyle: "medium", timeStyle: "short" 
                     }) : "Unknown time";
 
