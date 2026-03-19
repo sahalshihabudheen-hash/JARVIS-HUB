@@ -111,8 +111,8 @@ const Index = () => {
     if (manualFocus === "auto" && !target) target = regionCode;
     if (manualFocus === "auto" && !target) target = cityName;
     
-    // Explicitly handle generic 'IN' or 'india' to show the switcher
-    const isGenericIndia = target === "IN" || target === "india" || !target;
+    // Explicitly handle generic/unspecified locations to show switcher
+    const isGenericIndia = target === "IN" || target === "india" || target.includes("delhi") || target.includes("mumbai") || !target;
 
     const context = {
       title: "Indian",
@@ -328,15 +328,17 @@ const Index = () => {
                     </h2>
                   </div>
 
-                  {/* Quick Region Switcher if generic India is detected */}
-                  {regionalContext.region === "India" && (
-                    <div className="flex flex-wrap gap-2 animate-fade-in">
-                       <span className="text-[10px] font-black uppercase text-white/30 self-center mr-2">Switch Focus:</span>
+                  {/* Quick Region Switcher if generic/Hindi is detected */}
+                  {location?.country === "IN" && regionalContext.language === "hi" && (
+                    <div className="flex flex-wrap items-center gap-2 animate-fade-in bg-white/[0.03] p-1.5 rounded-2xl border border-white/5">
+                       <span className="text-[10px] font-black uppercase text-white/40 px-2">Focus on:</span>
                        {[
                          { id: "kerala", label: "Malayalam", icon: "🌴" },
                          { id: "tamil", label: "Tamil", icon: "🛕" },
                          { id: "telugu", label: "Telugu", icon: "🐘" },
                          { id: "karnataka", label: "Kannada", icon: "🏛️" },
+                         { id: "bengal", label: "Bengali", icon: "🎨" },
+                         { id: "maharashtra", label: "Marathi", icon: "🎭" },
                        ].map((r) => (
                          <button
                            key={r.id}
@@ -344,7 +346,7 @@ const Index = () => {
                              localStorage.setItem("user_regional_focus", r.id);
                              window.location.reload();
                            }}
-                           className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-blue-500/50 hover:bg-blue-500/10 text-[10px] font-bold uppercase transition-all flex items-center gap-1.5"
+                           className="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:border-blue-500/50 hover:bg-blue-500/20 text-[10px] font-bold uppercase transition-all flex items-center gap-1.5 whitespace-nowrap"
                          >
                            <span>{r.icon}</span> {r.label}
                          </button>
