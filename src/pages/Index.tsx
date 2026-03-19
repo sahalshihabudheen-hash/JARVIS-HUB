@@ -100,7 +100,8 @@ const Index = () => {
 
   // Advanced Region Detection Logic
   const getRegionalContext = () => {
-    const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
+    const focusKey = user?.uid ? `user_regional_focus_${user.uid}` : "user_regional_focus";
+    const manualFocus = localStorage.getItem(focusKey) || "auto";
     const regionName = (location?.region || "").toLowerCase();
     const regionCode = (location?.region_code || "").toUpperCase();
     const cityName = (location?.city || "").toLowerCase();
@@ -152,9 +153,10 @@ const Index = () => {
   const regionalContext = getRegionalContext();
 
   const { data: regionalNow, isLoading: regionalLoading } = useQuery({
-    queryKey: ["regionalNow", location?.country, location?.region, location?.region_code, localStorage.getItem("user_regional_focus")],
+    queryKey: ["regionalNow", location?.country, location?.region, location?.region_code, user?.uid ? `user_regional_focus_${user.uid}` : "user_regional_focus"],
     queryFn: () => {
-      const isIndia = location?.country === "IN" || localStorage.getItem("user_regional_focus") !== "auto";
+      const focusKey = user?.uid ? `user_regional_focus_${user.uid}` : "user_regional_focus";
+      const isIndia = location?.country === "IN" || localStorage.getItem(focusKey) !== "auto";
       
       const params: Record<string, string> = {
         sort_by: "popularity.desc",
@@ -177,9 +179,10 @@ const Index = () => {
   });
 
   const { data: regionalUpcoming, isLoading: regionalUpcomingLoading } = useQuery({
-    queryKey: ["regionalUpcoming", location?.country, location?.region, location?.region_code, localStorage.getItem("user_regional_focus")],
+    queryKey: ["regionalUpcoming", location?.country, location?.region, location?.region_code, user?.uid ? `user_regional_focus_${user.uid}` : "user_regional_focus"],
     queryFn: () => {
-      const isIndia = location?.country === "IN" || localStorage.getItem("user_regional_focus") !== "auto";
+      const focusKey = user?.uid ? `user_regional_focus_${user.uid}` : "user_regional_focus";
+      const isIndia = location?.country === "IN" || localStorage.getItem(focusKey) !== "auto";
       
       const params: Record<string, string> = {
         sort_by: "popularity.desc",
@@ -325,7 +328,8 @@ const Index = () => {
                          <button
                            key={r.id}
                            onClick={() => {
-                             localStorage.setItem("user_regional_focus", r.id);
+                             const focusKey = user?.uid ? `user_regional_focus_${user.uid}` : "user_regional_focus";
+                             localStorage.setItem(focusKey, r.id);
                              window.location.reload();
                            }}
                            className="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:border-blue-500/50 hover:bg-blue-500/20 text-[10px] font-bold uppercase transition-all flex items-center gap-1.5 whitespace-nowrap"

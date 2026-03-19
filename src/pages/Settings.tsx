@@ -110,7 +110,17 @@ const Settings = () => {
   const clearData = () => {
     localStorage.removeItem("user_selected_genres");
     localStorage.removeItem("jarvis_tutorial_complete");
-    localStorage.removeItem("user_regional_focus");
+    
+    // User-specific clears
+    if (user?.uid) {
+      localStorage.removeItem(`user_regional_focus_${user.uid}`);
+      localStorage.removeItem(`vidLinkProgress_${user.uid}`);
+      localStorage.removeItem(`user_selected_genres_${user.uid}`);
+    } else {
+      localStorage.removeItem("user_regional_focus");
+      localStorage.removeItem("vidLinkProgress");
+    }
+    
     updateSelectedGenres([]);
     toast.success("Protocol data wiped successfully.");
   };
@@ -381,11 +391,11 @@ const Settings = () => {
                                 ].map((region) => (
                                   <Button
                                     key={region.id}
-                                    variant={localStorage.getItem("user_regional_focus") === region.id || (!localStorage.getItem("user_regional_focus") && region.id === "auto") ? "default" : "outline"}
+                                    variant={localStorage.getItem(`user_regional_focus_${user?.uid || 'guest'}`) === region.id || (!localStorage.getItem(`user_regional_focus_${user?.uid || 'guest'}`) && region.id === "auto") ? "default" : "outline"}
                                     size="sm"
                                     className="text-[10px] font-bold uppercase tracking-widest h-8"
                                     onClick={() => {
-                                      localStorage.setItem("user_regional_focus", region.id);
+                                      localStorage.setItem(`user_regional_focus_${user?.uid || 'guest'}`, region.id);
                                       toast.success(`Protocol updated: Focus set to ${region.label}`);
                                       window.location.reload(); // Quick way to refresh queries
                                     }}
