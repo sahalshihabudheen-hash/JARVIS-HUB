@@ -104,6 +104,8 @@ const Index = () => {
     const regionName = (location?.region || "").toLowerCase();
     const regionCode = (location?.region_code || "").toUpperCase();
     const cityName = (location?.city || "").toLowerCase();
+    const countryCode = (location?.country || "IN").toUpperCase();
+    const countryName = location?.country_name || "India";
     const browserLangs = navigator.languages || [navigator.language];
     
     // Determine target region (Manual override or Detected)
@@ -111,57 +113,37 @@ const Index = () => {
     if (manualFocus === "auto" && !target) target = regionCode;
     if (manualFocus === "auto" && !target) target = cityName;
     
-    // Explicitly handle generic/unspecified locations to show switcher
-    const isGenericIndia = target === "IN" || target === "india" || target.includes("delhi") || target.includes("mumbai") || !target;
-
+    // Default Global Context
     const context = {
-      title: "Indian",
+      title: countryName,
       accent: "Cinema Hub",
-      language: "hi",
-      region: isGenericIndia ? "India" : (target.charAt(0).toUpperCase() + target.slice(1)), 
-      stateCode: regionCode
+      language: location?.languages?.split(',')[0].split('-')[0] || "en",
+      region: target ? (target.charAt(0).toUpperCase() + target.slice(1)) : countryName,
+      stateCode: regionCode,
+      isIndia: countryCode === "IN"
     };
 
-    // 1. Check for Kerala (High Priority as per User)
-    const keralaCities = ["kochi", "trivandrum", "thiruvananthapuram", "calicut", "kozhikode", "thrissur", "kollam", "palakkad", "alappuzha", "kottayam", "malappuram", "kannur", "kasaragod"];
-    const isMalayalamBrowser = browserLangs.some(l => l.toLowerCase().startsWith('ml'));
-    
-    if (target.includes("kerala") || regionCode === "KL" || keralaCities.includes(cityName) || isMalayalamBrowser) {
-      context.title = "Malayalam";
-      context.region = "Kerala";
-      context.language = "ml";
-    } 
-    // 2. Check for Tamil Nadu
-    else if (target.includes("tamil") || regionCode === "TN" || cityName.includes("chennai") || cityName.includes("madurai") || browserLangs.some(l => l.toLowerCase().startsWith('ta'))) {
-      context.title = "Tamil";
-      context.region = "Tamil Nadu";
-      context.language = "ta";
-    } 
-    // 3. Other regions
-    else if (target.includes("telugu") || target.includes("andhra") || regionCode === "AP" || regionCode === "TG" || cityName.includes("hyderabad") || browserLangs.some(l => l.toLowerCase().startsWith('te'))) {
-      context.title = "Telugu";
-      context.region = "Andhra & Telangana";
-      context.language = "te";
-    } else if (target.includes("karnataka") || regionCode === "KA") {
-      context.title = "Kannada";
-      context.region = "Karnataka";
-      context.language = "kn";
-    } else if (target.includes("bengal") || regionCode === "WB") {
-      context.title = "Bengali";
-      context.region = "West Bengal";
-      context.language = "bn";
-    } else if (target.includes("maharashtra") || regionCode === "MH") {
-      context.title = "Marathi";
-      context.region = "Maharashtra";
-      context.language = "mr";
-    } else if (target.includes("punjab") || regionCode === "PB") {
-      context.title = "Punjabi";
-      context.region = "Punjab";
-      context.language = "pa";
-    } else if (target.includes("gujarat") || regionCode === "GJ") {
-      context.title = "Gujarati";
-      context.region = "Gujarat";
-      context.language = "gu";
+    // Special Case: India (Language detection)
+    if (context.isIndia) {
+      context.title = "Indian";
+      context.language = "hi"; // Default to Hindi for India if no specific state found
+      
+      const keralaCities = ["kochi", "trivandrum", "thiruvananthapuram", "calicut", "kozhikode", "thrissur", "kollam", "palakkad", "alappuzha", "kottayam", "malappuram", "kannur", "kasaragod"];
+      const isMalayalamBrowser = browserLangs.some(l => l.toLowerCase().startsWith('ml'));
+      
+      if (target.includes("kerala") || regionCode === "KL" || keralaCities.includes(cityName) || isMalayalamBrowser) {
+        context.title = "Malayalam";
+        context.region = "Kerala";
+        context.language = "ml";
+      } else if (target.includes("tamil") || regionCode === "TN" || cityName.includes("chennai") || cityName.includes("madurai") || browserLangs.some(l => l.toLowerCase().startsWith('ta'))) {
+        context.title = "Tamil";
+        context.region = "Tamil Nadu";
+        context.language = "ta";
+      } else if (target.includes("telugu") || target.includes("andhra") || regionCode === "AP" || regionCode === "TG" || cityName.includes("hyderabad") || browserLangs.some(l => l.toLowerCase().startsWith('te'))) {
+        context.title = "Telugu";
+        context.region = "Andhra & Telangana";
+        context.language = "te";
+      }
     }
 
     return context;
@@ -317,9 +299,9 @@ const Index = () => {
             <ContinueWatching />
           </div>
 
-          {/* REGIONAL CINEMA HUB - DYNAMIC BASED ON LOCATION */}
-          {(location?.country === "IN" || regionalContext.language !== "hi") && (
-            <div className="space-y-8 bg-blue-500/[0.02] border-y border-white/[0.02] py-10 -mx-4 px-4 overflow-hidden">
+          {/* REGIONAL CINEMA HUB - DYNAMIC BASED ON LOCATION (Global Support) */}
+          {location && (
+            <div className="space-y-8 bg-primary/[0.02] border-y border-white/[0.02] py-10 -mx-4 px-4 overflow-hidden">
                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2 px-4">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-8 bg-blue-500 rounded-full" />
