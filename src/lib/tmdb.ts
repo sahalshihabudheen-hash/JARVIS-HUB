@@ -192,22 +192,53 @@ export const getUserLocation = async (): Promise<{
   latitude?: number;
   longitude?: number;
 }> => {
+  // Try primary service first (ipapi.co)
   try {
     const response = await fetch("https://ipapi.co/json/");
-    if (!response.ok) throw new Error("Location service unavailable");
-    const data = await response.json();
-    return { 
-      country: data.country_code || "US", 
-      country_name: data.country_name || "United States",
-      region: data.region || "",
-      region_code: data.region_code || "",
-      city: data.city || "",
-      languages: data.languages || "en-US",
-      latitude: data.latitude,
-      longitude: data.longitude
-    };
+    if (response.ok) {
+      const data = await response.json();
+      return { 
+        country: data.country_code || "IN", // Default to IN if we detect something failed but responded
+        country_name: data.country_name || "India",
+        region: data.region || "",
+        region_code: data.region_code || "",
+        city: data.city || "",
+        languages: data.languages || "en-US",
+        latitude: data.latitude,
+        longitude: data.longitude
+      };
+    }
   } catch (error) {
-    console.error("Error fetching location:", error);
-    return { country: "US", country_name: "United States", region: "", region_code: "", city: "", languages: "en-US" };
+    console.warn("Primary location service (ipapi.co) failed, trying fallback...", error);
   }
+
+  // Fallback service (ip-api.com - Note: free version is HTTP only usually, but some mirrors work)
+  try {
+    const response = await fetch("https://ipwho.is/"); // Alternative HTTPS free service
+    if (response.ok) {
+      const data = await response.json();
+      return { 
+        country: data.country_code || "IN",
+        country_name: data.country || "India",
+        region: data.region || "",
+        region_code: data.region_code || "",
+        city: data.city || "",
+        languages: "en-US", // Doesn't provide this usually
+        latitude: data.latitude,
+        longitude: data.longitude
+      };
+    }
+  } catch (error) {
+    console.error("All location services failed:", error);
+  }
+
+  // Last resort defaults
+  return { 
+    country: "IN", // Default to IN for our core user base
+    country_name: "India", 
+    region: "", 
+    region_code: "", 
+    city: "", 
+    languages: "en-US" 
+  };
 };

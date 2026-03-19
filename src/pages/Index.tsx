@@ -315,7 +315,7 @@ const Index = () => {
           </div>
 
           {/* REGIONAL CINEMA HUB - DYNAMIC BASED ON LOCATION */}
-          {location?.country === "IN" && (
+          {(location?.country === "IN" || regionalContext.language !== "hi") && (
             <div className="space-y-8 bg-blue-500/[0.02] border-y border-white/[0.02] py-10 -mx-4 px-4 overflow-hidden">
                <div className="flex items-center gap-3 mb-2 px-4">
                   <div className="w-2 h-8 bg-blue-500 rounded-full" />
