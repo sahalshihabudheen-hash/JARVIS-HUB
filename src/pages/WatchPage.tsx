@@ -73,12 +73,13 @@ const WatchPage = () => {
 
       // 2. Force add to "Continue Watching" history (since non-Vidlink servers don't emit progress)
       try {
-        const historyStr = localStorage.getItem("vidLinkProgress");
+        const historyKey = user?.uid ? `vidLinkProgress_${user.uid}` : "vidLinkProgress";
+        const historyStr = localStorage.getItem(historyKey);
         const historyObj = historyStr ? JSON.parse(historyStr) : {};
-        const historyKey = `${content.id}`;
+        const mediaKey = `${content.id}`;
         
-        historyObj[historyKey] = {
-          ...historyObj[historyKey], // Preserve any real progress if it previously existed
+        historyObj[mediaKey] = {
+          ...historyObj[mediaKey], // Preserve any real progress if it previously existed
           id: content.id,
           type: type as "movie" | "tv",
           title: title,
@@ -86,14 +87,14 @@ const WatchPage = () => {
           backdrop_path: content.backdrop_path || "",
           last_season_watched: isTV ? String(seasonNum) : undefined,
           last_episode_watched: isTV ? String(episodeNum) : undefined,
-          progress: historyObj[historyKey]?.progress || {
+          progress: historyObj[mediaKey]?.progress || {
             watched: 1, // 1% initial so it doesn't clutter 'Continue Watching' yet
             duration: 100 
           },
           last_updated: Date.now()
         };
         
-        localStorage.setItem("vidLinkProgress", JSON.stringify(historyObj));
+        localStorage.setItem(historyKey, JSON.stringify(historyObj));
       } catch (e) {
         console.error("Failed to save history", e);
       }

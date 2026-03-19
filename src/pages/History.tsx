@@ -8,20 +8,23 @@ import { toast } from "sonner";
 import { getWatchProgress, clearWatchProgress, WatchProgress } from "@/lib/vidlink";
 import { cn } from "@/lib/utils";
 
+import { useAuth } from "@/context/AuthContext";
+
 const History = () => {
+  const { user } = useAuth();
   const [history, setHistory] = useState<WatchProgress[]>([]);
 
   useEffect(() => {
-    const progressMap = getWatchProgress();
+    const progressMap = getWatchProgress(user?.uid);
     // Convert map to array and sort by last updated
     const sortedHistory = Object.values(progressMap)
       .sort((a, b) => (b.last_updated || 0) - (a.last_updated || 0));
     setHistory(sortedHistory);
-  }, []);
+  }, [user?.uid]);
 
   const handleClear = () => {
     if (confirm("Are you sure you want to clear your entire watch history? This cannot be undone.")) {
-      clearWatchProgress();
+      clearWatchProgress(user?.uid);
       setHistory([]);
       toast.success("History cleared successfully");
     }

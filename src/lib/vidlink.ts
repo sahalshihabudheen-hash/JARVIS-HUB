@@ -90,17 +90,18 @@ export interface WatchProgress {
   last_updated?: number;
 }
 
-export const getWatchProgress = (): Record<string, WatchProgress> => {
+export const getWatchProgress = (userId?: string): Record<string, WatchProgress> => {
   try {
-    const data = localStorage.getItem("vidLinkProgress");
+    const key = userId ? `vidLinkProgress_${userId}` : "vidLinkProgress";
+    const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : {};
   } catch {
     return {};
   }
 };
 
-export const getContinueWatching = (): WatchProgress[] => {
-  const progress = getWatchProgress();
+export const getContinueWatching = (userId?: string): WatchProgress[] => {
+  const progress = getWatchProgress(userId);
   return Object.values(progress)
     .filter(item => {
       const percentage = (item.progress.watched / item.progress.duration) * 100;
@@ -110,21 +111,26 @@ export const getContinueWatching = (): WatchProgress[] => {
     .slice(0, 10);
 };
 
-export const clearWatchProgress = (): void => {
-  localStorage.removeItem("vidLinkProgress");
+export const clearWatchProgress = (userId?: string): void => {
+  const key = userId ? `vidLinkProgress_${userId}` : "vidLinkProgress";
+  localStorage.removeItem(key);
 };
 
-export const setupProgressListener = (): void => {
-  window.addEventListener("message", (event) => {
+export const setupProgressListener = (userId?: string): (() => void) => {
+  const handleMessage = (event: MessageEvent) => {
     if (event.origin !== "https://vidlink.pro") return;
     
     if (event.data?.type === "MEDIA_DATA") {
       const mediaData = event.data.data;
       if (mediaData && typeof mediaData === "object") {
-        const existing = getWatchProgress();
+        const key = userId ? `vidLinkProgress_${userId}` : "vidLinkProgress";
+        const existing = getWatchProgress(userId);
         const updated = { ...existing, ...mediaData };
-        localStorage.setItem("vidLinkProgress", JSON.stringify(updated));
+        localStorage.setItem(key, JSON.stringify(updated));
       }
     }
-  });
+  };
+
+  window.addEventListener("message", handleMessage);
+  return () => window.removeEventListener("message", handleMessage);
 };

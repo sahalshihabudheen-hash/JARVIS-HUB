@@ -3,6 +3,7 @@ import { db } from "@/lib/firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 
 interface User {
+  uid: string;
   email: string;
   name?: string;
   isAdmin?: boolean;
@@ -220,6 +221,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const isAdmin = email.toLowerCase() === "admin@gmail.com";
     const userData: User = { 
+      uid: userDocId,
       email: email.toLowerCase(), 
       name: name || email.split("@")[0],
       isAdmin,

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
+import { useAuth } from "@/context/AuthContext";
 import { useTutorial } from "@/context/TutorialContext";
 
 interface VideoPlayerProps {
@@ -64,9 +65,11 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     }
   }, [lang]);
 
-  // Block popup ads from embedded video servers
+  const { user } = useAuth();
+  
+  // Block popup ads from embedded video servers and sync progress
   useEffect(() => {
-    setupProgressListener();
+    const unsub = setupProgressListener(user?.uid);
     
     const originalOpen = window.open;
     window.open = (url?: string | URL, target?: string, ...rest: any[]) => {
@@ -83,8 +86,11 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
       }
       return originalOpen(url as any, target, ...rest);
     };
-    return () => { window.open = originalOpen; };
-  }, []);
+    return () => { 
+      window.open = originalOpen;
+      unsub();
+    };
+  }, [user?.uid]);
 
   // Auto-Search Mode Logic
   useEffect(() => {

@@ -3,15 +3,17 @@ import { Link } from "react-router-dom";
 import { Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { getContinueWatching, WatchProgress, clearWatchProgress } from "@/lib/vidlink";
 import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
 
 const ContinueWatching = () => {
+  const { user } = useAuth();
   const [items, setItems] = useState<WatchProgress[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadProgress = () => {
-      const watchList = getContinueWatching();
+      const watchList = getContinueWatching(user?.uid);
       setItems(watchList);
     };
 
@@ -20,7 +22,7 @@ const ContinueWatching = () => {
     // Listen for updates
     window.addEventListener("storage", loadProgress);
     return () => window.removeEventListener("storage", loadProgress);
-  }, []);
+  }, [user?.uid]);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
