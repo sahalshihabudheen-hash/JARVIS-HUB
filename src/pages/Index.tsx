@@ -110,12 +110,15 @@ const Index = () => {
     let target = manualFocus !== "auto" ? manualFocus : regionName;
     if (manualFocus === "auto" && !target) target = regionCode;
     if (manualFocus === "auto" && !target) target = cityName;
+    
+    // Explicitly handle generic 'IN' or 'india' to show the switcher
+    const isGenericIndia = target === "IN" || target === "india" || !target;
 
     const context = {
       title: "Indian",
       accent: "Cinema Hub",
       language: "hi",
-      region: "India",
+      region: isGenericIndia ? "India" : (target.charAt(0).toUpperCase() + target.slice(1)), 
       stateCode: regionCode
     };
 
@@ -317,11 +320,37 @@ const Index = () => {
           {/* REGIONAL CINEMA HUB - DYNAMIC BASED ON LOCATION */}
           {(location?.country === "IN" || regionalContext.language !== "hi") && (
             <div className="space-y-8 bg-blue-500/[0.02] border-y border-white/[0.02] py-10 -mx-4 px-4 overflow-hidden">
-               <div className="flex items-center gap-3 mb-2 px-4">
-                  <div className="w-2 h-8 bg-blue-500 rounded-full" />
-                  <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
-                    {regionalContext.title} <span className="text-blue-500">Cinema Hub</span>
-                  </h2>
+               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2 px-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-8 bg-blue-500 rounded-full" />
+                    <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
+                      {regionalContext.title} <span className="text-blue-500">Cinema Hub</span>
+                    </h2>
+                  </div>
+
+                  {/* Quick Region Switcher if generic India is detected */}
+                  {regionalContext.region === "India" && (
+                    <div className="flex flex-wrap gap-2 animate-fade-in">
+                       <span className="text-[10px] font-black uppercase text-white/30 self-center mr-2">Switch Focus:</span>
+                       {[
+                         { id: "kerala", label: "Malayalam", icon: "🌴" },
+                         { id: "tamil", label: "Tamil", icon: "🛕" },
+                         { id: "telugu", label: "Telugu", icon: "🐘" },
+                         { id: "karnataka", label: "Kannada", icon: "🏛️" },
+                       ].map((r) => (
+                         <button
+                           key={r.id}
+                           onClick={() => {
+                             localStorage.setItem("user_regional_focus", r.id);
+                             window.location.reload();
+                           }}
+                           className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-blue-500/50 hover:bg-blue-500/10 text-[10px] font-bold uppercase transition-all flex items-center gap-1.5"
+                         >
+                           <span>{r.icon}</span> {r.label}
+                         </button>
+                       ))}
+                    </div>
+                  )}
                </div>
 
                <MediaRow
