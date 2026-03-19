@@ -182,7 +182,16 @@ export const getRecommendations = async (mediaType: "movie" | "tv", id: number):
   return data.results;
 };
 
-export const getUserLocation = async (): Promise<{ country: string; country_name: string; region: string; city: string; languages: string }> => {
+export const getUserLocation = async (): Promise<{ 
+  country: string; 
+  country_name: string; 
+  region: string; 
+  region_code: string;
+  city: string; 
+  languages: string;
+  latitude?: number;
+  longitude?: number;
+}> => {
   try {
     const response = await fetch("https://ipapi.co/json/");
     if (!response.ok) throw new Error("Location service unavailable");
@@ -191,11 +200,14 @@ export const getUserLocation = async (): Promise<{ country: string; country_name
       country: data.country_code || "US", 
       country_name: data.country_name || "United States",
       region: data.region || "",
+      region_code: data.region_code || "",
       city: data.city || "",
-      languages: data.languages || "en-US"
+      languages: data.languages || "en-US",
+      latitude: data.latitude,
+      longitude: data.longitude
     };
   } catch (error) {
     console.error("Error fetching location:", error);
-    return { country: "US", country_name: "United States", region: "", city: "", languages: "en-US" };
+    return { country: "US", country_name: "United States", region: "", region_code: "", city: "", languages: "en-US" };
   }
 };

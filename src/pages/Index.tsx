@@ -43,8 +43,11 @@ const Index = () => {
     country: string; 
     country_name: string; 
     region: string;
+    region_code: string;
     city: string;
     languages: string;
+    latitude?: number;
+    longitude?: number;
   } | null>(null);
 
   useEffect(() => {
@@ -95,32 +98,78 @@ const Index = () => {
     enabled: !!location,
   });
 
-  // Region specific content (e.g., Malayalam for Kerala)
-  const isKerala = location?.region?.toLowerCase().includes("kerala");
-  
+  // Advanced Region Detection Logic
+  const getRegionalContext = () => {
+    const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
+    const regionName = (location?.region || "").toLowerCase();
+    const regionCode = (location?.region_code || "").toUpperCase();
+    
+    // Determine target region (Manual override or Detected)
+    let target = manualFocus !== "auto" ? manualFocus : regionName;
+    if (manualFocus === "auto" && !target) target = regionCode;
+
+    const context = {
+      title: "Indian",
+      accent: "Cinema Hub",
+      language: "hi",
+      region: "India",
+      stateCode: regionCode
+    };
+
+    if (target.includes("kerala") || regionCode === "KL") {
+      context.title = "Malayalam";
+      context.region = "Kerala";
+      context.language = "ml";
+    } else if (target.includes("tamil") || regionCode === "TN") {
+      context.title = "Tamil";
+      context.region = "Tamil Nadu";
+      context.language = "ta";
+    } else if (target.includes("telugu") || target.includes("andhra") || regionCode === "AP" || regionCode === "TG") {
+      context.title = "Telugu";
+      context.region = "Andhra & Telangana";
+      context.language = "te";
+    } else if (target.includes("karnataka") || regionCode === "KA") {
+      context.title = "Kannada";
+      context.region = "Karnataka";
+      context.language = "kn";
+    } else if (target.includes("bengal") || regionCode === "WB") {
+      context.title = "Bengali";
+      context.region = "West Bengal";
+      context.language = "bn";
+    } else if (target.includes("maharashtra") || regionCode === "MH") {
+      context.title = "Marathi";
+      context.region = "Maharashtra";
+      context.language = "mr";
+    } else if (target.includes("punjab") || regionCode === "PB") {
+      context.title = "Punjabi";
+      context.region = "Punjab";
+      context.language = "pa";
+    } else if (target.includes("gujarat") || regionCode === "GJ") {
+      context.title = "Gujarati";
+      context.region = "Gujarat";
+      context.language = "gu";
+    }
+
+    return context;
+  };
+
+  const regionalContext = getRegionalContext();
+
   const { data: regionalNow, isLoading: regionalLoading } = useQuery({
-    queryKey: ["regionalNow", location?.country, location?.region, localStorage.getItem("user_regional_focus")],
+    queryKey: ["regionalNow", location?.country, location?.region, location?.region_code, localStorage.getItem("user_regional_focus")],
     queryFn: () => {
-      const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
-      const isIndia = location?.country === "IN" || manualFocus !== "auto";
-      const regionName = manualFocus !== "auto" ? manualFocus : (location?.region?.toLowerCase() || "");
+      const isIndia = location?.country === "IN" || localStorage.getItem("user_regional_focus") !== "auto";
       
       const params: Record<string, string> = {
         sort_by: "popularity.desc",
         include_adult: "false"
       };
 
-      if (isIndia || manualFocus !== "auto") {
+      if (isIndia) {
         params.with_origin_country = "IN";
-        if (regionName.includes("kerala")) params.with_original_language = "ml";
-        else if (regionName.includes("tamil")) params.with_original_language = "ta";
-        else if (regionName.includes("telugu") || regionName.includes("andhra")) params.with_original_language = "te";
-        else if (regionName.includes("karnataka")) params.with_original_language = "kn";
-        else if (regionName.includes("bengal")) params.with_original_language = "bn";
-        else if (regionName.includes("maharashtra")) params.with_original_language = "mr";
-        else params.with_original_language = "hi";
+        params.with_original_language = regionalContext.language;
       } else {
-        params.with_origin_country = location?.country;
+        params.with_origin_country = location?.country || "";
         const detectedLanguages = location?.languages?.split(',') || [];
         const localLang = detectedLanguages.find(l => !l.startsWith('en'))?.split('-')[0];
         if (localLang) params.with_original_language = localLang;
@@ -132,11 +181,9 @@ const Index = () => {
   });
 
   const { data: regionalUpcoming, isLoading: regionalUpcomingLoading } = useQuery({
-    queryKey: ["regionalUpcoming", location?.country, location?.region, localStorage.getItem("user_regional_focus")],
+    queryKey: ["regionalUpcoming", location?.country, location?.region, location?.region_code, localStorage.getItem("user_regional_focus")],
     queryFn: () => {
-      const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
-      const isIndia = location?.country === "IN" || manualFocus !== "auto";
-      const regionName = manualFocus !== "auto" ? manualFocus : (location?.region?.toLowerCase() || "");
+      const isIndia = location?.country === "IN" || localStorage.getItem("user_regional_focus") !== "auto";
       
       const params: Record<string, string> = {
         sort_by: "popularity.desc",
@@ -144,17 +191,11 @@ const Index = () => {
         "primary_release_date.gte": new Date().toISOString().split('T')[0]
       };
 
-      if (isIndia || manualFocus !== "auto") {
+      if (isIndia) {
         params.with_origin_country = "IN";
-        if (regionName.includes("kerala")) params.with_original_language = "ml";
-        else if (regionName.includes("tamil")) params.with_original_language = "ta";
-        else if (regionName.includes("telugu") || regionName.includes("andhra")) params.with_original_language = "te";
-        else if (regionName.includes("karnataka")) params.with_original_language = "kn";
-        else if (regionName.includes("bengal")) params.with_original_language = "bn";
-        else if (regionName.includes("maharashtra")) params.with_original_language = "mr";
-        else params.with_original_language = "hi";
+        params.with_original_language = regionalContext.language;
       } else {
-        params.with_origin_country = location?.country;
+        params.with_origin_country = location?.country || "";
         const detectedLanguages = location?.languages?.split(',') || [];
         const localLang = detectedLanguages.find(l => !l.startsWith('en'))?.split('-')[0];
         if (localLang) params.with_original_language = localLang;
@@ -268,62 +309,26 @@ const Index = () => {
                <div className="flex items-center gap-3 mb-2 px-4">
                   <div className="w-2 h-8 bg-blue-500 rounded-full" />
                   <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
-                    {(() => {
-                      const region = (localStorage.getItem("user_regional_focus") || location?.region || "").toLowerCase();
-                      if (region.includes("kerala")) return <>Malayalam <span className="text-blue-500">Cinema Hub</span></>;
-                      if (region.includes("tamil")) return <>Tamil <span className="text-blue-500">Cinema Hub</span></>;
-                      if (region.includes("telugu") || region.includes("andhra")) return <>Telugu <span className="text-blue-500">Cinema Hub</span></>;
-                      if (region.includes("karnataka")) return <>Kannada <span className="text-blue-500">Cinema Hub</span></>;
-                      if (region.includes("bengal")) return <>Bengali <span className="text-blue-500">Cinema Hub</span></>;
-                      if (region.includes("maharashtra")) return <>Marathi <span className="text-blue-500">Cinema Hub</span></>;
-                      return <>Indian <span className="text-blue-500">Cinema Hub</span></>;
-                    })()}
+                    {regionalContext.title} <span className="text-blue-500">Cinema Hub</span>
                   </h2>
                </div>
 
                <MediaRow
-                  title={`🔥 Current Blockbusters (${(() => {
-                    const region = (localStorage.getItem("user_regional_focus") || location?.region || "").toLowerCase();
-                    if (region.includes("kerala")) return "Kerala";
-                    if (region.includes("tamil")) return "Tamil Nadu";
-                    if (region.includes("telugu") || region.includes("andhra")) return "Andhra & Telangana";
-                    if (region.includes("karnataka")) return "Karnataka";
-                    if (region.includes("bengal")) return "West Bengal";
-                    if (region.includes("maharashtra")) return "Maharashtra";
-                    return "India";
-                  })()})`}
+                  title={`🔥 Current Blockbusters (${regionalContext.region})`}
                   items={regionalNow?.results || []}
                   mediaType="movie"
                   isLoading={regionalLoading}
                 />
                 
                 <MediaRow
-                  title={`${(() => {
-                    const region = (localStorage.getItem("user_regional_focus") || location?.region || "").toLowerCase();
-                    if (region.includes("kerala")) return "Malayalam";
-                    if (region.includes("tamil")) return "Tamil";
-                    if (region.includes("telugu") || region.includes("andhra")) return "Telugu";
-                    if (region.includes("karnataka")) return "Kannada";
-                    if (region.includes("bengal")) return "Bengali";
-                    if (region.includes("maharashtra")) return "Marathi";
-                    return "Indian";
-                  })()} Evergreens`}
+                  title={`${regionalContext.title} Evergreens`}
                   items={regionalNow?.results?.slice().reverse() || []}
                   mediaType="movie"
                   isLoading={regionalLoading}
                 />
 
                 <MediaRow
-                  title={`🆕 New ${(() => {
-                    const region = (localStorage.getItem("user_regional_focus") || location?.region || "").toLowerCase();
-                    if (region.includes("kerala")) return "Malayalam";
-                    if (region.includes("tamil")) return "Tamil";
-                    if (region.includes("telugu") || region.includes("andhra")) return "Telugu";
-                    if (region.includes("karnataka")) return "Kannada";
-                    if (region.includes("bengal")) return "Bengali";
-                    if (region.includes("maharashtra")) return "Marathi";
-                    return "Indian";
-                  })()} Releases`}
+                  title={`🆕 New ${regionalContext.title} Releases`}
                   items={regionalUpcoming?.results || []}
                   mediaType="movie"
                   isLoading={regionalUpcomingLoading}
