@@ -120,7 +120,11 @@ export const setupProgressListener = (): void => {
     
     if (event.data?.type === "MEDIA_DATA") {
       const mediaData = event.data.data;
-      localStorage.setItem("vidLinkProgress", JSON.stringify(mediaData));
+      if (mediaData && typeof mediaData === "object") {
+        const existing = getWatchProgress();
+        const updated = { ...existing, ...mediaData };
+        localStorage.setItem("vidLinkProgress", JSON.stringify(updated));
+      }
     }
   });
 };

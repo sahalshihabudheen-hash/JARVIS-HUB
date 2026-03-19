@@ -262,32 +262,68 @@ const Index = () => {
             <ContinueWatching />
           </div>
 
-          {/* MALAYALAM CINEMA HUB - HIGH PRIORITY FOR KERALA USERS */}
+          {/* REGIONAL CINEMA HUB - DYNAMIC BASED ON LOCATION */}
           {location?.country === "IN" && (
             <div className="space-y-8 bg-blue-500/[0.02] border-y border-white/[0.02] py-10 -mx-4 px-4 overflow-hidden">
                <div className="flex items-center gap-3 mb-2 px-4">
                   <div className="w-2 h-8 bg-blue-500 rounded-full" />
                   <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
-                    Malayalam <span className="text-blue-500">Cinema Hub</span>
+                    {(() => {
+                      const region = (localStorage.getItem("user_regional_focus") || location?.region || "").toLowerCase();
+                      if (region.includes("kerala")) return <>Malayalam <span className="text-blue-500">Cinema Hub</span></>;
+                      if (region.includes("tamil")) return <>Tamil <span className="text-blue-500">Cinema Hub</span></>;
+                      if (region.includes("telugu") || region.includes("andhra")) return <>Telugu <span className="text-blue-500">Cinema Hub</span></>;
+                      if (region.includes("karnataka")) return <>Kannada <span className="text-blue-500">Cinema Hub</span></>;
+                      if (region.includes("bengal")) return <>Bengali <span className="text-blue-500">Cinema Hub</span></>;
+                      if (region.includes("maharashtra")) return <>Marathi <span className="text-blue-500">Cinema Hub</span></>;
+                      return <>Indian <span className="text-blue-500">Cinema Hub</span></>;
+                    })()}
                   </h2>
                </div>
 
                <MediaRow
-                  title="🔥 Current Blockbusters (Kerala)"
+                  title={`🔥 Current Blockbusters (${(() => {
+                    const region = (localStorage.getItem("user_regional_focus") || location?.region || "").toLowerCase();
+                    if (region.includes("kerala")) return "Kerala";
+                    if (region.includes("tamil")) return "Tamil Nadu";
+                    if (region.includes("telugu") || region.includes("andhra")) return "Andhra & Telangana";
+                    if (region.includes("karnataka")) return "Karnataka";
+                    if (region.includes("bengal")) return "West Bengal";
+                    if (region.includes("maharashtra")) return "Maharashtra";
+                    return "India";
+                  })()})`}
                   items={regionalNow?.results || []}
                   mediaType="movie"
                   isLoading={regionalLoading}
                 />
                 
                 <MediaRow
-                  title="💎 Malayalam Evergreens"
+                  title={`${(() => {
+                    const region = (localStorage.getItem("user_regional_focus") || location?.region || "").toLowerCase();
+                    if (region.includes("kerala")) return "Malayalam";
+                    if (region.includes("tamil")) return "Tamil";
+                    if (region.includes("telugu") || region.includes("andhra")) return "Telugu";
+                    if (region.includes("karnataka")) return "Kannada";
+                    if (region.includes("bengal")) return "Bengali";
+                    if (region.includes("maharashtra")) return "Marathi";
+                    return "Indian";
+                  })()} Evergreens`}
                   items={regionalNow?.results?.slice().reverse() || []}
                   mediaType="movie"
                   isLoading={regionalLoading}
                 />
 
                 <MediaRow
-                  title="🆕 New Malayalam Releases"
+                  title={`🆕 New ${(() => {
+                    const region = (localStorage.getItem("user_regional_focus") || location?.region || "").toLowerCase();
+                    if (region.includes("kerala")) return "Malayalam";
+                    if (region.includes("tamil")) return "Tamil";
+                    if (region.includes("telugu") || region.includes("andhra")) return "Telugu";
+                    if (region.includes("karnataka")) return "Kannada";
+                    if (region.includes("bengal")) return "Bengali";
+                    if (region.includes("maharashtra")) return "Marathi";
+                    return "Indian";
+                  })()} Releases`}
                   items={regionalUpcoming?.results || []}
                   mediaType="movie"
                   isLoading={regionalUpcomingLoading}
