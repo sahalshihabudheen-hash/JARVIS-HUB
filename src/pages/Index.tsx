@@ -103,10 +103,13 @@ const Index = () => {
     const manualFocus = localStorage.getItem("user_regional_focus") || "auto";
     const regionName = (location?.region || "").toLowerCase();
     const regionCode = (location?.region_code || "").toUpperCase();
+    const cityName = (location?.city || "").toLowerCase();
+    const browserLangs = navigator.languages || [navigator.language];
     
     // Determine target region (Manual override or Detected)
     let target = manualFocus !== "auto" ? manualFocus : regionName;
     if (manualFocus === "auto" && !target) target = regionCode;
+    if (manualFocus === "auto" && !target) target = cityName;
 
     const context = {
       title: "Indian",
@@ -116,15 +119,23 @@ const Index = () => {
       stateCode: regionCode
     };
 
-    if (target.includes("kerala") || regionCode === "KL") {
+    // 1. Check for Kerala (High Priority as per User)
+    const keralaCities = ["kochi", "trivandrum", "thiruvananthapuram", "calicut", "kozhikode", "thrissur", "kollam", "palakkad", "alappuzha", "kottayam", "malappuram", "kannur", "kasaragod"];
+    const isMalayalamBrowser = browserLangs.some(l => l.toLowerCase().startsWith('ml'));
+    
+    if (target.includes("kerala") || regionCode === "KL" || keralaCities.includes(cityName) || isMalayalamBrowser) {
       context.title = "Malayalam";
       context.region = "Kerala";
       context.language = "ml";
-    } else if (target.includes("tamil") || regionCode === "TN") {
+    } 
+    // 2. Check for Tamil Nadu
+    else if (target.includes("tamil") || regionCode === "TN" || cityName.includes("chennai") || cityName.includes("madurai") || browserLangs.some(l => l.toLowerCase().startsWith('ta'))) {
       context.title = "Tamil";
       context.region = "Tamil Nadu";
       context.language = "ta";
-    } else if (target.includes("telugu") || target.includes("andhra") || regionCode === "AP" || regionCode === "TG") {
+    } 
+    // 3. Other regions
+    else if (target.includes("telugu") || target.includes("andhra") || regionCode === "AP" || regionCode === "TG" || cityName.includes("hyderabad") || browserLangs.some(l => l.toLowerCase().startsWith('te'))) {
       context.title = "Telugu";
       context.region = "Andhra & Telangana";
       context.language = "te";
