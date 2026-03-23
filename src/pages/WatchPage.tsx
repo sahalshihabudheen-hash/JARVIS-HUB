@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Play, Tv } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { getMovieDetails, getTVDetails, getSeasonDetails } from "@/lib/tmdb";
+import { getMovieDetails, getTVDetails, getSeasonDetails, getImageUrl } from "@/lib/tmdb";
 import { useAuth } from "@/context/AuthContext";
 import { useAdmin } from "@/context/AdminContext";
 import { cn } from "@/lib/utils";
@@ -155,6 +155,12 @@ const WatchPage = () => {
           {/* TV Navigation */}
           {isTV && (
             <div className="mt-6">
+              {/* More Episodes Heading */}
+              <div className="mt-12 mb-6 flex items-center justify-between">
+                <h2 className="text-xl md:text-2xl font-display font-bold">Episodes</h2>
+                <div className="h-px flex-1 bg-white/10 mx-6 hidden sm:block" />
+              </div>
+
               {/* Episode Navigation */}
               <div className="flex items-center justify-between mb-6">
                 <Button
@@ -197,18 +203,70 @@ const WatchPage = () => {
               )}
 
               {/* Episode List */}
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {episodes.map((ep) => (
                   <Link
                     key={ep.id}
                     to={`/watch/tv/${mediaId}/${seasonNum}/${ep.episode_number}`}
-                    className={`p-3 rounded-lg text-center transition-colors ${
-                      ep.episode_number === episodeNum
-                        ? "gradient-primary text-primary-foreground"
-                        : "bg-secondary hover:bg-secondary/80"
-                    }`}
+                    className={cn(
+                      "group relative flex flex-col rounded-xl overflow-hidden bg-card border border-white/5 transition-all duration-300 hover:scale-[1.02] hover:bg-secondary/50",
+                      ep.episode_number === episodeNum 
+                        ? "ring-2 ring-primary bg-primary/5" 
+                        : "hover:shadow-xl hover:shadow-primary/5"
+                    )}
                   >
-                    <span className="text-sm font-medium">Ep {ep.episode_number}</span>
+                    <div className="relative aspect-video overflow-hidden bg-secondary">
+                      {ep.still_path ? (
+                        <img
+                          src={getImageUrl(ep.still_path, "w300")}
+                          alt={ep.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-secondary/50">
+                          <Tv className="w-8 h-8 text-muted-foreground opacity-50" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80" />
+                      
+                      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded bg-primary/80 backdrop-blur-sm">
+                            EP {ep.episode_number}
+                          </span>
+                          {ep.runtime && (
+                            <span className="text-[10px] text-white/90 font-medium">
+                              {ep.runtime}m
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {ep.episode_number === episodeNum ? (
+                        <div className="absolute inset-0 flex items-center justify-center bg-primary/20 backdrop-blur-[1px]">
+                          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/50">
+                            <Play className="w-5 h-5 text-white fill-current" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                          <Play className="w-8 h-8 text-white fill-current" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="p-3">
+                      <h3 className={cn(
+                        "text-sm font-semibold line-clamp-1 transition-colors",
+                        ep.episode_number === episodeNum ? "text-primary" : "group-hover:text-primary"
+                      )}>
+                        {ep.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
+                        {ep.overview || "No description available for this episode."}
+                      </p>
+                    </div>
                   </Link>
                 ))}
               </div>

@@ -1,3 +1,5 @@
+import { getMovieEmbedUrl, getTVEmbedUrl } from "./vidlink";
+
 export interface VideoServer {
   id: string;
   name: string;
@@ -21,6 +23,20 @@ export const videoServers: VideoServer[] = [
     supportsSandbox: true,
   },
   {
+    id: "vidlink",
+    name: "VidLink (Premium)",
+    getMovieUrl: (tmdbId) => getMovieEmbedUrl(tmdbId),
+    getTVUrl: (tmdbId, season, episode) => getTVEmbedUrl(tmdbId, season, episode),
+    supportsSandbox: true,
+  },
+  {
+    id: "vidsrcto",
+    name: "VidSrc To (Stable)",
+    getMovieUrl: (tmdbId) => `https://vidsrc.to/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.to/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: true,
+  },
+  {
     id: "vidsrcin",
     name: "Indian Mirror (Stable)",
     getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.in/embed/movie/${tmdbId}${lang ? `?ds_lang=${lang}` : ""}`,
@@ -33,6 +49,27 @@ export const videoServers: VideoServer[] = [
     getMovieUrl: (tmdbId, _, lang) => `https://moviesapi.club/movie/${tmdbId}${lang ? `?lang=${lang}` : ""}`,
     getTVUrl: (tmdbId, season, episode, _, lang) => `https://moviesapi.club/tv/${tmdbId}-${season}-${episode}${lang ? `?lang=${lang}` : ""}`,
     supportsSandbox: true,
+  },
+  {
+    id: "embedsu",
+    name: "Embed.su (Clean)",
+    getMovieUrl: (tmdbId) => `https://embed.su/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://embed.su/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "smashystream",
+    name: "SmashyStream",
+    getMovieUrl: (tmdbId) => `https://embed.smashystream.com/playere.php?tmdb=${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://embed.smashystream.com/playere.php?tmdb=${tmdbId}&season=${season}&episode=${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "autoembed",
+    name: "AutoEmbed (Fast)",
+    getMovieUrl: (tmdbId) => `https://player.autoembed.cc/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://player.autoembed.cc/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
   },
   {
     id: "vidsrcvip",
