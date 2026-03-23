@@ -67,6 +67,22 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
 
   const { user } = useAuth();
   
+  const availableServers = sandboxEnabled 
+    ? videoServers.filter(s => s.supportsSandbox)
+    : videoServers;
+
+  // Auto-switch away from incompatible servers when sandbox is enabled
+  useEffect(() => {
+    const current = videoServers.find(s => s.id === currentServer);
+    if (sandboxEnabled && current && !current.supportsSandbox) {
+      const fallback = videoServers.find(s => s.supportsSandbox);
+      if (fallback) {
+        handleServerChange(fallback.id);
+        toast.info(`Mirror switched to ${fallback.name} for Hard Adblock compatibility.`);
+      }
+    }
+  }, [sandboxEnabled, currentServer]);
+  
   // Block popup ads from embedded video servers and sync progress
   useEffect(() => {
     const unsub = setupProgressListener(user?.uid);
@@ -111,10 +127,10 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
   };
 
   const cycleMirror = () => {
-    const currentIndex = videoServers.findIndex((s) => s.id === currentServer);
-    const nextIndex = (currentIndex + 1) % videoServers.length;
-    handleServerChange(videoServers[nextIndex].id);
-    toast.success(`Scanning Mirror ${nextIndex + 1}: ${videoServers[nextIndex].name}`, {
+    const currentIndex = availableServers.findIndex((s) => s.id === currentServer);
+    const nextIndex = (currentIndex + 1) % availableServers.length;
+    handleServerChange(availableServers[nextIndex].id);
+    toast.success(`Scanning Mirror ${availableServers[nextIndex].id}: ${availableServers[nextIndex].name}`, {
       duration: 2000
     });
   };
@@ -195,7 +211,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
           
           <div className="flex flex-col gap-2 relative w-full xl:w-auto">
             <div className="flex flex-wrap gap-1.5 backdrop-blur-md bg-white/5 p-2 rounded-xl border border-white/5">
-              {videoServers.slice(0, 8).map((s) => (
+              {availableServers.slice(0, 8).map((s) => (
                 <Button
                   key={s.id}
                   variant={s.id === currentServer ? "default" : "outline"}
@@ -214,22 +230,24 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
               ))}
             </div>
             
-            <div className="flex flex-wrap gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
-              {videoServers.slice(8).map((s) => (
-                <Button
-                  key={s.id}
-                  variant={s.id === currentServer ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleServerChange(s.id)}
-                  className={cn(
-                    "rounded-md px-2 h-6 text-[9px] font-bold uppercase tracking-tight transition-all duration-300",
-                    s.id === currentServer ? "bg-primary text-black" : "hover:bg-white/5 border-white/5"
-                  )}
-                >
-                  {s.name.includes('.') ? s.name.split('.')[1] : s.name.split(' ')[0]}
-                </Button>
-              ))}
-            </div>
+            {availableServers.length > 8 && (
+              <div className="flex flex-wrap gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+                {availableServers.slice(8).map((s) => (
+                  <Button
+                    key={s.id}
+                    variant={s.id === currentServer ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleServerChange(s.id)}
+                    className={cn(
+                      "rounded-md px-2 h-6 text-[9px] font-bold uppercase tracking-tight transition-all duration-300",
+                      s.id === currentServer ? "bg-primary text-black" : "hover:bg-white/5 border-white/5"
+                    )}
+                  >
+                    {s.name.includes('.') ? s.name.split('.')[1] : s.name.split(' ')[0]}
+                  </Button>
+                ))}
+              </div>
+            )}
 
             <Button
               onClick={() => setIsAutoSearching(!isAutoSearching)}

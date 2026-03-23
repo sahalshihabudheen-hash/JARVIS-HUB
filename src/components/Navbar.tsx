@@ -21,6 +21,7 @@ const Navbar = () => {
   const { isActive: isTutorialActive } = useTutorial();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ const Navbar = () => {
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
+      setIsSearchExpanded(false);
     }
   };
 
@@ -65,7 +67,35 @@ const Navbar = () => {
         isTutorialActive && "pointer-events-none"
       )}>
         <div className="flex items-center justify-between h-18 md:h-22">
-          {/* Logo */}
+          {isSearchExpanded ? (
+            <div className="flex-1 flex items-center gap-3 animate-fade-in px-2">
+              <Search className="w-5 h-5 text-blue-500 shrink-0" />
+              <form onSubmit={handleSearch} className="flex-1">
+                <input
+                  autoFocus
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onBlur={() => !searchQuery && setIsSearchExpanded(false)}
+                  placeholder="Search movies, TV shows..."
+                  className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-white placeholder:text-white/20 text-base py-2"
+                />
+              </form>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="w-10 h-10 rounded-full text-white/40 hover:text-white shrink-0"
+                onClick={() => {
+                  setIsSearchExpanded(false);
+                  setSearchQuery("");
+                }}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+          ) : (
+            <>
+              {/* Logo */}
           <Link to="/" id="navbar-logo" className="flex items-center gap-3 group shrink-0">
             <div className="relative">
               <div className="absolute inset-0 bg-blue-500/20 blur-lg rounded-full animate-pulse group-hover:bg-blue-500/40 transition-all" />
@@ -109,7 +139,7 @@ const Navbar = () => {
 
           {/* Search and Mobile Menu */}
           <div className="flex items-center gap-3 lg:gap-6">
-            <form onSubmit={handleSearch} id="navbar-search" className="hidden xl:flex items-center group">
+            <form onSubmit={handleSearch} id="navbar-search" className="hidden lg:flex items-center group">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-blue-500 transition-colors" />
                 <input
@@ -218,7 +248,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="icon"
                 className="w-10 h-10 rounded-full text-white/40 hover:text-white"
-                onClick={() => navigate("/search")}
+                onClick={() => setIsSearchExpanded(true)}
               >
                 <Search className="w-5 h-5" />
               </Button>
@@ -233,7 +263,9 @@ const Navbar = () => {
               </Button>
             </div>
           </div>
-        </div>
+        </>
+      )}
+    </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
