@@ -54,9 +54,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
 
   const { user } = useAuth();
   
-  const availableServers = sandboxEnabled 
-    ? videoServers.filter(s => s.supportsSandbox)
-    : videoServers;
+  const availableServers = videoServers;
 
 
   
@@ -185,13 +183,13 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                     s.id === currentServer ? "bg-primary text-black hover-glow" : "hover:bg-white/5 border-white/10"
                   )}
                 >
-                  {s.name.split(' ')[0]}
+                  {s.id.includes('vidsrc') && s.id !== 'vidsrcin' ? `V-SRC ${s.id.replace('vidsrc', '').toUpperCase()}` : s.name.split(' ')[0]}
                 </Button>
               ))}
             </div>
             
             {availableServers.length > 8 && (
-              <div className="flex flex-wrap gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+              <div className="flex flex-wrap gap-1.5 mt-2">
                 {availableServers.slice(8).map((s) => (
                   <Button
                     key={s.id}
