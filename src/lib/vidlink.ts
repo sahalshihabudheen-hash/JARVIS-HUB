@@ -1,4 +1,7 @@
 const VIDLINK_BASE = "https://vidlink.pro";
+import { db } from "./firebase";
+import { doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, serverTimestamp, orderBy, limit, deleteDoc } from "firebase/firestore";
+
 
 export interface VidLinkOptions {
   primaryColor?: string;
@@ -79,6 +82,7 @@ export interface WatchProgress {
   };
   last_season_watched?: string;
   last_episode_watched?: string;
+  isAnimation?: boolean;
   show_progress?: Record<string, {
     season: string;
     episode: string;
@@ -111,13 +115,115 @@ export const getContinueWatching = (userId?: string): WatchProgress[] => {
     .slice(0, 10);
 };
 
-export const clearWatchProgress = (userId?: string): void => {
+export const clearWatchProgress = async (userId?: string): Promise<void> => {
   const key = userId ? `vidLinkProgress_${userId}` : "vidLinkProgress";
   localStorage.removeItem(key);
+  
+  if (userId) {
+    try {
+      const q = query(collection(db, "watch_history"), where("userId", "==", userId));
+      const snapshot = await getDocs(q);
+      const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(deletePromises);
+    } catch (e) {
+      console.error("Failed to clear cloud history", e);
+    }
+  }
+};
+
+export const syncHistoryFromCloud = async (userId: string): Promise<Record<string, WatchProgress>> => {
+  try {
+    const q = query(
+      collection(db, "watch_history"), 
+      where("userId", "==", userId),
+      orderBy("last_updated", "desc")
+    );
+    const snapshot = await getDocs(q);
+    const cloudHistory: Record<string, WatchProgress> = {};
+    
+    snapshot.forEach(doc => {
+      const data = doc.data() as any;
+      cloudHistory[data.id.toString()] = {
+        ...data,
+        last_updated: data.last_updated?.toMillis?.() || Date.now()
+      };
+    });
+
+    const key = `vidLinkProgress_${userId}`;
+    const localStr = localStorage.getItem(key);
+    const localHistory = localStr ? JSON.parse(localStr) : {};
+    
+    // Merge: cloud wins unless local is newer
+    const finalHistory = { ...cloudHistory, ...localHistory };
+    localStorage.setItem(key, JSON.stringify(finalHistory));
+    
+    return finalHistory;
+  } catch (e) {
+    console.error("Cloud sync failed", e);
+    return getWatchProgress(userId);
+  }
+};
+
+export const saveWatchProgressCloud = async (userId: string, progress: WatchProgress): Promise<void> => {
+  try {
+    const docId = `${userId}_${progress.type}_${progress.id}`;
+    const docRef = doc(db, "watch_history", docId);
+    await setDoc(docRef, {
+      ...progress,
+      userId,
+      last_updated: serverTimestamp()
+    }, { merge: true });
+  } catch (e) {
+    console.error("Failed to save progress to cloud", e);
+  }
+};
+
+export interface SearchHistoryItem {
+  query: string;
+  timestamp: number;
+}
+
+export const saveSearchHistory = async (userId: string, searchQuery: string): Promise<void> => {
+  if (!searchQuery.trim()) return;
+  try {
+    const userDocId = userId.replace(/\./g, "_");
+    const docRef = doc(collection(db, "users", userDocId, "search_history"));
+    await setDoc(docRef, {
+      query: searchQuery,
+      timestamp: serverTimestamp()
+    });
+    
+    // Also save to local for immediate feedback
+    const localKey = `searchHistory_${userId}`;
+    const existing = JSON.parse(localStorage.getItem(localKey) || "[]");
+    const updated = [{ query: searchQuery, timestamp: Date.now() }, ...existing].slice(0, 20);
+    localStorage.setItem(localKey, JSON.stringify(updated));
+  } catch (e) {
+    console.error("Failed to save search history", e);
+  }
+};
+
+export const getSearchHistory = async (userId: string): Promise<SearchHistoryItem[]> => {
+  try {
+    const userDocId = userId.replace(/\./g, "_");
+    const q = query(
+      collection(db, "users", userDocId, "search_history"), 
+      orderBy("timestamp", "desc"),
+      limit(20)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      query: doc.data().query,
+      timestamp: doc.data().timestamp?.toMillis?.() || Date.now()
+    }));
+  } catch (e) {
+    console.error("Failed to fetch search history", e);
+    return [];
+  }
 };
 
 export const setupProgressListener = (userId?: string): (() => void) => {
-  const handleMessage = (event: MessageEvent) => {
+  const handleMessage = async (event: MessageEvent) => {
     if (event.origin !== "https://vidlink.pro") return;
     
     if (event.data?.type === "MEDIA_DATA") {
@@ -127,6 +233,13 @@ export const setupProgressListener = (userId?: string): (() => void) => {
         const existing = getWatchProgress(userId);
         const updated = { ...existing, ...mediaData };
         localStorage.setItem(key, JSON.stringify(updated));
+
+        // Sync to Cloud if logged in
+        if (userId) {
+          Object.values(mediaData).forEach((item: any) => {
+            saveWatchProgressCloud(userId, item);
+          });
+        }
       }
     }
   };

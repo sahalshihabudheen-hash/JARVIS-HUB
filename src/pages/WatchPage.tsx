@@ -11,6 +11,7 @@ import { getMovieDetails, getTVDetails, getSeasonDetails, getImageUrl } from "@/
 import { useAuth } from "@/context/AuthContext";
 import { useAdmin } from "@/context/AdminContext";
 import { cn } from "@/lib/utils";
+import { saveWatchProgressCloud } from "@/lib/vidlink";
 
 const WatchPage = () => {
   const { type, id, season, episode } = useParams<{
@@ -71,35 +72,88 @@ const WatchPage = () => {
         });
       }
 
-      // 2. Force add to "Continue Watching" history (since non-Vidlink servers don't emit progress)
-      try {
-        const historyKey = user?.uid ? `vidLinkProgress_${user.uid}` : "vidLinkProgress";
-        const historyStr = localStorage.getItem(historyKey);
-        const historyObj = historyStr ? JSON.parse(historyStr) : {};
-        const mediaKey = `${content.id}`;
-        
-        historyObj[mediaKey] = {
-          ...historyObj[mediaKey], // Preserve any real progress if it previously existed
-          id: content.id,
-          type: type as "movie" | "tv",
-          title: title,
-          poster_path: content.poster_path || "",
-          backdrop_path: content.backdrop_path || "",
-          last_season_watched: isTV ? String(seasonNum) : undefined,
-          last_episode_watched: isTV ? String(episodeNum) : undefined,
-          progress: historyObj[mediaKey]?.progress || {
-            watched: 1, // 1% initial so it doesn't clutter 'Continue Watching' yet
-            duration: 100 
-          },
-          last_updated: Date.now()
-        };
-        
-        localStorage.setItem(historyKey, JSON.stringify(historyObj));
-      } catch (e) {
-        console.error("Failed to save history", e);
-      }
+      // 2. Initial add/update to history
+      const updateHistory = (incrementalWatched: number = 0) => {
+        try {
+          const historyKey = user?.uid ? `vidLinkProgress_${user.uid}` : "vidLinkProgress";
+          const historyStr = localStorage.getItem(historyKey);
+          const historyObj = historyStr ? JSON.parse(historyStr) : {};
+          const mediaKey = `${content.id}`;
+          
+          // Determine duration in seconds (fallback: current episode runtime > show default runtime > 30m/120m)
+          const durationMins = movie?.runtime || currentEpisode?.runtime || (isTV ? (show?.episode_run_time?.[0] || 30) : 120);
+          const durationSecs = durationMins * 60;
+
+          const existingProgress = historyObj[mediaKey]?.progress || {
+            watched: 0,
+            duration: durationSecs
+          };
+
+          const newWatched = Math.min((existingProgress.watched || 0) + incrementalWatched, durationSecs);
+          
+          historyObj[mediaKey] = {
+            ...historyObj[mediaKey],
+            id: content.id,
+            type: type as "movie" | "tv",
+            title: title,
+            poster_path: content.poster_path || "",
+            backdrop_path: content.backdrop_path || "",
+            last_season_watched: isTV ? String(seasonNum) : undefined,
+            last_episode_watched: isTV ? String(episodeNum) : undefined,
+            isAnimation: content.genres?.some(g => g.id === 16) || content.genre_ids?.includes(16),
+            progress: {
+              watched: newWatched,
+              duration: durationSecs
+            },
+            last_updated: Date.now()
+          };
+
+          // For TV shows, also update individual episode progress
+          if (isTV) {
+            const episodeKey = `s${seasonNum}e${episodeNum}`;
+            if (!historyObj[mediaKey].show_progress) {
+              historyObj[mediaKey].show_progress = {};
+            }
+            
+            const existingEpisodeProgress = historyObj[mediaKey].show_progress[episodeKey]?.progress || {
+              watched: 0,
+              duration: durationSecs
+            };
+
+            historyObj[mediaKey].show_progress[episodeKey] = {
+              season: String(seasonNum),
+              episode: String(episodeNum),
+              progress: {
+                watched: Math.min((existingEpisodeProgress.watched || 0) + incrementalWatched, durationSecs),
+                duration: durationSecs
+              }
+            };
+          }
+          
+          localStorage.setItem(historyKey, JSON.stringify(historyObj));
+
+          // Sync to Cloud if logged in
+          if (user?.uid) {
+            saveWatchProgressCloud(user.uid, historyObj[mediaKey]);
+          }
+        } catch (e) {
+          console.error("Failed to save history", e);
+        }
+      };
+
+      // Initial update (0 increment)
+      updateHistory(0);
+
+      // Start interval to track progress (every 30 seconds)
+      const interval = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          updateHistory(30);
+        }
+      }, 30000);
+
+      return () => clearInterval(interval);
     }
-  }, [content?.id, episodeNum, user, title, type, isTV, seasonNum, currentEpisode]);
+  }, [content?.id, episodeNum, user, title, type, isTV, seasonNum, currentEpisode, movie?.runtime, show?.episode_run_time]);
 
   return (
     <div className="min-h-screen bg-background">

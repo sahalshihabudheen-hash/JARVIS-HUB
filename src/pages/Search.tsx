@@ -6,8 +6,11 @@ import Navbar from "@/components/Navbar";
 import MediaCard from "@/components/MediaCard";
 import Footer from "@/components/Footer";
 import { searchMulti, MediaItem } from "@/lib/tmdb";
+import { useAuth } from "@/context/AuthContext";
+import { saveSearchHistory } from "@/lib/vidlink";
 
 const Search = () => {
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
   const [query, setQuery] = useState(initialQuery);
@@ -28,6 +31,12 @@ const Search = () => {
     queryFn: () => searchMulti(debouncedQuery),
     enabled: debouncedQuery.length > 2,
   });
+
+  useEffect(() => {
+    if (debouncedQuery.length > 2 && user?.uid) {
+      saveSearchHistory(user.uid, debouncedQuery);
+    }
+  }, [debouncedQuery, user?.uid]);
 
   const results = data?.results?.filter(
     (item: MediaItem) => item.media_type === "movie" || item.media_type === "tv"
