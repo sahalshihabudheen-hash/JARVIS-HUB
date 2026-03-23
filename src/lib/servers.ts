@@ -72,6 +72,20 @@ export const videoServers: VideoServer[] = [
     supportsSandbox: false,
   },
   {
+    id: "vidsrcnet",
+    name: "VidSrc Net",
+    getMovieUrl: (tmdbId) => `https://vidsrc.net/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.net/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "vidsrcstream",
+    name: "VidSrc Stream",
+    getMovieUrl: (tmdbId) => `https://vidsrc.stream/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.stream/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
     id: "autoembed",
     name: "AutoEmbed (Fast)",
     getMovieUrl: (tmdbId) => `https://player.autoembed.cc/embed/movie/${tmdbId}`,
