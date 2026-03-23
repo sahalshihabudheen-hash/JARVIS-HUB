@@ -72,26 +72,30 @@ const WatchPage = () => {
         });
       }
 
-      // 2. Initial add/update to history
+          // 2. Initial add/update to history
       const updateHistory = (incrementalWatched: number = 0) => {
         try {
           const historyKey = user?.uid ? `vidLinkProgress_${user.uid}` : "vidLinkProgress";
           const historyStr = localStorage.getItem(historyKey);
           const historyObj = historyStr ? JSON.parse(historyStr) : {};
-          const mediaKey = `${content.id}`;
+          const mediaKey = `${type}_${content.id}`;
           
           // Determine duration in seconds (fallback: current episode runtime > show default runtime > 30m/120m)
           const durationMins = movie?.runtime || currentEpisode?.runtime || (isTV ? (show?.episode_run_time?.[0] || 30) : 120);
           const durationSecs = durationMins * 60;
 
-          const existingProgress = historyObj[mediaKey]?.progress || {
-            watched: 0,
-            duration: durationSecs
-          };
+          // Resolve current progress based on type
+          let currentWatched = 0;
+          if (isTV) {
+            const episodeKey = `s${seasonNum}e${episodeNum}`;
+            currentWatched = historyObj[mediaKey]?.show_progress?.[episodeKey]?.progress?.watched || 0;
+          } else {
+            currentWatched = historyObj[mediaKey]?.progress?.watched || 0;
+          }
 
-          const newWatched = Math.min((existingProgress.watched || 0) + incrementalWatched, durationSecs);
+          const newWatched = Math.min(currentWatched + incrementalWatched, durationSecs);
           
-          historyObj[mediaKey] = {
+          const updatedMediaEntry = {
             ...historyObj[mediaKey],
             id: content.id,
             type: type as "movie" | "tv",
@@ -100,41 +104,34 @@ const WatchPage = () => {
             backdrop_path: content.backdrop_path || "",
             last_season_watched: isTV ? String(seasonNum) : undefined,
             last_episode_watched: isTV ? String(episodeNum) : undefined,
-            isAnimation: content.genres?.some(g => g.id === 16) || content.genre_ids?.includes(16),
+            isAnimation: content.genres?.some((g: any) => g.id === 16) || content.genre_ids?.includes(16),
             progress: {
-              watched: newWatched,
+              watched: newWatched, // Main progress field reflects the item currently being watched
               duration: durationSecs
             },
             last_updated: Date.now()
           };
 
-          // For TV shows, also update individual episode progress
+          // For TV shows, also update individual episode progress specific sub-object
           if (isTV) {
             const episodeKey = `s${seasonNum}e${episodeNum}`;
-            if (!historyObj[mediaKey].show_progress) {
-              historyObj[mediaKey].show_progress = {};
-            }
-            
-            const existingEpisodeProgress = historyObj[mediaKey].show_progress[episodeKey]?.progress || {
-              watched: 0,
-              duration: durationSecs
-            };
-
-            historyObj[mediaKey].show_progress[episodeKey] = {
+            if (!updatedMediaEntry.show_progress) updatedMediaEntry.show_progress = {};
+            updatedMediaEntry.show_progress[episodeKey] = {
               season: String(seasonNum),
               episode: String(episodeNum),
               progress: {
-                watched: Math.min((existingEpisodeProgress.watched || 0) + incrementalWatched, durationSecs),
+                watched: newWatched,
                 duration: durationSecs
               }
             };
           }
           
+          historyObj[mediaKey] = updatedMediaEntry;
           localStorage.setItem(historyKey, JSON.stringify(historyObj));
 
           // Sync to Cloud if logged in
           if (user?.uid) {
-            saveWatchProgressCloud(user.uid, historyObj[mediaKey]);
+            saveWatchProgressCloud(user.uid, updatedMediaEntry);
           }
         } catch (e) {
           console.error("Failed to save history", e);
@@ -144,12 +141,12 @@ const WatchPage = () => {
       // Initial update (0 increment)
       updateHistory(0);
 
-      // Start interval to track progress (every 30 seconds)
+      // Start interval to track progress (every 20 seconds for higher resolution)
       const interval = setInterval(() => {
         if (document.visibilityState === 'visible') {
-          updateHistory(30);
+          updateHistory(20);
         }
-      }, 30000);
+      }, 20000);
 
       return () => clearInterval(interval);
     }

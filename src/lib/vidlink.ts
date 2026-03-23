@@ -98,7 +98,28 @@ export const getWatchProgress = (userId?: string): Record<string, WatchProgress>
   try {
     const key = userId ? `vidLinkProgress_${userId}` : "vidLinkProgress";
     const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : {};
+    const history: Record<string, WatchProgress> = data ? JSON.parse(data) : {};
+    
+    // Migration: If we find old keys (numeric IDs without type_prefix), migrate them
+    let migrated = false;
+    Object.keys(history).forEach(k => {
+      // Check if key is purely numeric or doesn't have the expected prefix
+      if (!k.includes("_") && history[k].type && history[k].id) {
+        const newKey = `${history[k].type}_${history[k].id}`;
+        // Move to new key if it doesn't exist or is older
+        if (!history[newKey] || (history[k].last_updated || 0) > (history[newKey].last_updated || 0)) {
+          history[newKey] = history[k];
+        }
+        delete history[k];
+        migrated = true;
+      }
+    });
+
+    if (migrated) {
+      localStorage.setItem(key, JSON.stringify(history));
+    }
+
+    return history;
   } catch {
     return {};
   }
@@ -224,19 +245,29 @@ export const getSearchHistory = async (userId: string): Promise<SearchHistoryIte
 
 export const setupProgressListener = (userId?: string): (() => void) => {
   const handleMessage = async (event: MessageEvent) => {
-    if (event.origin !== "https://vidlink.pro") return;
+    // Both origins are common for VidLink mirrors
+    if (event.origin !== "https://vidlink.pro" && event.origin !== "https://vidsrc.pro") return;
     
     if (event.data?.type === "MEDIA_DATA") {
       const mediaData = event.data.data;
       if (mediaData && typeof mediaData === "object") {
         const key = userId ? `vidLinkProgress_${userId}` : "vidLinkProgress";
         const existing = getWatchProgress(userId);
-        const updated = { ...existing, ...mediaData };
+        
+        // Normalize keys and merge
+        const normalizedData: Record<string, WatchProgress> = {};
+        Object.entries(mediaData).forEach(([k, v]: [string, any]) => {
+          // VidLink usually uses keys like "movie_123" or "tv_123"
+          // We ensure our internal keys match this or are normalized to it
+          normalizedData[k] = v;
+        });
+
+        const updated = { ...existing, ...normalizedData };
         localStorage.setItem(key, JSON.stringify(updated));
 
         // Sync to Cloud if logged in
         if (userId) {
-          Object.values(mediaData).forEach((item: any) => {
+          Object.values(normalizedData).forEach((item: WatchProgress) => {
             saveWatchProgressCloud(userId, item);
           });
         }
