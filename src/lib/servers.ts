@@ -37,6 +37,13 @@ export const videoServers: VideoServer[] = [
     supportsSandbox: true,
   },
   {
+    id: "vidsrcxyz",
+    name: "VidSrc XYZ",
+    getMovieUrl: (tmdbId) => `https://vidsrc.xyz/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.xyz/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: true,
+  },
+  {
     id: "vidsrcin",
     name: "Indian Mirror (Stable)",
     getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.in/embed/movie/${tmdbId}${lang ? `?ds_lang=${lang}` : ""}`,
@@ -69,6 +76,27 @@ export const videoServers: VideoServer[] = [
     name: "AutoEmbed (Fast)",
     getMovieUrl: (tmdbId) => `https://player.autoembed.cc/embed/movie/${tmdbId}`,
     getTVUrl: (tmdbId, season, episode) => `https://player.autoembed.cc/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "twoembed",
+    name: "2Embed",
+    getMovieUrl: (tmdbId) => `https://www.2embed.cc/embed/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://www.2embed.cc/embedtv/${tmdbId}&s=${season}&e=${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "flicky",
+    name: "Flicky",
+    getMovieUrl: (tmdbId) => `https://flicky.host/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://flicky.host/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "vidapi",
+    name: "VidAPI",
+    getMovieUrl: (tmdbId) => `https://vidapi.dev/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidapi.dev/embed/tv/${tmdbId}/${season}/${episode}`,
     supportsSandbox: false,
   },
   {

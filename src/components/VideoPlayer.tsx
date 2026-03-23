@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
-import { ShieldAlert, Play, RefreshCcw } from "lucide-react";
+import { ShieldAlert, Play } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
@@ -46,24 +46,11 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     win.postMessage(JSON.stringify({ event: 'command', func: command }), '*');
   };
 
-  useEffect(() => {
-    // For Malayalam content, prioritize Indian Mirror if no preference set
-    if (lang === 'ml' && !localStorage.getItem("preferredServer")) {
-       setCurrentServer("vidsrcin");
-    }
-  }, [lang]);
   const [showOverlay, setShowOverlay] = useState(true);
   const [shieldActive, setShieldActive] = useState(false);
-  const [isAutoSearching, setIsAutoSearching] = useState(false);
   const [sandboxEnabled, setSandboxEnabled] = useState(false);
 
-  // Auto-set Indian Mirror for Malayalam content
-  useEffect(() => {
-    if (lang === "ml" && currentServer === "superembed") {
-      setCurrentServer("vidsrcin");
-      toast.info("Malayalam stream detected — Prioritizing Indian Mirror.");
-    }
-  }, [lang]);
+
 
   const { user } = useAuth();
   
@@ -71,17 +58,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     ? videoServers.filter(s => s.supportsSandbox)
     : videoServers;
 
-  // Auto-switch away from incompatible servers when sandbox is enabled
-  useEffect(() => {
-    const current = videoServers.find(s => s.id === currentServer);
-    if (sandboxEnabled && current && !current.supportsSandbox) {
-      const fallback = videoServers.find(s => s.supportsSandbox);
-      if (fallback) {
-        handleServerChange(fallback.id);
-        toast.info(`Mirror switched to ${fallback.name} for Hard Adblock compatibility.`);
-      }
-    }
-  }, [sandboxEnabled, currentServer]);
+
   
   // Block popup ads from embedded video servers and sync progress
   useEffect(() => {
@@ -108,16 +85,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     };
   }, [user?.uid]);
 
-  // Auto-Search Mode Logic
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isAutoSearching && showOverlay) {
-      interval = setInterval(() => {
-        cycleMirror();
-      }, 10000); // Try next source every 10s
-    }
-    return () => clearInterval(interval);
-  }, [isAutoSearching, showOverlay, currentServer]);
+
 
   const handleServerChange = (serverId: string) => {
     setCurrentServer(serverId);
@@ -126,14 +94,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     setShieldActive(false);
   };
 
-  const cycleMirror = () => {
-    const currentIndex = availableServers.findIndex((s) => s.id === currentServer);
-    const nextIndex = (currentIndex + 1) % availableServers.length;
-    handleServerChange(availableServers[nextIndex].id);
-    toast.success(`Scanning Mirror ${availableServers[nextIndex].id}: ${availableServers[nextIndex].name}`, {
-      duration: 2000
-    });
-  };
+
 
   const server = videoServers.find((s) => s.id === currentServer) || videoServers[0];
   const embedUrl =
@@ -218,7 +179,6 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                   size="sm"
                   onClick={() => {
                     handleServerChange(s.id);
-                    if (isActive && step === 4) nextStep();
                   }}
                   className={cn(
                     "rounded-md px-3 h-7 text-[10px] font-bold uppercase tracking-tight transition-all duration-300",
@@ -249,20 +209,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
               </div>
             )}
 
-            <Button
-              onClick={() => setIsAutoSearching(!isAutoSearching)}
-              variant="outline"
-              size="sm"
-              className={cn(
-                "mt-2 w-full font-black uppercase text-[10px] tracking-widest h-9 transition-all duration-500",
-                isAutoSearching 
-                  ? "bg-red-500/20 border-red-500 text-red-500 hover:bg-red-500/30" 
-                  : "bg-primary/20 border-primary/40 text-primary hover:bg-primary hover:text-black shadow-[0_0_20px_rgba(34,211,238,0.2)]"
-              )}
-            >
-              <RefreshCcw className={cn("w-3.5 h-3.5 mr-2", isAutoSearching && "animate-spin")} />
-              {isAutoSearching ? "STOP AUTO-SEARCHING" : "STABILIZE SIGNAL (AUTO-SCAN)"}
-            </Button>
+
           </div>
         </div>
       </div>
