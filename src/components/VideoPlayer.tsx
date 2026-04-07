@@ -48,8 +48,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
 
   const [showOverlay, setShowOverlay] = useState(true);
   const [shieldActive, setShieldActive] = useState(false);
-  const [sandboxEnabled, setSandboxEnabled] = useState(false);
-
+  const [sandboxEnabled, setSandboxEnabled] = useState(true);
 
 
   const { user } = useAuth();
@@ -62,26 +61,42 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
   useEffect(() => {
     const unsub = setupProgressListener(user?.uid);
     
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (sandboxEnabled) {
+        // Block top-navigation malicious redirects from the iframe player
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
     const originalOpen = window.open;
     window.open = (url?: string | URL, target?: string, ...rest: any[]) => {
+      const urlStr = String(url || '');
+      if (sandboxEnabled) {
+        console.warn('[JARVIS AD SHIELD] Forcibly blocked popup:', urlStr);
+        return null;
+      }
       const blockedDomains = [
         'sexytalk', 'adsterra', 'propellerads', 'popcash',
         'popads', 'casino', 'betting', 'adult', 'porn', 'xxx',
         'click.php', 'redirect', 'exoclick', 'trafficjunky'
       ];
-      const urlStr = String(url || '');
       const isAdDomain = blockedDomains.some(d => urlStr.toLowerCase().includes(d));
       if (isAdDomain) {
-        console.warn('[JARVIS AD SHIELD] Blocked popup:', urlStr);
+        console.warn('[JARVIS AD SHIELD] Blocked domain popup:', urlStr);
         return null;
       }
       return originalOpen(url as any, target, ...rest);
     };
     return () => { 
       window.open = originalOpen;
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       unsub();
     };
-  }, [user?.uid]);
+  }, [user?.uid, sandboxEnabled]);
 
 
 
@@ -228,7 +243,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
           className="absolute inset-0 w-full h-full"
           allowFullScreen
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-          {...(sandboxEnabled ? { sandbox: "allow-same-origin allow-scripts allow-forms allow-presentation" } : {})}
+          {...(sandboxEnabled ? { sandbox: "allow-same-origin allow-scripts allow-forms allow-presentation allow-downloads allow-top-navigation-by-user-activation allow-orientation-lock" } : {})}
         />
 
         {/* Ad-Block Overlay Shield (Initial) */}
