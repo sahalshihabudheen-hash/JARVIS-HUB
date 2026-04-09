@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Play, Star, Calendar, Tv, Heart } from "lucide-react";
+import { ArrowLeft, Play, Star, Calendar, Tv, Heart, Bell } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import MediaRow from "@/components/MediaRow";
 import Footer from "@/components/Footer";
@@ -78,6 +78,14 @@ const TVDetails = () => {
     });
     setInWatchlist(added);
     toast.success(added ? "Added to watchlist" : "Removed from watchlist");
+  };
+
+  const isReleased = show.first_air_date ? new Date(show.first_air_date) <= new Date() : true;
+  const releaseStatus = show.status || (isReleased ? "Released" : "Upcoming");
+  const trailers = show.videos?.results?.filter(v => v.type === "Trailer" && v.site === "YouTube") || [];
+  
+  const handleNotify = () => {
+    toast.success(`You will be notified when ${show.name} is released!`);
   };
 
   return (
@@ -161,20 +169,28 @@ const TVDetails = () => {
                 {show.overview}
               </p>
 
-              <div className="flex flex-wrap gap-4">
-                <Link to={`/watch/tv/${show.id}/1/1`}>
-                  <Button size="lg" className="hover-glow">
-                    <Play className="w-5 h-5 mr-2 fill-current" />
-                    Watch Now
+              <div className="flex flex-wrap gap-4 mt-8">
+                {isReleased && validSeasons.length > 0 ? (
+                  <Link to={`/watch/tv/${show.id}/1/1`}>
+                    <Button size="lg" className="hover-glow bg-primary text-black font-semibold rounded-full px-8 shadow-[0_0_20px_rgba(34,211,238,0.4)]">
+                      <Play className="w-5 h-5 mr-2 fill-current" />
+                      Watch Now
+                    </Button>
+                  </Link>
+                ) : !isReleased ? (
+                  <Button size="lg" onClick={handleNotify} className="hover-glow bg-purple-500 text-white font-semibold rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)]">
+                    <Bell className="w-5 h-5 mr-2" />
+                    Notify when launched
                   </Button>
-                </Link>
+                ) : null}
+                
                 <Button
                   size="lg"
-                  variant="secondary"
+                  variant="outline"
                   onClick={handleWatchlist}
-                  className={inWatchlist ? "text-highlight" : ""}
+                  className={`rounded-full px-6 border-white/10 glass ${inWatchlist ? "text-red-500 border-red-500/30 bg-red-500/10" : "text-white hover:bg-white/10"}`}
                 >
-                  <Heart className={`w-5 h-5 mr-2 ${inWatchlist ? "fill-highlight" : ""}`} />
+                  <Heart className={`w-5 h-5 mr-2 ${inWatchlist ? "fill-red-500" : ""}`} />
                   {inWatchlist ? "In Watchlist" : "Add to Watchlist"}
                 </Button>
               </div>
@@ -182,6 +198,29 @@ const TVDetails = () => {
           </div>
         </div>
       </section>
+
+      {/* Trailers Section */}
+      {trailers.length > 0 && (
+        <section className="container py-12 border-t border-white/5">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
+            <h2 className="text-2xl font-display font-bold">Trailers & Clips</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {trailers.slice(0, 3).map((trailer) => (
+              <div key={trailer.id} className="relative aspect-video rounded-xl overflow-hidden glass border border-white/5 group">
+                <iframe
+                  src={`https://www.youtube.com/embed/${trailer.key}?modestbranding=1&rel=0`}
+                  title={trailer.name}
+                  className="w-full h-full"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Episodes */}
       <div className="container py-8">
