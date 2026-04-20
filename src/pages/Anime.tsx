@@ -4,16 +4,39 @@ import Navbar from "@/components/Navbar";
 import MediaCard from "@/components/MediaCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { discoverTV, SearchResult } from "@/lib/tmdb";
+import { discoverTV, discoverMovies, SearchResult } from "@/lib/tmdb";
 
-const ANIME_GENRE_ID = 16; // Animation genre
+const ANIME_GENRE_ID = "16"; // Animation genre for both TV and Movies
+const ANIME_KEYWORD = "210024"; // Anime keyword in TMDB
+
+type AnimeCategory = "tv" | "movie" | "standard";
 
 const Anime = () => {
   const [page, setPage] = useState(1);
+  const [category, setCategory] = useState<AnimeCategory>("tv");
+
+  const fetchFn = () => {
+    if (category === "tv") {
+      return discoverTV({ 
+        with_genres: ANIME_GENRE_ID,
+        with_original_language: "ja"
+      }, page);
+    } else if (category === "movie") {
+      return discoverMovies({ 
+        with_genres: ANIME_GENRE_ID,
+        with_original_language: "ja"
+      }, page);
+    } else {
+      // Standard Animation (All countries)
+      return discoverMovies({ 
+        with_genres: ANIME_GENRE_ID
+      }, page);
+    }
+  };
 
   const { data, isLoading } = useQuery<SearchResult>({
-    queryKey: ["anime", page],
-    queryFn: () => discoverTV(ANIME_GENRE_ID, page),
+    queryKey: ["anime", category, page],
+    queryFn: fetchFn,
   });
 
   return (
@@ -22,8 +45,29 @@ const Anime = () => {
 
       <main className="pt-24 pb-16">
         <div className="container">
-          <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">Anime</h1>
-          <p className="text-muted-foreground mb-8">Discover popular animated series</p>
+          <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">Anime & Animation</h1>
+          <p className="text-muted-foreground mb-6">Discover popular animated series and movies</p>
+
+          <div className="flex flex-wrap gap-2 mb-8">
+            <Button
+              variant={category === "tv" ? "default" : "outline"}
+              onClick={() => { setCategory("tv"); setPage(1); }}
+            >
+              Anime Series
+            </Button>
+            <Button
+              variant={category === "movie" ? "default" : "outline"}
+              onClick={() => { setCategory("movie"); setPage(1); }}
+            >
+              Anime Movies
+            </Button>
+            <Button
+              variant={category === "standard" ? "default" : "outline"}
+              onClick={() => { setCategory("standard"); setPage(1); }}
+            >
+              Standard Animation Movies
+            </Button>
+          </div>
 
           {/* Grid */}
           {isLoading ? (
@@ -36,7 +80,11 @@ const Anime = () => {
             <>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 {data?.results?.map((anime) => (
-                  <MediaCard key={anime.id} item={anime} mediaType="tv" />
+                  <MediaCard 
+                    key={anime.id} 
+                    item={anime} 
+                    mediaType={category === "tv" ? "tv" : "movie"} 
+                  />
                 ))}
               </div>
 
