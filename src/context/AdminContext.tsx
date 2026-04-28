@@ -24,6 +24,7 @@ interface AdminContextType {
   deleteUser: (userId: string) => Promise<void>;
   resetUserPassword: (email: string) => Promise<void>;
   setUserPassword: (email: string, newPassword: string) => Promise<void>;
+  toggleAdultAccess: (userId: string, currentStatus: boolean) => Promise<void>;
   isMaintenanceMode: boolean;
   toggleMaintenanceMode: () => Promise<void>;
 }
@@ -44,6 +45,7 @@ export interface AdminUser {
   isp?: string;
   ip?: string;
   password?: string;
+  hasAdultAccess?: boolean;
   sessions?: Record<string, any>;
 }
 
@@ -236,6 +238,22 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const toggleAdultAccess = async (userId: string, currentStatus: boolean) => {
+    try {
+      const userDocId = userId.replace(/\./g, "_");
+      const { doc: fsDoc, updateDoc } = await import("firebase/firestore");
+      await updateDoc(fsDoc(db, "users", userDocId), {
+        hasAdultAccess: !currentStatus
+      });
+      toast.success(`Adult access ${!currentStatus ? "enabled" : "disabled"} for ${userId}`, { 
+        icon: !currentStatus ? "🔥" : "🔒" 
+      });
+    } catch (err) {
+      console.error("Toggle Adult Access Error:", err);
+      toast.error("Failed to update access");
+    }
+  };
+
   const toggleMaintenanceMode = async () => {
     try {
       const { doc: fsDoc, setDoc } = await import("firebase/firestore");
@@ -262,6 +280,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       deleteUser, 
       resetUserPassword,
       setUserPassword,
+      toggleAdultAccess,
       isMaintenanceMode,
       toggleMaintenanceMode
     }}>

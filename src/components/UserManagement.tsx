@@ -12,7 +12,8 @@ import {
   RefreshCw, 
   Search,
   ChevronDown,
-  Gamepad2
+  Gamepad2,
+  Flame
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -339,6 +340,20 @@ const UserManagement = () => {
               <div className="flex items-center gap-1 pr-2">
                 {/* Admin Toggle (Current User can't toggle themselves) */}
                 {u.email !== currentUser?.email && !isOwner && (
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => toggleAdultAccess(u.email, !!u.hasAdultAccess)}
+                    className={cn(
+                      "h-9 px-3 rounded-full transition-all border border-white/5 mr-1",
+                      u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-transparent text-white/20"
+                    )}
+                  >
+                    <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
+                      <Flame className="w-3.5 h-3.5" />
+                      Adult
+                    </div>
+                  </Button>
+
                   <Button 
                     variant="ghost" 
                     onClick={() => toggleAdmin(u.email, u.isAdmin)}

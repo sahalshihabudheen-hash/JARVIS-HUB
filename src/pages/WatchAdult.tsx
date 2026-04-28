@@ -1,13 +1,23 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Flame, Eye, Star } from "lucide-react";
 import { getEpornerEmbedUrl } from "@/lib/eporner";
+import { useAuth } from "@/context/AuthContext";
 
 const WatchAdult = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com";
+    if (!user || (!user.hasAdultAccess && !user.isAdmin && !isOwner)) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   if (!id) return null;
 

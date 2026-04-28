@@ -13,6 +13,7 @@ interface User {
   isp?: string;
   ip?: string;
   password?: string;
+  hasAdultAccess?: boolean;
 }
 
 interface AuthContextType {

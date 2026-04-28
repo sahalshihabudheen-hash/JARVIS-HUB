@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AdultCard from "@/components/AdultCard";
 import Footer from "@/components/Footer";
@@ -7,11 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/eporner";
 import { Search, Flame } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const Adult = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [query, setQuery] = useState("all");
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com";
+    if (!user || (!user.hasAdultAccess && !user.isAdmin && !isOwner)) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["adult-videos", query, page],

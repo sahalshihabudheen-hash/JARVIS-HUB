@@ -52,9 +52,9 @@ const Navbar = () => {
     { to: "/movies", label: "Movies", icon: Film },
     { to: "/tv", label: "TV Shows", icon: Tv },
     { to: "/anime", label: "Anime", icon: Sparkles },
-    { to: "/adult", label: "Adult", icon: Flame },
     { to: "/watchlist", label: "Watchlist", icon: Heart },
     { to: "/history", label: "History", icon: History },
+    ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
