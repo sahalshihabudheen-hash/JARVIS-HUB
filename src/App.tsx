@@ -79,7 +79,9 @@ const App = () => (
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/history" element={<History />} />
                 <Route path="/adult" element={<Adult />} />
-                <Route path="/watch/adult/:id" element={<WatchHub />} />
+                <Route path="/adult" element={<Adult />} />
+                <Route path="/hub/watch/:id" element={<WatchHub />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="/admin" element={<Admin />} />
               </Route>
   
