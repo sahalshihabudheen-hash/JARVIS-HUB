@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Play, Tv } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Play, Tv, Share2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
 import Footer from "@/components/Footer";
@@ -185,20 +185,31 @@ const WatchPage = () => {
             <div className="flex flex-wrap gap-2 shrink-0">
               <Button 
                 variant="outline" 
-                className="bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 text-white transition-all shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                className="bg-primary/10 border-primary/20 hover:bg-primary/20 hover:border-primary/50 text-primary transition-all shadow-[0_0_15px_rgba(34,211,238,0.15)] font-bold"
                 onClick={() => {
                   const url = window.location.href;
-                  navigator.clipboard.writeText(url).then(() => {
-                    toast.success("Link copied! Share it with your friends.");
-                  });
+                  if (navigator.share) {
+                    navigator.share({
+                      title: title,
+                      url: url
+                    }).catch(() => {
+                      navigator.clipboard.writeText(url).then(() => {
+                        toast.success("Link copied!");
+                      });
+                    });
+                  } else {
+                    navigator.clipboard.writeText(url).then(() => {
+                      toast.success("Link copied! Share it with your friends.");
+                    });
+                  }
                 }}
               >
-                <Download className="w-4 h-4 mr-2" />
+                <Share2 className="w-4 h-4 mr-2" />
                 Share
               </Button>
               <Button 
                 variant="outline" 
-                className="bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 text-white transition-all shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                className="bg-white/5 border-white/10 hover:bg-white/10 text-white transition-all"
                 onClick={() => toast.info("To download: Play the video, and look for the download icon (⬇) inside the player controls at the bottom right.", { duration: 6000 })}
               >
                 <Download className="w-4 h-4 mr-2" />
