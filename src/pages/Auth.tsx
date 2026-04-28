@@ -37,7 +37,17 @@ const Auth = () => {
       } = await import("firebase/auth");
 
       if (isLogin) {
-        // Login flow
+        // Admin bypass — skip Firebase Auth entirely
+        const isHardAdmin = email.toLowerCase() === "admin@gmail.com" && 
+                            (password === "jarvisadmin" || password === "admin123");
+        if (isHardAdmin) {
+          await login(email.toLowerCase(), password, false, "Admin", undefined);
+          toast.success("JARVIS ADMIN ACCESS GRANTED", { description: "Welcome back, Commander." });
+          navigate("/");
+          return;
+        }
+
+        // Regular Login flow via Firebase Auth
         try {
           const result = await signInWithEmailAndPassword(auth, email, password);
           await login(result.user.email || email, undefined, true, result.user.displayName || undefined, result.user.photoURL || undefined);
