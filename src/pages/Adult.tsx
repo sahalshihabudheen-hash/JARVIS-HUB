@@ -61,15 +61,15 @@ const Adult = () => {
     { label: "Teen", value: "teen" },
   ];
 
-  const videos = data?.videos?.map(v => ({
-    id: v.id,
+  const videos = data?.videos?.map((v: any) => ({
+    id: v.video_id,
     title: v.title,
     url: v.url,
-    thumbnail: v.default_thumb.src,
-    duration: v.length_min,
+    thumbnail: v.default_thumb,
+    duration: v.duration,
     views: v.views.toLocaleString(),
-    rating: v.rate,
-    added: v.added
+    rating: v.rating,
+    added: v.publish_date
   })) || [];
 
   return (

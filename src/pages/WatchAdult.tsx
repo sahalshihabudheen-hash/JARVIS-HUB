@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Flame, Eye, Star } from "lucide-react";
-import { getEpornerEmbedUrl } from "@/lib/eporner";
+import { getPornhubEmbedUrl } from "@/lib/pornhub";
 import { useAuth } from "@/context/AuthContext";
 
 const WatchAdult = () => {
@@ -21,7 +21,8 @@ const WatchAdult = () => {
 
   if (!id) return null;
 
-  const embedUrl = getEpornerEmbedUrl(id);
+  const embedUrl = getPornhubEmbedUrl(id);
+
 
   return (
     <div className="min-h-screen bg-background">
