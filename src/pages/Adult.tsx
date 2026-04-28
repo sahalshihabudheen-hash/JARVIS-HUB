@@ -74,13 +74,13 @@ const Adult = () => {
   ];
 
   const teamSkeetShows = [
-    { label: "Hijab Hookup", value: "teamskeet hijab hookup full movie" },
-    { label: "Perv Dad", value: "teamskeet perv dad full movie" },
-    { label: "Shoplyfter", value: "teamskeet shoplyfter full movie" },
-    { label: "Family Strokes", value: "teamskeet family strokes full movie" },
-    { label: "BFFs", value: "teamskeet bffs full movie" },
-    { label: "Deeper", value: "teamskeet deeper full movie" },
-    { label: "Sis Loves Me", value: "teamskeet sis loves me full movie" },
+    { label: "Hijab Hookup", value: 'teamskeet "hijab hookup" full movie' },
+    { label: "Perv Dad", value: 'teamskeet "perv dad" full movie' },
+    { label: "Shoplyfter", value: 'teamskeet "shoplyfter" full movie' },
+    { label: "Family Strokes", value: 'teamskeet "family strokes" full movie' },
+    { label: "BFFs", value: 'teamskeet "bffs" full movie' },
+    { label: "Deeper", value: 'teamskeet "deeper" full movie' },
+    { label: "Sis Loves Me", value: 'teamskeet "sis loves me" full movie' },
   ];
 
   const videos = data?.videos?.map((v: any) => ({

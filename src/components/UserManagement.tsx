@@ -453,7 +453,9 @@ const UserManagement = () => {
             <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                <Users className="w-6 h-6 text-white/10" />
             </div>
-            <p className="text-white/20 text-[11px] font-bold uppercase tracking-widest">No matching records found</p>
+            <p className="text-white/20 text-[11px] font-bold uppercase tracking-widest">
+              {users.length === 0 ? "No users registered in system protocol" : "No matching records found"}
+            </p>
           </div>
         )}
       </div>

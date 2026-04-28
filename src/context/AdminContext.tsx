@@ -84,8 +84,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         ...doc.data()
       })) as any[];
       setUsers(fetchedUsers);
-    } catch (err) {
+      toast.info(`Retrieved ${fetchedUsers.length} total users from protocol.`, { icon: "📊" });
+    } catch (err: any) {
       console.error("Refresh error:", err);
+      toast.error(`Database sync failed: ${err.message}`);
     }
   };
 
@@ -115,7 +117,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           })) as any[];
           setUsers(fetchedUsers);
         },
-        (err) => console.error("Users listener error:", err)
+        (err) => {
+          console.error("Users listener error:", err);
+          toast.error("Protocol Error: Unable to sync users. Check Firestore rules.");
+        }
       );
     } catch (e) { console.error("Failed to subscribe to users:", e); }
 
