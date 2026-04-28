@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Play, Star, Calendar, Tv, Heart, Bell } from "lucide-react";
+import { ArrowLeft, Play, Star, Calendar, Tv, Heart, Bell, Share2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import MediaRow from "@/components/MediaRow";
 import Footer from "@/components/Footer";
+import SeoMetadata from "@/components/SeoMetadata";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getTVDetails, getSeasonDetails, getSimilar, getBackdropUrl, getImageUrl } from "@/lib/tmdb";
@@ -80,6 +81,15 @@ const TVDetails = () => {
     toast.success(added ? "Added to watchlist" : "Removed from watchlist");
   };
 
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      toast.success("Link copied! Share it with your friends.");
+    }).catch(() => {
+      toast.error("Failed to copy link");
+    });
+  };
+
   const isReleased = show.first_air_date ? new Date(show.first_air_date) <= new Date() : true;
   const releaseStatus = show.status || (isReleased ? "Released" : "Upcoming");
   const trailers = show.videos?.results?.filter(v => v.type === "Trailer" && v.site === "YouTube") || [];
@@ -90,6 +100,12 @@ const TVDetails = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SeoMetadata 
+        title={show.name}
+        description={show.overview}
+        image={getImageUrl(show.poster_path, "w780")}
+        type="video.tv_show"
+      />
       <Navbar />
 
       {/* Hero */}
@@ -192,6 +208,16 @@ const TVDetails = () => {
                 >
                   <Heart className={`w-5 h-5 mr-2 ${inWatchlist ? "fill-red-500" : ""}`} />
                   {inWatchlist ? "In Watchlist" : "Add to Watchlist"}
+                </Button>
+
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleShare}
+                  className="rounded-full px-6 border-white/10 glass text-white hover:bg-white/10"
+                >
+                  <Share2 className="w-5 h-5 mr-2" />
+                  Share Show
                 </Button>
               </div>
             </div>
