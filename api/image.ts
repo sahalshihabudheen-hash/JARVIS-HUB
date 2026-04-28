@@ -10,11 +10,22 @@ export default async function handler(req: Request) {
     return new Response('Missing URL', { status: 400 });
   }
 
+  // Dynamically determine the correct referer based on image host
+  let referer = 'https://www.pornhub.com/';
+  try {
+    const host = new URL(imageUrl).hostname;
+    if (host.includes('redtube')) referer = 'https://www.redtube.com/';
+    else if (host.includes('eporner')) referer = 'https://www.eporner.com/';
+    else if (host.includes('xvideos')) referer = 'https://www.xvideos.com/';
+    else if (host.includes('pornhub') || host.includes('phncdn')) referer = 'https://www.pornhub.com/';
+  } catch (_) {}
+
   try {
     const response = await fetch(imageUrl, {
       headers: {
-        'Referer': 'https://www.eporner.com/',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Referer': referer,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
       },
     });
 
