@@ -36,7 +36,7 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
     };
   }, [onComplete]);
 
-  if (!visible) return null;
+  if (!visible || typeof document === 'undefined') return null;
 
   return createPortal(
       "fixed inset-0 z-[300001] bg-black flex items-center justify-center overflow-hidden transition-all ease-in-out",

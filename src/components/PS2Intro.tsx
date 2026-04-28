@@ -77,7 +77,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
     };
   }, [onComplete, hasStarted]);
 
-  if (!visible) return null;
+  if (!visible || typeof document === 'undefined') return null;
 
   // Booleans for cleaner JSX
   const showGlow   = phase >= 2;
