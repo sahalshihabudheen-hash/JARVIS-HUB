@@ -5,7 +5,7 @@ import AdultCard from "@/components/AdultCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { searchRedTubeVideos } from "@/lib/redtube";
+import { searchVideos } from "@/lib/eporner";
 import { Search, Flame } from "lucide-react";
 
 const Adult = () => {
@@ -15,7 +15,7 @@ const Adult = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["adult-videos", query, page],
-    queryFn: () => searchRedTubeVideos(query, page),
+    queryFn: () => searchVideos(query, page),
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -48,14 +48,14 @@ const Adult = () => {
   ];
 
   const videos = data?.videos?.map(v => ({
-    id: v.video.video_id,
-    title: v.video.title,
-    url: v.video.url,
-    thumbnail: v.video.default_thumb,
-    duration: v.video.duration,
-    views: v.video.views.toLocaleString(),
-    rating: v.video.rating,
-    added: v.video.publish_date
+    id: v.id,
+    title: v.title,
+    url: v.url,
+    thumbnail: v.default_thumb.src,
+    duration: v.length_min,
+    views: v.views.toLocaleString(),
+    rating: v.rate,
+    added: v.added
   })) || [];
 
   return (
@@ -66,20 +66,20 @@ const Adult = () => {
         <div className="container">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-red-500/20 rounded-xl">
-                <Flame className="w-6 h-6 text-red-500" />
+              <div className="p-2 bg-blue-500/20 rounded-xl">
+                <Flame className="w-6 h-6 text-blue-500" />
               </div>
-              <h1 className="text-3xl md:text-4xl font-display font-bold">Adult Entertainment</h1>
+              <h1 className="text-3xl md:text-4xl font-display font-bold">Premium Entertainment</h1>
             </div>
             
             <form onSubmit={handleSearch} className="relative w-full md:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search premium videos..."
+                placeholder="Search thousands of videos..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="pl-10 bg-white/5 border-white/10 rounded-full focus:ring-red-500/50"
+                className="pl-10 bg-white/5 border-white/10 rounded-full focus:ring-blue-500/50"
               />
             </form>
           </div>
@@ -96,7 +96,7 @@ const Adult = () => {
                   setSearchInput("");
                   setPage(1);
                 }}
-                className={`rounded-full whitespace-nowrap ${query === cat.value ? 'bg-red-600 hover:bg-red-700' : ''}`}
+                className={`rounded-full whitespace-nowrap ${query === cat.value ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
               >
                 {cat.label}
               </Button>
@@ -118,7 +118,7 @@ const Adult = () => {
             <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10">
               <h2 className="text-xl font-medium text-red-400">Connection Error</h2>
               <p className="text-muted-foreground mt-2 max-w-md mx-auto">We couldn't connect to the content provider. This might be due to regional restrictions or a temporary outage.</p>
-              <Button onClick={() => window.location.reload()} className="mt-6 bg-red-600 hover:bg-red-700 rounded-full px-8">
+              <Button onClick={() => window.location.reload()} className="mt-6 bg-blue-600 hover:bg-blue-700 rounded-full px-8">
                 Try Reconnecting
               </Button>
             </div>

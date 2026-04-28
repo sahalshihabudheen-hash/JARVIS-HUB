@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Flame, Eye, Star } from "lucide-react";
-import { getRedTubeEmbedUrl } from "@/lib/redtube";
+import { getEpornerEmbedUrl } from "@/lib/eporner";
 
 const WatchAdult = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,7 +11,7 @@ const WatchAdult = () => {
 
   if (!id) return null;
 
-  const embedUrl = getRedTubeEmbedUrl(id);
+  const embedUrl = getEpornerEmbedUrl(id);
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,10 +45,10 @@ const WatchAdult = () => {
               <div className="flex flex-col md:flex-row justify-between gap-6">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-1.5 bg-red-500/20 rounded-lg">
-                      <Flame className="w-4 h-4 text-red-500" />
+                    <div className="p-1.5 bg-blue-500/20 rounded-lg">
+                      <Flame className="w-4 h-4 text-blue-500" />
                     </div>
-                    <span className="text-xs font-bold text-red-500 uppercase tracking-widest">Premium Content</span>
+                    <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">Premium Content</span>
                   </div>
                   <h1 className="text-2xl md:text-3xl font-display font-bold text-white mb-4">
                     Playing Content #{id}

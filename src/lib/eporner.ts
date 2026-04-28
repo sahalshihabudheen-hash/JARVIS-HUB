@@ -30,24 +30,18 @@ export interface EpornerResponse {
   videos: EpornerVideo[];
 }
 
-export const searchVideos = async (query: string = 'all', page: number = 1, thumbsize: string = 'big'): Promise<EpornerResponse> => {
-  const url = new URL(`${BASE_URL}/search/`);
-  url.searchParams.set('query', query);
+export const searchVideos = async (query: string = 'all', page: number = 1): Promise<EpornerResponse> => {
+  const url = new URL('/api/adult', window.location.origin);
+  url.searchParams.set('search', query);
   url.searchParams.set('page', page.toString());
-  url.searchParams.set('thumbsize', thumbsize);
-  url.searchParams.set('format', 'json');
 
   const response = await fetch(url.toString());
-  if (!response.ok) throw new Error(`Eporner API error: ${response.status}`);
+  if (!response.ok) throw new Error(`API error: ${response.status}`);
   return response.json();
 };
 
-export const getVideoById = async (id: string): Promise<EpornerVideo> => {
-  const url = new URL(`${BASE_URL}/id/`);
-  url.searchParams.set('id', id);
-  url.searchParams.set('format', 'json');
-
-  const response = await fetch(url.toString());
-  if (!response.ok) throw new Error(`Eporner API error: ${response.status}`);
-  return response.json();
+export const getEpornerEmbedUrl = (id: string): string => {
+  // Typical Eporner embed format
+  return `https://www.eporner.com/embed/${id}/`;
 };
+
