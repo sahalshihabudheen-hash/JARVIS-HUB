@@ -391,7 +391,7 @@ const Index = () => {
           {/* Hide/De-prioritize broader India row if user wants strict local focus */}
           {!isKeralaFocus && (
             <MediaRow
-              title={location?.country === "IN" ? "⚡ Indian Cinema Trends" : (location ? `⚡ Trending in ${location.country_name}` : "Trending Now")}
+              title={location ? `⚡ Trending in ${location.region ? `${location.region}, ${location.country_name}` : location.country_name}` : "Trending Now"}
               items={nowPlaying?.results || []}
               mediaType="movie"
               isLoading={nowPlayingLoading}
@@ -400,7 +400,7 @@ const Index = () => {
 
           {!isKeralaFocus && (
             <MediaRow
-              title={location?.country === "IN" ? "📅 Upcoming Indian Releases" : (location ? `📅 Upcoming in ${location.country_name}` : "Upcoming Releases")}
+              title={location ? `📅 Upcoming in ${location.region ? `${location.region}, ${location.country_name}` : location.country_name}` : "Upcoming Releases"}
               items={upcoming?.results || []}
               mediaType="movie"
               isLoading={upcomingLoading}

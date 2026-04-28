@@ -31,7 +31,10 @@ const Adult = () => {
     // Fetch Location
     getUserLocation().then(data => {
       if (data) {
-        setLocation(data.city || data.country_name || "");
+        const stateStr = data.region || "";
+        const countryStr = data.country_name || "";
+        const fullLocation = stateStr && countryStr ? `${stateStr}, ${countryStr}` : (stateStr || countryStr);
+        setLocation(fullLocation);
       }
     });
   }, [user, navigate]);
