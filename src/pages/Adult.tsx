@@ -22,6 +22,7 @@ const Adult = () => {
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const [showAllTS, setShowAllTS] = useState(false);
 
   const scrollToResults = () => {
     setTimeout(() => {
@@ -714,11 +715,12 @@ const Adult = () => {
               </div>
             </div>
 
-            {/* ── Row 3c: TeamSkeet — full-width scrollable ── */}
+            {/* ── Row 3c: TeamSkeet — 5 visible + dropdown ── */}
             <div className="px-6 py-5 border-b border-white/5">
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">TeamSkeet Network — All Shows</p>
               <div className="flex flex-wrap gap-2">
-                {teamSkeetShows.map((show) => (
+                {/* First 5 always visible */}
+                {teamSkeetShows.slice(0, 5).map((show) => (
                   <button
                     key={show.value}
                     onClick={() => { setQuery(show.value); setPage(1); scrollToResults(); }}
@@ -732,6 +734,49 @@ const Adult = () => {
                     {show.label}
                   </button>
                 ))}
+
+                {/* Dropdown toggle */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowAllTS(p => !p)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
+                      showAllTS
+                        ? "bg-blue-600/20 border-blue-500/40 text-blue-300"
+                        : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:text-white"
+                    )}
+                  >
+                    {showAllTS ? "▲ Less" : `▼ +${teamSkeetShows.length - 5} More Shows`}
+                  </button>
+
+                  {/* Dropdown panel */}
+                  {showAllTS && (
+                    <div className="absolute left-0 top-9 z-50 w-72 rounded-2xl border border-white/10 bg-[#0d0d14] shadow-2xl shadow-black/60 p-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-white/20 mb-3">All TeamSkeet Shows</p>
+                      <div className="flex flex-wrap gap-2">
+                        {teamSkeetShows.slice(5).map((show) => (
+                          <button
+                            key={show.value}
+                            onClick={() => {
+                              setQuery(show.value);
+                              setPage(1);
+                              setShowAllTS(false);
+                              scrollToResults();
+                            }}
+                            className={cn(
+                              "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
+                              query === show.value
+                                ? "bg-blue-600/30 border-blue-500/50 text-blue-300"
+                                : "bg-white/5 border-white/8 text-white/50 hover:bg-blue-500/10 hover:text-blue-300"
+                            )}
+                          >
+                            {show.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
