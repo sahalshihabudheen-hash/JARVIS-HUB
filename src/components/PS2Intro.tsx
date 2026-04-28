@@ -172,7 +172,8 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
 
       {/* ── Central Beacon Glow ── */}
       <div 
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-[3s]"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000"
+        style={{ transitionDuration: '3000ms' }}
         style={{
           width: showGlow ? "min(120vw, 1400px)" : 0,
           height: showGlow ? "min(80vh, 1000px)" : 0,

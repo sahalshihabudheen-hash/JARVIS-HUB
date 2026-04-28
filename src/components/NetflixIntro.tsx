@@ -39,19 +39,24 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
   if (!visible) return null;
 
   return createPortal(
-    <div className={cn(
-      "fixed inset-0 z-[300001] bg-black flex items-center justify-center overflow-hidden transition-all duration-2000 ease-in-out",
+      "fixed inset-0 z-[300001] bg-black flex items-center justify-center overflow-hidden transition-all ease-in-out",
       phase === "fade" ? "opacity-0 invisible" : "opacity-100 visible"
-    )}>
+    )}
+    style={{ transitionDuration: '2000ms' }}
+    >
       {/* Cinematic CRT Grain & Deep Backdrop */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.08] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-[100]" />
       <div className="absolute inset-0 bg-[#000105]" />
 
       {/* The Spectrum Rays (Denser & More Organic) */}
       <div className={cn(
-        "absolute inset-0 flex items-center justify-center h-full w-full transition-all duration-[6s] cubic-bezier(0.2, 0, 0, 1)",
+        "absolute inset-0 flex items-center justify-center h-full w-full transition-all",
         phase === "spectrum" ? "opacity-100 scale-150 rotate-3" : "opacity-0 scale-100"
-      )}>
+      )}
+      style={{
+        transitionDuration: "6000ms",
+        transitionTimingFunction: "cubic-bezier(0.2, 0, 0, 1)",
+      }}>
         {Array.from({ length: 90 }).map((_, i) => (
           <div
             key={i}
@@ -74,9 +79,9 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
 
       {/* The Cinematic Branding (Geometric Unfolding) */}
       <div className={cn(
-        "relative flex items-center justify-center transition-all duration-[4s] ease-[cubic-bezier(0.1, 0.9, 0.2, 1)]",
+        "relative flex items-center justify-center transition-all",
         phase === "zoom" ? "scale-[20] opacity-0 blur-3xl translate-z-[500px]" : "scale-100 translate-z-0"
-      )} style={{ perspective: '1000px' }}>
+      )} style={{ perspective: '1000px', transitionDuration: '4000ms', transitionTimingFunction: 'cubic-bezier(0.1, 0.9, 0.2, 1)' }}>
         {letters.map((char, i) => (
           <div
             key={i}
