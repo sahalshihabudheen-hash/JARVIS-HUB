@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Dynamic import to keep everything tidy
     import("firebase/firestore").then(({ onSnapshot, doc: fsDoc }) => {
       let isInitial = true;
-      unsubscribe = onSnapshot(fsDoc(db, "users", userDocId), (snapshot: any) => {
+      unsubscribe = onSnapshot(fsDoc(db, "users", userDocId), async (snapshot: any) => {
         if (snapshot.exists()) {
           const data = snapshot.data();
           
