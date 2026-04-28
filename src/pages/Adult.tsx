@@ -70,6 +70,16 @@ const Adult = () => {
     queryFn: () => searchVideos(query, page),
   });
 
+  const { data: regionalData } = useQuery({
+    queryKey: ["regional-stars", location],
+    queryFn: () => {
+      const searchTerm = location.toLowerCase().includes("kerala") ? "Malayalam" : (location.split(',')[0] || "Indian");
+      return searchVideos(`${searchTerm} pornstar`, 1);
+    },
+    enabled: !!location,
+  });
+
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
@@ -220,6 +230,14 @@ const Adult = () => {
     return null;
   }).filter((star): star is any => star !== null).slice(0, 18);
 
+  const regionalVideos = regionalData?.videos || [];
+  const regionalUniqueNames = Array.from(new Set(regionalVideos.flatMap((v: any) => v.pornstars)));
+  const regionalStars = regionalUniqueNames.map(name => {
+    const v = regionalVideos.find((v: any) => v.pornstars.includes(name));
+    return v ? { name, id: name.toLowerCase().replace(/\s+/g, '-'), thumb: v.default_thumb } : null;
+  }).filter(s => s !== null).slice(0, 9);
+
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -359,25 +377,34 @@ const Adult = () => {
               </div>
               
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-4 md:gap-6">
-                {/* We'll use a search query for these or just mock some regional-looking stars for now if the API doesn't support geolocation for stars */}
-                {/* For demonstration, we'll show a few that might match the region query if we had a specific API for it. */}
-                {currentPagePornstars.slice(0, 9).map((star, idx) => (
-                  <button
-                    key={`reg-${star.id}`}
-                    onClick={() => {
-                      setQuery(`${star.name} ${location.split(',')[0]}`);
-                      setPage(1);
-                    }}
-                    className="group flex flex-col items-center gap-3 transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-green-500/20 group-hover:border-green-500/50 transition-all duration-300">
-                      <img src={star.thumb} alt={star.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-green-500/10 group-hover:bg-transparent transition-colors" />
+                {regionalStars.length > 0 ? (
+                  regionalStars.map((star) => (
+                    <button
+                      key={`reg-${star.id}`}
+                      onClick={() => {
+                        setQuery(star.name);
+                        setPage(1);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="group flex flex-col items-center gap-3 transition-all duration-300 hover:-translate-y-1"
+                    >
+                      <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-green-500/20 group-hover:border-green-500/50 transition-all duration-300">
+                        <img src={star.thumb} alt={star.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-green-500/10 group-hover:bg-transparent transition-colors" />
+                      </div>
+                      <span className="text-[10px] font-bold text-white/60 group-hover:text-green-400 transition-colors text-center line-clamp-1">{star.name}</span>
+                    </button>
+                  ))
+                ) : (
+                  [...Array(9)].map((_, i) => (
+                    <div key={i} className="flex flex-col items-center gap-3">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full shimmer bg-white/5" />
+                      <div className="h-3 w-12 bg-white/5 rounded shimmer" />
                     </div>
-                    <span className="text-[10px] font-bold text-white/60 group-hover:text-green-400 transition-colors text-center line-clamp-1">{star.name}</span>
-                  </button>
-                ))}
+                  ))
+                )}
               </div>
+
             </div>
           )}
 
