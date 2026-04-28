@@ -1,4 +1,4 @@
-const BASE_URL = "https://www.eporner.com/api/v2/video";
+const BASE_URL = "/api/eporner";
 
 export interface EpornerVideo {
   id: string;
