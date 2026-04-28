@@ -15,7 +15,12 @@
 - [ ] Implement logic to automatically translate location names into local content search queries (e.g., "Kerala" -> "Malayalam").
 - [ ] Add regional language support for localized section headers.
 
-## 4. UI/UX Polish
+## 4. Special Adult History
+- [ ] Create a dedicated "Incognito History" or "Adult History" tracking system.
+- [ ] Ensure adult watch progress is stored separately from standard movies/TV.
+- [ ] Implement a "Private Mode" toggle to enable/disable history tracking for premium content.
+
+## 5. UI/UX Polish
 - [ ] Improve the loading state for the dynamic Actress section.
 - [ ] Add "Watch Later" support for Adult videos.
 - [ ] Optimize mobile layout for the new Actress portraits.
