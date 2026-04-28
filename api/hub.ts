@@ -8,8 +8,14 @@ export default async function handler(req: Request) {
   const page = searchParams.get('page') || '1';
 
   // Use Pornhub Webmasters API - Server-side fetch from Vercel US bypasses India blocks
-  const query = search === 'all' ? '' : search;
-  const pornhubUrl = `https://www.pornhub.com/webmasters/search?search=${encodeURIComponent(query)}&page=${page}&thumbsize=large_number`;
+  let query = search === 'all' ? '' : search;
+  
+  // Improve full-length searching
+  if (query.toLowerCase().includes("full length")) {
+    query = query.replace(/full length/i, "") + " full movie full episode";
+  }
+  
+  const pornhubUrl = `https://www.pornhub.com/webmasters/search?search=${encodeURIComponent(query.trim())}&page=${page}&thumbsize=large_number`;
 
   try {
     const response = await fetch(pornhubUrl, {
@@ -41,8 +47,8 @@ export default async function handler(req: Request) {
       views: v.views,
       rating: v.rating,
       publish_date: v.publish_date,
-      pornstars: v.pornstars || [],
-      tags: v.tags || [],
+      pornstars: (v.pornstars || []).map((p: any) => typeof p === 'string' ? p : p.pornstar_name),
+      tags: (v.tags || []).map((t: any) => typeof t === 'string' ? t : t.tag_name),
     }));
 
     return new Response(JSON.stringify({ videos }), {

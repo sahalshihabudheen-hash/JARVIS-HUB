@@ -48,8 +48,8 @@ export default async function handler(req: Request) {
       views: v.views,
       rating: v.rating,
       publish_date: v.publish_date,
-      pornstars: v.pornstars || [],
-      tags: v.tags || [],
+      pornstars: (v.pornstars || []).map((p: any) => typeof p === 'string' ? p : p.pornstar_name),
+      tags: (v.tags || []).map((t: any) => typeof t === 'string' ? t : t.tag_name),
     };
 
     return new Response(JSON.stringify({ video }), {
