@@ -31,6 +31,9 @@ const Adult = () => {
 
   const categories = [
     { label: "All", value: "all" },
+    { label: "Full Length", value: "full length" },
+    { label: "TeamSkeet", value: "teamskeet" },
+    { label: "Brazzers", value: "brazzers" },
     { label: "Popular", value: "popular" },
     { label: "Anal", value: "anal" },
     { label: "Amateur", value: "amateur" },
