@@ -39,6 +39,7 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
   if (!visible || typeof document === 'undefined') return null;
 
   return createPortal(
+    <div className={cn(
       "fixed inset-0 z-[300001] bg-black flex items-center justify-center overflow-hidden transition-all ease-in-out",
       phase === "fade" ? "opacity-0 invisible" : "opacity-100 visible"
     )}
