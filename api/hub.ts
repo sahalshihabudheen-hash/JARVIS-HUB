@@ -6,44 +6,41 @@ export default async function handler(req: Request) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get('search') || 'all';
   const page = searchParams.get('page') || '1';
-  const per_page = 24;
 
-  // Use xVideos public search API - different domain avoids ISP blocks
-  const query = search === 'all' ? 'popular' : search;
-  const xvUrl = `https://www.xvideos.com/api/search?q=${encodeURIComponent(query)}&p=${Number(page) - 1}&nb=${per_page}`;
+  // Use Pornhub Webmasters API - Server-side fetch from Vercel US bypasses India blocks
+  const query = search === 'all' ? '' : search;
+  const pornhubUrl = `https://www.pornhub.com/webmasters/search?search=${encodeURIComponent(query)}&page=${page}&thumbsize=large_number`;
 
   try {
-    const response = await fetch(xvUrl, {
+    const response = await fetch(pornhubUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Referer': 'https://www.xvideos.com/',
       },
     });
 
     if (!response.ok) {
-      // Fallback: return a mock structure with xVideos embed links so player at least works
       return new Response(JSON.stringify({ 
         videos: [], 
-        error: `Upstream error: ${response.status}` 
+        error: `Pornhub API error: ${response.status}`,
+        debug: pornhubUrl
       }), {
-        status: 200,
+        status: 200, // Return 200 so frontend doesn't crash
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
     const data = await response.json();
-
-    // Normalize xVideos API response
+    
+    // Normalize Pornhub API response
     const videos = (data.videos || []).map((v: any) => ({
-      video_id: v.id?.replace('video', '') || v.id,
-      title: v.tf || v.t || 'Untitled',
-      url: `https://www.xvideos.com/${v.id}`,
-      default_thumb: v.il || v.i || '',
-      duration: v.d ? `${Math.floor(Number(v.d) / 60)}:${String(Number(v.d) % 60).padStart(2, '0')}` : '0:00',
-      views: v.v || 0,
-      rating: v.r || '0',
-      publish_date: '',
+      video_id: v.video_id,
+      title: v.title,
+      url: v.url,
+      default_thumb: v.default_thumb,
+      duration: v.duration,
+      views: v.views,
+      rating: v.rating,
+      publish_date: v.publish_date,
     }));
 
     return new Response(JSON.stringify({ videos }), {
@@ -54,7 +51,11 @@ export default async function handler(req: Request) {
       },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ videos: [], error: 'Internal Server Error' }), {
+    return new Response(JSON.stringify({ 
+      videos: [], 
+      error: 'Internal Server Error fetching from Pornhub',
+      details: error instanceof Error ? error.message : String(error)
+    }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
