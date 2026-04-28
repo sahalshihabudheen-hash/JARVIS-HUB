@@ -216,7 +216,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
         <div className="relative group">
           <div className="absolute inset-0 rounded-full bg-blue-500/30 blur-2xl animate-pulse" />
           <div 
-            className="relative w-24 h-24 md:w-32 md:h-32 rounded-full border-[3px] border-white/20 overflow-hidden shadow-2xl transition-all duration-[1.5s]"
+            className="relative w-24 h-24 md:w-32 md:h-32 rounded-full border-[3px] border-white/20 overflow-hidden shadow-2xl transition-all duration-[1500ms]"
             style={{
               borderColor: fullLogo ? "rgba(34, 211, 238, 0.8)" : "rgba(255,255,255,0.2)",
               boxShadow: fullLogo ? "0 0 50px rgba(34, 211, 238, 0.5), inset 0 0 20px rgba(34, 211, 238, 0.3)" : "none",
@@ -233,7 +233,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
         {/* Brand Text */}
         <div className="text-center">
           <h1 
-            className="font-display font-black tracking-tighter text-[min(16vw,84px)] leading-none transition-all duration-[1.5s]"
+            className="font-display font-black tracking-tighter text-[min(16vw,84px)] leading-none transition-all duration-[1500ms]"
             style={{
               textShadow: fullLogo ? "0 0 40px rgba(255,255,255,0.6), 0 0 80px rgba(34, 211, 238, 0.4)" : "none"
             }}
@@ -242,7 +242,7 @@ const PS2Intro = ({ onComplete }: { onComplete: () => void }) => {
             <span className="text-cyan-400 ml-2">HUB</span>
           </h1>
           <div 
-            className="mt-4 flex items-center justify-center gap-4 text-[10px] md:text-sm font-bold tracking-[0.6em] uppercase text-white/40 transition-all duration-[1.5s]"
+            className="mt-4 flex items-center justify-center gap-4 text-[10px] md:text-sm font-bold tracking-[0.6em] uppercase text-white/40 transition-all duration-[1500ms]"
             style={{ opacity: fullLogo ? 1 : 0, transform: fullLogo ? "translateY(0)" : "translateY(10px)" }}
           >
             <span className="w-8 md:w-12 h-px bg-white/10" />

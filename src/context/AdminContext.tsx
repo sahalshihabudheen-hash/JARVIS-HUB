@@ -47,6 +47,7 @@ export interface AdminUser {
   password?: string;
   hasAdultAccess?: boolean;
   sessions?: Record<string, any>;
+  emailVerified?: boolean;
 }
 
 export interface ActivityEntry {
