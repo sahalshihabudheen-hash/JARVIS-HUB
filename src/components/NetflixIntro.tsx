@@ -39,11 +39,12 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
   if (!visible || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className={cn(
-      "fixed inset-0 z-[300001] bg-black flex items-center justify-center overflow-hidden transition-all ease-in-out",
-      phase === "fade" ? "opacity-0 invisible" : "opacity-100 visible"
-    )}
-    style={{ transitionDuration: '2000ms' }}
+    <div 
+      className={cn(
+        "fixed inset-0 z-[300001] bg-black flex items-center justify-center overflow-hidden transition-all ease-in-out",
+        phase === "fade" ? "opacity-0 invisible" : "opacity-100 visible"
+      )}
+      style={{ transitionDuration: "2000ms" }}
     >
       {/* Cinematic CRT Grain & Deep Backdrop */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.08] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-[100]" />
