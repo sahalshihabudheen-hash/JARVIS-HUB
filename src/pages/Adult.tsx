@@ -6,7 +6,7 @@ import AdultCard from "@/components/AdultCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { searchVideos } from "@/lib/eporner";
+import { searchVideos } from "@/lib/hub";
 import { Search, Flame } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
