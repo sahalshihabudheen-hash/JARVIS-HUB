@@ -61,6 +61,16 @@ const Adult = () => {
     { label: "Teen", value: "teen" },
   ];
 
+  const teamSkeetShows = [
+    { label: "Hijab Hookup", value: "teamskeet hijab hookup" },
+    { label: "Perv Dad", value: "teamskeet perv dad" },
+    { label: "Shoplyfter", value: "teamskeet shoplyfter" },
+    { label: "Family Strokes", value: "teamskeet family strokes" },
+    { label: "BFFs", value: "teamskeet bffs" },
+    { label: "Deeper", value: "teamskeet deeper" },
+    { label: "Sis Loves Me", value: "teamskeet sis loves me" },
+  ];
+
   const videos = data?.videos?.map((v: any) => ({
     id: v.video_id,
     title: v.title,
@@ -116,6 +126,27 @@ const Adult = () => {
               </Button>
             ))}
           </div>
+
+          {/* TeamSkeet Sub-categories */}
+          {query.toLowerCase().includes("teamskeet") && (
+            <div className="flex flex-wrap gap-2 mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
+              <div className="w-full text-xs font-bold text-blue-500/60 uppercase tracking-widest mb-1 ml-1">TeamSkeet Network Shows</div>
+              {teamSkeetShows.map((show) => (
+                <Button
+                  key={show.value}
+                  variant={query === show.value ? "default" : "outline"}
+                  size="xs"
+                  onClick={() => {
+                    setQuery(show.value);
+                    setPage(1);
+                  }}
+                  className={`rounded-xl text-[10px] h-8 ${query === show.value ? 'bg-blue-600/20 text-blue-400 border-blue-500/50 hover:bg-blue-600/30' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}
+                >
+                  {show.label}
+                </Button>
+              ))}
+            </div>
+          )}
 
           {/* Grid */}
           {isLoading ? (
