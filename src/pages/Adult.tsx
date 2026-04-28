@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AdultCard from "@/components/AdultCard";
 import Footer from "@/components/Footer";
@@ -23,6 +23,17 @@ const Adult = () => {
       navigate("/");
     }
   }, [user, navigate]);
+
+  const [searchParams] = useSearchParams();
+  const searchParam = searchParams.get("search");
+
+  useEffect(() => {
+    if (searchParam) {
+      setQuery(searchParam);
+      setSearchInput(searchParam);
+      setPage(1);
+    }
+  }, [searchParam]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["pornhub-videos", query, page],

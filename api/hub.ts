@@ -41,6 +41,8 @@ export default async function handler(req: Request) {
       views: v.views,
       rating: v.rating,
       publish_date: v.publish_date,
+      pornstars: v.pornstars || [],
+      tags: v.tags || [],
     }));
 
     return new Response(JSON.stringify({ videos }), {
