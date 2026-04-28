@@ -7,7 +7,7 @@ import { ChevronLeft, Flame, Eye, Star } from "lucide-react";
 import { getPornhubEmbedUrl } from "@/lib/pornhub";
 import { useAuth } from "@/context/AuthContext";
 
-const WatchAdult = () => {
+const WatchHub = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -95,4 +95,4 @@ const WatchAdult = () => {
   );
 };
 
-export default WatchAdult;
+export default WatchHub;

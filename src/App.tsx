@@ -16,7 +16,7 @@ import Auth from "./pages/Auth";
 import Settings from "./pages/Settings";
 import History from "./pages/History";
 import Adult from "./pages/Adult";
-import WatchAdult from "./pages/WatchAdult";
+import WatchHub from "./pages/WatchHub";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import { TutorialProvider } from "./context/TutorialContext";
@@ -79,7 +79,7 @@ const App = () => (
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/history" element={<History />} />
                 <Route path="/adult" element={<Adult />} />
-                <Route path="/watch/adult/:id" element={<WatchAdult />} />
+                <Route path="/watch/adult/:id" element={<WatchHub />} />
                 <Route path="/admin" element={<Admin />} />
               </Route>
   
