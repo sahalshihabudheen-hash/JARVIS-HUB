@@ -14,6 +14,7 @@ interface User {
   ip?: string;
   password?: string;
   hasAdultAccess?: boolean;
+  emailVerified?: boolean;
 }
 
 interface AuthContextType {
@@ -54,6 +55,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       unsubscribe = onSnapshot(fsDoc(db, "users", userDocId), (snapshot: any) => {
         if (snapshot.exists()) {
           const data = snapshot.data();
+          
+          // Get verification status from Firebase Auth directly
+          const { auth } = await import("@/lib/firebase");
+          const emailVerified = auth.currentUser?.emailVerified || false;
           
           // Detect if user became admin
           if (!isInitial && !user.isAdmin && data.isAdmin) {
@@ -230,7 +235,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       location,
       isp,
       ip,
-      countryCode
+      countryCode,
+      emailVerified: false
     };
 
     // Save/Update in Firestore

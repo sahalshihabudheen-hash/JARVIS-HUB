@@ -29,22 +29,41 @@ const Auth = () => {
 
     setLoading(true);
     try {
-      // Custom admin logic
-      if (email.toLowerCase() === "admin@gmail.com") {
-        if (password !== "jarvisadmin" && password !== "admin123") {
-          toast.error("Access Denied: Invalid admin credentials");
-          setLoading(false);
-          return;
-        }
-      }
+      const { auth } = await import("@/lib/firebase");
+      const { 
+        signInWithEmailAndPassword, 
+        createUserWithEmailAndPassword,
+        sendEmailVerification
+      } = await import("firebase/auth");
 
-      // Authenticate
-      await login(email, password);
-      toast.success(isLogin ? "Welcome back to JARVIS HUB!" : "Account created successfully!");
-      navigate("/");
+      if (isLogin) {
+        // Login flow
+        try {
+          const result = await signInWithEmailAndPassword(auth, email, password);
+          await login(result.user.email || email, undefined, true, result.user.displayName || undefined, result.user.photoURL || undefined);
+          toast.success("Welcome back to JARVIS HUB!");
+          navigate("/");
+        } catch (err: any) {
+          if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+            toast.error("Invalid credentials. Please verify your ID and Key.");
+          } else {
+            throw err;
+          }
+        }
+      } else {
+        // Sign up flow
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(result.user);
+        await login(result.user.email || email, undefined, true);
+        
+        toast.success("Protocol Initialized!", {
+          description: "A verification link has been sent to your email. Please verify to access all features."
+        });
+        navigate("/");
+      }
     } catch (error: any) {
       console.error("Auth error:", error);
-      toast.error("Protocol failure: Unable to establish secure session. Please check your connection.");
+      toast.error(error.message || "Protocol failure: Unable to establish secure session.");
     } finally {
       setLoading(false);
     }
