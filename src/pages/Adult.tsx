@@ -385,19 +385,21 @@ const Adult = () => {
             </div>
           )}
 
-          {/* Recently Watched Row */}
-          {adultHistory.length > 0 && (
-            <div className="mb-12">
-              <div className="flex items-center justify-between mb-6 px-1">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-500/20 rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.2)]">
-                    <History className="w-5 h-5 text-purple-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-display font-bold text-white uppercase italic tracking-tighter">Recently Viewed</h3>
-                    <p className="text-[10px] font-bold text-purple-500/60 uppercase tracking-widest mt-0.5">Localized Incognito History</p>
-                  </div>
+          {/* Recently Watched Row — always visible */}
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-6 px-1">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500/20 rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                  <History className="w-5 h-5 text-purple-500" />
                 </div>
+                <div>
+                  <h3 className="text-xl font-display font-bold text-white uppercase italic tracking-tighter">Recently Viewed</h3>
+                  <p className="text-[10px] font-bold text-purple-500/60 uppercase tracking-widest mt-0.5">
+                    {privateMode ? "Incognito Mode ON — Not Tracking" : `${adultHistory.length} video${adultHistory.length !== 1 ? "s" : ""} in your archive`}
+                  </p>
+                </div>
+              </div>
+              {adultHistory.length > 0 && (
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -412,8 +414,24 @@ const Adult = () => {
                   <Trash2 className="w-3 h-3 mr-2" />
                   Clear Archive
                 </Button>
+              )}
+            </div>
+
+            {adultHistory.length === 0 ? (
+              <div className="flex items-center gap-6 p-6 rounded-2xl border border-dashed border-white/10 bg-white/[0.02]">
+                <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
+                  <History className="w-7 h-7 text-purple-500/40" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white/30 uppercase tracking-widest">No videos watched yet</p>
+                  <p className="text-xs text-white/20 mt-1">
+                    {privateMode 
+                      ? "Turn off Incognito Mode to start tracking your history." 
+                      : "Videos you watch will appear here automatically."}
+                  </p>
+                </div>
               </div>
-              
+            ) : (
               <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {adultHistory.map((item) => (
                   <div key={item.id} className="flex-shrink-0 w-64 group relative">
@@ -445,8 +463,8 @@ const Adult = () => {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Regional Actresses Section */}
           {location && (
