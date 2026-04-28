@@ -35,7 +35,8 @@ const SeoMetadata = ({ title, description, image, type = "website", url }: SeoMe
     updateMetaTag("og:description", description || "Stream your favorite movies and TV shows on JARVIS HUB.");
     updateMetaTag("og:image", image || "/og-image.png");
     updateMetaTag("og:type", type);
-    updateMetaTag("og:url", url || window.location.href);
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : "";
+    updateMetaTag("og:url", url || currentUrl);
     updateMetaTag("og:site_name", "JARVIS HUB");
 
     // Twitter Tags

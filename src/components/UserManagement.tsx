@@ -11,8 +11,8 @@ import {
   Globe,
   RefreshCw,
   MoreVertical,
-  CheckCircle,
-  XCircle
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -183,11 +183,11 @@ const UserManagement = () => {
                         )}
                         {u.emailVerified ? (
                           <Badge className="bg-teal-500/10 text-teal-400 border-teal-500/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter flex items-center gap-1">
-                            <CheckCircle className="w-3 h-3" /> Verified
+                            <CheckCircle2 className="w-3 h-3" /> Verified
                           </Badge>
                         ) : (
                           <Badge className="bg-red-500/10 text-red-500 border-red-500/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter flex items-center gap-1">
-                            <XCircle className="w-3 h-3" /> Unverified
+                            <AlertCircle className="w-3 h-3" /> Unverified
                           </Badge>
                         )}
                       </div>
