@@ -31,3 +31,8 @@ export const searchRedTubeVideos = async (search: string = 'all', page: number =
   if (!response.ok) throw new Error(`RedTube API error: ${response.status}`);
   return response.json();
 };
+
+export const getRedTubeEmbedUrl = (videoId: string): string => {
+  return `https://embed.redtube.com/?id=${videoId}`;
+};
+
