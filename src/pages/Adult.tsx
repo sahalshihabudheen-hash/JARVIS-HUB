@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -21,6 +21,13 @@ const Adult = () => {
   const [query, setQuery] = useState("all");
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  const scrollToResults = () => {
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  };
   const [isBlurred, setIsBlurred] = useState(true);
   const [privateMode, setPrivateMode] = useState(() => localStorage.getItem("adult_private_mode") === "true");
   const [showGenreHub, setShowGenreHub] = useState(false);
@@ -101,6 +108,7 @@ const Adult = () => {
       setQuery("all");
       setPage(1);
     }
+    scrollToResults();
   };
 
   const categories = [
@@ -567,7 +575,7 @@ const Adult = () => {
                 {categories.map((cat) => (
                   <button
                     key={cat.value}
-                    onClick={() => { setQuery(cat.value); setSearchInput(""); setPage(1); }}
+                    onClick={() => { setQuery(cat.value); setSearchInput(""); setPage(1); scrollToResults(); }}
                     className={cn(
                       "px-4 h-9 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all duration-200",
                       query === cat.value
@@ -588,7 +596,7 @@ const Adult = () => {
                 {popularTags.map((tag) => (
                   <button
                     key={tag}
-                    onClick={() => { setQuery(tag); setPage(1); }}
+                    onClick={() => { setQuery(tag); setPage(1); scrollToResults(); }}
                     className={cn(
                       "px-3 h-7 rounded-lg text-[11px] font-medium border transition-all",
                       query === tag
@@ -610,7 +618,7 @@ const Adult = () => {
                   {asianGenres.map((genre) => (
                     <button
                       key={genre.value}
-                      onClick={() => { setQuery(genre.value); setPage(1); }}
+                      onClick={() => { setQuery(genre.value); setPage(1); scrollToResults(); }}
                       className={cn(
                         "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
                         query === genre.value
@@ -629,7 +637,7 @@ const Adult = () => {
                   {teamSkeetShows.map((show) => (
                     <button
                       key={show.value}
-                      onClick={() => { setQuery(show.value); setPage(1); }}
+                      onClick={() => { setQuery(show.value); setPage(1); scrollToResults(); }}
                       className={cn(
                         "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
                         query === show.value
@@ -653,7 +661,7 @@ const Adult = () => {
                   return (
                     <button
                       key={bs.value}
-                      onClick={() => { setQuery(bs.value); setSearchInput(bs.label); setPage(1); }}
+                      onClick={() => { setQuery(bs.value); setSearchInput(bs.label); setPage(1); scrollToResults(); }}
                       className={cn(
                         "flex items-center gap-2 pl-2 pr-4 h-9 rounded-xl border text-xs font-bold transition-all duration-200",
                         isActive
@@ -680,7 +688,7 @@ const Adult = () => {
           </div>
 
           {/* Grid Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div ref={resultsRef} className="flex items-center justify-between mb-8 scroll-mt-28">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-orange-500/20 rounded-xl">
                 <Zap className="w-5 h-5 text-orange-500" />
