@@ -129,8 +129,17 @@ const Adult = () => {
     duration: v.duration,
     views: v.views.toLocaleString(),
     rating: v.rating,
-    added: v.publish_date
+    added: v.publish_date,
+    pornstars: v.pornstars || []
   })) || [];
+
+  // Extract unique pornstars from current page videos
+  const currentPagePornstars = Array.from(new Set(
+    videos.flatMap((v: any) => v.pornstars)
+  )).map(name => ({
+    name,
+    id: name.toLowerCase().replace(/\s+/g, '-')
+  })).slice(0, 18); // Show up to 18
 
   return (
     <div className="min-h-screen bg-background">
@@ -320,45 +329,47 @@ const Adult = () => {
             </>
           )}
 
-          {/* Featured Actresses */}
-          <div className="mt-20">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-2 bg-pink-500/20 rounded-xl">
-                <Flame className="w-6 h-6 text-pink-500" />
+          {/* Dynamic Page Actresses */}
+          {currentPagePornstars.length > 0 && (
+            <div className="mt-20">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 bg-pink-500/20 rounded-xl">
+                  <Flame className="w-6 h-6 text-pink-500" />
+                </div>
+                <h2 className="text-2xl md:text-3xl font-display font-bold">Actresses on this Page</h2>
               </div>
-              <h2 className="text-2xl md:text-3xl font-display font-bold">Top Featured Actresses</h2>
+              
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-4 md:gap-6">
+                {currentPagePornstars.map((star) => (
+                  <button
+                    key={star.id}
+                    onClick={() => {
+                      setQuery(star.name);
+                      setSearchInput(star.name);
+                      setPage(1);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="group flex flex-col items-center gap-3 transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <div className="relative w-16 h-16 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-white/5 group-hover:border-pink-500/50 transition-all duration-300 shadow-xl shadow-black/40">
+                      <img
+                        src={`https://images.metadata.sk/pornstars/${star.id}.jpg`}
+                        alt={star.name}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = `https://via.placeholder.com/200x200?text=${star.name.split(' ')[0]}`;
+                        }}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <span className="text-[10px] md:text-xs font-bold text-white/80 group-hover:text-pink-400 transition-colors text-center line-clamp-1">
+                      {star.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-            
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 md:gap-6">
-              {topActresses.map((star) => (
-                <button
-                  key={star.id}
-                  onClick={() => {
-                    setQuery(star.name);
-                    setSearchInput(star.name);
-                    setPage(1);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="group flex flex-col items-center gap-3 transition-all duration-300 hover:-translate-y-1"
-                >
-                  <div className="relative w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-white/5 group-hover:border-pink-500/50 transition-all duration-300 shadow-xl shadow-black/40">
-                    <img
-                      src={`https://images.metadata.sk/pornstars/${star.id}.jpg`}
-                      alt={star.name}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = `https://via.placeholder.com/200x200?text=${star.name.split(' ')[0]}`;
-                      }}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <span className="text-xs md:text-sm font-bold text-white/80 group-hover:text-pink-400 transition-colors">
-                    {star.name}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </main>
       <Footer />
