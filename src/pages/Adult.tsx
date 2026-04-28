@@ -7,10 +7,11 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
-import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star } from "lucide-react";
+import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { getUserLocation } from "@/lib/tmdb";
 import { MapPin } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const Adult = () => {
   const { user } = useAuth();
