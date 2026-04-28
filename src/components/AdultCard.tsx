@@ -70,12 +70,6 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
           </Link>
         </div>
 
-        {/* Duration Badge */}
-        <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-md glass text-[10px] font-medium">
-          <Clock className="w-3 h-3" />
-          <span>{video.duration}</span>
-        </div>
-
         {/* Rating Badge */}
         {video.rating && (
           <div className="absolute top-2 right-2 flex items-center gap-2">
@@ -88,25 +82,34 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
             >
               {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
             </button>
-            <div className="flex items-center gap-1 px-2 py-1 rounded-md glass text-xs font-medium text-yellow-400">
-              <span>{video.rating}</span>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-md glass text-[10px] font-black text-yellow-500 bg-yellow-500/10 border-yellow-500/20">
+              <span>{video.rating}%</span>
             </div>
           </div>
         )}
 
+        {/* Duration Badge */}
+        <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md glass text-[10px] font-bold text-white/90 bg-black/40 backdrop-blur-sm">
+          {video.duration}
+        </div>
       </div>
 
       {/* Info */}
-      <div className="p-3">
-        <h3 className="font-medium text-sm line-clamp-2 group-hover:text-red-400 transition-colors h-10" title={video.title}>
+      <div className="p-4 space-y-2 bg-gradient-to-b from-transparent to-white/[0.02]">
+        <h3 className="font-medium text-sm line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
           {video.title}
         </h3>
-        <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
-          <div className="flex items-center gap-1">
-            <Eye className="w-3 h-3" />
-            <span>{video.views}</span>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 text-[10px] font-bold text-white/30">
+            <div className="flex items-center gap-1">
+              <Eye className="w-3 h-3" />
+              <span>{video.views}</span>
+            </div>
           </div>
-          {video.added && <span>{video.added}</span>}
+          <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
+            <Play className="w-4 h-4 fill-current" />
+          </div>
         </div>
       </div>
     </div>

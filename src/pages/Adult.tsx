@@ -7,7 +7,9 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
-import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert } from "lucide-react";
+import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe } from "lucide-react";
+import { searchRedTubeVideos } from "@/lib/redtube";
+
 import { useAuth } from "@/context/AuthContext";
 import { getUserLocation } from "@/lib/tmdb";
 import { MapPin } from "lucide-react";
@@ -27,6 +29,8 @@ const Adult = () => {
     const saved = localStorage.getItem("adult_preferred_genres");
     return saved ? JSON.parse(saved) : [];
   });
+  const [source, setSource] = useState<"pornhub" | "redtube">("pornhub");
+
 
 
   useEffect(() => {
@@ -66,9 +70,18 @@ const Adult = () => {
   }, [searchParam]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["pornhub-videos", query, page],
-    queryFn: () => searchVideos(query, page),
+    queryKey: ["adult-videos", source, query, page],
+    queryFn: async () => {
+      if (source === "redtube") {
+        const res = await searchRedTubeVideos(query, page);
+        return {
+          videos: res.videos.map(v => v.video)
+        };
+      }
+      return searchVideos(query, page);
+    },
   });
+
 
   const { data: regionalData } = useQuery({
     queryKey: ["regional-stars", location],
@@ -264,8 +277,30 @@ const Adult = () => {
             </form>
 
             <div className="flex items-center gap-2">
+              <div className="flex bg-white/5 p-1 rounded-full border border-white/10 mr-2">
+                <button
+                  onClick={() => setSource("pornhub")}
+                  className={cn(
+                    "px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all",
+                    source === "pornhub" ? "bg-orange-500 text-white" : "text-white/40 hover:text-white/60"
+                  )}
+                >
+                  Pornhub
+                </button>
+                <button
+                  onClick={() => setSource("redtube")}
+                  className={cn(
+                    "px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all",
+                    source === "redtube" ? "bg-red-600 text-white" : "text-white/40 hover:text-white/60"
+                  )}
+                >
+                  RedTube
+                </button>
+              </div>
+
               <Button
                 variant="outline"
+
                 size="sm"
                 onClick={() => setIsBlurred(!isBlurred)}
                 className={`rounded-full border-white/10 px-6 h-10 ${isBlurred ? 'bg-blue-600/10 text-blue-400 border-blue-500/30' : 'bg-white/5 text-white/60'}`}
@@ -508,8 +543,25 @@ const Adult = () => {
             ))}
           </div>
 
+          {/* Grid Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-orange-500/20 rounded-xl">
+                <Zap className="w-5 h-5 text-orange-500" />
+              </div>
+              <h2 className="text-2xl font-display font-bold">
+                {query === "all" ? "Trending Right Now" : `Results for "${query}"`}
+              </h2>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-medium text-white/40">
+              <Filter className="w-4 h-4" />
+              <span>Sorted by Popularity</span>
+            </div>
+          </div>
+
           {/* Grid */}
           {isLoading ? (
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {[...Array(12)].map((_, i) => (
                 <div key={i} className="flex flex-col gap-3">
