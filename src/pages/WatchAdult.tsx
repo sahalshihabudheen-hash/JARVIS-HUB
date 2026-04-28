@@ -80,7 +80,7 @@ const WatchAdult = () => {
 
               <div className="mt-8 pt-8 border-t border-white/5 text-muted-foreground text-sm leading-relaxed">
                 <p>
-                  You are watching premium adult entertainment powered by RedTube. 
+                  You are watching premium adult entertainment powered by Pornhub. 
                   Enjoy a seamless viewing experience directly on JARVIS HUB. 
                   Please ensure you are over 18 years of age.
                 </p>

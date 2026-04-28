@@ -25,7 +25,7 @@ const Adult = () => {
   }, [user, navigate]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["adult-videos", query, page],
+    queryKey: ["pornhub-videos", query, page],
     queryFn: () => searchVideos(query, page),
   });
 
