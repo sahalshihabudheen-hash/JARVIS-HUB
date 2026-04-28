@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -23,6 +23,8 @@ const WatchHub = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [details, setDetails] = useState<VideoDetails | null>(null);
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get("source") || "pornhub";
 
   useEffect(() => {
     const isOwner = user?.email?.toLowerCase() === "admin@gmail.com";
@@ -33,7 +35,7 @@ const WatchHub = () => {
 
   useEffect(() => {
     if (id) {
-      fetch(`/api/video?id=${id}`)
+      fetch(`/api/video?id=${id}&source=${source}`)
         .then(res => res.json())
         .then(data => {
           if (data.video) {
@@ -43,18 +45,25 @@ const WatchHub = () => {
             addToAdultHistory({
               id: id,
               title: data.video.title || `Content #${id}`,
-              thumbnail: data.video.thumbnail || "",
+              thumbnail: data.video.default_thumb || "",
               duration: data.video.duration || ""
             });
           }
         })
         .catch(err => console.error("Failed to fetch video details:", err));
     }
-  }, [id]);
+  }, [id, source]);
 
   if (!id) return null;
 
-  const embedUrl = getEmbedUrl(id);
+  let embedUrl = "";
+  if (source === "pornhub") {
+    embedUrl = `https://www.pornhub.com/embed/${id}`;
+  } else if (source === "redtube") {
+    embedUrl = `https://embed.redtube.com/?id=${id}`;
+  } else if (source === "eporner") {
+    embedUrl = `https://www.eporner.com/embed/${id}/`;
+  }
 
   return (
     <div className="min-h-screen bg-background">

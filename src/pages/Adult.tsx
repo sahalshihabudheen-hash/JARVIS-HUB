@@ -7,8 +7,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
-import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe } from "lucide-react";
-import { searchRedTubeVideos } from "@/lib/redtube";
+import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2 } from "lucide-react";
+import { getAdultHistory, clearAdultHistory, AdultHistoryItem } from "@/lib/adult-history";
 
 import { useAuth } from "@/context/AuthContext";
 import { getUserLocation } from "@/lib/tmdb";
@@ -29,7 +29,12 @@ const Adult = () => {
     const saved = localStorage.getItem("adult_preferred_genres");
     return saved ? JSON.parse(saved) : [];
   });
-  const [source, setSource] = useState<"pornhub" | "redtube">("pornhub");
+  const [source, setSource] = useState<"pornhub" | "redtube" | "eporner">("pornhub");
+  const [adultHistory, setAdultHistory] = useState<AdultHistoryItem[]>([]);
+
+  useEffect(() => {
+    setAdultHistory(getAdultHistory());
+  }, []);
 
 
 
@@ -72,13 +77,7 @@ const Adult = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["adult-videos", source, query, page],
     queryFn: async () => {
-      if (source === "redtube") {
-        const res = await searchRedTubeVideos(query, page);
-        return {
-          videos: res.videos.map(v => v.video)
-        };
-      }
-      return searchVideos(query, page);
+      return searchVideos(query, page, source);
     },
   });
 
@@ -278,24 +277,22 @@ const Adult = () => {
 
             <div className="flex items-center gap-2">
               <div className="flex bg-white/5 p-1 rounded-full border border-white/10 mr-2">
-                <button
-                  onClick={() => setSource("pornhub")}
-                  className={cn(
-                    "px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all",
-                    source === "pornhub" ? "bg-orange-500 text-white" : "text-white/40 hover:text-white/60"
-                  )}
-                >
-                  Pornhub
-                </button>
-                <button
-                  onClick={() => setSource("redtube")}
-                  className={cn(
-                    "px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all",
-                    source === "redtube" ? "bg-red-600 text-white" : "text-white/40 hover:text-white/60"
-                  )}
-                >
-                  RedTube
-                </button>
+                {[
+                  { id: "pornhub", label: "PH", color: "bg-orange-500" },
+                  { id: "redtube", label: "RT", color: "bg-red-600" },
+                  { id: "eporner", label: "EP", color: "bg-blue-600" }
+                ].map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setSource(s.id as any)}
+                    className={cn(
+                      "px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all",
+                      source === s.id ? `${s.color} text-white shadow-lg` : "text-white/40 hover:text-white/60"
+                    )}
+                  >
+                    {s.label}
+                  </button>
+                ))}
               </div>
 
               <Button
@@ -388,6 +385,69 @@ const Adult = () => {
             </div>
           )}
 
+          {/* Recently Watched Row */}
+          {adultHistory.length > 0 && (
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-6 px-1">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-500/20 rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                    <History className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-display font-bold text-white uppercase italic tracking-tighter">Recently Viewed</h3>
+                    <p className="text-[10px] font-bold text-purple-500/60 uppercase tracking-widest mt-0.5">Localized Incognito History</p>
+                  </div>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => {
+                    if (confirm("Purge incognito history?")) {
+                      clearAdultHistory();
+                      setAdultHistory([]);
+                    }
+                  }}
+                  className="text-[10px] font-bold text-white/20 hover:text-red-400 transition-colors uppercase tracking-widest"
+                >
+                  <Trash2 className="w-3 h-3 mr-2" />
+                  Clear Archive
+                </Button>
+              </div>
+              
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                {adultHistory.map((item) => (
+                  <div key={item.id} className="flex-shrink-0 w-64 group relative">
+                    <div className={cn(
+                      "relative aspect-video rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 group-hover:border-purple-500/30",
+                      isBlurred ? "blur-md hover:blur-none" : ""
+                    )}>
+                      <img 
+                        src={`/api/image?url=${encodeURIComponent(item.thumbnail)}`} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+                      <button 
+                        onClick={() => navigate(`/hub/watch/${item.id}`)}
+                        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center shadow-lg shadow-purple-900/40">
+                          <Play className="w-5 h-5 text-white fill-current ml-1" />
+                        </div>
+                      </button>
+                      {item.duration && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/60 text-[10px] font-bold text-white backdrop-blur-md border border-white/10">
+                          {item.duration}
+                        </div>
+                      )}
+                    </div>
+                    <h4 className="mt-3 text-[11px] font-bold text-white/60 line-clamp-1 group-hover:text-purple-400 transition-colors uppercase tracking-wide">{item.title}</h4>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Regional Actresses Section */}
           {location && (
             <div className="mb-12">
@@ -445,9 +505,9 @@ const Adult = () => {
 
 
           {/* Top Studios Row */}
-          <div className="mb-8 overflow-hidden">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">Top Premium Studios</h3>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="mb-12 overflow-hidden">
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/30 mb-6 ml-1">Featured Networks</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-4">
               {topStudios.map((studio) => (
                 <button
                   key={studio.name}
@@ -455,10 +515,11 @@ const Adult = () => {
                     setQuery(studio.name);
                     setPage(1);
                   }}
-                  className="flex-shrink-0 w-32 h-16 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/50 hover:bg-blue-500/10 transition-all flex items-center justify-center group"
+                  className="relative h-20 rounded-2xl bg-[#0a0a0a] border border-white/5 hover:border-blue-500/30 transition-all duration-500 group overflow-hidden"
                 >
-                  <span className="text-xl font-black text-white/20 group-hover:text-blue-500/50 transition-colors uppercase italic">{studio.logo}</span>
-                  <span className="absolute text-[10px] font-bold text-white opacity-60 group-hover:opacity-100 transition-opacity">{studio.name}</span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="text-2xl font-black text-white/5 group-hover:text-blue-500/20 transition-all duration-700 uppercase italic scale-150">{studio.logo}</span>
+                  <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white/40 group-hover:text-white transition-colors uppercase tracking-widest z-10">{studio.name}</span>
                 </button>
               ))}
             </div>
@@ -485,7 +546,7 @@ const Adult = () => {
 
 
           {/* Categories */}
-          <div className="flex flex-wrap gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex flex-wrap gap-2 mb-12 overflow-x-auto pb-2 scrollbar-hide">
             {categories.map((cat) => (
               <Button
                 key={cat.value}
@@ -496,7 +557,12 @@ const Adult = () => {
                   setSearchInput("");
                   setPage(1);
                 }}
-                className={`rounded-full whitespace-nowrap ${query === cat.value ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+                className={cn(
+                  "rounded-xl px-6 h-10 text-xs font-bold uppercase tracking-widest transition-all duration-300",
+                  query === cat.value 
+                    ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] border-transparent" 
+                    : "bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white"
+                )}
               >
                 {cat.label}
               </Button>

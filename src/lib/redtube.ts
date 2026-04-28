@@ -21,6 +21,7 @@ export const searchRedTubeVideos = async (search: string = 'all', page: number =
   const url = new URL('/api/adult', window.location.origin);
   url.searchParams.set('search', search);
   url.searchParams.set('page', page.toString());
+  url.searchParams.set('source', 'redtube');
 
   const response = await fetch(url.toString());
 

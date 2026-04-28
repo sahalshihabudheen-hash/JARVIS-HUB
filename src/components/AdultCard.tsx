@@ -63,7 +63,7 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
         {/* Play Button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
           <Link 
-            to={`/hub/watch/${video.id}`}
+            to={`/hub/watch/${video.id}?source=${(video as any).source || 'pornhub'}`}
             className="w-14 h-14 rounded-full bg-red-600 flex items-center justify-center shadow-glow transform scale-75 group-hover:scale-100 transition-transform duration-300 pointer-events-auto"
           >
             <Play className="w-6 h-6 text-white fill-current ml-1" />
