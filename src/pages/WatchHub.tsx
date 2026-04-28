@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Flame, Eye, Star } from "lucide-react";
-import { getPornhubEmbedUrl } from "@/lib/pornhub";
+import { getEmbedUrl } from "@/lib/pornhub";
 import { useAuth } from "@/context/AuthContext";
 
 const WatchHub = () => {
@@ -21,7 +21,7 @@ const WatchHub = () => {
 
   if (!id) return null;
 
-  const embedUrl = getPornhubEmbedUrl(id);
+  const embedUrl = getEmbedUrl(id);
 
 
   return (

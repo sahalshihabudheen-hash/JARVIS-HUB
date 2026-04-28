@@ -1,3 +1,4 @@
-export const getPornhubEmbedUrl = (videoId: string): string => {
-  return `https://www.pornhub.com/embed/${videoId}`;
+export const getEmbedUrl = (videoId: string): string => {
+  // xVideos embed - different domain avoids ISP blocks on eporner/pornhub
+  return `https://www.xvideos.com/embedframe/${videoId}`;
 };
