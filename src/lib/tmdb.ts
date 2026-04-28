@@ -40,6 +40,14 @@ export interface MediaDetails extends MediaItem {
       type: string;
     }[];
   };
+  credits?: {
+    cast: {
+      id: number;
+      name: string;
+      character: string;
+      profile_path: string | null;
+    }[];
+  };
 }
 
 export interface Season {
@@ -140,11 +148,11 @@ export const getNowPlayingMovies = async (page: number = 1, region?: string, wit
 };
 
 export const getMovieDetails = async (id: number): Promise<MediaDetails> => {
-  return fetchTMDB<MediaDetails>(`/movie/${id}`, { append_to_response: "external_ids,videos" });
+  return fetchTMDB<MediaDetails>(`/movie/${id}`, { append_to_response: "external_ids,videos,credits" });
 };
 
 export const getTVDetails = async (id: number): Promise<MediaDetails> => {
-  return fetchTMDB<MediaDetails>(`/tv/${id}`, { append_to_response: "external_ids,videos" });
+  return fetchTMDB<MediaDetails>(`/tv/${id}`, { append_to_response: "external_ids,videos,credits" });
 };
 
 export const getSeasonDetails = async (tvId: number, seasonNumber: number): Promise<{ episodes: Episode[] }> => {

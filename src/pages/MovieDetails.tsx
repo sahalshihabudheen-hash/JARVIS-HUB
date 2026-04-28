@@ -247,6 +247,31 @@ const MovieDetails = () => {
         </section>
       )}
 
+      {/* Cast Section */}
+      {movie.credits?.cast && movie.credits.cast.length > 0 && (
+        <section className="container py-12 border-t border-white/5">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-1.5 h-6 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
+            <h2 className="text-2xl font-display font-bold">Top Cast</h2>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide">
+            {movie.credits.cast.slice(0, 12).map((actor) => (
+              <div key={actor.id} className="flex-shrink-0 w-28 group">
+                <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-white/5 mb-3 group-hover:border-primary/50 transition-all duration-300 shadow-xl">
+                  <img
+                    src={getImageUrl(actor.profile_path, "w185")}
+                    alt={actor.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <p className="text-sm font-bold text-white text-center line-clamp-1">{actor.name}</p>
+                <p className="text-[10px] text-muted-foreground text-center line-clamp-1">{actor.character}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Similar */}
       <div className="container pb-16">
         <MediaRow

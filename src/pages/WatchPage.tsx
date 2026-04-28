@@ -182,14 +182,29 @@ const WatchPage = () => {
               )}
             </div>
             
-            <Button 
-              variant="outline" 
-              className="shrink-0 bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 text-white transition-all shadow-[0_0_15px_rgba(34,211,238,0.1)]"
-              onClick={() => toast.info("To download: Play the video, and look for the download icon (⬇) inside the player controls at the bottom right.", { duration: 6000 })}
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Download
-            </Button>
+            <div className="flex flex-wrap gap-2 shrink-0">
+              <Button 
+                variant="outline" 
+                className="bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 text-white transition-all shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                onClick={() => {
+                  const url = window.location.href;
+                  navigator.clipboard.writeText(url).then(() => {
+                    toast.success("Link copied! Share it with your friends.");
+                  });
+                }}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+              <Button 
+                variant="outline" 
+                className="bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 text-white transition-all shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                onClick={() => toast.info("To download: Play the video, and look for the download icon (⬇) inside the player controls at the bottom right.", { duration: 6000 })}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download
+              </Button>
+            </div>
           </div>
 
           {/* Player */}
@@ -202,6 +217,32 @@ const WatchPage = () => {
             lang={selectedLang || content?.original_language}
             onLangChange={(l) => setSelectedLang(l)}
           />
+
+          {/* Cast Section */}
+          {content?.credits?.cast && content.credits.cast.length > 0 && (
+            <div className="mt-12">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1.5 h-6 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
+                <h2 className="text-xl font-display font-bold">Cast & Crew</h2>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                {content.credits.cast.slice(0, 15).map((actor) => (
+                  <div key={actor.id} className="flex-shrink-0 w-24 group">
+                    <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/5 mb-2 group-hover:border-primary/50 transition-all duration-300">
+                      <img
+                        src={getImageUrl(actor.profile_path, "w185")}
+                        alt={actor.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    </div>
+                    <p className="text-[11px] font-bold text-white text-center line-clamp-1">{actor.name}</p>
+                    <p className="text-[9px] text-muted-foreground text-center line-clamp-1">{actor.character}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* TV Navigation */}
           {isTV && (
