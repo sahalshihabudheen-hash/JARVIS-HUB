@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/api/eporner/:path*",
-      "destination": "https://www.eporner.com/api/v2/video/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

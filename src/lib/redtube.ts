@@ -18,20 +18,16 @@ export interface RedTubeResponse {
 }
 
 export const searchRedTubeVideos = async (search: string = 'all', page: number = 1): Promise<RedTubeResponse> => {
-  const url = new URL(BASE_URL);
-  url.searchParams.set('data', 'redtube.Videos.searchVideos');
-  url.searchParams.set('output', 'json');
+  const url = new URL('/api/adult', window.location.origin);
   url.searchParams.set('search', search);
   url.searchParams.set('page', page.toString());
 
-  // Using a faster CORS proxy to improve loading speeds
-  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url.toString())}`;
+  const response = await fetch(url.toString());
 
-  const response = await fetch(proxyUrl);
-
-  if (!response.ok) throw new Error(`RedTube API error: ${response.status}`);
+  if (!response.ok) throw new Error(`API error: ${response.status}`);
   return response.json();
 };
+
 
 export const getRedTubeEmbedUrl = (videoId: string): string => {
   return `https://embed.redtube.com/?id=${videoId}`;
