@@ -182,12 +182,12 @@ const UserManagement = () => {
                           </Badge>
                         )}
                         {u.emailVerified ? (
-                          <Badge className="bg-teal-500/10 text-teal-400 border-teal-500/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter flex items-center gap-1">
-                            <Check className="w-3 h-3" /> Verified
+                          <Badge className="bg-teal-500/10 text-teal-400 border-teal-500/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter">
+                            Verified
                           </Badge>
                         ) : (
-                          <Badge className="bg-red-500/10 text-red-500 border-red-500/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter flex items-center gap-1">
-                            <AlertCircle className="w-3 h-3" /> Unverified
+                          <Badge className="bg-red-500/10 text-red-500 border-red-500/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter">
+                            Unverified
                           </Badge>
                         )}
                       </div>
