@@ -23,7 +23,7 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 
 const UserManagement = () => {
-  const { users, refreshData, toggleAdmin, deleteUser, resetUserPassword, setUserPassword } = useAdmin();
+  const { users, refreshData, toggleAdmin, deleteUser, resetUserPassword, setUserPassword, toggleAdultAccess } = useAdmin();
   const { user: currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
