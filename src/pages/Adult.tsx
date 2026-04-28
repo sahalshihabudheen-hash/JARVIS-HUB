@@ -649,45 +649,24 @@ const Adult = () => {
               </div>
             </div>
 
-            {/* ── Row 3: Asian + TeamSkeet side by side ── */}
-            <div className="px-6 py-5 border-b border-white/5 flex flex-col md:flex-row gap-6">
-              <div className="flex-1">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Asian</p>
-                <div className="flex flex-wrap gap-2">
-                  {asianGenres.map((genre) => (
-                    <button
-                      key={genre.value}
-                      onClick={() => { setQuery(genre.value); setPage(1); scrollToResults(); }}
-                      className={cn(
-                        "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
-                        query === genre.value
-                          ? "bg-white text-black border-transparent"
-                          : "bg-transparent border-white/8 text-white/40 hover:bg-white/8 hover:text-white"
-                      )}
-                    >
-                      {genre.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex-1">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">TeamSkeet Series</p>
-                <div className="flex flex-wrap gap-2">
-                  {teamSkeetShows.map((show) => (
-                    <button
-                      key={show.value}
-                      onClick={() => { setQuery(show.value); setPage(1); scrollToResults(); }}
-                      className={cn(
-                        "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
-                        query === show.value
-                          ? "bg-blue-600/30 border-blue-500/50 text-blue-300"
-                          : "bg-transparent border-white/8 text-white/40 hover:bg-blue-500/8 hover:text-blue-300"
-                      )}
-                    >
-                      {show.label}
-                    </button>
-                  ))}
-                </div>
+            {/* ── Row 3: Asian categories ── */}
+            <div className="px-6 py-5 border-b border-white/5">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Asian</p>
+              <div className="flex flex-wrap gap-2">
+                {asianGenres.map((genre) => (
+                  <button
+                    key={genre.value}
+                    onClick={() => { setQuery(genre.value); setPage(1); scrollToResults(); }}
+                    className={cn(
+                      "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
+                      query === genre.value
+                        ? "bg-white text-black border-transparent"
+                        : "bg-transparent border-white/8 text-white/40 hover:bg-white/8 hover:text-white"
+                    )}
+                  >
+                    {genre.label}
+                  </button>
+                ))}
               </div>
             </div>
 
