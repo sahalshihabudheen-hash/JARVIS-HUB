@@ -27,11 +27,10 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
       {/* Thumbnail */}
       <div className="relative aspect-video overflow-hidden bg-secondary">
         <img
-          src={video.thumbnail}
+          src={`https://images.weserv.nl/?url=${video.thumbnail.replace('https://', '')}`}
           alt={video.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
-          referrerPolicy="no-referrer"
         />
         
         {/* Overlay */}
