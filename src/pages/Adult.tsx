@@ -133,14 +133,52 @@ const Adult = () => {
   ];
 
   const teamSkeetShows = [
-    { label: "Hijab Hookup", value: 'teamskeet "hijab hookup" full movie' },
-    { label: "Perv Dad", value: 'teamskeet "perv dad" full movie' },
-    { label: "Shoplyfter", value: 'teamskeet "shoplyfter" full movie' },
-    { label: "Family Strokes", value: 'teamskeet "family strokes" full movie' },
-    { label: "BFFs", value: 'teamskeet "bffs" full movie' },
-    { label: "Deeper", value: 'teamskeet "deeper" full movie' },
-    { label: "Sis Loves Me", value: 'teamskeet "sis loves me" full movie' },
+    // ── Hijab / Muslim themed (dedicated row below) ──
+    { label: "Hijab Hookup",        value: '"hijab hookup"' },
+    // ── Fan-favourite series ──
+    { label: "Perv Dad",            value: 'teamskeet "perv dad"' },
+    { label: "Shoplyfter",          value: 'teamskeet "shoplyfter"' },
+    { label: "Family Strokes",      value: 'teamskeet "family strokes"' },
+    { label: "BFFs",                value: 'teamskeet "bffs"' },
+    { label: "Deeper",              value: 'teamskeet "deeper"' },
+    { label: "Sis Loves Me",        value: 'teamskeet "sis loves me"' },
+    { label: "True Amateurs",       value: 'teamskeet "true amateurs"' },
+    { label: "My First Sex Teacher",value: 'teamskeet "my first sex teacher"' },
+    { label: "Teens Love Huge Cocks",value: 'teamskeet "teens love huge cocks"' },
+    { label: "Moms Bang Teens",     value: 'teamskeet "moms bang teens"' },
+    { label: "Bang Real Teens",     value: 'teamskeet "bang real teens"' },
+    { label: "Tiny4K",              value: 'teamskeet "tiny4k"' },
+    { label: "Exploited College Girls", value: 'teamskeet "exploited college girls"' },
+    { label: "We Live Together",    value: 'teamskeet "we live together"' },
+    { label: "Naughty Bookworms",   value: 'teamskeet "naughty bookworms"' },
+    { label: "Naughty Athletics",   value: 'teamskeet "naughty athletics"' },
+    { label: "Tutor4K",             value: 'teamskeet "tutor4k"' },
+    { label: "Little Caprice Dreams", value: 'teamskeet "little caprice"' },
+    { label: "Step Siblings Caught",value: 'teamskeet "step siblings caught"' },
+    { label: "Pervs On Patrol",     value: 'teamskeet "pervs on patrol"' },
+    { label: "Cum Fiesta",          value: 'teamskeet "cum fiesta"' },
+    { label: "Karup's Private Collection", value: 'teamskeet "karups private"' },
+    { label: "Jizz Orgy",           value: 'teamskeet "jizz orgy"' },
+    { label: "Pure18",              value: 'teamskeet "pure18"' },
+    { label: "Fantasy Massage",     value: 'teamskeet "fantasy massage"' },
+    { label: "Hot And Mean",        value: 'teamskeet "hot and mean"' },
   ];
+
+  // Dedicated Hijab / Muslim / Arab search angles for maximum results
+  const hijabShows = [
+    { label: "Hijab Hookup",    value: '"hijab hookup"' },
+    { label: "Hijab Full",      value: '"hijab hookup" full movie' },
+    { label: "All Hijab Episodes", value: 'hijab hookup all episodes' },
+    { label: "Muslim Teen",     value: 'muslim hijab teen' },
+    { label: "Arab Hijab",      value: 'arab hijab' },
+    { label: "Turkish Hijab",   value: 'turkish hijab' },
+    { label: "Iranian Hijab",   value: 'iranian hijab' },
+    { label: "Malay Hijab",     value: 'malay hijab' },
+    { label: "Niqab",           value: 'niqab sex' },
+    { label: "Muslim Housewife",value: 'muslim housewife' },
+    { label: "Abaya",           value: 'abaya arab' },
+  ];
+
 
   const asianGenres = [
     { label: "Japanese", value: "japanese" },
@@ -649,6 +687,51 @@ const Adult = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* ── Row 3b: Hijab / Muslim dedicated row ── */}
+            <div className="px-6 py-5 border-b border-white/5">
+              <div className="flex items-center gap-2 mb-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25">🕌 Hijab & Muslim</p>
+                <span className="text-[9px] text-emerald-500/40 font-bold uppercase tracking-widest">— Multiple search angles for more results</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {hijabShows.map((s) => (
+                  <button
+                    key={s.value}
+                    onClick={() => { setQuery(s.value); setPage(1); scrollToResults(); }}
+                    className={cn(
+                      "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
+                      query === s.value
+                        ? "bg-emerald-600/30 border-emerald-500/50 text-emerald-300"
+                        : "bg-transparent border-white/8 text-white/40 hover:bg-emerald-500/8 hover:border-emerald-500/30 hover:text-emerald-300"
+                    )}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Row 3c: TeamSkeet — full-width scrollable ── */}
+            <div className="px-6 py-5 border-b border-white/5">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">TeamSkeet Network — All Shows</p>
+              <div className="flex flex-wrap gap-2">
+                {teamSkeetShows.map((show) => (
+                  <button
+                    key={show.value}
+                    onClick={() => { setQuery(show.value); setPage(1); scrollToResults(); }}
+                    className={cn(
+                      "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
+                      query === show.value
+                        ? "bg-blue-600/30 border-blue-500/50 text-blue-300"
+                        : "bg-transparent border-white/8 text-white/40 hover:bg-blue-500/8 hover:text-blue-300"
+                    )}
+                  >
+                    {show.label}
+                  </button>
+                ))}
               </div>
             </div>
 
