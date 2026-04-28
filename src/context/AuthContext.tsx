@@ -58,7 +58,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           // Get verification status from Firebase Auth directly
           const { auth } = await import("@/lib/firebase");
-          const emailVerified = auth.currentUser?.emailVerified || false;
+          let emailVerified = auth.currentUser?.emailVerified || false;
+          
+          // If not verified, try to reload the user to see if they verified
+          if (!emailVerified && auth.currentUser) {
+            await auth.currentUser.reload();
+            emailVerified = auth.currentUser.emailVerified;
+          }
           
           // Detect if user became admin
           if (!isInitial && !user.isAdmin && data.isAdmin) {

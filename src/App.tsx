@@ -25,6 +25,7 @@ import JarvisTutorial from "./components/JarvisTutorial";
 import Admin from "./pages/Admin";
 import Maintenance from "./components/Maintenance";
 import { useAdmin } from "./context/AdminContext";
+import VerificationBanner from "./components/VerificationBanner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,6 +60,7 @@ const App = () => (
           <TooltipProvider>
             <BrowserRouter>
               <JarvisTutorial />
+              <VerificationBanner />
               <Toaster />
               <Sonner />
               <Routes>
