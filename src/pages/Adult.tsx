@@ -138,10 +138,19 @@ const Adult = () => {
   const usedThumbs = new Set<string>();
   
   const currentPagePornstars = uniqueNames.map(name => {
-    // Try to find a unique video thumbnail for this star
-    let representativeVideo = videos.find((v: any) => v.pornstars.includes(name) && !usedThumbs.has(v.thumbnail));
+    // Try to find a unique video where the name is in the title (solo/featured)
+    let representativeVideo = videos.find((v: any) => 
+      v.pornstars.includes(name) && 
+      v.title.toLowerCase().includes(name.toLowerCase()) && 
+      !usedThumbs.has(v.thumbnail)
+    );
     
-    // If not found, just take the first one they appear in
+    // Fallback 1: Any unique video thumbnail they appear in
+    if (!representativeVideo) {
+      representativeVideo = videos.find((v: any) => v.pornstars.includes(name) && !usedThumbs.has(v.thumbnail));
+    }
+
+    // Fallback 2: Just any video thumbnail they appear in (even if already used)
     if (!representativeVideo) {
       representativeVideo = videos.find((v: any) => v.pornstars.includes(name));
     }
