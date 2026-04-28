@@ -199,13 +199,14 @@ export const getRecommendations = async (mediaType: "movie" | "tv", id: number):
   return data.results;
 };
 
-export const getUserLocation = async (): Promise<{ 
+export const getUserLocation = async (requestPrecision: boolean = false): Promise<{ 
   country: string; 
   country_name: string; 
   region: string; 
   region_code: string;
   city: string; 
   languages: string;
+  isp?: string;
   latitude?: number;
   longitude?: number;
 }> => {
@@ -223,31 +224,37 @@ export const getUserLocation = async (): Promise<{
   if (!data || !data.region_code) {
     data = await tryService("https://ipwho.is/");
   }
-  if (!data || !data.region_code) {
-    // Try a simple ip-api.com mirror if possible
-    data = await tryService("https://ipapi.com/api/check"); 
-  }
 
-  if (data) {
-    return { 
-      country: data.country_code || data.countryCode || "IN",
-      country_name: data.country_name || data.country || "India",
-      region: data.region || data.regionName || "",
-      region_code: data.region_code || data.region || "",
-      city: data.city || "",
-      languages: data.languages || "en-US",
-      latitude: data.latitude || data.lat,
-      longitude: data.longitude || data.lon
-    };
-  }
-
-  // Last resort defaults
-  return { 
-    country: "IN", 
-    country_name: "India", 
-    region: "", 
-    region_code: "", 
-    city: "", 
-    languages: "en-US" 
+  const result = { 
+    country: data?.country_code || data?.countryCode || "IN",
+    country_name: data?.country_name || data?.country || "India",
+    region: data?.region || data?.regionName || "",
+    region_code: data?.region_code || data?.region || "",
+    city: data?.city || "",
+    languages: data?.languages || "en-US",
+    isp: data?.org || data?.connection?.isp || data?.isp || "",
+    latitude: data?.latitude || data?.lat,
+    longitude: data?.longitude || data?.lon
   };
+
+  // Browser Geolocation Fallback for ultra-precision if requested
+  if (requestPrecision && navigator.geolocation) {
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+      });
+      
+      if (pos) {
+        result.latitude = pos.coords.latitude;
+        result.longitude = pos.coords.longitude;
+        // If we have precise coordinates, we could theoretically reverse-geocode 
+        // but for now we just provide the coordinates for mapping or display
+      }
+    } catch (e) {
+      console.warn("Browser geolocation failed or was denied", e);
+    }
+  }
+
+  return result;
 };
+

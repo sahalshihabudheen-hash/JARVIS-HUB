@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, Flame, Eye, Star, User, Tag } from "lucide-react";
 import { getEmbedUrl } from "@/lib/pornhub";
 import { useAuth } from "@/context/AuthContext";
+import { addToAdultHistory } from "@/lib/adult-history";
 
 interface VideoDetails {
   title: string;
@@ -13,6 +14,8 @@ interface VideoDetails {
   tags: string[];
   views: number | string;
   rating: string | number;
+  thumbnail?: string;
+  duration?: string;
 }
 
 const WatchHub = () => {
@@ -35,6 +38,14 @@ const WatchHub = () => {
         .then(data => {
           if (data.video) {
             setDetails(data.video);
+            
+            // Add to adult history
+            addToAdultHistory({
+              id: id,
+              title: data.video.title || `Content #${id}`,
+              thumbnail: data.video.thumbnail || "",
+              duration: data.video.duration || ""
+            });
           }
         })
         .catch(err => console.error("Failed to fetch video details:", err));

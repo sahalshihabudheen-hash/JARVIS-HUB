@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
-import { Play, Eye, Clock } from "lucide-react";
+import { Play, Eye, Clock, Bookmark, BookmarkCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { toggleAdultWatchlist, isInAdultWatchlist } from "@/lib/adult-watchlist";
+import { toast } from "sonner";
 
 interface AdultCardProps {
   video: {
@@ -17,6 +20,27 @@ interface AdultCardProps {
 }
 
 const AdultCard = ({ video, className }: AdultCardProps) => {
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    setIsSaved(isInAdultWatchlist(video.id));
+  }, [video.id]);
+
+  const handleWatchLater = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const added = toggleAdultWatchlist({
+      id: video.id,
+      title: video.title,
+      thumbnail: video.thumbnail,
+      duration: video.duration
+    });
+    setIsSaved(added);
+    toast(added ? "Added to Watch Later" : "Removed from Watch Later", {
+      icon: added ? <BookmarkCheck className="w-4 h-4 text-green-500" /> : <Bookmark className="w-4 h-4" />
+    });
+  };
+
   return (
     <div
       className={cn(
@@ -54,10 +78,22 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
 
         {/* Rating Badge */}
         {video.rating && (
-          <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-md glass text-xs font-medium text-yellow-400">
-            <span>{video.rating}</span>
+          <div className="absolute top-2 right-2 flex items-center gap-2">
+            <button 
+              onClick={handleWatchLater}
+              className={cn(
+                "p-2 rounded-lg glass transition-all duration-300",
+                isSaved ? "bg-red-500/20 text-red-500 border-red-500/30" : "hover:bg-white/10 text-white/60"
+              )}
+            >
+              {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+            </button>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-md glass text-xs font-medium text-yellow-400">
+              <span>{video.rating}</span>
+            </div>
           </div>
         )}
+
       </div>
 
       {/* Info */}
