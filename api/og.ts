@@ -6,36 +6,60 @@ const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { type, id, season, episode } = req.query;
 
-  if (!type || !id) {
-    return res.status(400).send('Missing type or id');
+  if (!id) {
+    return res.status(400).send('Missing id');
   }
 
   try {
-    // Fetch basic details
-    const response = await fetch(`${TMDB_BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}`);
-    const data = await response.json();
+    let title = "JARVIS HUB";
+    let description = "Stream movies, TV shows, and anime for free on JARVIS HUB.";
+    let image = "https://jarvis-hub-eight.vercel.app/JARVIS2.gif";
+    let watchUrl = `https://jarvis-hub-eight.vercel.app/`;
 
-    let title = data.title || data.name || "JARVIS HUB";
-    let description = data.overview || "Stream movies and TV shows on JARVIS HUB.";
-    let image = data.poster_path ? `https://image.tmdb.org/t/p/w780${data.poster_path}` : "https://jarvis-hub-eight.vercel.app/og-image.png";
-    let watchUrl = `https://jarvis-hub-eight.vercel.app/watch/${type}/${id}`;
-
-    // If it's a TV show with specific season and episode
-    if (type === 'tv' && season && episode) {
+    // Handle Adult Content (Hub)
+    if (type === 'adult' || req.url?.includes('/hub/watch/')) {
       try {
-        const epResponse = await fetch(`${TMDB_BASE_URL}/tv/${id}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}`);
-        const epData = await epResponse.json();
-        
-        if (epData.name) {
-          title = `${data.name} - S${season}E${episode}: ${epData.name}`;
-          description = epData.overview || description;
-          if (epData.still_path) {
-            image = `https://image.tmdb.org/t/p/w780${epData.still_path}`;
-          }
+        const hubResponse = await fetch(`https://www.pornhub.com/webmasters/video_by_id?id=${id}&thumbsize=large_number`);
+        const hubData = await hubResponse.json();
+        if (hubData.video) {
+          const v = hubData.video;
+          title = `▶ WATCH NOW: ${v.title}`;
+          description = `Duration: ${v.duration} | Views: ${v.views} | Rating: ${v.rating}%`;
+          image = v.default_thumb;
+          watchUrl = `https://jarvis-hub-eight.vercel.app/watch/adult/${id}`;
         }
-        watchUrl = `https://jarvis-hub-eight.vercel.app/watch/tv/${id}/${season}/${episode}`;
       } catch (e) {
-        // Fallback to basic TV show info
+        title = "Premium Entertainment | JARVIS HUB";
+      }
+    } 
+    // Handle TMDB Content (Movie/TV)
+    else {
+      const mediaType = type === 'tv' ? 'tv' : 'movie';
+      const response = await fetch(`${TMDB_BASE_URL}/${mediaType}/${id}?api_key=${TMDB_API_KEY}`);
+      const data = await response.json();
+
+      title = data.title || data.name || "JARVIS HUB";
+      description = data.overview || "Stream movies and TV shows on JARVIS HUB.";
+      image = data.poster_path ? `https://image.tmdb.org/t/p/w780${data.poster_path}` : image;
+      watchUrl = `https://jarvis-hub-eight.vercel.app/${mediaType}/${id}`;
+
+      // If it's a TV show with specific season and episode
+      if (mediaType === 'tv' && season && episode) {
+        try {
+          const epResponse = await fetch(`${TMDB_BASE_URL}/tv/${id}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}`);
+          const epData = await epResponse.json();
+          
+          if (epData.name) {
+            title = `${data.name} - S${season}E${episode}: ${epData.name}`;
+            description = epData.overview || description;
+            if (epData.still_path) {
+              image = `https://image.tmdb.org/t/p/w780${epData.still_path}`;
+            }
+          }
+          watchUrl = `https://jarvis-hub-eight.vercel.app/watch/tv/${id}/${season}/${episode}`;
+        } catch (e) {}
+      } else if (req.url?.includes('/watch/')) {
+        watchUrl = `https://jarvis-hub-eight.vercel.app/watch/${mediaType}/${id}`;
       }
     }
 
@@ -61,7 +85,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         <meta name="twitter:description" content="${description}">
         <meta name="twitter:image" content="${image}">
         
-        <!-- Redirect to the actual app for humans -->
+        <!-- Redirect to the actual app -->
         <meta http-equiv="refresh" content="0;url=${watchUrl}">
       </head>
       <body>
