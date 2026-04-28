@@ -133,13 +133,18 @@ const Adult = () => {
     pornstars: v.pornstars || []
   })) || [];
 
-  // Extract unique pornstars from current page videos
+  // Extract unique pornstars from current page videos and find their representative thumb
   const currentPagePornstars = Array.from(new Set(
     videos.flatMap((v: any) => v.pornstars)
-  )).map(name => ({
-    name,
-    id: name.toLowerCase().replace(/\s+/g, '-')
-  })).slice(0, 18); // Show up to 18
+  )).map(name => {
+    // Find the first video that features this star to use as their "hot" thumbnail
+    const representativeVideo = videos.find((v: any) => v.pornstars.includes(name));
+    return {
+      name,
+      id: name.toLowerCase().replace(/\s+/g, '-'),
+      thumb: representativeVideo?.thumbnail || ""
+    };
+  }).filter(star => star.thumb).slice(0, 18);
 
   return (
     <div className="min-h-screen bg-background">
@@ -353,11 +358,8 @@ const Adult = () => {
                   >
                     <div className="relative w-16 h-16 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-white/5 group-hover:border-pink-500/50 transition-all duration-300 shadow-xl shadow-black/40">
                       <img
-                        src={`https://images.metadata.sk/pornstars/${star.id}.jpg`}
+                        src={star.thumb}
                         alt={star.name}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = `https://via.placeholder.com/200x200?text=${star.name.split(' ')[0]}`;
-                        }}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
