@@ -145,13 +145,14 @@ const Adult = () => {
   ];
 
   const breastSizes = [
-    { label: "Flat / Small", value: "small tits",   emoji: "🔵", color: "border-blue-500/40 hover:bg-blue-500/10 hover:border-blue-400" },
-    { label: "Medium",       value: "medium tits",  emoji: "🟢", color: "border-green-500/40 hover:bg-green-500/10 hover:border-green-400" },
-    { label: "Big",          value: "big tits",     emoji: "🟡", color: "border-yellow-500/40 hover:bg-yellow-500/10 hover:border-yellow-400" },
-    { label: "Huge",         value: "huge tits",    emoji: "🟠", color: "border-orange-500/40 hover:bg-orange-500/10 hover:border-orange-400" },
-    { label: "Extra Huge",   value: "gigantic tits",emoji: "🔴", color: "border-red-500/40 hover:bg-red-500/10 hover:border-red-400" },
-    { label: "Natural",      value: "natural tits", emoji: "🌿", color: "border-emerald-500/40 hover:bg-emerald-500/10 hover:border-emerald-400" },
-    { label: "Fake / Implants", value: "fake tits", emoji: "💎", color: "border-purple-500/40 hover:bg-purple-500/10 hover:border-purple-400" },
+    { label: "Flat",        value: "flat chested",  icon: "(·)(·)",  accent: "text-sky-400    border-sky-500/30    hover:bg-sky-500/10" },
+    { label: "Small",       value: "small tits",    icon: "(°)(°)",  accent: "text-blue-400   border-blue-500/30   hover:bg-blue-500/10" },
+    { label: "Medium",      value: "medium tits",   icon: "(o)(o)",  accent: "text-green-400  border-green-500/30  hover:bg-green-500/10" },
+    { label: "Big",         value: "big tits",      icon: "(O)(O)",  accent: "text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10" },
+    { label: "Huge",        value: "huge tits",     icon: "(0)(0)",  accent: "text-orange-400 border-orange-500/30 hover:bg-orange-500/10" },
+    { label: "Extra Huge",  value: "gigantic tits", icon: "(@)(@)",  accent: "text-red-400    border-red-500/30    hover:bg-red-500/10" },
+    { label: "Natural",     value: "natural tits",  icon: "(u)(u)",  accent: "text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10" },
+    { label: "Implants",    value: "fake tits",     icon: "(Q)(Q)",  accent: "text-purple-400 border-purple-500/30 hover:bg-purple-500/10" },
   ];
 
 
@@ -554,119 +555,128 @@ const Adult = () => {
             </div>
           </div>
 
-          {/* Popular Tags Row */}
-          <div className="mb-8">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">Trending Tags</h3>
-            <div className="flex flex-wrap gap-2">
-              {popularTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => {
-                    setQuery(tag);
-                    setPage(1);
-                  }}
-                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500/50 hover:bg-pink-500/10 text-xs font-medium transition-all"
-                >
-                  #{tag}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* ═══════════════════════════════════════
+               UNIFIED DISCOVERY & FILTER PANEL
+          ═══════════════════════════════════════ */}
+          <div className="mb-12 rounded-3xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
 
-
-          {/* Categories */}
-          <div className="flex flex-wrap gap-2 mb-12 overflow-x-auto pb-2 scrollbar-hide">
-            {categories.map((cat) => (
-              <Button
-                key={cat.value}
-                variant={query === cat.value ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setQuery(cat.value);
-                  setSearchInput("");
-                  setPage(1);
-                }}
-                className={cn(
-                  "rounded-xl px-6 h-10 text-xs font-bold uppercase tracking-widest transition-all duration-300",
-                  query === cat.value 
-                    ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] border-transparent" 
-                    : "bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white"
-                )}
-              >
-                {cat.label}
-              </Button>
-            ))}
-          </div>
-
-          {/* TeamSkeet Sub-categories */}
-          {query.toLowerCase().includes("teamskeet") && (
-            <div className="flex flex-wrap gap-2 mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
-              <div className="w-full text-xs font-bold text-blue-500/60 uppercase tracking-widest mb-1 ml-1">TeamSkeet Network Shows</div>
-              {teamSkeetShows.map((show) => (
-                <Button
-                  key={show.value}
-                  variant={query === show.value ? "default" : "outline"}
-                  size="xs"
-                  onClick={() => {
-                    setQuery(show.value);
-                    setPage(1);
-                  }}
-                  className={`rounded-xl text-[10px] h-8 ${query === show.value ? 'bg-blue-600/20 text-blue-400 border-blue-500/50 hover:bg-blue-600/30' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}
-                >
-                  {show.label}
-                </Button>
-              ))}
-            </div>
-          )}
-
-          {/* Asian Genres Sub-categories */}
-          <div className="flex flex-wrap gap-2 mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
-            <div className="w-full text-xs font-bold text-white/30 uppercase tracking-widest mb-1 ml-1">Explore Asian Categories</div>
-            {asianGenres.map((genre) => (
-              <Button
-                key={genre.value}
-                variant={query === genre.value ? "default" : "outline"}
-                size="xs"
-                onClick={() => {
-                  setQuery(genre.value);
-                  setPage(1);
-                }}
-                className={`rounded-xl text-[10px] h-8 ${query === genre.value ? 'bg-white text-black' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}
-              >
-                {genre.label}
-              </Button>
-            ))}
-          </div>
-
-          {/* ── Breast Size Filter ── */}
-          <div className="mb-10">
-            <div className="flex items-center gap-2 mb-4 ml-1">
-              <span className="text-xs font-black uppercase tracking-[0.2em] text-white/30">Filter by Size</span>
-              <span className="text-[10px] text-white/20 font-medium">— Breast size categories</span>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {breastSizes.map((bs) => {
-                const isActive = query === bs.value;
-                return (
+            {/* ── Row 1: Category Pills ── */}
+            <div className="px-6 pt-6 pb-5 border-b border-white/5">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Categories</p>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => (
                   <button
-                    key={bs.value}
-                    onClick={() => { setQuery(bs.value); setSearchInput(bs.label); setPage(1); }}
+                    key={cat.value}
+                    onClick={() => { setQuery(cat.value); setSearchInput(""); setPage(1); }}
                     className={cn(
-                      "flex items-center gap-2 px-5 py-2.5 rounded-2xl border text-xs font-bold transition-all duration-300",
-                      isActive
-                        ? "bg-white/10 border-white/30 text-white scale-[1.03] shadow-lg"
-                        : `bg-white/[0.03] text-white/50 ${bs.color}`
+                      "px-4 h-9 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all duration-200",
+                      query === cat.value
+                        ? "bg-blue-600 border-transparent text-white shadow-[0_0_16px_rgba(37,99,235,0.45)]"
+                        : "bg-transparent border-white/8 text-white/40 hover:bg-white/8 hover:text-white/80"
                     )}
                   >
-                    <span className="text-base leading-none">{bs.emoji}</span>
-                    <span>{bs.label}</span>
-                    {isActive && (
-                      <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/10 text-[9px] font-black tracking-widest">ACTIVE</span>
-                    )}
+                    {cat.label}
                   </button>
-                );
-              })}
+                ))}
+              </div>
             </div>
+
+            {/* ── Row 2: Trending Tags ── */}
+            <div className="px-6 py-5 border-b border-white/5">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Trending Tags</p>
+              <div className="flex flex-wrap gap-2">
+                {popularTags.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => { setQuery(tag); setPage(1); }}
+                    className={cn(
+                      "px-3 h-7 rounded-lg text-[11px] font-medium border transition-all",
+                      query === tag
+                        ? "bg-pink-600/20 border-pink-500/50 text-pink-400"
+                        : "bg-transparent border-white/8 text-white/35 hover:border-pink-500/40 hover:bg-pink-500/8 hover:text-pink-300"
+                    )}
+                  >
+                    #{tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Row 3: Asian + TeamSkeet side by side ── */}
+            <div className="px-6 py-5 border-b border-white/5 flex flex-col md:flex-row gap-6">
+              <div className="flex-1">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Asian</p>
+                <div className="flex flex-wrap gap-2">
+                  {asianGenres.map((genre) => (
+                    <button
+                      key={genre.value}
+                      onClick={() => { setQuery(genre.value); setPage(1); }}
+                      className={cn(
+                        "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
+                        query === genre.value
+                          ? "bg-white text-black border-transparent"
+                          : "bg-transparent border-white/8 text-white/40 hover:bg-white/8 hover:text-white"
+                      )}
+                    >
+                      {genre.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">TeamSkeet Series</p>
+                <div className="flex flex-wrap gap-2">
+                  {teamSkeetShows.map((show) => (
+                    <button
+                      key={show.value}
+                      onClick={() => { setQuery(show.value); setPage(1); }}
+                      className={cn(
+                        "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
+                        query === show.value
+                          ? "bg-blue-600/30 border-blue-500/50 text-blue-300"
+                          : "bg-transparent border-white/8 text-white/40 hover:bg-blue-500/8 hover:text-blue-300"
+                      )}
+                    >
+                      {show.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* ── Row 4: Breast Size Filter ── */}
+            <div className="px-6 py-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Body Type — Breast Size</p>
+              <div className="flex flex-wrap gap-2">
+                {breastSizes.map((bs) => {
+                  const isActive = query === bs.value;
+                  return (
+                    <button
+                      key={bs.value}
+                      onClick={() => { setQuery(bs.value); setSearchInput(bs.label); setPage(1); }}
+                      className={cn(
+                        "flex items-center gap-2 pl-2 pr-4 h-9 rounded-xl border text-xs font-bold transition-all duration-200",
+                        isActive
+                          ? "bg-white/12 border-white/25 text-white"
+                          : `bg-transparent border-white/8 text-white/45 ${bs.accent}`
+                      )}
+                    >
+                      {/* ASCII breast icon in mono font */}
+                      <span
+                        className={cn(
+                          "font-mono text-[11px] tracking-tighter leading-none px-1.5 py-0.5 rounded-md",
+                          isActive ? "bg-white/10 text-white" : "bg-white/5 text-white/30"
+                        )}
+                      >
+                        {bs.icon}
+                      </span>
+                      {bs.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
           </div>
 
           {/* Grid Header */}
