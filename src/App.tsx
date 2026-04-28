@@ -15,6 +15,7 @@ import Watchlist from "./pages/Watchlist";
 import Auth from "./pages/Auth";
 import Settings from "./pages/Settings";
 import History from "./pages/History";
+import Adult from "./pages/Adult";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import { TutorialProvider } from "./context/TutorialContext";
@@ -76,6 +77,7 @@ const App = () => (
                 <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/history" element={<History />} />
+                <Route path="/adult" element={<Adult />} />
                 <Route path="/admin" element={<Admin />} />
               </Route>
   

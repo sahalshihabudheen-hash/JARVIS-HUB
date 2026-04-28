@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield, History } from "lucide-react";
+import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield, History, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -52,6 +52,7 @@ const Navbar = () => {
     { to: "/movies", label: "Movies", icon: Film },
     { to: "/tv", label: "TV Shows", icon: Tv },
     { to: "/anime", label: "Anime", icon: Sparkles },
+    { to: "/adult", label: "Adult", icon: Flame },
     { to: "/watchlist", label: "Watchlist", icon: Heart },
     { to: "/history", label: "History", icon: History },
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
