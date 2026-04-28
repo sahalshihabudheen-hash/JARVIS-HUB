@@ -77,7 +77,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const refreshData = async () => {
     toast.success("Syncing with JARVIS database...", { icon: "🔄" });
     try {
-      const q = query(collection(db, "users"), orderBy("lastSeen", "desc"));
+      const q = collection(db, "users");
       const snapshot = await getDocs(q);
       const fetchedUsers = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -106,7 +106,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Real-time Users from Firestore
     try {
-      const q = query(collection(db, "users"), orderBy("lastSeen", "desc"));
+      const q = collection(db, "users");
       unsubscribe = onSnapshot(q, 
         (snapshot) => {
           const fetchedUsers = snapshot.docs.map(doc => ({

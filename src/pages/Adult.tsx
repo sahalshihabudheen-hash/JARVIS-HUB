@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
-import { Search, Flame } from "lucide-react";
+import { Search, Flame, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const Adult = () => {
@@ -16,6 +16,7 @@ const Adult = () => {
   const [query, setQuery] = useState("all");
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
+  const [isBlurred, setIsBlurred] = useState(true);
 
   useEffect(() => {
     const isOwner = user?.email?.toLowerCase() === "admin@gmail.com";
@@ -117,6 +118,19 @@ const Adult = () => {
                 className="pl-10 bg-white/5 border-white/10 rounded-full focus:ring-blue-500/50"
               />
             </form>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsBlurred(!isBlurred)}
+              className={`rounded-full border-white/10 px-6 h-10 ${isBlurred ? 'bg-blue-600/10 text-blue-400 border-blue-500/30' : 'bg-white/5 text-white/60'}`}
+            >
+              {isBlurred ? (
+                <><Eye className="w-4 h-4 mr-2" /> Show Thumbs</>
+              ) : (
+                <><EyeOff className="w-4 h-4 mr-2" /> Hide Thumbs</>
+              )}
+            </Button>
           </div>
 
           {/* Categories */}
@@ -187,7 +201,9 @@ const Adult = () => {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {videos.map((video) => (
-                  <AdultCard key={video.id} video={video} />
+                  <div key={video.id} className={isBlurred ? "blur-xl hover:blur-none transition-all duration-500" : ""}>
+                    <AdultCard video={video} />
+                  </div>
                 ))}
               </div>
 
