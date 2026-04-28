@@ -118,7 +118,9 @@ const Adult = () => {
     { label: "Asian", value: "asian" },
     { label: "Thai", value: "thai" },
     { label: "Indian", value: "indian" },
+    { label: "Malayalam", value: "malayalam" },
   ];
+
 
   const topActresses = [
     { name: "Mia Khalifa", id: "mia-khalifa" },
@@ -296,14 +298,16 @@ const Adult = () => {
               </div>
               <Button 
                 onClick={() => {
-                  setQuery(`${location} porn`);
+                  const searchTerm = location.toLowerCase().includes("kerala") ? "Malayalam" : location;
+                  setQuery(`${searchTerm} porn`);
                   setPage(1);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="relative z-10 bg-blue-600 hover:bg-blue-700 rounded-full px-8 h-12 font-bold shadow-[0_0_20px_rgba(37,99,235,0.4)]"
               >
-                See Porn in My Region
+                See Kerala Porn Videos
               </Button>
+
             </div>
           )}
 
@@ -700,7 +704,8 @@ const Adult = () => {
 
       {/* Onboarding Modal */}
       {showOnboarding && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-4">
+
           <div className="max-w-xl w-full bg-card border border-white/10 rounded-[2.5rem] p-10 shadow-3xl text-center space-y-8">
             <div className="space-y-3">
               <div className="mx-auto w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6">
