@@ -134,17 +134,28 @@ const Adult = () => {
   })) || [];
 
   // Extract unique pornstars from current page videos and find their representative thumb
-  const currentPagePornstars = Array.from(new Set(
-    videos.flatMap((v: any) => v.pornstars)
-  )).map(name => {
-    // Find the first video that features this star to use as their "hot" thumbnail
-    const representativeVideo = videos.find((v: any) => v.pornstars.includes(name));
-    return {
-      name,
-      id: name.toLowerCase().replace(/\s+/g, '-'),
-      thumb: representativeVideo?.thumbnail || ""
-    };
-  }).filter(star => star.thumb).slice(0, 18);
+  const uniqueNames = Array.from(new Set(videos.flatMap((v: any) => v.pornstars)));
+  const usedThumbs = new Set<string>();
+  
+  const currentPagePornstars = uniqueNames.map(name => {
+    // Try to find a unique video thumbnail for this star
+    let representativeVideo = videos.find((v: any) => v.pornstars.includes(name) && !usedThumbs.has(v.thumbnail));
+    
+    // If not found, just take the first one they appear in
+    if (!representativeVideo) {
+      representativeVideo = videos.find((v: any) => v.pornstars.includes(name));
+    }
+
+    if (representativeVideo) {
+      usedThumbs.add(representativeVideo.thumbnail);
+      return {
+        name,
+        id: name.toLowerCase().replace(/\s+/g, '-'),
+        thumb: representativeVideo.thumbnail
+      };
+    }
+    return null;
+  }).filter((star): star is any => star !== null).slice(0, 18);
 
   return (
     <div className="min-h-screen bg-background">
