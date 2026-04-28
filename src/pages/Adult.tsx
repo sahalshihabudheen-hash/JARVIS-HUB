@@ -164,7 +164,7 @@ const Adult = () => {
                   <MapPin className="w-4 h-4 text-blue-400" />
                   <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Localized Feed</span>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-display font-bold">Trending in {location}</h2>
+                <h2 className="text-2xl md:text-3xl font-display font-bold">Porn in {location}</h2>
                 <p className="text-muted-foreground mt-2 max-w-lg">We've customized your feed with content popular in your region. Enjoy premium entertainment from around the globe.</p>
               </div>
               <Button 
