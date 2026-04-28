@@ -144,6 +144,16 @@ const Adult = () => {
     { label: "Malayalam", value: "malayalam" },
   ];
 
+  const breastSizes = [
+    { label: "Flat / Small", value: "small tits",   emoji: "🔵", color: "border-blue-500/40 hover:bg-blue-500/10 hover:border-blue-400" },
+    { label: "Medium",       value: "medium tits",  emoji: "🟢", color: "border-green-500/40 hover:bg-green-500/10 hover:border-green-400" },
+    { label: "Big",          value: "big tits",     emoji: "🟡", color: "border-yellow-500/40 hover:bg-yellow-500/10 hover:border-yellow-400" },
+    { label: "Huge",         value: "huge tits",    emoji: "🟠", color: "border-orange-500/40 hover:bg-orange-500/10 hover:border-orange-400" },
+    { label: "Extra Huge",   value: "gigantic tits",emoji: "🔴", color: "border-red-500/40 hover:bg-red-500/10 hover:border-red-400" },
+    { label: "Natural",      value: "natural tits", emoji: "🌿", color: "border-emerald-500/40 hover:bg-emerald-500/10 hover:border-emerald-400" },
+    { label: "Fake / Implants", value: "fake tits", emoji: "💎", color: "border-purple-500/40 hover:bg-purple-500/10 hover:border-purple-400" },
+  ];
+
 
   const topActresses = [
     { name: "Mia Khalifa", id: "mia-khalifa" },
@@ -203,10 +213,11 @@ const Adult = () => {
     url: v.url,
     thumbnail: v.default_thumb,
     duration: v.duration,
-    views: v.views.toLocaleString(),
+    views: typeof v.views === "number" ? v.views.toLocaleString() : (v.views || ""),
     rating: v.rating,
     added: v.publish_date,
-    pornstars: v.pornstars || []
+    pornstars: v.pornstars || [],
+    source,
   })) || [];
 
   // Extract unique pornstars from current page videos and find their representative thumb
@@ -625,6 +636,37 @@ const Adult = () => {
                 {genre.label}
               </Button>
             ))}
+          </div>
+
+          {/* ── Breast Size Filter ── */}
+          <div className="mb-10">
+            <div className="flex items-center gap-2 mb-4 ml-1">
+              <span className="text-xs font-black uppercase tracking-[0.2em] text-white/30">Filter by Size</span>
+              <span className="text-[10px] text-white/20 font-medium">— Breast size categories</span>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {breastSizes.map((bs) => {
+                const isActive = query === bs.value;
+                return (
+                  <button
+                    key={bs.value}
+                    onClick={() => { setQuery(bs.value); setSearchInput(bs.label); setPage(1); }}
+                    className={cn(
+                      "flex items-center gap-2 px-5 py-2.5 rounded-2xl border text-xs font-bold transition-all duration-300",
+                      isActive
+                        ? "bg-white/10 border-white/30 text-white scale-[1.03] shadow-lg"
+                        : `bg-white/[0.03] text-white/50 ${bs.color}`
+                    )}
+                  >
+                    <span className="text-base leading-none">{bs.emoji}</span>
+                    <span>{bs.label}</span>
+                    {isActive && (
+                      <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/10 text-[9px] font-black tracking-widest">ACTIVE</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Grid Header */}
