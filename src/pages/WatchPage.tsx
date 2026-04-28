@@ -12,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useAdmin } from "@/context/AdminContext";
 import { cn } from "@/lib/utils";
 import { saveWatchProgressCloud } from "@/lib/vidlink";
+import SeoMetadata from "@/components/SeoMetadata";
 
 const WatchPage = () => {
   const { type, id, season, episode } = useParams<{
@@ -154,6 +155,14 @@ const WatchPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {content && (
+        <SeoMetadata 
+          title={`WATCH NOW: ${title}`}
+          description={content.overview}
+          image={getImageUrl(content.poster_path, "w780")}
+          type={type === "movie" ? "video.movie" : "video.tv_show"}
+        />
+      )}
       <Navbar />
 
       <main className="pt-20 pb-16">
