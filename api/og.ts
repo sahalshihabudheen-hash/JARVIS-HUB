@@ -4,27 +4,47 @@ const TMDB_API_KEY = "4e44d9029b1270a757cddc766a1bcb63";
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const { type, id } = req.query;
+  const { type, id, season, episode } = req.query;
 
   if (!type || !id) {
     return res.status(400).send('Missing type or id');
   }
 
   try {
+    // Fetch basic details
     const response = await fetch(`${TMDB_BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}`);
     const data = await response.json();
 
-    const title = data.title || data.name || "JARVIS HUB";
-    const description = data.overview || "Stream movies and TV shows on JARVIS HUB.";
-    const image = data.poster_path ? `https://image.tmdb.org/t/p/w780${data.poster_path}` : "https://jarvis-hub-eight.vercel.app/og-image.png";
-    const watchUrl = `https://jarvis-hub-eight.vercel.app/watch/${type}/${id}`;
+    let title = data.title || data.name || "JARVIS HUB";
+    let description = data.overview || "Stream movies and TV shows on JARVIS HUB.";
+    let image = data.poster_path ? `https://image.tmdb.org/t/p/w780${data.poster_path}` : "https://jarvis-hub-eight.vercel.app/og-image.png";
+    let watchUrl = `https://jarvis-hub-eight.vercel.app/watch/${type}/${id}`;
+
+    // If it's a TV show with specific season and episode
+    if (type === 'tv' && season && episode) {
+      try {
+        const epResponse = await fetch(`${TMDB_BASE_URL}/tv/${id}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}`);
+        const epData = await epResponse.json();
+        
+        if (epData.name) {
+          title = `${data.name} - S${season}E${episode}: ${epData.name}`;
+          description = epData.overview || description;
+          if (epData.still_path) {
+            image = `https://image.tmdb.org/t/p/w780${epData.still_path}`;
+          }
+        }
+        watchUrl = `https://jarvis-hub-eight.vercel.app/watch/tv/${id}/${season}/${episode}`;
+      } catch (e) {
+        // Fallback to basic TV show info
+      }
+    }
 
     const html = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
-        <title>WATCH NOW: ${title} | JARVIS HUB</title>
+        <title>▶ WATCH NOW: ${title} | JARVIS HUB</title>
         <meta name="description" content="${description}">
         
         <!-- OpenGraph -->
@@ -41,7 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         <meta name="twitter:description" content="${description}">
         <meta name="twitter:image" content="${image}">
         
-        <!-- Redirect to the actual app for humans who hit this directly -->
+        <!-- Redirect to the actual app for humans -->
         <meta http-equiv="refresh" content="0;url=${watchUrl}">
       </head>
       <body>

@@ -1,12 +1,23 @@
 {
   "rewrites": [
     {
+      "source": "/watch/tv/:id/:season/:episode",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(.*Discordbot.*|.*WhatsApp.*|.*facebookexternalhit.*|.*Twitterbot.*|.*TelegramBot.*|.*Slackbot.*|.*Googlebot.*|.*LinkedInBot.*|.*Pinterest.*)"
+        }
+      ],
+      "destination": "/api/og?type=tv&id=:id&season=:season&episode=:episode"
+    },
+    {
       "source": "/watch/:type/:id",
       "has": [
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(.*Discordbot.*|.*WhatsApp.*|.*facebookexternalhit.*|.*Twitterbot.*|.*TelegramBot.*|.*Slackbot.*|.*Googlebot.*)"
+          "value": "(.*Discordbot.*|.*WhatsApp.*|.*facebookexternalhit.*|.*Twitterbot.*|.*TelegramBot.*|.*Slackbot.*|.*Googlebot.*|.*LinkedInBot.*|.*Pinterest.*)"
         }
       ],
       "destination": "/api/og?type=:type&id=:id"
