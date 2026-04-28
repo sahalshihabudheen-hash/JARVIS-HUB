@@ -1,10 +1,17 @@
-import { Link } from "react-router-dom";
 import { Play, Eye, Clock } from "lucide-react";
-import { EpornerVideo } from "@/lib/eporner";
 import { cn } from "@/lib/utils";
 
 interface AdultCardProps {
-  video: EpornerVideo;
+  video: {
+    id: string;
+    title: string;
+    url: string;
+    thumbnail: string;
+    duration: string;
+    views: number | string;
+    rating: string | number;
+    added?: string;
+  };
   className?: string;
 }
 
@@ -12,14 +19,14 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
   return (
     <div
       className={cn(
-        "group relative block rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-card-hover",
+        "group relative block rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-card-hover bg-card border border-white/5",
         className
       )}
     >
       {/* Thumbnail */}
       <div className="relative aspect-video overflow-hidden bg-secondary">
         <img
-          src={video.default_thumb.src}
+          src={video.thumbnail}
           alt={video.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
@@ -34,7 +41,7 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
             href={video.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center shadow-glow transform scale-75 group-hover:scale-100 transition-transform duration-300 pointer-events-auto"
+            className="w-14 h-14 rounded-full bg-red-600 flex items-center justify-center shadow-glow transform scale-75 group-hover:scale-100 transition-transform duration-300 pointer-events-auto"
           >
             <Play className="w-6 h-6 text-white fill-current ml-1" />
           </a>
@@ -43,28 +50,28 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
         {/* Duration Badge */}
         <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-md glass text-[10px] font-medium">
           <Clock className="w-3 h-3" />
-          <span>{video.length_min} min</span>
+          <span>{video.duration}</span>
         </div>
 
         {/* Rating Badge */}
-        {video.rate > 0 && (
+        {video.rating && (
           <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-md glass text-xs font-medium text-yellow-400">
-            <span>{video.rate}</span>
+            <span>{video.rating}</span>
           </div>
         )}
       </div>
 
       {/* Info */}
-      <div className="p-3 bg-card h-full border-t border-white/5">
-        <h3 className="font-medium text-sm line-clamp-2 group-hover:text-blue-400 transition-colors" title={video.title}>
+      <div className="p-3">
+        <h3 className="font-medium text-sm line-clamp-2 group-hover:text-red-400 transition-colors h-10" title={video.title}>
           {video.title}
         </h3>
-        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
           <div className="flex items-center gap-1">
             <Eye className="w-3 h-3" />
-            <span>{video.views.toLocaleString()}</span>
+            <span>{video.views}</span>
           </div>
-          <span>{video.added}</span>
+          {video.added && <span>{video.added}</span>}
         </div>
       </div>
     </div>

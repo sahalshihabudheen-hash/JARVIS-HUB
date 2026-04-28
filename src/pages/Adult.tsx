@@ -5,8 +5,8 @@ import AdultCard from "@/components/AdultCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { searchVideos } from "@/lib/eporner";
-import { Search } from "lucide-react";
+import { searchRedTubeVideos } from "@/lib/redtube";
+import { Search, Flame } from "lucide-react";
 
 const Adult = () => {
   const [query, setQuery] = useState("all");
@@ -15,7 +15,7 @@ const Adult = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["adult-videos", query, page],
-    queryFn: () => searchVideos(query, page),
+    queryFn: () => searchRedTubeVideos(query, page),
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -31,6 +31,7 @@ const Adult = () => {
 
   const categories = [
     { label: "All", value: "all" },
+    { label: "Popular", value: "popular" },
     { label: "Anal", value: "anal" },
     { label: "Amateur", value: "amateur" },
     { label: "BDSM", value: "bdsm" },
@@ -46,6 +47,17 @@ const Adult = () => {
     { label: "Teen", value: "teen" },
   ];
 
+  const videos = data?.videos?.map(v => ({
+    id: v.video.video_id,
+    title: v.video.title,
+    url: v.video.url,
+    thumbnail: v.video.default_thumb,
+    duration: v.video.duration,
+    views: v.video.views.toLocaleString(),
+    rating: v.video.rating,
+    added: v.video.publish_date
+  })) || [];
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -53,16 +65,21 @@ const Adult = () => {
       <main className="pt-24 pb-16">
         <div className="container">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-            <h1 className="text-3xl md:text-4xl font-display font-bold">Adult Content</h1>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-500/20 rounded-xl">
+                <Flame className="w-6 h-6 text-red-500" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-display font-bold">Adult Entertainment</h1>
+            </div>
             
             <form onSubmit={handleSearch} className="relative w-full md:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search videos..."
+                placeholder="Search premium videos..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="pl-10 bg-white/5 border-white/10 rounded-full"
+                className="pl-10 bg-white/5 border-white/10 rounded-full focus:ring-red-500/50"
               />
             </form>
           </div>
@@ -79,7 +96,7 @@ const Adult = () => {
                   setSearchInput("");
                   setPage(1);
                 }}
-                className="rounded-full whitespace-nowrap"
+                className={`rounded-full whitespace-nowrap ${query === cat.value ? 'bg-red-600 hover:bg-red-700' : ''}`}
               >
                 {cat.label}
               </Button>
@@ -91,58 +108,60 @@ const Adult = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {[...Array(12)].map((_, i) => (
                 <div key={i} className="flex flex-col gap-3">
-                  <div className="aspect-video rounded-xl shimmer" />
+                  <div className="aspect-video rounded-xl shimmer bg-white/5" />
                   <div className="h-4 w-3/4 bg-white/5 rounded shimmer" />
                   <div className="h-3 w-1/2 bg-white/5 rounded shimmer" />
                 </div>
               ))}
             </div>
           ) : error ? (
-            <div className="text-center py-20">
-              <h2 className="text-xl font-medium text-red-400">Failed to load content</h2>
-              <p className="text-muted-foreground mt-2">Please try again later.</p>
-              <Button onClick={() => window.location.reload()} className="mt-4">
-                Retry
+            <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10">
+              <h2 className="text-xl font-medium text-red-400">Connection Error</h2>
+              <p className="text-muted-foreground mt-2 max-w-md mx-auto">We couldn't connect to the content provider. This might be due to regional restrictions or a temporary outage.</p>
+              <Button onClick={() => window.location.reload()} className="mt-6 bg-red-600 hover:bg-red-700 rounded-full px-8">
+                Try Reconnecting
               </Button>
+            </div>
+          ) : videos.length === 0 ? (
+            <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10">
+              <h2 className="text-xl font-medium">No results found</h2>
+              <p className="text-muted-foreground mt-2">Try searching for something else or browse categories.</p>
             </div>
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {data?.videos?.map((video) => (
+                {videos.map((video) => (
                   <AdultCard key={video.id} video={video} />
                 ))}
               </div>
 
               {/* Pagination */}
-              {data && data.total_pages > 1 && (
-                <div className="flex justify-center items-center gap-6 mt-12">
-                  <Button
-                    variant="outline"
-                    disabled={page === 1}
-                    onClick={() => {
-                      setPage(p => p - 1);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className="rounded-full"
-                  >
-                    Previous
-                  </Button>
-                  <span className="text-muted-foreground text-sm font-medium">
-                    Page {page} of {data.total_pages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    disabled={page >= data.total_pages}
-                    onClick={() => {
-                      setPage(p => p + 1);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className="rounded-full"
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
+              <div className="flex justify-center items-center gap-6 mt-12">
+                <Button
+                  variant="outline"
+                  disabled={page === 1}
+                  onClick={() => {
+                    setPage(p => p - 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="rounded-full px-6"
+                >
+                  Previous
+                </Button>
+                <span className="text-muted-foreground text-sm font-bold bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                  PAGE {page}
+                </span>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setPage(p => p + 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="rounded-full px-6"
+                >
+                  Next
+                </Button>
+              </div>
             </>
           )}
         </div>
