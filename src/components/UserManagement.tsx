@@ -190,259 +190,202 @@ const UserManagement = () => {
         {filteredUsers.map((u) => {
           const type = getUserType(u);
           const isOwner = type === "OWNER";
-          const isAdmin = type === "ADMIN";           return (
+          const isAdmin = type === "ADMIN";
+          return (
             <div 
               key={u.id} 
-              className="group relative flex items-center bg-[#111111] border border-white/5 p-4 rounded-2xl transition-all duration-300 hover:bg-[#161616] hover:border-white/10"
+              className="group relative bg-[#111111] border border-white/5 p-4 md:p-6 rounded-[2rem] transition-all duration-300 hover:bg-[#161616] hover:border-white/10 hover:shadow-2xl hover:shadow-blue-500/5 flex flex-col md:flex-row md:items-center gap-6"
             >
-              {/* User Identity Column */}
-              <div className="flex items-center gap-4 min-w-[280px]">
+              {/* 1. Identity Column */}
+              <div className="flex items-center gap-4 md:w-[25%] shrink-0">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-white/5 flex items-center justify-center overflow-hidden">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-white/5 flex items-center justify-center overflow-hidden">
                     {u.photoURL ? (
                       <img src={u.photoURL} alt={u.name || "User"} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-lg font-bold text-blue-400">
+                      <span className="text-xl font-bold text-blue-400">
                         {(u.name?.[0] || u.email?.[0] || "?").toUpperCase()}
                       </span>
                     )}
                   </div>
                   {isActuallyOnline(u) && (
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-500 border-2 border-[#111] shadow-[0_0_8px_#22c55e]" />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-green-500 border-4 border-[#111] shadow-[0_0_10px_#22c55e]" />
                   )}
                 </div>
-                <div>
-                  <h4 className="text-[15px] font-bold text-white leading-tight flex items-center gap-2">
+                <div className="min-w-0">
+                  <h4 className="text-[16px] font-bold text-white leading-none flex items-center gap-2 truncate">
                     {u.name || (u.email ? u.email.split('@')[0] : "Unknown User")}
                   </h4>
-                  <p className="text-[12px] text-white/40 mt-0.5">{u.email || "No Protocol ID"}</p>
-                  {isActuallyOnline(u) ? (
-                    <p className="text-[11px] text-green-500/80 font-medium mt-0.5 flex items-center gap-1.5">
-                      <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
-                      Online now
-                    </p>
-                  ) : (
-                    <p className="text-[11px] text-white/40 font-medium mt-0.5">
-                      Offline
-                    </p>
-                  )}
+                  <p className="text-[12px] text-white/40 mt-1.5 truncate">{u.email || "No Protocol ID"}</p>
+                  <div className="mt-2">
+                    {isActuallyOnline(u) ? (
+                      <Badge className="bg-green-500/10 text-green-500 border-green-500/20 text-[9px] h-5 px-2 rounded-full uppercase tracking-tighter">
+                        Online
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-white/5 text-white/30 border-white/5 text-[9px] h-5 px-2 rounded-full uppercase tracking-tighter">
+                        Offline
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* Location Information Column */}
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 items-center px-4">
-                
-                {/* Geo & ISP */}
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-[14px] text-white font-bold">
-                    <span>📍</span>
-                    <p>{u.location?.split(',')[0] || "Malappuram"}, {u.location?.split(',')[1] || "Kerala"}</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-[12px] text-white/60 font-medium pl-6">
-                    <p>India</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px] text-cyan-400/80 font-bold pl-6 uppercase tracking-wider">
-                    <Activity className="w-3 h-3" />
-                    {u.isp || "BSNL Internet"}
-                  </div>
+              {/* 2. Location & ISP Column */}
+              <div className="flex flex-col gap-1 md:w-[20%] shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl leading-none">
+                    {u.countryCode === "IN" || !u.countryCode ? "🇮🇳" : u.countryCode.replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397))}
+                  </span>
+                  <p className="text-[13px] font-bold text-white/80 truncate">
+                    {u.location?.split(',')[0] || "Kerala"}, {u.location?.split(',')[1] || "India"}
+                  </p>
                 </div>
+                <p className="text-[11px] text-blue-400/60 font-bold uppercase tracking-wider pl-8 truncate">
+                  {u.isp || "BSNL Internet"}
+                </p>
+              </div>
 
-                {/* Device & OS (Advanced Separation) */}
-                <div className="flex flex-col gap-2 min-w-[200px]">
-                  {u.sessions ? (
-                    Object.entries(u.sessions).map(([id, session]: [string, any]) => {
-                      const sessionTime = new Date(session.lastSeen);
-                      const isSessionOnline = Math.abs(new Date().getTime() - sessionTime.getTime()) < 180000;
-                      
-                      const deviceColor = session.device === "Phone" ? "text-cyan-400" : session.device === "Smart TV" ? "text-orange-400" : session.device === "Console" ? "text-purple-400" : session.device === "Tablet" ? "text-green-400" : "text-yellow-400";
-                      const deviceBorder = session.device === "Phone" ? "border-cyan-500/30 bg-cyan-500/10" : session.device === "Smart TV" ? "border-orange-500/30 bg-orange-500/10" : session.device === "Console" ? "border-purple-500/30 bg-purple-500/10" : session.device === "Tablet" ? "border-green-500/30 bg-green-500/10" : "border-yellow-500/30 bg-yellow-500/10";
-
+              {/* 3. Device & Technology Column */}
+              <div className="flex-1 min-w-0">
+                <div className="grid grid-cols-1 gap-2">
+                  {u.sessions && Object.keys(u.sessions).length > 0 ? (
+                    Object.entries(u.sessions).slice(0, 1).map(([id, session]: [string, any]) => {
+                      const isSessionOnline = isActuallyOnline({ ...u, lastSeen: session.lastSeen });
                       return (
                         <div key={id} className={cn(
-                          "relative group/session border rounded-xl px-3 py-2.5 transition-all duration-300",
-                          isSessionOnline ? `${deviceBorder} shadow-[0_0_15px_rgba(59,130,246,0.08)]` : "bg-white/[0.03] border-white/10"
+                          "flex items-center gap-3 p-2.5 rounded-2xl border transition-all",
+                          isSessionOnline ? "bg-blue-500/5 border-blue-500/20" : "bg-white/[0.02] border-white/5"
                         )}>
-                          <div className="flex items-center gap-3">
-                            <div className={cn(
-                              "w-8 h-8 rounded-lg flex items-center justify-center border shrink-0",
-                              isSessionOnline ? deviceBorder : "bg-white/5 border-white/10"
-                            )}>
-                              {session.device === "Phone" ? (
-                                <Smartphone className={cn("w-4 h-4", isSessionOnline ? "text-cyan-400" : "text-white/30")} />
-                              ) : session.device === "Smart TV" ? (
-                                <Monitor className={cn("w-4 h-4", isSessionOnline ? "text-orange-400" : "text-white/30")} />
-                              ) : session.device === "Console" ? (
-                                <Gamepad2 className={cn("w-4 h-4", isSessionOnline ? "text-purple-400" : "text-white/30")} />
-                              ) : session.device === "Tablet" ? (
-                                <Laptop className={cn("w-4 h-4", isSessionOnline ? "text-green-400" : "text-white/30")} />
-                              ) : (
-                                <Monitor className={cn("w-4 h-4", isSessionOnline ? "text-yellow-400" : "text-white/30")} />
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                               <div className="flex items-center gap-2">
-                                  <p className={cn("text-[13px] font-black uppercase tracking-wide", isSessionOnline ? deviceColor : "text-white/50")}>
-                                    {session.device || "Desktop PC"}
-                                  </p>
-                                  {isSessionOnline && <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e] animate-pulse" />}
-                               </div>
-                               <p className="text-[10px] text-white/40 font-semibold uppercase tracking-wider truncate">
-                                 {session.os || "Unknown OS"} · {session.browser || "Unknown Browser"}
-                               </p>
-                            </div>
+                          <div className={cn(
+                            "w-9 h-9 rounded-xl flex items-center justify-center border shrink-0",
+                            isSessionOnline ? "bg-blue-500/20 border-blue-500/20 text-blue-400" : "bg-white/5 border-white/5 text-white/20"
+                          )}>
+                            {session.device === "Phone" ? <Smartphone className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[12px] font-black uppercase tracking-widest text-white/80">
+                              {session.device || "Desktop PC"}
+                            </p>
+                            <p className="text-[10px] text-white/30 font-bold uppercase truncate">
+                              {session.os || "OS"} · {session.browser || "Browser"}
+                            </p>
                           </div>
                         </div>
                       );
                     })
                   ) : (
-                    <div className={cn(
-                      "border rounded-xl px-3 py-2.5",
-                      u.device === "Phone" ? "border-cyan-500/20 bg-cyan-500/5" : "border-yellow-500/20 bg-yellow-500/5"
-                    )}>
-                      <div className="flex items-center gap-3">
-                        <div className={cn(
-                          "w-8 h-8 rounded-lg flex items-center justify-center border shrink-0",
-                          u.device === "Phone" ? "border-cyan-500/30 bg-cyan-500/10" : "border-yellow-500/30 bg-yellow-500/10"
-                        )}>
-                          {u.device === "Phone" 
-                            ? <Smartphone className="w-4 h-4 text-cyan-400" /> 
-                            : <Monitor className="w-4 h-4 text-yellow-400" />}
-                        </div>
-                        <div>
-                          <p className={cn(
-                            "text-[13px] font-black uppercase tracking-wide",
-                            u.device === "Phone" ? "text-cyan-400" : "text-yellow-400"
-                          )}>
-                            {u.device === "Phone" ? "📱 Phone" : u.device === "Smart TV" ? "📺 Smart TV" : u.device === "Console" ? "🎮 Console" : u.device === "Tablet" ? "📱 Tablet" : "🖥️ Desktop PC"}
-                          </p>
-                          <p className="text-[10px] text-white/40 font-semibold">{u.os || ""} · {u.browser?.split('/')[0] || ""}</p>
-                        </div>
+                    <div className="flex items-center gap-3 p-2.5 rounded-2xl border bg-white/[0.02] border-white/5">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center border bg-white/5 border-white/5 text-white/20">
+                        {u.device === "Phone" ? <Smartphone className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[12px] font-black uppercase tracking-widest text-white/80">
+                          {u.device || "Desktop PC"}
+                        </p>
+                        <p className="text-[10px] text-white/30 font-bold uppercase truncate">
+                          {u.os || "Windows"} · {u.browser?.split('/')[0] || "Firefox"}
+                        </p>
                       </div>
                     </div>
                   )}
                 </div>
-
-                {/* Status Badges */}
-                <div className="flex items-center gap-3">
-                  {(isOwner || isAdmin) && (
-                    <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 hover:bg-yellow-500/20 text-[10px] font-bold h-6 px-3 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
-                      <Shield className="w-3 h-3" />
-                      {isOwner ? "Owner" : "Admin"}
-                    </Badge>
-                  )}
-                  <Badge className="bg-teal-500/10 text-teal-500 border-teal-500/20 hover:bg-teal-500/20 text-[10px] font-bold h-6 px-3 rounded-full uppercase tracking-wider">
-                    Verified
-                  </Badge>
-                </div>
               </div>
 
-              {/* Actions Right Side */}
-              <div className="flex items-center gap-1 pr-2">
-                {/* Admin Toggle (Current User can't toggle themselves) */}
+              {/* 4. Badges & Roles */}
+              <div className="flex flex-wrap items-center gap-2 md:w-[15%] justify-end md:justify-start">
+                {isOwner && (
+                  <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 text-[10px] font-bold h-6 rounded-full px-3 uppercase tracking-tighter">
+                    Owner
+                  </Badge>
+                )}
+                {isAdmin && (
+                  <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[10px] font-bold h-6 rounded-full px-3 uppercase tracking-tighter">
+                    Admin
+                  </Badge>
+                )}
+                <Badge className={cn(
+                  "text-[10px] font-bold h-6 rounded-full px-3 uppercase tracking-tighter",
+                  u.emailVerified ? "bg-teal-500/10 text-teal-400 border-teal-500/20" : "bg-red-500/5 text-red-500/40 border-red-500/10"
+                )}>
+                  {u.emailVerified ? "Verified" : "Unverified"}
+                </Badge>
+              </div>
+
+              {/* 5. Actions Column */}
+              <div className="flex items-center gap-1.5 md:w-[15%] justify-end">
                 {u.email !== currentUser?.email && !isOwner && (
                   <>
                     <Button 
                       variant="ghost" 
+                      size="icon"
                       onClick={() => toggleAdultAccess(u.email, !!u.hasAdultAccess)}
                       className={cn(
-                        "h-9 px-3 rounded-full transition-all border border-white/5 mr-1",
-                        u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-transparent text-white/20"
+                        "w-9 h-9 rounded-xl transition-all border",
+                        u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-white/5 text-white/20 border-white/5"
                       )}
                     >
-                      <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
-                        <Flame className="w-3.5 h-3.5" />
-                        Adult
-                      </div>
+                      <Flame className="w-4 h-4" />
                     </Button>
 
                     <Button 
                       variant="ghost" 
+                      size="icon"
                       onClick={() => toggleAdmin(u.email, u.isAdmin)}
                       className={cn(
-                        "h-9 px-3 rounded-full transition-all border border-white/5",
-                        u.isAdmin ? "bg-white/5 text-white/90" : "bg-transparent text-white/20"
+                        "w-9 h-9 rounded-xl transition-all border",
+                        u.isAdmin ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-white/5 text-white/20 border-white/5"
                       )}
                     >
-                      <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
-                        <Shield className="w-3.5 h-3.5" />
-                        Admin
-                      </div>
+                      <Shield className="w-4 h-4" />
                     </Button>
-                  </>
-                )}
-                                {/* Action Buttons */}
-                <div className="flex items-center gap-1">
-                  {/* Manual Password Set (Owner Only) */}
-                  {currentUser?.email === "admin@gmail.com" && (
-                    <div className="relative group/pass">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => setEditingPassword(editingPassword?.email === u.email ? null : { email: u.email, value: u.password || "" })}
-                        className={cn(
-                          "w-9 h-9 rounded-full transition-all",
-                          editingPassword?.email === u.email ? "bg-blue-500 text-white" : "text-white/20 hover:text-blue-400 hover:bg-blue-400/10"
-                        )}
-                      >
-                        <Key className="w-4 h-4" />
-                      </Button>
 
-                      {editingPassword?.email === u.email && (
-                        <div className="absolute right-0 top-full mt-2 w-48 p-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 animate-in fade-in slide-in-from-top-2">
-                          <Input 
-                            autoFocus
-                            placeholder="Static Key/Pass"
-                            value={editingPassword.value}
-                            onChange={(e) => setEditingPassword({ ...editingPassword, value: e.target.value })}
-                            className="h-8 text-xs bg-black/40 border-white/5 mb-2 focus:border-blue-500"
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                setUserPassword(u.email, editingPassword.value);
-                                setEditingPassword(null);
-                              }
-                            }}
-                          />
-                          <Button 
-                            className="w-full h-7 text-[10px] font-bold uppercase bg-blue-600 hover:bg-blue-500"
-                            onClick={() => {
-                              setUserPassword(u.email, editingPassword.value);
-                              setEditingPassword(null);
-                            }}
-                          >
-                            Set Key
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Standard Password Reset (Other Admins) */}
-                  {currentUser?.email !== "admin@gmail.com" && (
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => resetUserPassword(u.email)}
-                      className="w-9 h-9 rounded-full text-white/20 hover:text-blue-400 hover:bg-blue-400/10 transition-colors"
-                    >
-                      <Key className="w-4 h-4" />
-                    </Button>
-                  )}
-                  
-                  {u.email !== currentUser?.email && !isOwner && (
                     <Button 
                       variant="ghost" 
                       size="icon" 
                       onClick={() => deleteUser(u.email)}
-                      className="w-9 h-9 rounded-full text-white/20 hover:text-red-500 hover:bg-red-500/10"
+                      className="w-9 h-9 rounded-xl text-white/20 hover:text-red-500 hover:bg-red-500/10 border border-white/5 hover:border-red-500/20"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
-                  )}
-                </div>
-
-                <div className="w-10 h-10 flex items-center justify-center opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-default text-xl">
-                  {u.countryCode === "IN" || !u.countryCode ? "🇮🇳" : u.countryCode.replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397))}
-                </div>
+                  </>
+                )}
+                
+                {currentUser?.email === "admin@gmail.com" && (
+                  <div className="relative group/pass">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => setEditingPassword(editingPassword?.email === u.email ? null : { email: u.email, value: u.password || "" })}
+                      className={cn(
+                        "w-9 h-9 rounded-xl transition-all border",
+                        editingPassword?.email === u.email ? "bg-blue-500 text-white border-blue-500" : "bg-white/5 text-white/20 border-white/5"
+                      )}
+                    >
+                      <Key className="w-4 h-4" />
+                    </Button>
+                    {editingPassword?.email === u.email && (
+                      <div className="absolute right-0 bottom-full mb-3 w-48 p-3 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl z-50 animate-in fade-in slide-in-from-bottom-2">
+                        <Input 
+                          autoFocus
+                          placeholder="New Pass"
+                          value={editingPassword.value}
+                          onChange={(e) => setEditingPassword({ ...editingPassword, value: e.target.value })}
+                          className="h-9 text-xs bg-black/40 border-white/10 mb-2 rounded-lg"
+                        />
+                        <Button 
+                          className="w-full h-8 text-[10px] font-bold uppercase bg-blue-600 hover:bg-blue-500 rounded-lg"
+                          onClick={() => {
+                            setUserPassword(u.email, editingPassword.value);
+                            setEditingPassword(null);
+                          }}
+                        >
+                          Update Key
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );
