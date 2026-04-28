@@ -24,10 +24,11 @@ export const searchRedTubeVideos = async (search: string = 'all', page: number =
   url.searchParams.set('search', search);
   url.searchParams.set('page', page.toString());
 
-  // Using a public CORS proxy to ensure it works in the browser
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url.toString())}`;
+  // Using a faster CORS proxy to improve loading speeds
+  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url.toString())}`;
 
   const response = await fetch(proxyUrl);
+
   if (!response.ok) throw new Error(`RedTube API error: ${response.status}`);
   return response.json();
 };
