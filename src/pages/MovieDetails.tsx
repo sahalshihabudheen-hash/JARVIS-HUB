@@ -13,15 +13,15 @@ import { toast } from "sonner";
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const movieId = parseInt(id || "0");
   const [inWatchlist, setInWatchlist] = useState(false);
 
   useEffect(() => {
     if (movieId) {
-      setInWatchlist(isInWatchlist(movieId, "movie"));
+      setInWatchlist(isInWatchlist(movieId, "movie", user?.uid));
     }
-  }, [movieId]);
+  }, [movieId, user?.uid]);
 
   const { data: movie, isLoading } = useQuery({
     queryKey: ["movie", movieId],
@@ -67,7 +67,7 @@ const MovieDetails = () => {
       backdrop_path: movie.backdrop_path,
       vote_average: movie.vote_average,
       release_date: movie.release_date,
-    });
+    }, user?.uid);
     setInWatchlist(added);
     toast.success(added ? "Added to watchlist" : "Removed from watchlist");
   };

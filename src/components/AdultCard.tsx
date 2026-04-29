@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { toggleAdultWatchlist, isInAdultWatchlist } from "@/lib/adult-watchlist";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 interface AdultCardProps {
   video: {
@@ -58,6 +59,7 @@ function getPreviewFrames(thumbnail: string): string[] {
 }
 
 const AdultCard = ({ video, className }: AdultCardProps) => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [isSaved, setIsSaved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -76,8 +78,8 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
   }, []);
 
   useEffect(() => {
-    setIsSaved(isInAdultWatchlist(video.id));
-  }, [video.id]);
+    setIsSaved(isInAdultWatchlist(video.id, user?.uid));
+  }, [video.id, user?.uid]);
 
   // Start cycling preview frames after a short delay
   const startPreview = useCallback(() => {
@@ -114,7 +116,7 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
       title: video.title,
       thumbnail: video.thumbnail,
       duration: video.duration,
-    });
+    }, user?.uid);
     setIsSaved(added);
     toast(added ? "Added to Watch Later" : "Removed from Watch Later", {
       icon: added ? (

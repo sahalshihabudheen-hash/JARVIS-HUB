@@ -15,6 +15,7 @@ import { toast } from "sonner";
 
 const TVDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const tvId = parseInt(id || "0");
   const [selectedSeason, setSelectedSeason] = useState(1);
@@ -22,9 +23,9 @@ const TVDetails = () => {
 
   useEffect(() => {
     if (tvId) {
-      setInWatchlist(isInWatchlist(tvId, "tv"));
+      setInWatchlist(isInWatchlist(tvId, "tv", user?.uid));
     }
-  }, [tvId]);
+  }, [tvId, user?.uid]);
 
   const { data: show, isLoading } = useQuery({
     queryKey: ["tv", tvId],
@@ -76,7 +77,7 @@ const TVDetails = () => {
       backdrop_path: show.backdrop_path,
       vote_average: show.vote_average,
       first_air_date: show.first_air_date,
-    });
+    }, user?.uid);
     setInWatchlist(added);
     toast.success(added ? "Added to watchlist" : "Removed from watchlist");
   };

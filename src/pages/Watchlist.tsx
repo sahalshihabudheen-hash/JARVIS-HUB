@@ -4,19 +4,29 @@ import { Heart, Trash2, Play } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { getWatchlist, removeFromWatchlist, WatchlistItem } from "@/lib/watchlist";
+import { getWatchlist, removeFromWatchlist, WatchlistItem, syncWatchlistFromCloud } from "@/lib/watchlist";
 import { getImageUrl } from "@/lib/tmdb";
+import { useAuth } from "@/context/AuthContext";
 
 const Watchlist = () => {
+  const { user } = useAuth();
   const [items, setItems] = useState<WatchlistItem[]>([]);
 
   useEffect(() => {
-    setItems(getWatchlist());
-  }, []);
+    const loadWatchlist = async () => {
+      if (user?.uid) {
+        const synced = await syncWatchlistFromCloud(user.uid);
+        setItems(synced);
+      } else {
+        setItems(getWatchlist());
+      }
+    };
+    loadWatchlist();
+  }, [user?.uid]);
 
   const handleRemove = (id: number, type: "movie" | "tv") => {
-    removeFromWatchlist(id, type);
-    setItems(getWatchlist());
+    removeFromWatchlist(id, type, user?.uid);
+    setItems(getWatchlist(user?.uid));
   };
 
   return (

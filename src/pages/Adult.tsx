@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
 import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2 } from "lucide-react";
 import { getAdultHistory, clearAdultHistory, AdultHistoryItem, syncAdultHistoryFromCloud } from "@/lib/adult-history";
+import { getAdultWatchlist, toggleAdultWatchlist, syncAdultWatchlistFromCloud } from "@/lib/adult-watchlist";
 
 import { useAuth } from "@/context/AuthContext";
 import { getUserLocation } from "@/lib/tmdb";
@@ -41,15 +42,18 @@ const Adult = () => {
   const [adultHistory, setAdultHistory] = useState<AdultHistoryItem[]>([]);
 
   useEffect(() => {
-    const loadHistory = async () => {
+    const loadData = async () => {
       if (user?.uid) {
-        const synced = await syncAdultHistoryFromCloud(user.uid);
-        setAdultHistory(synced);
+        const [syncedHistory, syncedWatchlist] = await Promise.all([
+          syncAdultHistoryFromCloud(user.uid),
+          syncAdultWatchlistFromCloud(user.uid)
+        ]);
+        setAdultHistory(syncedHistory);
       } else {
         setAdultHistory(getAdultHistory());
       }
     };
-    loadHistory();
+    loadData();
   }, [user?.uid]);
 
 
