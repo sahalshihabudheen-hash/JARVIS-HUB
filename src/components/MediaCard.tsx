@@ -65,11 +65,11 @@ const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardP
 
         {/* Video Preview */}
         {isHovered && trailerKey && (
-          <div className="absolute inset-0 bg-black animate-in fade-in duration-500 z-0">
+          <div className="absolute inset-0 bg-black animate-in fade-in duration-500 z-10 pointer-events-none overflow-hidden">
             <iframe
-              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailerKey}&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1`}
+              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailerKey}&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&origin=${window.location.origin}`}
               className="w-[300%] h-[300%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              allow="autoplay; encrypted-media"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
           </div>

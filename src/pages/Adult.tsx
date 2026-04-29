@@ -24,6 +24,7 @@ const Adult = () => {
   const [page, setPage] = useState(1);
   const resultsRef = useRef<HTMLDivElement>(null);
   const [showAllTS, setShowAllTS] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const scrollToResults = () => {
     setTimeout(() => {
@@ -615,195 +616,179 @@ const Adult = () => {
           </div>
 
           {/* ═══════════════════════════════════════
-               UNIFIED DISCOVERY & FILTER PANEL
+               PREMIUM DISCOVERY RIBBON
           ═══════════════════════════════════════ */}
-          <div className="mb-12 rounded-3xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-
-            {/* ── Row 1: Category Pills ── */}
-            <div className="px-6 pt-6 pb-5 border-b border-white/5">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Categories</p>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat.value}
-                    onClick={() => { setQuery(cat.value); setSearchInput(""); setPage(1); scrollToResults(); }}
-                    className={cn(
-                      "px-4 h-9 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all duration-200",
-                      query === cat.value
-                        ? "bg-blue-600 border-transparent text-white shadow-[0_0_16px_rgba(37,99,235,0.45)]"
-                        : "bg-transparent border-white/8 text-white/40 hover:bg-white/8 hover:text-white/80"
-                    )}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
+          <div className="mb-12 relative">
+            <div className="flex items-center justify-between mb-4 px-2">
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white/40">Browse Categories</h3>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className={cn(
+                  "rounded-full h-8 text-[10px] font-bold uppercase tracking-widest transition-all",
+                  showAdvancedFilters 
+                    ? "bg-purple-600/20 border-purple-500/50 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]" 
+                    : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                <Filter className="w-3 h-3 mr-2" />
+                Advanced Filters
+              </Button>
             </div>
 
-            {/* ── Row 2: Trending Tags ── */}
-            <div className="px-6 py-5 border-b border-white/5">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Trending Tags</p>
-              <div className="flex flex-wrap gap-2">
-                {popularTags.map((tag) => (
-                  <button
-                    key={tag}
-                    onClick={() => { setQuery(tag); setPage(1); scrollToResults(); }}
-                    className={cn(
-                      "px-3 h-7 rounded-lg text-[11px] font-medium border transition-all",
-                      query === tag
-                        ? "bg-pink-600/20 border-pink-500/50 text-pink-400"
-                        : "bg-transparent border-white/8 text-white/35 hover:border-pink-500/40 hover:bg-pink-500/8 hover:text-pink-300"
-                    )}
-                  >
-                    #{tag}
-                  </button>
-                ))}
-              </div>
+            {/* Categories Ribbon */}
+            <div className="flex overflow-x-auto pb-4 gap-2 scrollbar-hide px-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat.value}
+                  onClick={() => { setQuery(cat.value); setSearchInput(""); setPage(1); scrollToResults(); }}
+                  className={cn(
+                    "flex-shrink-0 px-5 h-10 rounded-2xl text-[11px] font-black uppercase tracking-widest border transition-all duration-300",
+                    query === cat.value
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 border-transparent text-white shadow-[0_5px_15px_rgba(59,130,246,0.4)]"
+                      : "bg-white/5 border-white/5 text-white/50 hover:bg-white/10 hover:text-white hover:border-white/10 hover:-translate-y-0.5"
+                  )}
+                >
+                  {cat.label}
+                </button>
+              ))}
             </div>
 
-            {/* ── Row 3: Asian categories ── */}
-            <div className="px-6 py-5 border-b border-white/5">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Asian</p>
-              <div className="flex flex-wrap gap-2">
-                {asianGenres.map((genre) => (
-                  <button
-                    key={genre.value}
-                    onClick={() => { setQuery(genre.value); setPage(1); scrollToResults(); }}
-                    className={cn(
-                      "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
-                      query === genre.value
-                        ? "bg-white text-black border-transparent"
-                        : "bg-transparent border-white/8 text-white/40 hover:bg-white/8 hover:text-white"
-                    )}
-                  >
-                    {genre.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Collapsible Advanced Filters Panel */}
+            {showAdvancedFilters && (
+              <div className="mt-4 rounded-3xl border border-white/10 bg-black/40 backdrop-blur-2xl overflow-hidden shadow-2xl animate-in slide-in-from-top-4 fade-in duration-300">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8">
+                  
+                  {/* Trending Tags Section */}
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-500 mb-4 flex items-center gap-2">
+                      <Flame className="w-3 h-3" /> Trending Tags
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {popularTags.map((tag) => (
+                        <button
+                          key={tag}
+                          onClick={() => { setQuery(tag); setPage(1); scrollToResults(); }}
+                          className={cn(
+                            "px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all",
+                            query === tag
+                              ? "bg-pink-600/20 border-pink-500/50 text-pink-400"
+                              : "bg-white/5 border-white/5 text-white/40 hover:bg-pink-500/10 hover:text-pink-300 hover:border-pink-500/30"
+                          )}
+                        >
+                          #{tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-            {/* ── Row 3b: Hijab / Muslim dedicated row ── */}
-            <div className="px-6 py-5 border-b border-white/5">
-              <div className="flex items-center gap-2 mb-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25">🕌 Hijab & Muslim</p>
-                <span className="text-[9px] text-emerald-500/40 font-bold uppercase tracking-widest">— Multiple search angles for more results</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {hijabShows.map((s) => (
-                  <button
-                    key={s.value}
-                    onClick={() => { setQuery(s.value); setPage(1); scrollToResults(); }}
-                    className={cn(
-                      "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
-                      query === s.value
-                        ? "bg-emerald-600/30 border-emerald-500/50 text-emerald-300"
-                        : "bg-transparent border-white/8 text-white/40 hover:bg-emerald-500/8 hover:border-emerald-500/30 hover:text-emerald-300"
-                    )}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+                  {/* Asian & Regional Section */}
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-4 flex items-center gap-2">
+                      <Globe className="w-3 h-3" /> Asian & Regional
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {asianGenres.map((genre) => (
+                        <button
+                          key={genre.value}
+                          onClick={() => { setQuery(genre.value); setPage(1); scrollToResults(); }}
+                          className={cn(
+                            "px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all",
+                            query === genre.value
+                              ? "bg-blue-600/20 border-blue-500/50 text-blue-400"
+                              : "bg-white/5 border-white/5 text-white/40 hover:bg-blue-500/10 hover:text-blue-300 hover:border-blue-500/30"
+                          )}
+                        >
+                          {genre.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-            {/* ── Row 3c: TeamSkeet — 5 visible + dropdown ── */}
-            <div className="px-6 py-5 border-b border-white/5">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">TeamSkeet Network — All Shows</p>
-              <div className="flex flex-wrap gap-2">
-                {/* First 5 always visible */}
-                {teamSkeetShows.slice(0, 5).map((show) => (
-                  <button
-                    key={show.value}
-                    onClick={() => { setQuery(show.value); setPage(1); scrollToResults(); }}
-                    className={cn(
-                      "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
-                      query === show.value
-                        ? "bg-blue-600/30 border-blue-500/50 text-blue-300"
-                        : "bg-transparent border-white/8 text-white/40 hover:bg-blue-500/8 hover:text-blue-300"
-                    )}
-                  >
-                    {show.label}
-                  </button>
-                ))}
+                  {/* Hijab & Muslim Section */}
+                  <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-4 flex items-center gap-2">
+                      <Star className="w-3 h-3" /> Exclusive Niches
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {hijabShows.slice(0, 8).map((s) => (
+                        <button
+                          key={s.value}
+                          onClick={() => { setQuery(s.value); setPage(1); scrollToResults(); }}
+                          className={cn(
+                            "px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all",
+                            query === s.value
+                              ? "bg-emerald-600/20 border-emerald-500/50 text-emerald-400"
+                              : "bg-white/5 border-white/5 text-white/40 hover:bg-emerald-500/10 hover:text-emerald-300 hover:border-emerald-500/30"
+                          )}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-                {/* Dropdown toggle */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowAllTS(p => !p)}
-                    className={cn(
-                      "flex items-center gap-1.5 px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
-                      showAllTS
-                        ? "bg-blue-600/20 border-blue-500/40 text-blue-300"
-                        : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:text-white"
-                    )}
-                  >
-                    {showAllTS ? "▲ Less" : `▼ +${teamSkeetShows.length - 5} More Shows`}
-                  </button>
+                  {/* TeamSkeet Section */}
+                  <div className="lg:col-span-2">
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-4 flex items-center gap-2">
+                      <Film className="w-3 h-3" /> TeamSkeet Network
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {teamSkeetShows.slice(0, 10).map((show) => (
+                        <button
+                          key={show.value}
+                          onClick={() => { setQuery(show.value); setPage(1); scrollToResults(); }}
+                          className={cn(
+                            "px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all",
+                            query === show.value
+                              ? "bg-white/20 border-white/50 text-white"
+                              : "bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white hover:border-white/20"
+                          )}
+                        >
+                          {show.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-                  {/* Dropdown panel */}
-                  {showAllTS && (
-                    <div className="absolute left-0 top-9 z-50 w-72 rounded-2xl border border-white/10 bg-[#0d0d14] shadow-2xl shadow-black/60 p-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-white/20 mb-3">All TeamSkeet Shows</p>
-                      <div className="flex flex-wrap gap-2">
-                        {teamSkeetShows.slice(5).map((show) => (
+                  {/* Body Type Section */}
+                  <div className="lg:col-span-3 pt-6 border-t border-white/10">
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-4 flex items-center gap-2">
+                      <User className="w-3 h-3" /> Body Type Matrix
+                    </h4>
+                    <div className="flex flex-wrap gap-3">
+                      {breastSizes.map((bs) => {
+                        const isActive = query === bs.value;
+                        return (
                           <button
-                            key={show.value}
-                            onClick={() => {
-                              setQuery(show.value);
-                              setPage(1);
-                              setShowAllTS(false);
-                              scrollToResults();
-                            }}
+                            key={bs.value}
+                            onClick={() => { setQuery(bs.value); setSearchInput(bs.label); setPage(1); scrollToResults(); }}
                             className={cn(
-                              "px-3 h-7 rounded-lg text-[11px] font-bold border transition-all",
-                              query === show.value
-                                ? "bg-blue-600/30 border-blue-500/50 text-blue-300"
-                                : "bg-white/5 border-white/8 text-white/50 hover:bg-blue-500/10 hover:text-blue-300"
+                              "flex items-center gap-2 pl-2 pr-4 h-10 rounded-2xl border text-[11px] font-bold transition-all duration-300",
+                              isActive
+                                ? "bg-white/10 border-white/30 text-white shadow-lg"
+                                : `bg-white/5 border-transparent text-white/50 hover:bg-white/10 hover:-translate-y-0.5 ${bs.accent.replace('text-', 'hover:text-').replace('border-', 'hover:border-')}`
                             )}
                           >
-                            {show.label}
+                            <span
+                              className={cn(
+                                "font-mono text-[10px] tracking-tighter leading-none px-2 py-1 rounded-xl shadow-inner",
+                                isActive ? "bg-white/20 text-white" : "bg-black/40 text-white/40"
+                              )}
+                            >
+                              {bs.icon}
+                            </span>
+                            {bs.label}
                           </button>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
-                  )}
+                  </div>
+
                 </div>
               </div>
-            </div>
-
-            {/* ── Row 4: Breast Size Filter ── */}
-            <div className="px-6 py-5">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/25 mb-3">Body Type — Breast Size</p>
-              <div className="flex flex-wrap gap-2">
-                {breastSizes.map((bs) => {
-                  const isActive = query === bs.value;
-                  return (
-                    <button
-                      key={bs.value}
-                      onClick={() => { setQuery(bs.value); setSearchInput(bs.label); setPage(1); scrollToResults(); }}
-                      className={cn(
-                        "flex items-center gap-2 pl-2 pr-4 h-9 rounded-xl border text-xs font-bold transition-all duration-200",
-                        isActive
-                          ? "bg-white/12 border-white/25 text-white"
-                          : `bg-transparent border-white/8 text-white/45 ${bs.accent}`
-                      )}
-                    >
-                      {/* ASCII breast icon in mono font */}
-                      <span
-                        className={cn(
-                          "font-mono text-[11px] tracking-tighter leading-none px-1.5 py-0.5 rounded-md",
-                          isActive ? "bg-white/10 text-white" : "bg-white/5 text-white/30"
-                        )}
-                      >
-                        {bs.icon}
-                      </span>
-                      {bs.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
+            )}
           </div>
 
           {/* Grid Header */}
