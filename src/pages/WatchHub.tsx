@@ -12,6 +12,7 @@ import {
   Tag,
   Play,
   Search,
+  ExternalLink,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { addToAdultHistory } from "@/lib/adult-history";
@@ -187,7 +188,6 @@ const WatchHub = () => {
                 <p className="text-xs text-white/50 leading-relaxed">
                   The thumbnails <span className="text-blue-400 font-bold">inside</span> the player are external ads. To watch more and stay on our site, please use the <span className="text-blue-400 font-bold">Related Videos</span> catalog below.
                 </p>
-                </div>
               </div>
             </div>
 
@@ -335,8 +335,6 @@ const WatchHub = () => {
                 </div>
               </div>
             )}
-
-            </div>
           </div>
         </div>
       </main>
