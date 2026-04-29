@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
 import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2 } from "lucide-react";
-import { getAdultHistory, clearAdultHistory, AdultHistoryItem } from "@/lib/adult-history";
+import { getAdultHistory, clearAdultHistory, AdultHistoryItem, syncAdultHistoryFromCloud } from "@/lib/adult-history";
 
 import { useAuth } from "@/context/AuthContext";
 import { getUserLocation } from "@/lib/tmdb";
@@ -41,8 +41,16 @@ const Adult = () => {
   const [adultHistory, setAdultHistory] = useState<AdultHistoryItem[]>([]);
 
   useEffect(() => {
-    setAdultHistory(getAdultHistory());
-  }, []);
+    const loadHistory = async () => {
+      if (user?.uid) {
+        const synced = await syncAdultHistoryFromCloud(user.uid);
+        setAdultHistory(synced);
+      } else {
+        setAdultHistory(getAdultHistory());
+      }
+    };
+    loadHistory();
+  }, [user?.uid]);
 
 
 
@@ -464,7 +472,7 @@ const Adult = () => {
                   size="sm" 
                   onClick={() => {
                     if (confirm("Purge incognito history?")) {
-                      clearAdultHistory();
+                      clearAdultHistory(user?.uid);
                       setAdultHistory([]);
                     }
                   }}

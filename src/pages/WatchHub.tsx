@@ -100,7 +100,8 @@ const WatchHub = () => {
             title: data.video.title || `Content #${id}`,
             thumbnail: data.video.default_thumb || data.video.thumbnail || "",
             duration: data.video.duration || "",
-          });
+            source: source,
+          }, user?.uid);
         }
       })
       .catch((err) => console.error("Failed to fetch video details:", err));
