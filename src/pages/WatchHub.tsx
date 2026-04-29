@@ -173,12 +173,68 @@ const WatchHub = () => {
                 allowFullScreen
                 scrolling="no"
                 allow="autoplay; encrypted-media; picture-in-picture"
-                sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-presentation"
+                sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
               />
             </div>
 
+            {/* ── Player Navigation Tip ── */}
+            <div className="bg-blue-600/10 border border-blue-500/20 p-4 rounded-2xl flex items-start gap-3 shadow-lg shadow-blue-600/5">
+              <div className="p-1.5 bg-blue-600 rounded-lg shrink-0">
+                <ExternalLink className="w-4 h-4 text-white" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-white uppercase tracking-wider">Stay on JARVIS Hub</p>
+                <p className="text-xs text-white/50 leading-relaxed">
+                  The thumbnails <span className="text-blue-400 font-bold">inside</span> the player are external ads. To watch more and stay on our site, please use the <span className="text-blue-400 font-bold">Related Videos</span> catalog below.
+                </p>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Related Videos Section ── */}
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-blue-500/20 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.15)]">
+                  <Flame className="w-5 h-5 text-blue-500" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-display font-bold text-white">
+                    Up Next
+                  </h2>
+                  <p className="text-[10px] font-bold text-blue-400/50 uppercase tracking-widest mt-0.5">
+                    More from JARVIS Catalog
+                  </p>
+                </div>
+              </div>
+
+              {relatedLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="flex flex-col gap-3">
+                      <div className="aspect-video rounded-xl shimmer bg-white/5" />
+                      <div className="h-4 w-3/4 bg-white/5 rounded shimmer" />
+                      <div className="h-3 w-1/2 bg-white/5 rounded shimmer" />
+                    </div>
+                  ))}
+                </div>
+              ) : relatedVideos.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {relatedVideos.map((video) => (
+                    <AdultCard key={video.id} video={video} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16 bg-white/5 rounded-3xl border border-white/10">
+                  <Play className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-sm font-bold uppercase tracking-widest">
+                    No related videos found
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* ── Video Info Card ── */}
-            <div className="bg-card p-8 rounded-3xl border border-white/10 shadow-xl">
+            <div className="bg-card p-8 rounded-3xl border border-white/10 shadow-xl mb-8">
               {/* Header row */}
               <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
@@ -280,46 +336,6 @@ const WatchHub = () => {
               </div>
             )}
 
-            {/* ── Related Videos Section ── */}
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-orange-500/20 rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.15)]">
-                  <Flame className="w-5 h-5 text-orange-500" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-display font-bold text-white">
-                    Related Videos
-                  </h2>
-                  <p className="text-[10px] font-bold text-orange-400/50 uppercase tracking-widest mt-0.5">
-                    You might also like
-                  </p>
-                </div>
-              </div>
-
-              {relatedLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {[...Array(8)].map((_, i) => (
-                    <div key={i} className="flex flex-col gap-3">
-                      <div className="aspect-video rounded-xl shimmer bg-white/5" />
-                      <div className="h-4 w-3/4 bg-white/5 rounded shimmer" />
-                      <div className="h-3 w-1/2 bg-white/5 rounded shimmer" />
-                    </div>
-                  ))}
-                </div>
-              ) : relatedVideos.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {relatedVideos.map((video) => (
-                    <AdultCard key={video.id} video={video} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-16 bg-white/5 rounded-3xl border border-white/10">
-                  <Play className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                  <p className="text-white/30 text-sm font-bold uppercase tracking-widest">
-                    No related videos found
-                  </p>
-                </div>
-              )}
             </div>
           </div>
         </div>
