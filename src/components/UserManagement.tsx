@@ -195,14 +195,14 @@ const UserManagement = () => {
 
                     {/* Actions */}
                     <td className="px-8 py-6 text-right">
-                      <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-1.5 transition-opacity">
                         {u.email !== currentUser?.email && !isOwner && (
                           <>
                             <Button 
                               variant="ghost" 
                               size="icon"
                               onClick={() => toggleAdultAccess(u.email, !!u.hasAdultAccess)}
-                              className={cn("w-9 h-9 rounded-xl border", u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-white/5 text-white/20 border-white/5")}
+                              className={cn("w-9 h-9 rounded-xl border", u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-white/5 text-white/40 border-white/10")}
                             >
                               <Flame className="w-4 h-4" />
                             </Button>
@@ -210,7 +210,7 @@ const UserManagement = () => {
                               variant="ghost" 
                               size="icon"
                               onClick={() => toggleAdmin(u.email, !!u.isAdmin)}
-                              className={cn("w-9 h-9 rounded-xl border", u.isAdmin ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-white/5 text-white/20 border-white/5")}
+                              className={cn("w-9 h-9 rounded-xl border", u.isAdmin ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-white/5 text-white/40 border-white/10")}
                             >
                               <Shield className="w-4 h-4" />
                             </Button>
