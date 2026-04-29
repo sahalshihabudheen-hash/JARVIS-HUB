@@ -6,7 +6,7 @@ const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
 const FEEDS = [
   {
     url: 'https://timesofindia.indiatimes.com/rss/4719148.cms',
-    source: 'Times of India',
+    source: 'TOI',
     region: 'india',
   },
   {
@@ -15,29 +15,35 @@ const FEEDS = [
     region: 'india',
   },
   {
-    url: 'https://www.firstpost.com/rss/entertainment.xml',
-    source: 'Firstpost',
-    region: 'india',
-  },
-  {
-    url: 'https://feeds.feedburner.com/variety/headlines',
+    url: 'https://variety.com/feed/',
     source: 'Variety',
     region: 'global',
   },
   {
-    url: 'https://screenrant.com/feed/',
-    source: 'Screen Rant',
+    url: 'https://deadline.com/feed/',
+    source: 'Deadline',
+    region: 'global',
+  },
+  {
+    url: 'https://www.hollywoodreporter.com/feed/',
+    source: 'THR',
+    region: 'global',
+  },
+  {
+    url: 'https://screenrant.com/feed/category/movies/',
+    source: 'ScreenRant',
     region: 'global',
   },
 ];
 
 // Keywords to keep — OTT / streaming / movies / TV related
 const KEEP = [
-  'ott', 'netflix', 'amazon prime', 'prime video', 'disney', 'hotstar',
-  'jio cinema', 'jiocinema', 'zee5', 'apple tv', 'hbo', 'streaming',
-  'release', 'trailer', 'movie', 'film', 'series', 'season', 'episode',
+  'ott', 'netflix', 'amazon', 'prime', 'disney', 'hotstar', 'sony',
+  'jio', 'zee5', 'apple', 'hbo', 'streaming', 'release', 'trailer', 
+  'movie', 'film', 'series', 'season', 'episode', 'cinema', 'theatre',
   'bollywood', 'hollywood', 'malayalam', 'tamil', 'telugu', 'kannada',
-  'hindi', 'review', 'premiere', 'box office', 'award', 'cast',
+  'hindi', 'review', 'premiere', 'box office', 'award', 'cast', 'actor',
+  'actress', 'director', 'teaser', 'poster', 'shoot', 'sets', 'gossip',
 ];
 
 function isRelevant(title: string, description: string): boolean {
@@ -80,7 +86,7 @@ export default async function handler(req: Request) {
   try {
     const results = await Promise.allSettled(
       FEEDS.map(async (feed) => {
-        const res = await fetch(`${RSS2JSON}${encodeURIComponent(feed.url)}&count=30`, {
+        const res = await fetch(`${RSS2JSON}${encodeURIComponent(feed.url)}`, {
           headers: { 'User-Agent': 'Mozilla/5.0' },
         });
         if (!res.ok) return [];
@@ -106,15 +112,17 @@ export default async function handler(req: Request) {
 
     // Category filter
     if (category === 'ott') {
-      const ottKw = ['netflix', 'amazon', 'prime', 'disney', 'hotstar', 'jio', 'zee5', 'apple tv', 'hbo', 'streaming', 'ott', 'show', 'series', 'original'];
+      const ottKw = ['netflix', 'amazon', 'prime', 'disney', 'hotstar', 'jio', 'zee5', 'apple', 'hbo', 'streaming', 'ott', 'series', 'original', 'premiere'];
       all = all.filter(a => ottKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
     } else if (category === 'regional') {
-      const regKw = ['malayalam', 'tamil', 'telugu', 'kannada', 'hindi', 'bollywood', 'mollywood', 'kollywood', 'tollywood', 'india', 'regional'];
+      const regKw = ['malayalam', 'tamil', 'telugu', 'kannada', 'india', 'regional', 'mollywood', 'kollywood', 'tollywood', 'south', 'kerala'];
       all = all.filter(a => regKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
     } else if (category === 'hollywood') {
-      all = all.filter(a => a.region === 'global' || ['hollywood', 'marvel', 'dc ', 'netflix', 'hbo', 'disney', 'oscars', 'cannes', 'series'].some(k => (a.title + a.description).toLowerCase().includes(k)));
+      // For Hollywood, we take ALL global items + any items with Hollywood keywords
+      const holKw = ['hollywood', 'marvel', 'dc', 'oscar', 'cannes', 'series', 'english', 'global', 'star', 'actor'];
+      all = all.filter(a => a.region === 'global' || holKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
     } else if (category === 'bollywood') {
-      const bwKw = ['bollywood', 'hindi', 'shah rukh', 'salman', 'deepika', 'alia', 'ranveer', 'akshay', 'khan', 'bwood'];
+      const bwKw = ['bollywood', 'hindi', 'khan', 'bwood', 'mumbai', 'kapoor', 'singh'];
       all = all.filter(a => bwKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
     }
 
