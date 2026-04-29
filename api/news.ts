@@ -102,19 +102,19 @@ export default async function handler(req: Request) {
     let all = results
       .filter((r): r is PromiseFulfilledResult<any[]> => r.status === 'fulfilled')
       .flatMap(r => r.value)
-      .filter(item => item.title && isRelevant(item.title, item.description));
+      .filter(item => item.title);
 
     // Category filter
     if (category === 'ott') {
-      const ottKw = ['netflix', 'amazon', 'prime', 'disney', 'hotstar', 'jio', 'zee5', 'apple tv', 'hbo', 'streaming', 'ott'];
+      const ottKw = ['netflix', 'amazon', 'prime', 'disney', 'hotstar', 'jio', 'zee5', 'apple tv', 'hbo', 'streaming', 'ott', 'show', 'series', 'original'];
       all = all.filter(a => ottKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
     } else if (category === 'regional') {
-      const regKw = ['malayalam', 'tamil', 'telugu', 'kannada', 'hindi', 'bollywood', 'mollywood', 'kollywood', 'tollywood'];
+      const regKw = ['malayalam', 'tamil', 'telugu', 'kannada', 'hindi', 'bollywood', 'mollywood', 'kollywood', 'tollywood', 'india', 'regional'];
       all = all.filter(a => regKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
     } else if (category === 'hollywood') {
-      all = all.filter(a => a.region === 'global' || ['hollywood', 'marvel', 'dc ', 'netflix', 'hbo', 'disney'].some(k => (a.title + a.description).toLowerCase().includes(k)));
+      all = all.filter(a => a.region === 'global' || ['hollywood', 'marvel', 'dc ', 'netflix', 'hbo', 'disney', 'oscars', 'cannes', 'series'].some(k => (a.title + a.description).toLowerCase().includes(k)));
     } else if (category === 'bollywood') {
-      const bwKw = ['bollywood', 'hindi', 'shah rukh', 'salman', 'deepika', 'alia', 'ranveer', 'akshay'];
+      const bwKw = ['bollywood', 'hindi', 'shah rukh', 'salman', 'deepika', 'alia', 'ranveer', 'akshay', 'khan', 'bwood'];
       all = all.filter(a => bwKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
     }
 
