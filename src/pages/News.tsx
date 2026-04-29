@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getUserLocation } from "@/lib/tmdb";
 
 // ── Types ───────────────────────────────────────────────────────────
 interface Article {
@@ -98,7 +100,9 @@ function NewsCard({
       {/* Content */}
       <div className={cn("flex flex-col justify-between p-4 gap-3", featured && "md:p-8")}>
         <div className="space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">OTT News Update</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">
+            {article.region === 'india' ? 'Regional News' : 'OTT News Update'}
+          </p>
           <h3
             className={cn(
               "font-display font-bold text-white group-hover:text-blue-400 transition-colors leading-tight",
@@ -132,13 +136,20 @@ function NewsCard({
 
 // ── Main Page ────────────────────────────────────────────────────────
 const News = () => {
+  const [category, setCategory] = useState("ott");
   const [page, setPage] = useState(1);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [userLocation, setUserLocation] = useState<any>(null);
+
+  useEffect(() => {
+    getUserLocation().then(setUserLocation);
+  }, []);
 
   const { data, isLoading, error, refetch, isFetching } = useQuery({
-    queryKey: ["news", "ott", page],
+    queryKey: ["news", category, page, userLocation?.region],
     queryFn: async () => {
-      const res = await fetch(`/api/news?category=ott&page=${page}`);
+      const regionParam = category === 'regional' ? `&region=${userLocation?.region || ''}` : '';
+      const res = await fetch(`/api/news?category=${category}&page=${page}${regionParam}`);
       if (!res.ok) throw new Error("Failed to fetch");
       return res.json();
     },
@@ -149,6 +160,11 @@ const News = () => {
   const featured = articles[0];
   const rest = articles.slice(1);
   const totalPages = Math.ceil((data?.total || 0) / (data?.perPage || 20));
+
+  const TABS = [
+    { id: "ott", label: "OTT Spotlight", icon: Tv },
+    { id: "regional", label: userLocation?.region ? `News in ${userLocation.region}` : "Local News", icon: MapPin },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -161,26 +177,55 @@ const News = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-blue-600 rounded-2xl shadow-[0_0_30px_rgba(37,99,235,0.4)]">
-                <Tv className="w-7 h-7 text-white" />
+                <Newspaper className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight">OTT Spotlight</h1>
+                <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight">
+                  {category === 'regional' ? 'Regional OTT' : 'OTT Spotlight'}
+                </h1>
                 <p className="text-xs font-bold text-white/30 uppercase tracking-[0.2em] mt-1">
-                  Exclusive Streaming Releases · Netflix · Prime · Disney+
+                  {category === 'regional' 
+                    ? `Trending in ${userLocation?.region || 'your area'} · Local releases` 
+                    : 'Exclusive Streaming Releases · Netflix · Prime · Disney+'
+                  }
                 </p>
               </div>
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-              disabled={isFetching}
-              className="rounded-full border-white/10 bg-white/5 text-white/50 hover:bg-white/10 h-10 px-6"
-            >
-              <RefreshCw className={cn("w-4 h-4 mr-2", isFetching && "animate-spin")} />
-              Refresh Feed
-            </Button>
+            <div className="flex items-center gap-3">
+              {/* Category Tabs */}
+              <div className="flex p-1 bg-white/5 rounded-full border border-white/10">
+                {TABS.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => { setCategory(tab.id); setPage(1); }}
+                      className={cn(
+                        "flex items-center gap-2 px-6 h-9 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                        category === tab.id 
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" 
+                          : "text-white/40 hover:text-white"
+                      )}
+                    >
+                      <Icon className="w-3 h-3" />
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
+                disabled={isFetching}
+                className="rounded-full border-white/10 bg-white/5 text-white/50 hover:bg-white/10 h-11 px-6 hidden md:flex"
+              >
+                <RefreshCw className={cn("w-4 h-4 mr-2", isFetching && "animate-spin")} />
+                Refresh
+              </Button>
+            </div>
           </div>
 
           {/* ── Loading ── */}

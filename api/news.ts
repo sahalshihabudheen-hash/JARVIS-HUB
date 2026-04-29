@@ -79,45 +79,63 @@ function extractImage(item: any): string {
 
 export default async function handler(req: Request) {
   const { searchParams } = new URL(req.url);
-  const category = searchParams.get('category') || 'all';
-  const page = parseInt(searchParams.get('page') || '1', 10);
-  const perPage = 20;
+    const category = searchParams.get('category') || 'all';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const region = searchParams.get('region') || '';
+    const perPage = 20;
 
-  try {
-    const results = await Promise.allSettled(
-      FEEDS.map(async (feed) => {
-        const res = await fetch(`${RSS2JSON}${encodeURIComponent(feed.url)}`, {
-          headers: { 'User-Agent': 'Mozilla/5.0' },
+    try {
+      const results = await Promise.allSettled(
+        FEEDS.map(async (feed) => {
+          const res = await fetch(`${RSS2JSON}${encodeURIComponent(feed.url)}`, {
+            headers: { 'User-Agent': 'Mozilla/5.0' },
+          });
+          if (!res.ok) return [];
+          const data = await res.json();
+          if (data.status !== 'ok') return [];
+          return (data.items || []).map((item: any) => ({
+            id: item.guid || item.link,
+            title: item.title?.trim() || '',
+            description: cleanHtml(item.description || item.content || ''),
+            image: extractImage(item),
+            link: item.link,
+            source: feed.source,
+            region: feed.region,
+            pubDate: item.pubDate,
+          }));
+        })
+      );
+
+      let all = results
+        .filter((r): r is PromiseFulfilledResult<any[]> => r.status === 'fulfilled')
+        .flatMap(r => r.value)
+        .filter(item => item.title);
+
+      // Category filter
+      if (category === 'ott') {
+        const ottKw = ['netflix', 'amazon', 'prime', 'disney', 'hotstar', 'jio', 'zee5', 'apple', 'hbo', 'streaming', 'ott', 'series', 'original', 'premiere'];
+        all = all.filter(a => ottKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
+      } else if (category === 'regional') {
+        // Dynamic regional filtering based on location
+        const regKw = ['malayalam', 'tamil', 'telugu', 'kannada', 'india', 'regional', 'mollywood', 'kollywood', 'tollywood', 'south', 'kerala', 'marathi', 'bengali', 'punjabi', 'gujarati'];
+        
+        // If we have a specific region, prioritize it
+        const detectedRegion = region.toLowerCase();
+        const specificKeywords = [];
+        if (detectedRegion.includes('kerala')) specificKeywords.push('malayalam', 'kerala', 'mollywood');
+        if (detectedRegion.includes('tamil')) specificKeywords.push('tamil', 'chennai', 'kollywood');
+        if (detectedRegion.includes('telangana') || detectedRegion.includes('andhra')) specificKeywords.push('telugu', 'hyderabad', 'tollywood');
+        if (detectedRegion.includes('karnataka')) specificKeywords.push('kannada', 'bangalore', 'sandalwood');
+        if (detectedRegion.includes('maharashtra')) specificKeywords.push('marathi', 'mumbai', 'bollywood');
+        
+        all = all.filter(a => {
+          const text = (a.title + a.description).toLowerCase();
+          // If we have specific region keywords, try to match them first
+          if (specificKeywords.length > 0 && specificKeywords.some(k => text.includes(k))) return true;
+          // Otherwise fallback to general regional keywords
+          return regKw.some(k => text.includes(k));
         });
-        if (!res.ok) return [];
-        const data = await res.json();
-        if (data.status !== 'ok') return [];
-        return (data.items || []).map((item: any) => ({
-          id: item.guid || item.link,
-          title: item.title?.trim() || '',
-          description: cleanHtml(item.description || item.content || ''),
-          image: extractImage(item),
-          link: item.link,
-          source: feed.source,
-          region: feed.region,
-          pubDate: item.pubDate,
-        }));
-      })
-    );
-
-    let all = results
-      .filter((r): r is PromiseFulfilledResult<any[]> => r.status === 'fulfilled')
-      .flatMap(r => r.value)
-      .filter(item => item.title);
-
-    // Category filter
-    if (category === 'ott') {
-      const ottKw = ['netflix', 'amazon', 'prime', 'disney', 'hotstar', 'jio', 'zee5', 'apple', 'hbo', 'streaming', 'ott', 'series', 'original', 'premiere'];
-      all = all.filter(a => ottKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
-    } else if (category === 'regional') {
-      const regKw = ['malayalam', 'tamil', 'telugu', 'kannada', 'india', 'regional', 'mollywood', 'kollywood', 'tollywood', 'south', 'kerala'];
-      all = all.filter(a => regKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
-    } else if (category === 'hollywood') {
+      } else if (category === 'hollywood') {
       // For Hollywood, we take ALL global items + any items with Hollywood keywords
       const holKw = ['hollywood', 'marvel', 'dc', 'oscar', 'cannes', 'series', 'english', 'global', 'star', 'actor'];
       all = all.filter(a => a.region === 'global' || holKw.some(k => (a.title + a.description).toLowerCase().includes(k)));
