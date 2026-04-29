@@ -99,7 +99,10 @@ const HomeNavbar = () => {
           </Link>
 
           {/* Centered Navigation Pills (Desktop) */}
-          <div className="hidden lg:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/5 p-1.5 rounded-full border border-white/10 shadow-inner backdrop-blur-md">
+          <div className={cn(
+            "hidden lg:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/5 p-1.5 rounded-full border border-white/10 shadow-inner backdrop-blur-md transition-all duration-300",
+            isSearchExpanded ? "opacity-0 pointer-events-none scale-95" : "opacity-100 scale-100"
+          )}>
             {navLinks.map((link) => (
               <Link
                 key={link.to}
