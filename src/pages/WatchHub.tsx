@@ -172,7 +172,8 @@ const WatchHub = () => {
                 className="absolute inset-0 w-full h-full border-0"
                 allowFullScreen
                 scrolling="no"
-                allow="autoplay; encrypted-media"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-presentation"
               />
             </div>
 
