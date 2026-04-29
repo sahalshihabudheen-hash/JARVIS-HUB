@@ -37,8 +37,45 @@ const queryClient = new QueryClient({
   },
 });
 
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import { useEffect, useRef } from "react";
+
+const StealthManager = () => {
+  const navigate = useNavigate();
+  const lastEscPress = useRef<number>(0);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        const now = Date.now();
+        if (now - lastEscPress.current < 500) {
+          // Double tap detected
+          document.title = "Google";
+          const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+          if (favicon) {
+            favicon.href = "https://www.google.com/favicon.ico";
+          }
+          
+          // Mute and pause any HTML5 media elements
+          document.querySelectorAll("video, audio").forEach((media: any) => {
+            media.pause();
+            media.muted = true;
+          });
+
+          // Navigate to home to destroy video player iframes
+          navigate("/", { replace: true });
+        }
+        lastEscPress.current = now;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [navigate]);
+
+  return null;
+};
 
 const ProtectedLayout = () => {
   const { user } = useAuth();
@@ -60,6 +97,7 @@ const App = () => (
         <TutorialProvider>
           <TooltipProvider>
             <BrowserRouter>
+              <StealthManager />
               <JarvisTutorial />
               <VerificationBanner />
               <Toaster />

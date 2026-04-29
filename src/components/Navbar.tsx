@@ -28,6 +28,8 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const { branding } = useAdmin();
 
+  const isAdultMode = location.pathname.startsWith("/adult") || location.pathname.startsWith("/hub/watch") || location.pathname.startsWith("/watch/adult");
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
@@ -118,30 +120,43 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div id="navbar-links" className="hidden lg:flex items-center gap-2 xl:gap-4 ml-4 xl:ml-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={cn(
-                  "flex items-center gap-2 text-[10px] xl:text-[11px] font-black uppercase tracking-[0.15em] px-2 xl:px-3 py-2 rounded-full transition-all duration-300",
-                  location.pathname === link.to
-                    ? "bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-white/10"
-                    : link.to === "/admin" 
-                      ? "text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
-                      : "text-white/40 hover:text-white hover:bg-white/5"
-                )}
+          {!isAdultMode ? (
+            <div id="navbar-links" className="hidden lg:flex items-center gap-2 xl:gap-4 ml-4 xl:ml-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={cn(
+                    "flex items-center gap-2 text-[10px] xl:text-[11px] font-black uppercase tracking-[0.15em] px-2 xl:px-3 py-2 rounded-full transition-all duration-300",
+                    location.pathname === link.to
+                      ? "bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-white/10"
+                      : link.to === "/admin" 
+                        ? "text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+                        : "text-white/40 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  {link.icon && <link.icon className="w-3.5 h-3.5" />}
+                  <span className="hidden xl:block">{link.label}</span>
+                  {location.pathname === link.to && <span className="xl:hidden">{link.label}</span>}
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="hidden lg:flex flex-1 justify-center ml-4">
+              <Button 
+                onClick={() => navigate("/")}
+                variant="outline"
+                className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-full h-10 px-6 font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.15)] transition-all"
               >
-                {link.icon && <link.icon className="w-3.5 h-3.5" />}
-                <span className="hidden xl:block">{link.label}</span>
-                {location.pathname === link.to && <span className="xl:hidden">{link.label}</span>}
-              </Link>
-            ))}
-          </div>
+                Exit to Normal Mode
+              </Button>
+            </div>
+          )}
 
           {/* Search and Mobile Menu */}
           <div className="flex items-center gap-3 lg:gap-6">
-            <form onSubmit={handleSearch} id="navbar-search" className="hidden lg:flex items-center group">
+            {!isAdultMode && (
+              <form onSubmit={handleSearch} id="navbar-search" className="hidden lg:flex items-center group">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-blue-500 transition-colors" />
                 <input
@@ -153,6 +168,7 @@ const Navbar = () => {
                 />
               </div>
             </form>
+            )}
             
             {user ? (
               <div className="flex items-center gap-3 lg:gap-5">
@@ -236,6 +252,27 @@ const Navbar = () => {
 
             {/* Mobile Controls */}
             <div className="flex items-center gap-1 lg:hidden">
+              {isAdultMode ? (
+                <Button 
+                  onClick={() => navigate("/")}
+                  variant="outline"
+                  size="sm"
+                  className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-full px-3 text-[10px] font-bold uppercase tracking-widest mr-2"
+                >
+                  Exit
+                </Button>
+              ) : (
+                <Button
+                  id="search-btn-mobile"
+                  variant="ghost"
+                  size="icon"
+                  className="w-10 h-10 rounded-full text-white/40 hover:text-white"
+                  onClick={() => setIsSearchExpanded(true)}
+                >
+                  <Search className="w-5 h-5" />
+                </Button>
+              )}
+              
               <Button
                 id="settings-btn-mobile"
                 variant="ghost"
@@ -245,24 +282,18 @@ const Navbar = () => {
               >
                 <Settings className="w-5 h-5" />
               </Button>
-              <Button
-                id="search-btn-mobile"
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 rounded-full text-white/40 hover:text-white"
-                onClick={() => setIsSearchExpanded(true)}
-              >
-                <Search className="w-5 h-5" />
-              </Button>
-              <Button
-                id="menu-btn-mobile"
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 rounded-full text-white/40 hover:text-white"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </Button>
+              
+              {!isAdultMode && (
+                <Button
+                  id="menu-btn-mobile"
+                  variant="ghost"
+                  size="icon"
+                  className="w-10 h-10 rounded-full text-white/40 hover:text-white"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                </Button>
+              )}
             </div>
           </div>
         </>

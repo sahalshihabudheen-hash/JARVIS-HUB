@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Play, Tv, Share2 } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Play, Tv, Share2, Ghost } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
 import Footer from "@/components/Footer";
@@ -31,6 +31,7 @@ const WatchPage = () => {
   const isTV = type === "tv";
 
   const [selectedLang, setSelectedLang] = useState<string | undefined>(undefined);
+  const [isIncognito, setIsIncognito] = useState(false);
 
   const { data: movie } = useQuery({
     queryKey: ["movie", mediaId],
@@ -140,18 +141,18 @@ const WatchPage = () => {
       };
 
       // Initial update (0 increment)
-      updateHistory(0);
+      if (!isIncognito) updateHistory(0);
 
       // Start interval to track progress (every 20 seconds for higher resolution)
       const interval = setInterval(() => {
-        if (document.visibilityState === 'visible') {
+        if (document.visibilityState === 'visible' && !isIncognito) {
           updateHistory(20);
         }
       }, 20000);
 
       return () => clearInterval(interval);
     }
-  }, [content?.id, episodeNum, user, title, type, isTV, seasonNum, currentEpisode, movie?.runtime, show?.episode_run_time]);
+  }, [content?.id, episodeNum, user, title, type, isTV, seasonNum, currentEpisode, movie?.runtime, show?.episode_run_time, isIncognito]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -167,16 +168,34 @@ const WatchPage = () => {
 
       <main className="pt-20 pb-16">
         <div className="container">
-          {/* Back Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(isTV ? `/tv/${mediaId}` : `/movie/${mediaId}`)}
-            className="mb-4 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Details
-          </Button>
+          <div className="flex items-center justify-between mb-4">
+            {/* Back Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(isTV ? `/tv/${mediaId}` : `/movie/${mediaId}`)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Details
+            </Button>
+
+            {/* Incognito Toggle */}
+            <Button
+              variant={isIncognito ? "default" : "outline"}
+              size="sm"
+              onClick={() => setIsIncognito(!isIncognito)}
+              className={cn(
+                "rounded-full px-4 transition-all duration-300",
+                isIncognito 
+                  ? "bg-purple-500/20 text-purple-400 border-purple-500/50 hover:bg-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]" 
+                  : "bg-white/5 text-white/50 border-white/10 hover:text-white"
+              )}
+            >
+              <Ghost className={cn("w-4 h-4 mr-2", isIncognito ? "animate-pulse" : "")} />
+              {isIncognito ? "INCOGNITO ACTIVE" : "GO INCOGNITO"}
+            </Button>
+          </div>
 
           {/* Title and Download */}
           <div className="mb-4 flex flex-col md:flex-row md:items-start justify-between gap-4">

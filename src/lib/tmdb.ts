@@ -258,3 +258,13 @@ export const getUserLocation = async (requestPrecision: boolean = false): Promis
   return result;
 };
 
+export const getTrailerKey = async (mediaType: "movie" | "tv", id: number): Promise<string | null> => {
+  try {
+    const data = await fetchTMDB<{ results: { key: string; type: string; site: string }[] }>(`/${mediaType}/${id}/videos`);
+    const trailer = data.results.find(v => v.type === "Trailer" && v.site === "YouTube") || data.results.find(v => v.site === "YouTube");
+    return trailer ? trailer.key : null;
+  } catch (e) {
+    return null;
+  }
+};
+

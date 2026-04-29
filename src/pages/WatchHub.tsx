@@ -13,7 +13,9 @@ import {
   Play,
   Search,
   ExternalLink,
+  Ghost,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { addToAdultHistory } from "@/lib/adult-history";
 import { searchVideos } from "@/lib/hub";
@@ -74,9 +76,10 @@ const WatchHub = () => {
   const [details, setDetails] = useState<VideoDetails | null>(null);
   const [relatedVideos, setRelatedVideos] = useState<any[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams()[0];
   const source = searchParams.get("source") || "pornhub";
   const hasFetchedRelated = useRef(false);
+  const [isIncognito, setIsIncognito] = useState(false);
 
   useEffect(() => {
     const isOwner = user?.email?.toLowerCase() === "admin@gmail.com";
@@ -96,17 +99,19 @@ const WatchHub = () => {
         if (data.video) {
           setDetails(data.video);
 
-          addToAdultHistory({
-            id: id,
-            title: data.video.title || `Content #${id}`,
-            thumbnail: data.video.default_thumb || data.video.thumbnail || "",
-            duration: data.video.duration || "",
-            source: source,
-          }, user?.uid);
+          if (!isIncognito) {
+            addToAdultHistory({
+              id: id,
+              title: data.video.title || `Content #${id}`,
+              thumbnail: data.video.default_thumb || data.video.thumbnail || "",
+              duration: data.video.duration || "",
+              source: source,
+            }, user?.uid);
+          }
         }
       })
       .catch((err) => console.error("Failed to fetch video details:", err));
-  }, [id, source]);
+  }, [id, source, isIncognito, user?.uid]);
 
   /* Fetch related videos once details arrive */
   useEffect(() => {
@@ -156,14 +161,31 @@ const WatchHub = () => {
 
       <main className="pt-24 pb-16">
         <div className="container max-w-7xl">
-          <Button
-            variant="ghost"
-            className="mb-6 hover:bg-white/5 -ml-4"
-            onClick={() => navigate(-1)}
-          >
-            <ChevronLeft className="w-5 h-5 mr-2" />
-            Back to Catalog
-          </Button>
+          <div className="flex items-center justify-between mb-6">
+            <Button
+              variant="ghost"
+              className="hover:bg-white/5 -ml-4"
+              onClick={() => navigate(-1)}
+            >
+              <ChevronLeft className="w-5 h-5 mr-2" />
+              Back to Catalog
+            </Button>
+            
+            <Button
+              variant={isIncognito ? "default" : "outline"}
+              size="sm"
+              onClick={() => setIsIncognito(!isIncognito)}
+              className={cn(
+                "rounded-full px-4 transition-all duration-300",
+                isIncognito 
+                  ? "bg-purple-500/20 text-purple-400 border-purple-500/50 hover:bg-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]" 
+                  : "bg-white/5 text-white/50 border-white/10 hover:text-white"
+              )}
+            >
+              <Ghost className={cn("w-4 h-4 mr-2", isIncognito ? "animate-pulse" : "")} />
+              {isIncognito ? "INCOGNITO ACTIVE" : "GO INCOGNITO"}
+            </Button>
+          </div>
 
           <div className="flex flex-col gap-8">
             {/* ── Player ── */}
