@@ -42,4 +42,38 @@ This document outlines the priority features to be implemented in the next phase
 - **Tech**: Framer Motion for animations and lightweight video/GIF previews.
 
 ---
-*Plan initialized on April 29, 2026*
+
+## 🔒 Priority Phase 2: Adult Hub Excellence
+
+### 6. 🕵️‍♂️ Stealth Mode (Boss Key)
+- **Goal**: Instant privacy toggle for the Adult Hub.
+- **Features**: 
+  - Hotkey (e.g., `Esc` x2) to instantly switch the view to a safe page (e.g., News or Home).
+  - Browser tab title and icon change to something generic (e.g., "Research Tools") while active.
+
+### 7. 👯‍♀️ Performer "Discovery" Hub
+- **Goal**: Unified profiles for performers.
+- **Features**:
+  - Detailed profiles showing filmography across all sources (Pornhub, Redtube, Eporner).
+  - "Follow" performer to get notifications of new releases.
+
+### 8. 🔀 Smart Auto-Next (Binge Mode)
+- **Goal**: Continuous playback experience.
+- **Features**:
+  - Countdown timer at the end of a video.
+  - Automatically load the next most relevant video from the JARVIS recommendation engine.
+
+### 9. 📉 Data Saver / 4K Quality Toggle
+- **Goal**: Performance optimization based on connection.
+- **Features**:
+  - High/Low resolution thumbnail proxy toggle.
+  - Option to load lightweight previews to save mobile data.
+
+### 10. 🌓 Incognito History
+- **Goal**: Private browsing within the private hub.
+- **Features**:
+  - A "Ghost Toggle" in the player.
+  - When active, the video will not be saved to Cloud Watch History or Recently Viewed.
+
+---
+*Plan updated on April 29, 2026*
