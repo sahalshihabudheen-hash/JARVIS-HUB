@@ -47,8 +47,16 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
   };
 
   const [showOverlay, setShowOverlay] = useState(true);
+  const [isPlayingIntro, setIsPlayingIntro] = useState(false);
   const [shieldActive, setShieldActive] = useState(false);
   const [sandboxEnabled, setSandboxEnabled] = useState(true);
+
+  const handleIntroEnd = () => {
+    setIsPlayingIntro(false);
+    setShowOverlay(false);
+    setShieldActive(true);
+    if (isActive && step === 3) nextStep();
+  };
 
 
   const { user } = useAuth();
@@ -263,26 +271,52 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
           {...(sandboxEnabled ? { sandbox: "allow-same-origin allow-scripts allow-forms allow-presentation allow-downloads allow-top-navigation-by-user-activation allow-orientation-lock" } : {})}
         />
 
-        {/* Ad-Block Overlay Shield (Initial) */}
+        {/* Ad-Block Overlay Shield (Initial) / Intro Video */}
         {showOverlay && (
           <div 
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 cursor-pointer group-hover:bg-black/60 transition-colors"
+            className={cn(
+              "absolute inset-0 z-50 flex items-center justify-center bg-black transition-colors",
+              !isPlayingIntro && "bg-black/80 cursor-pointer group-hover:bg-black/60"
+            )}
             onClick={() => {
-              setShowOverlay(false);
-              setShieldActive(true); // Automatically engage shield after first click
-              if (isActive && step === 3) nextStep();
+              if (!isPlayingIntro) {
+                setIsPlayingIntro(true);
+              }
             }}
           >
-            <div className="text-center animate-pulse-glow">
-              <div className="w-20 h-20 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 mx-auto shadow-[0_0_30px_rgba(34,211,238,0.4)]">
-                <div className="w-16 h-16 rounded-full border border-primary flex items-center justify-center bg-primary/5">
-                  <Play className="w-8 h-8 text-primary fill-primary ml-1" />
-                </div>
+            {isPlayingIntro ? (
+              <div className="relative w-full h-full bg-black">
+                <video 
+                  autoPlay 
+                  playsInline
+                  className="w-full h-full object-contain"
+                  onEnded={handleIntroEnd}
+                >
+                  <source src="/JARVIS-VDO-INTRO.mp4" type="video/mp4" />
+                </video>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleIntroEnd();
+                  }}
+                  className="absolute bottom-8 right-8 px-6 py-2 bg-black/60 hover:bg-primary/20 border border-white/10 hover:border-primary/50 rounded-xl text-white text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md transition-all z-[60] flex items-center gap-2 group/skip"
+                >
+                  Skip Protocol
+                  <div className="w-1 h-1 rounded-full bg-white group-hover/skip:bg-primary animate-pulse" />
+                </button>
               </div>
-              <p className="text-primary font-display font-semibold tracking-widest text-sm uppercase">
-                Initialize Secure Stream
-              </p>
-            </div>
+            ) : (
+              <div className="text-center animate-pulse-glow">
+                <div className="w-20 h-20 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 mx-auto shadow-[0_0_30px_rgba(34,211,238,0.4)]">
+                  <div className="w-16 h-16 rounded-full border border-primary flex items-center justify-center bg-primary/5">
+                    <Play className="w-8 h-8 text-primary fill-primary ml-1" />
+                  </div>
+                </div>
+                <p className="text-primary font-display font-semibold tracking-widest text-sm uppercase">
+                  Initialize Secure Stream
+                </p>
+              </div>
+            )}
           </div>
         )}
 
