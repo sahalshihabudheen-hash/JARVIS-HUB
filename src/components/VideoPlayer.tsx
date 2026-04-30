@@ -294,16 +294,6 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                 >
                   <source src="/JARVIS-VDO-INTRO.mp4" type="video/mp4" />
                 </video>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleIntroEnd();
-                  }}
-                  className="absolute bottom-8 right-8 px-6 py-2 bg-black/60 hover:bg-primary/20 border border-white/10 hover:border-primary/50 rounded-xl text-white text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md transition-all z-[60] flex items-center gap-2 group/skip"
-                >
-                  Skip Protocol
-                  <div className="w-1 h-1 rounded-full bg-white group-hover/skip:bg-primary animate-pulse" />
-                </button>
               </div>
             ) : (
               <div className="text-center animate-pulse-glow">

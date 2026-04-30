@@ -9,6 +9,11 @@ interface NetflixIntroProps {
 const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
   const [phase, setPhase] = useState<"initial" | "letters" | "zoom" | "spectrum" | "fade">("initial");
   const [visible, setVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   const letters = "JARVIS HUB".split("");
 
@@ -56,15 +61,18 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
         phase === "spectrum" ? "opacity-100 scale-150 rotate-3" : "opacity-0 scale-100"
       )}
       style={{
-        transitionDuration: "6000ms",
+        transitionDuration: isMobile ? "3000ms" : "6000ms",
         transitionTimingFunction: "cubic-bezier(0.2, 0, 0, 1)",
       }}>
-        {Array.from({ length: 90 }).map((_, i) => (
+        {Array.from({ length: isMobile ? 30 : 90 }).map((_, i) => (
           <div
             key={i}
-            className="absolute w-[2px] h-[400%] blur-[3px] animate-pulse"
+            className={cn(
+              "absolute w-[2px] h-[400%] animate-pulse",
+              !isMobile && "blur-[3px]"
+            )}
             style={{
-              left: `${(i / 90) * 100}%`,
+              left: `${(i / (isMobile ? 30 : 90)) * 100}%`,
               background: `linear-gradient(to bottom, transparent, ${
                 i % 4 === 0 ? '#22d3ee' : 
                 i % 3 === 0 ? '#3b82f6' : 
@@ -92,7 +100,7 @@ const NetflixIntro = ({ onComplete }: NetflixIntroProps) => {
               phase === "initial" ? "opacity-0 scale-y-0" : "opacity-100 scale-y-100"
             )}
             style={{
-              fontSize: 'min(18vw, 14rem)',
+              fontSize: isMobile ? 'min(22vw, 8rem)' : 'min(18vw, 14rem)',
               transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               transitionDelay: `${i * 150 + 1200}ms`,
               marginRight: char === " " ? "4rem" : "-1rem",
