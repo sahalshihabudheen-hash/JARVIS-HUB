@@ -241,7 +241,7 @@ const Settings = () => {
                          </span>
                          {isGoogleUser && (
                            <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-full border border-primary/20">
-                             Google Authenticated
+                             External Auth Active
                            </span>
                          )}
                          <p className="text-muted-foreground font-medium tracking-tight ml-2 my-auto">{user?.email}</p>

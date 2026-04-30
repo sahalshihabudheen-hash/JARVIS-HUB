@@ -51,11 +51,7 @@ const StealthManager = () => {
         const now = Date.now();
         if (now - lastEscPress.current < 500) {
           // Double tap detected
-          document.title = "Google";
-          const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-          if (favicon) {
-            favicon.href = "https://www.google.com/favicon.ico";
-          }
+          // Stealth mode active - no visual mask applied as per user request
           
           // Mute and pause any HTML5 media elements
           document.querySelectorAll("video, audio").forEach((media: any) => {

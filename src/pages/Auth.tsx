@@ -185,11 +185,7 @@ const Auth = () => {
               disabled={socialLoading}
               className="w-full flex items-center justify-center gap-3 bg-white hover:bg-white/90 text-zinc-800 h-12 rounded-full font-medium shadow-xl transition-all disabled:opacity-50 group px-6 border border-zinc-300"
             >
-              <img 
-                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-                alt="Google" 
-                className="w-5 h-5" 
-              />
+              <Chrome className="w-5 h-5 text-blue-500" />
               <span className="text-base">
                 {socialLoading ? "Signing in..." : "Sign up with Google"}
               </span>
