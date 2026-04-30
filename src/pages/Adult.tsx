@@ -327,7 +327,7 @@ const Adult = () => {
       <Navbar />
 
       <main className="pt-24 pb-16">
-        <div className="container">
+        <div className="container px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-500/20 rounded-xl">
@@ -347,7 +347,7 @@ const Adult = () => {
               />
             </form>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 w-full md:w-auto">
               <div className="flex bg-white/5 p-1 rounded-full border border-white/10 mr-2">
                 {[
                   { id: "pornhub", label: "PH", color: "bg-orange-500" },
@@ -369,15 +369,14 @@ const Adult = () => {
 
               <Button
                 variant="outline"
-
                 size="sm"
                 onClick={() => setIsBlurred(!isBlurred)}
-                className={`rounded-full border-white/10 px-6 h-10 ${isBlurred ? 'bg-blue-600/10 text-blue-400 border-blue-500/30' : 'bg-white/5 text-white/60'}`}
+                className={`rounded-full border-white/10 px-4 md:px-6 h-10 flex-1 md:flex-none ${isBlurred ? 'bg-blue-600/10 text-blue-400 border-blue-500/30' : 'bg-white/5 text-white/60'}`}
               >
                 {isBlurred ? (
-                  <><Eye className="w-4 h-4 mr-2" /> Show Thumbs</>
+                  <><Eye className="w-3.5 h-3.5 mr-2" /> Show</>
                 ) : (
-                  <><EyeOff className="w-4 h-4 mr-2" /> Hide Thumbs</>
+                  <><EyeOff className="w-3.5 h-3.5 mr-2" /> Hide</>
                 )}
               </Button>
 
@@ -385,19 +384,19 @@ const Adult = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setPrivateMode(!privateMode)}
-                className={`rounded-full border-white/10 px-6 h-10 ${privateMode ? 'bg-purple-600/20 text-purple-400 border-purple-500/30' : 'bg-white/5 text-white/60'}`}
+                className={`rounded-full border-white/10 px-4 md:px-6 h-10 flex-1 md:flex-none ${privateMode ? 'bg-purple-600/20 text-purple-400 border-purple-500/30' : 'bg-white/5 text-white/60'}`}
               >
-                <ShieldAlert className={`w-4 h-4 mr-2 ${privateMode ? 'text-purple-400' : 'text-muted-foreground'}`} />
-                {privateMode ? "Private: ON" : "Private: OFF"}
+                <ShieldAlert className={`w-3.5 h-3.5 mr-2 ${privateMode ? 'text-purple-400' : 'text-muted-foreground'}`} />
+                {privateMode ? "Private" : "Public"}
               </Button>
 
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowGenreHub(true)}
-                className="rounded-full border-white/10 px-6 h-10 bg-white/5 text-white/60 hover:bg-white/10"
+                className="rounded-full border-white/10 px-6 h-10 bg-white/5 text-white/60 hover:bg-white/10 hidden sm:flex"
               >
-                <LayoutGrid className="w-4 h-4 mr-2" /> Genre Hub
+                <LayoutGrid className="w-4 h-4 mr-2" /> Genres
               </Button>
             </div>
 
@@ -407,8 +406,8 @@ const Adult = () => {
 
           {/* Location Banner */}
           {location && (
-            <div className="mb-8 p-6 rounded-3xl bg-blue-600/10 border border-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <div className="mb-8 p-5 md:p-10 rounded-[2rem] md:rounded-[3rem] bg-blue-600/10 border border-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity hidden md:block">
                 <MapPin className="w-32 h-32 text-blue-500" />
               </div>
               <div className="relative z-10">
@@ -426,9 +425,9 @@ const Adult = () => {
                   setPage(1);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="relative z-10 bg-blue-600 hover:bg-blue-700 rounded-full px-8 h-12 font-bold shadow-[0_0_20px_rgba(37,99,235,0.4)]"
+                className="relative z-10 bg-blue-600 hover:bg-blue-700 rounded-2xl w-full md:w-auto px-10 h-14 font-bold shadow-[0_0_25px_rgba(37,99,235,0.4)]"
               >
-                See Kerala Porn Videos
+                See Kerala Originals
               </Button>
 
             </div>
@@ -638,7 +637,7 @@ const Adult = () => {
             </div>
 
             {/* Categories Ribbon */}
-            <div className="flex overflow-x-auto pb-4 gap-2 scrollbar-hide px-2">
+            <div className="flex overflow-x-auto pb-4 gap-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
               {categories.map((cat) => (
                 <button
                   key={cat.value}
@@ -928,8 +927,8 @@ const Adult = () => {
 
       {/* Genre Hub Modal */}
       {showGenreHub && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in p-4">
-          <div className="max-w-4xl w-full bg-card/95 border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md animate-fade-in p-2 md:p-4">
+          <div className="max-w-4xl w-full bg-card/95 border border-white/10 rounded-[2rem] md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] md:max-h-[90vh]">
             <div className="p-6 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-500/20 rounded-xl">
@@ -1033,8 +1032,7 @@ const Adult = () => {
       {/* Onboarding Modal */}
       {showOnboarding && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-4">
-
-          <div className="max-w-xl w-full bg-card border border-white/10 rounded-[2.5rem] p-10 shadow-3xl text-center space-y-8">
+          <div className="max-w-xl w-full bg-card border border-white/10 rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 shadow-3xl text-center space-y-8 max-h-[95vh] overflow-y-auto">
             <div className="space-y-3">
               <div className="mx-auto w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6">
                 <Flame className="w-8 h-8 text-blue-500" />
