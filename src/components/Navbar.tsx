@@ -67,37 +67,44 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-4 left-0 right-0 z-50 px-4 md:px-8 flex justify-center pointer-events-none">
+    <nav className="fixed top-4 left-0 right-0 z-50 px-4 md:px-8 flex justify-center pointer-events-none select-none">
       <div className={cn(
-        "pointer-events-auto w-full max-w-5xl rounded-[2.5rem] transition-all duration-500 border overflow-hidden",
+        "pointer-events-auto w-full max-w-5xl rounded-[2.5rem] transition-all duration-700 border relative group/nav",
         isScrolled
-          ? "bg-background/60 backdrop-blur-3xl border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] shadow-blue-500/10 py-2 px-4 md:px-6"
-          : "bg-background/30 backdrop-blur-xl border-white/5 shadow-2xl py-3 px-5 md:px-8",
+          ? "bg-background/40 backdrop-blur-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)] py-2 px-4 md:px-6"
+          : "bg-background/20 backdrop-blur-2xl border-white/5 shadow-2xl py-3 px-5 md:px-8",
         isAdultMode && "border-red-500/20 shadow-red-500/5",
         isTutorialActive && "pointer-events-none"
       )}>
-        <div className="flex items-center justify-between">
+        {/* Cute Prism Border Effect */}
+        <div className="absolute inset-0 rounded-[2.5rem] opacity-0 group-hover/nav:opacity-100 transition-opacity duration-1000 pointer-events-none overflow-hidden">
+          <div className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0,rgba(59,130,246,0.1)_25%,transparent_50%,rgba(168,85,247,0.1)_75%,transparent_100%)] animate-[spin_8s_linear_infinite]" />
+        </div>
+
+        <div className="flex items-center justify-between relative z-10">
           
           {/* Logo Section */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0 relative z-10">
+          <Link to="/" className="flex items-center gap-3 group shrink-0 relative">
             <div className="relative">
               <div className={cn(
-                "absolute inset-0 blur-xl rounded-full transition-all duration-500",
-                isAdultMode ? "bg-red-500/20 group-hover:bg-red-500/40" : "bg-blue-500/20 group-hover:bg-blue-500/40"
+                "absolute inset-0 blur-xl rounded-full transition-all duration-700 animate-pulse",
+                isAdultMode ? "bg-red-500/30 group-hover:bg-red-500/50" : "bg-blue-500/30 group-hover:bg-blue-500/50"
               )} />
               <img 
                 src={branding.appLogo} 
                 alt="App Logo" 
                 className={cn(
-                  "relative object-cover rounded-full border border-white/20 shadow-2xl transition-all duration-500",
-                  isScrolled ? "w-10 h-10 group-hover:scale-105" : "w-12 h-12 group-hover:scale-110",
+                  "relative object-cover rounded-full border border-white/20 shadow-2xl transition-all duration-500 group-hover:rotate-[360deg]",
+                  isScrolled ? "w-10 h-10" : "w-11 h-11",
                   isAdultMode && "border-red-500/40"
                 )}
               />
+              {/* Cute sparkle dots */}
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full animate-ping opacity-75" />
             </div>
             <div className="flex flex-col -space-y-1 hidden sm:flex whitespace-nowrap">
               <span className={cn(
-                "font-display font-black tracking-tighter text-white transition-all duration-300",
+                "font-display font-black tracking-tighter text-white transition-all duration-500",
                 isScrolled ? "text-xl" : "text-2xl",
                 isAdultMode ? "group-hover:text-red-400" : "group-hover:text-blue-400"
               )}>
@@ -114,7 +121,7 @@ const Navbar = () => {
 
           {/* Centered Navigation Pills (Desktop) */}
           <div className={cn(
-            "hidden lg:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/5 p-1.5 rounded-full border border-white/10 shadow-inner backdrop-blur-md transition-all duration-300",
+            "hidden lg:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/5 p-1 rounded-full border border-white/10 shadow-inner backdrop-blur-xl transition-all duration-500",
             isSearchExpanded ? "opacity-0 pointer-events-none scale-95" : "opacity-100 scale-100"
           )}>
             {navLinks.map((link) => (
@@ -122,28 +129,31 @@ const Navbar = () => {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  "flex items-center gap-1.5 text-[10px] xl:text-[11px] font-bold uppercase tracking-[0.15em] px-3 xl:px-4 py-2 rounded-full transition-all duration-300 relative overflow-hidden group",
+                  "flex items-center gap-1.5 text-[10px] xl:text-[11px] font-bold uppercase tracking-[0.15em] px-4 py-2.5 rounded-full transition-all duration-500 relative overflow-hidden group",
                   location.pathname === link.to
-                    ? "text-white shadow-md"
-                    : "text-white/50 hover:text-white"
+                    ? "text-white shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                    : "text-white/40 hover:text-white"
                 )}
               >
-                {/* Active Background Glow */}
+                {/* Active Background with Shimmer */}
                 {location.pathname === link.to && (
-                  <div className={cn(
-                    "absolute inset-0 rounded-full z-0",
-                    isAdultMode 
-                      ? "bg-gradient-to-r from-red-600/80 to-orange-600/80" 
-                      : "bg-gradient-to-r from-blue-600/80 to-purple-600/80"
-                  )} />
+                  <>
+                    <div className={cn(
+                      "absolute inset-0 rounded-full z-0 animate-pulse",
+                      isAdultMode 
+                        ? "bg-gradient-to-r from-red-600 to-orange-500" 
+                        : "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"
+                    )} />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer-slide z-[1]" />
+                  </>
                 )}
                 {/* Hover Background Glow */}
                 {location.pathname !== link.to && (
-                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-full z-0 transition-colors" />
+                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-full z-0 transition-all duration-300 scale-0 group-hover:scale-100" />
                 )}
                 
-                <span className="relative z-10 flex items-center gap-1.5">
-                  {link.icon && <link.icon className="w-3.5 h-3.5" />}
+                <span className="relative z-10 flex items-center gap-1.5 drop-shadow-sm">
+                  {link.icon && <link.icon className={cn("w-3.5 h-3.5 transition-transform duration-500 group-hover:scale-110", location.pathname === link.to ? "text-white" : "group-hover:text-white")} />}
                   {link.label}
                 </span>
               </Link>
@@ -151,13 +161,13 @@ const Navbar = () => {
           </div>
 
           {/* Right Section: Search & Auth */}
-          <div className="flex items-center gap-2 md:gap-4 relative z-10">
+          <div className="flex items-center gap-2 md:gap-3 relative z-10">
             {/* Adult Mode Exit Button */}
             {isAdultMode && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="hidden xl:flex rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 text-[10px] font-bold uppercase tracking-widest px-4 h-9"
+                className="hidden xl:flex rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 text-[10px] font-bold uppercase tracking-widest px-4 h-9 animate-bounce-subtle"
                 onClick={() => navigate("/")}
               >
                 Exit
@@ -166,7 +176,7 @@ const Navbar = () => {
 
             {/* Search Toggle / Input */}
             <div className={cn(
-              "flex items-center transition-all duration-300 overflow-hidden bg-white/5 rounded-full border border-white/10",
+              "flex items-center transition-all duration-500 overflow-hidden bg-white/5 rounded-full border border-white/10 shadow-inner",
               isSearchExpanded ? "w-48 md:w-64 px-1" : "w-10 md:w-11"
             )}>
               {isSearchExpanded ? (
@@ -181,7 +191,7 @@ const Navbar = () => {
                     placeholder="Search..."
                     className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-white text-xs placeholder:text-white/30"
                   />
-                  <button type="button" onClick={() => setIsSearchExpanded(false)} className="text-white/40 hover:text-white">
+                  <button type="button" onClick={() => setIsSearchExpanded(false)} className="text-white/40 hover:text-white transition-colors">
                     <X className="w-4 h-4" />
                   </button>
                 </form>
@@ -189,10 +199,10 @@ const Navbar = () => {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="w-10 h-10 md:w-11 md:h-11 rounded-full text-white/50 hover:text-white hover:bg-white/10"
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-full text-white/40 hover:text-white hover:bg-white/10 transition-all duration-300 group/search"
                   onClick={() => setIsSearchExpanded(true)}
                 >
-                  <Search className="w-4 h-4 md:w-5 md:h-5" />
+                  <Search className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover/search:scale-110" />
                 </Button>
               )}
             </div>
@@ -203,58 +213,62 @@ const Navbar = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className={cn(
-                      "relative h-11 w-11 rounded-full border-2 transition-all p-0 overflow-hidden shadow-lg",
-                      isAdultMode ? "border-red-500/30 hover:border-red-500" : "border-blue-500/30 hover:border-blue-500"
+                      "relative h-11 w-11 rounded-full border-2 transition-all p-0 overflow-hidden shadow-xl hover:scale-105 active:scale-95 duration-300",
+                      isAdultMode ? "border-red-500/40 hover:border-red-500" : "border-blue-500/40 hover:border-blue-500"
                     )}>
                       <Avatar className="h-full w-full">
                         <AvatarFallback className={cn(
                           "text-white font-bold uppercase text-sm",
-                          isAdultMode ? "bg-gradient-to-br from-red-600 to-orange-600" : "bg-gradient-to-br from-blue-600 to-purple-600"
+                          isAdultMode ? "bg-gradient-to-br from-red-600 to-orange-500" : "bg-gradient-to-br from-blue-600 via-indigo-500 to-purple-600"
                         )}>
                           {user.name?.substring(0, 2)}
                         </AvatarFallback>
                       </Avatar>
+                      <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 glass border-white/10 mt-2 rounded-2xl" align="end">
-                    <DropdownMenuLabel className="font-normal py-3">
+                  <DropdownMenuContent className="w-60 glass border-white/10 mt-3 rounded-[1.5rem] shadow-2xl p-1.5" align="end">
+                    <DropdownMenuLabel className="font-normal p-3">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-bold leading-none">{user.name}</p>
-                        <p className="text-xs leading-none text-white/50 mt-1">{user.email}</p>
+                        <p className="text-sm font-bold leading-none tracking-tight">{user.name}</p>
+                        <p className="text-[10px] leading-none text-white/40 mt-1 uppercase tracking-widest">{user.email}</p>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuSeparator className="bg-white/10 mx-1" />
                     
-                    {(user.email?.toLowerCase() === "admin@gmail.com" || user.isAdmin) && (
-                      <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer text-blue-400 hover:bg-blue-500/20 py-2.5 focus:text-blue-400 rounded-xl mx-1">
-                        <Shield className="mr-2 h-4 w-4" />
-                        Admin Dashboard
-                      </DropdownMenuItem>
-                    )}
+                    <div className="grid gap-1 mt-1">
+                      {(user.email?.toLowerCase() === "admin@gmail.com" || user.isAdmin) && (
+                        <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer text-blue-400 hover:bg-blue-500/20 py-3 focus:text-blue-400 rounded-xl px-3 transition-colors">
+                          <Shield className="mr-3 h-4 w-4" />
+                          <span className="font-bold text-xs uppercase tracking-wider">Admin Panel</span>
+                        </DropdownMenuItem>
+                      )}
 
-                    <DropdownMenuItem onClick={() => navigate("/watchlist")} className="cursor-pointer hover:bg-white/10 py-2.5 rounded-xl mx-1">
-                      <Heart className="mr-2 h-4 w-4 text-pink-400" />
-                      Watchlist
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/history")} className="cursor-pointer hover:bg-white/10 py-2.5 rounded-xl mx-1">
-                      <History className="mr-2 h-4 w-4 text-purple-400" />
-                      History
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer hover:bg-white/10 py-2.5 rounded-xl mx-1">
-                      <Settings className="mr-2 h-4 w-4 text-gray-400" />
-                      Settings
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-white/10" />
-                    <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-400 hover:bg-red-500/20 py-2.5 focus:text-red-400 rounded-xl mx-1 mb-1">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Log out
+                      <DropdownMenuItem onClick={() => navigate("/watchlist")} className="cursor-pointer hover:bg-white/10 py-3 rounded-xl px-3 transition-colors">
+                        <Heart className="mr-3 h-4 w-4 text-pink-400" />
+                        <span className="font-bold text-xs uppercase tracking-wider">My Watchlist</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/history")} className="cursor-pointer hover:bg-white/10 py-3 rounded-xl px-3 transition-colors">
+                        <History className="mr-3 h-4 w-4 text-purple-400" />
+                        <span className="font-bold text-xs uppercase tracking-wider">History</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer hover:bg-white/10 py-3 rounded-xl px-3 transition-colors">
+                        <Settings className="mr-3 h-4 w-4 text-gray-400" />
+                        <span className="font-bold text-xs uppercase tracking-wider">Settings</span>
+                      </DropdownMenuItem>
+                    </div>
+
+                    <DropdownMenuSeparator className="bg-white/10 mx-1" />
+                    <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-400 hover:bg-red-500/20 py-3 focus:text-red-400 rounded-xl px-3 mb-1 transition-colors mt-1">
+                      <LogOut className="mr-3 h-4 w-4" />
+                      <span className="font-bold text-xs uppercase tracking-wider">Log out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
                 <Button
                   variant="default"
-                  className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold uppercase tracking-widest text-[10px] px-6 h-11 border-none shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] transition-all"
+                  className="rounded-full bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 hover:scale-105 active:scale-95 text-white font-bold uppercase tracking-widest text-[10px] px-7 h-11 border-none shadow-[0_5px_20px_rgba(59,130,246,0.4)] hover:shadow-[0_8px_25px_rgba(59,130,246,0.6)] transition-all duration-300"
                   onClick={() => navigate("/auth")}
                 >
                   <User className="w-4 h-4 mr-2" />
@@ -268,10 +282,10 @@ const Navbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="w-10 h-10 rounded-full text-white/50 hover:text-white hover:bg-white/10 bg-white/5 border border-white/10"
+                className="w-10 h-10 rounded-full text-white/40 hover:text-white hover:bg-white/10 bg-white/5 border border-white/10 transition-all active:scale-90"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {isMobileMenuOpen ? <X className="w-5 h-5 animate-in spin-in-90 duration-300" /> : <Menu className="w-5 h-5 animate-in zoom-in duration-300" />}
               </Button>
             </div>
           </div>

@@ -218,6 +218,24 @@
   }
 }
 
+@keyframes shimmer-slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-shimmer-slide {
+  animation: shimmer-slide 2s infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 3s ease-in-out infinite;
+}
+
 .shimmer {
   background: linear-gradient(
     90deg,
