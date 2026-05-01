@@ -46,8 +46,13 @@ const MediaRow = ({ title, items, mediaType, className, isLoading }: MediaRowPro
   if (!items?.length) return null;
 
   return (
-    <section className={cn("py-6 relative group/row", className)}>
-      <h2 className="text-xl md:text-2xl font-display font-bold mb-4 px-4 md:px-0">{title}</h2>
+    <section className={cn("py-8 relative group/row", className)}>
+      <div className="flex items-center gap-4 mb-6 px-4 md:px-0">
+        <div className="w-1.5 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+        <h2 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-white uppercase italic">
+          {title}
+        </h2>
+      </div>
       
       {/* Scroll Buttons */}
       <Button

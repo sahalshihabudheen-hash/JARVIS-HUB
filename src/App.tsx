@@ -93,41 +93,47 @@ const App = () => (
         <TutorialProvider>
           <TooltipProvider>
             <BrowserRouter>
-              <StealthManager />
-              <JarvisTutorial />
-              <VerificationBanner />
-              <Toaster />
-              <Sonner />
-              <Routes>
-                <Route path="/auth" element={<Auth />} />
-              
-              {/* Protected Routes */}
-              <Route element={<ProtectedLayout />}>
-                <Route path="/" element={<Index />} />
-                <Route path="/movies" element={<Movies />} />
-                <Route path="/tv" element={<TVShows />} />
-                <Route path="/anime" element={<Anime />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/watchlist" element={<Watchlist />} />
-                <Route path="/movie/:id" element={<MovieDetails />} />
-                <Route path="/tv/:id" element={<TVDetails />} />
-                <Route path="/watch/:type/:id" element={<WatchPage />} />
-                <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/history" element={<History />} />
-                <Route path="/adult" element={<Adult />} />
-                <Route path="/news" element={<News />} />
-                <Route path="/hub/watch/:id" element={<WatchHub />} />
-                <Route path="/watch/adult/:id" element={<WatchHub />} />
-                <Route path="/admin" element={<Admin />} />
-              </Route>
-  
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </TutorialProvider>
-    </AuthProvider>
+              <div className="relative min-h-screen">
+                {/* Global Aesthetic Layer */}
+                <div className="fixed inset-0 mesh-gradient opacity-10 pointer-events-none -z-10" />
+                <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.05),transparent_50%)] pointer-events-none -z-10" />
+                
+                <StealthManager />
+                <JarvisTutorial />
+                <VerificationBanner />
+                <Toaster />
+                <Sonner />
+                <Routes>
+                  <Route path="/auth" element={<Auth />} />
+                
+                {/* Protected Routes */}
+                <Route element={<ProtectedLayout />}>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/movies" element={<Movies />} />
+                  <Route path="/tv" element={<TVShows />} />
+                  <Route path="/anime" element={<Anime />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/watchlist" element={<Watchlist />} />
+                  <Route path="/movie/:id" element={<MovieDetails />} />
+                  <Route path="/tv/:id" element={<TVDetails />} />
+                  <Route path="/watch/:type/:id" element={<WatchPage />} />
+                  <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/history" element={<History />} />
+                  <Route path="/adult" element={<Adult />} />
+                  <Route path="/news" element={<News />} />
+                  <Route path="/hub/watch/:id" element={<WatchHub />} />
+                  <Route path="/watch/adult/:id" element={<WatchHub />} />
+                  <Route path="/admin" element={<Admin />} />
+                </Route>
+    
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              </div>
+            </BrowserRouter>
+          </TooltipProvider>
+        </TutorialProvider>
+      </AuthProvider>
     </AdminProvider>
   </QueryClientProvider>
 );

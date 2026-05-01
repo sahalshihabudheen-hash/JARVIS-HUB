@@ -114,51 +114,54 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
       </div>
 
       {/* Glow Effect */}
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 gradient-glow opacity-50 animate-pulse-glow" />
+      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-primary/20 blur-[150px] rounded-full animate-pulse-glow" />
 
       {/* Content */}
-      <div className="container relative h-full flex items-end pb-20 md:pb-32">
+      <div className="container relative h-full flex items-end pb-20 md:pb-32 z-20">
         <div className={cn(
-          "max-w-2xl transition-all duration-500 ease-in-out",
-          animating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
+          "max-w-3xl transition-all duration-1000 ease-out",
+          animating ? "opacity-0 translate-y-8 scale-95" : "opacity-100 translate-y-0 scale-100"
         )}>
           {/* Badge */}
-          <div className="flex items-center gap-3 mb-4">
-            <span className="px-3 py-1 rounded-full bg-highlight text-background text-xs font-semibold uppercase tracking-wider">
-              Featured
-            </span>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-highlight/20 backdrop-blur-md border border-highlight/30 text-highlight text-[10px] font-black uppercase tracking-[0.3em]">
+              <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+              Featured Intelligence
+            </div>
             {rating && (
-              <div className="flex items-center gap-1 text-sm">
-                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                <span className="font-medium">{rating}</span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-xs font-bold text-yellow-400">
+                <Star className="w-4 h-4 fill-current" />
+                <span>{rating}</span>
               </div>
             )}
-            {year && <span className="text-sm text-muted-foreground">{year}</span>}
+            {year && <span className="text-xs font-black text-white/40 uppercase tracking-widest">{year}</span>}
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl md:text-6xl font-display font-bold mb-4 leading-tight">
+          <h1 className="text-5xl md:text-8xl font-display font-black mb-6 leading-[0.9] tracking-tighter text-white drop-shadow-2xl">
             {title}
           </h1>
 
           {/* Overview */}
-          <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-6 line-clamp-3">
+          <p className="text-white/60 text-sm md:text-lg leading-relaxed mb-8 line-clamp-3 max-w-2xl font-medium italic">
             {current.overview}
           </p>
 
           {/* Buttons */}
-          <div className="flex flex-wrap gap-3">
-            <Link to={watchPath} className="relative">
+          <div className="flex flex-wrap items-center gap-6">
+            <Link to={watchPath} className="group/btn relative">
+              {/* Prism Border Effect */}
+              <div className="absolute inset-0 rounded-2xl bg-[conic-gradient(from_0deg,transparent_0,rgba(59,130,246,0.5)_25%,transparent_50%,rgba(147,51,234,0.5)_75%,transparent_100%)] animate-[spin_3s_linear_infinite] opacity-0 group-hover/btn:opacity-100 transition-opacity blur-[2px]" />
               <Button 
                 id="hero-watch-btn"
                 size="lg" 
-                className="hover-glow"
+                className="relative h-16 px-10 rounded-2xl bg-white text-black hover:bg-white/90 font-black uppercase tracking-[0.2em] text-xs transition-transform active:scale-95 shadow-2xl"
                 onClick={() => {
                   if (isActive && step === 2) nextStep();
                 }}
               >
-                <Play className="w-5 h-5 mr-2 fill-current" />
-                Watch Now
+                <Play className="w-5 h-5 mr-3 fill-current" />
+                Initiate Stream
               </Button>
             </Link>
             <Link to={linkPath}>
@@ -166,15 +169,16 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
                 id="hero-more-info-btn"
                 size="lg" 
                 variant="outline" 
-                className="border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/40 transition-all duration-300"
+                className="h-16 px-10 rounded-2xl border-white/10 bg-white/5 backdrop-blur-xl hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-black uppercase tracking-[0.2em] text-xs text-white/70 hover:text-white"
               >
-                <Info className="w-5 h-5 mr-2" />
-                More Info
+                <Info className="w-5 h-5 mr-3" />
+                Data Archive
               </Button>
             </Link>
           </div>
         </div>
       </div>
+
 
       {/* Indicators */}
       {featured.length > 1 && (
