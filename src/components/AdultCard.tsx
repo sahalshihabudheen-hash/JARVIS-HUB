@@ -134,9 +134,11 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
 
   return (
     <>
+  return (
+    <>
       <div
         className={cn(
-          "group relative block rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.03] hover:shadow-card-hover bg-card border border-white/5 cursor-pointer",
+          "group relative block rounded-2xl overflow-hidden transition-all duration-700 hover:scale-[1.04] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#050505] border border-white/5 cursor-pointer",
           className
         )}
         onMouseEnter={!isTouchDevice ? startPreview : undefined}
@@ -146,6 +148,11 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && navigate(watchUrl)}
       >
+        {/* Premium Prism Border (Hover) */}
+        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none z-[5] overflow-hidden">
+          <div className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0,rgba(236,72,153,0.1)_25%,transparent_50%,rgba(168,85,247,0.1)_75%,transparent_100%)] animate-[spin_5s_linear_infinite]" />
+        </div>
+
         {/* ── Thumbnail area ── */}
         <div className="relative aspect-video overflow-hidden bg-secondary">
           {/* Main / cycling preview thumbnail */}
@@ -153,23 +160,23 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
             src={proxiedThumb(isHovered ? activeThumbnail : video.thumbnail)}
             alt={video.title}
             className={cn(
-              "w-full h-full object-cover transition-all duration-300",
-              isHovered ? "scale-[1.06]" : "scale-100 group-hover:scale-105"
+              "w-full h-full object-cover transition-all duration-700",
+              isHovered ? "scale-[1.1]" : "scale-100 group-hover:scale-110"
             )}
             loading="lazy"
-            // Fall back to original thumb if preview frame 404s
             onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = proxiedThumb(
-                video.thumbnail
-              );
+              (e.currentTarget as HTMLImageElement).src = proxiedThumb(video.thumbnail);
             }}
           />
 
-          {/* Preview progress bar — shown when cycling */}
+          {/* Shimmer overlay */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+          {/* Preview progress bar */}
           {isHovered && previewFrames.length > 1 && (
-            <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
               <div
-                className="h-full bg-red-500 transition-all duration-500"
+                className="h-full bg-pink-500 transition-all duration-500 shadow-[0_0_10px_#ec4899]"
                 style={{
                   width: `${((previewFrame + 1) / previewFrames.length) * 100}%`,
                 }}
@@ -179,105 +186,86 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
 
           {/* "PREVIEW" badge */}
           {isHovered && (
-            <div className="absolute top-2 left-2 z-20 animate-in fade-in duration-200">
-              <span className="px-2 py-0.5 rounded-md bg-red-600/90 text-[9px] font-black tracking-widest uppercase text-white shadow-lg">
-                Preview
+            <div className="absolute top-3 left-3 z-20 animate-in zoom-in-95 fade-in duration-300">
+              <span className="px-2.5 py-1 rounded-lg bg-pink-600/90 backdrop-blur-md text-[8px] font-black tracking-[0.2em] uppercase text-white shadow-xl border border-white/20">
+                Live Preview
               </span>
             </div>
           )}
 
-          {/* Gradient overlay on hover */}
+          {/* Gradient overlay */}
           <div
             className={cn(
-              "absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent transition-opacity duration-300",
-              isHovered ? "opacity-70" : "opacity-0 group-hover:opacity-40"
+              "absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent transition-opacity duration-500",
+              isHovered ? "opacity-80" : "opacity-40 group-hover:opacity-60"
             )}
           />
 
           {/* Desktop play button overlay */}
           <div
             className={cn(
-              "absolute inset-0 items-center justify-center hidden md:flex transition-all duration-300",
-              isHovered ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+              "absolute inset-0 flex items-center justify-center transition-all duration-500 z-10",
+              isHovered ? "opacity-100 scale-100" : "opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-90"
             )}
           >
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(watchUrl);
-              }}
-              className="w-14 h-14 rounded-full bg-red-600 flex items-center justify-center shadow-glow transform scale-75 group-hover:scale-100 transition-transform duration-300 hover:bg-red-500 cursor-pointer"
-            >
-              <Play className="w-6 h-6 text-white fill-current ml-1" />
+            <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl transition-transform hover:scale-110">
+              <Play className="w-6 h-6 text-white fill-current ml-1 drop-shadow-lg" />
             </div>
           </div>
 
-          {/* ── Mobile Eye button ── always visible on touch devices ── */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setMobilePreviewOpen(true);
-            }}
-            className={cn(
-              "absolute bottom-10 right-2 z-30 md:hidden",
-              "w-9 h-9 rounded-full glass border border-white/20 flex items-center justify-center",
-              "bg-black/60 backdrop-blur-sm shadow-lg",
-              "active:scale-95 transition-transform"
-            )}
-            aria-label="Preview video"
-          >
-            <Eye className="w-4 h-4 text-white/90" />
-          </button>
-
-          {/* Top-right: watchlist + rating */}
+          {/* Rating Badge */}
           {video.rating && (
-            <div className="absolute top-2 right-2 flex items-center gap-2 z-10">
+            <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
               <button
                 onClick={handleWatchLater}
                 className={cn(
-                  "p-2 rounded-lg glass transition-all duration-300",
+                  "p-2 rounded-xl backdrop-blur-md border transition-all duration-300",
                   isSaved
-                    ? "bg-red-500/20 text-red-500 border-red-500/30"
-                    : "hover:bg-white/10 text-white/60"
+                    ? "bg-pink-500/20 text-pink-500 border-pink-500/50 shadow-[0_0_15px_rgba(236,72,153,0.3)]"
+                    : "bg-black/40 text-white/60 border-white/10 hover:bg-white/10 hover:text-white"
                 )}
               >
-                {isSaved ? (
-                  <BookmarkCheck className="w-4 h-4" />
-                ) : (
-                  <Bookmark className="w-4 h-4" />
-                )}
+                {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
               </button>
-              <div className="flex items-center gap-1 px-2 py-1 rounded-md glass text-[10px] font-black text-yellow-500 bg-yellow-500/10 border-yellow-500/20">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl backdrop-blur-md text-[10px] font-black text-yellow-400 bg-black/40 border border-yellow-500/20 shadow-lg">
+                <Star className="w-3 h-3 fill-current" />
                 <span>{video.rating}%</span>
               </div>
             </div>
           )}
 
           {/* Duration badge */}
-          <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md glass text-[10px] font-bold text-white/90 bg-black/40 backdrop-blur-sm z-10">
+          <div className="absolute bottom-3 right-3 px-2.5 py-1.5 rounded-xl backdrop-blur-md text-[9px] font-black text-white/90 bg-black/60 border border-white/10 z-10 tracking-widest shadow-lg">
             {video.duration}
           </div>
         </div>
 
         {/* ── Info row ── */}
-        <div className="p-4 space-y-2 bg-gradient-to-b from-transparent to-white/[0.02]">
-          <h3 className="font-medium text-sm line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
+        <div className="p-5 space-y-3 bg-[#050505] relative z-10">
+          <h3 className="font-display font-bold text-sm line-clamp-1 leading-snug group-hover:text-pink-400 transition-colors tracking-tight">
             {video.title}
           </h3>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 text-[10px] font-bold text-white/30">
-              <div className="flex items-center gap-1">
-                <Eye className="w-3 h-3" />
+            <div className="flex items-center gap-4 text-[10px] font-bold text-white/30 uppercase tracking-widest">
+              <div className="flex items-center gap-1.5">
+                <Eye className="w-3 h-3 text-blue-500" />
                 <span>{video.views}</span>
               </div>
+              {video.source && (
+                <div className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[8px] text-white/20">
+                  {video.source.toUpperCase()}
+                </div>
+              )}
             </div>
-            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-              <Play className="w-4 h-4 fill-current" />
+            <div className="flex items-center gap-1.5 text-pink-500/50 group-hover:text-pink-500 transition-colors">
+               <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+               <span className="text-[8px] font-black uppercase tracking-widest">Premium</span>
             </div>
           </div>
         </div>
       </div>
+
 
       {/* ── Mobile full-screen preview modal ── */}
       {mobilePreviewOpen && (

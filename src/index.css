@@ -236,6 +236,31 @@
   animation: bounce-subtle 3s ease-in-out infinite;
 }
 
+@keyframes mesh-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.mesh-gradient {
+  background: linear-gradient(-45deg, 
+    hsl(240, 15%, 5%), 
+    hsl(240, 20%, 8%), 
+    hsl(280, 20%, 10%), 
+    hsl(240, 15%, 5%)
+  );
+  background-size: 400% 400%;
+  animation: mesh-move 15s ease infinite;
+}
+
+.glass-premium {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
 .shimmer {
   background: linear-gradient(
     90deg,
