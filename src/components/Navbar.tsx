@@ -54,22 +54,20 @@ const Navbar = () => {
     { to: "/tv", label: "TV Shows", icon: Tv },
     { to: "/anime", label: "Anime", icon: Sparkles },
     { to: "/news", label: "News", icon: Newspaper },
-    ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
-  ];
-
-  const allLinks = [
-    ...navLinks,
     ...(user ? [
       { to: "/watchlist", label: "Watchlist", icon: Heart },
       { to: "/history", label: "History", icon: History },
     ] : []),
+    ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
+  const allLinks = navLinks;
+
   return (
-    <nav className="fixed top-4 left-0 right-0 z-50 px-4 md:px-8 flex justify-center pointer-events-none select-none">
+    <nav className="fixed top-4 left-0 right-0 z-50 px-4 md:px-6 flex justify-center pointer-events-none select-none">
       <div className={cn(
-        "pointer-events-auto w-full max-w-5xl rounded-[2.5rem] transition-all duration-700 border relative group/nav",
+        "pointer-events-auto w-full max-w-7xl rounded-[2.5rem] transition-all duration-700 border relative group/nav",
         isScrolled
           ? "bg-background/40 backdrop-blur-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)] py-2 px-4 md:px-6"
           : "bg-background/20 backdrop-blur-2xl border-white/5 shadow-2xl py-3 px-5 md:px-8",
@@ -81,7 +79,7 @@ const Navbar = () => {
           <div className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0,rgba(59,130,246,0.1)_25%,transparent_50%,rgba(168,85,247,0.1)_75%,transparent_100%)] animate-[spin_8s_linear_infinite]" />
         </div>
 
-        <div className="flex items-center justify-between relative z-10">
+        <div className="flex items-center justify-between gap-4 relative z-10">
           
           {/* Logo Section */}
           <Link to="/" className="flex items-center gap-3 group shrink-0 relative">
@@ -95,23 +93,22 @@ const Navbar = () => {
                 alt="App Logo" 
                 className={cn(
                   "relative object-cover rounded-full border border-white/20 shadow-2xl transition-all duration-500 group-hover:rotate-[360deg]",
-                  isScrolled ? "w-10 h-10" : "w-11 h-11",
+                  isScrolled ? "w-9 h-9" : "w-10 h-10",
                   isAdultMode && "border-red-500/40"
                 )}
               />
-              {/* Cute sparkle dots */}
               <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full animate-ping opacity-75" />
             </div>
-            <div className="flex flex-col -space-y-1 hidden sm:flex whitespace-nowrap">
+            <div className="flex flex-col -space-y-1 hidden xl:flex whitespace-nowrap">
               <span className={cn(
                 "font-display font-black tracking-tighter text-white transition-all duration-500",
-                isScrolled ? "text-xl" : "text-2xl",
+                isScrolled ? "text-lg" : "text-xl",
                 isAdultMode ? "group-hover:text-red-400" : "group-hover:text-blue-400"
               )}>
                 JARVIS
               </span>
               <span className={cn(
-                "text-[10px] font-display font-black tracking-[0.4em] transition-colors",
+                "text-[9px] font-display font-black tracking-[0.4em] transition-colors",
                 isAdultMode ? "text-red-500" : "text-blue-500"
               )}>
                 HUB
@@ -121,43 +118,45 @@ const Navbar = () => {
 
           {/* Centered Navigation Pills (Desktop) */}
           <div className={cn(
-            "hidden lg:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/5 p-1 rounded-full border border-white/10 shadow-inner backdrop-blur-xl transition-all duration-500",
+            "hidden lg:flex items-center flex-1 justify-center transition-all duration-500",
             isSearchExpanded ? "opacity-0 pointer-events-none scale-95" : "opacity-100 scale-100"
           )}>
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={cn(
-                  "flex items-center gap-1.5 text-[10px] xl:text-[11px] font-bold uppercase tracking-[0.15em] px-4 py-2.5 rounded-full transition-all duration-500 relative overflow-hidden group",
-                  location.pathname === link.to
-                    ? "text-white shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                    : "text-white/40 hover:text-white"
-                )}
-              >
-                {/* Active Background with Shimmer */}
-                {location.pathname === link.to && (
-                  <>
-                    <div className={cn(
-                      "absolute inset-0 rounded-full z-0 animate-pulse",
-                      isAdultMode 
-                        ? "bg-gradient-to-r from-red-600 to-orange-500" 
-                        : "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"
-                    )} />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer-slide z-[1]" />
-                  </>
-                )}
-                {/* Hover Background Glow */}
-                {location.pathname !== link.to && (
-                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-full z-0 transition-all duration-300 scale-0 group-hover:scale-100" />
-                )}
-                
-                <span className="relative z-10 flex items-center gap-1.5 drop-shadow-sm">
-                  {link.icon && <link.icon className={cn("w-3.5 h-3.5 transition-transform duration-500 group-hover:scale-110", location.pathname === link.to ? "text-white" : "group-hover:text-white")} />}
-                  {link.label}
-                </span>
-              </Link>
-            ))}
+            <div className="flex items-center bg-white/5 p-1 rounded-full border border-white/10 shadow-inner backdrop-blur-xl">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={cn(
+                    "flex items-center gap-1.5 text-[9px] xl:text-[10px] font-bold uppercase tracking-[0.15em] px-3 xl:px-4 py-2 rounded-full transition-all duration-500 relative overflow-hidden group whitespace-nowrap",
+                    location.pathname === link.to
+                      ? "text-white shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                      : "text-white/40 hover:text-white"
+                  )}
+                >
+                  {/* Active Background with Shimmer */}
+                  {location.pathname === link.to && (
+                    <>
+                      <div className={cn(
+                        "absolute inset-0 rounded-full z-0 animate-pulse",
+                        isAdultMode 
+                          ? "bg-gradient-to-r from-red-600 to-orange-500" 
+                          : "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"
+                      )} />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer-slide z-[1]" />
+                    </>
+                  )}
+                  {/* Hover Background Glow */}
+                  {location.pathname !== link.to && (
+                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-full z-0 transition-all duration-300 scale-0 group-hover:scale-100" />
+                  )}
+                  
+                  <span className="relative z-10 flex items-center gap-1.5 drop-shadow-sm">
+                    {link.icon && <link.icon className={cn("w-3 h-3 transition-transform duration-500 group-hover:scale-110", location.pathname === link.to ? "text-white" : "group-hover:text-white")} />}
+                    {link.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* Right Section: Search & Auth */}
