@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield, History, Flame, Newspaper } from "lucide-react";
+import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield, History, Flame, Newspaper, LogOut, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger 
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { LogOut, Settings } from "lucide-react";
 import { useTutorial } from "@/context/TutorialContext";
 import { useAdmin } from "@/context/AdminContext";
 
@@ -54,302 +53,269 @@ const Navbar = () => {
     { to: "/movies", label: "Movies", icon: Film },
     { to: "/tv", label: "TV Shows", icon: Tv },
     { to: "/anime", label: "Anime", icon: Sparkles },
-    { to: "/watchlist", label: "Watchlist", icon: Heart },
-    { to: "/history", label: "History", icon: History },
     { to: "/news", label: "News", icon: Newspaper },
+    ...(user ? [
+      { to: "/watchlist", label: "Watchlist", icon: Heart },
+      { to: "/history", label: "History", icon: History },
+    ] : []),
     ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 p-4 lg:p-6 flex justify-center">
+    <nav className="fixed top-4 left-0 right-0 z-50 px-4 md:px-8 flex justify-center pointer-events-none">
       <div className={cn(
-        "w-[98%] max-w-[1700px] px-4 md:px-10 rounded-[2.5rem] transition-all duration-500 border",
+        "pointer-events-auto w-full max-w-6xl rounded-[2.5rem] transition-all duration-500 border overflow-hidden",
         isScrolled
-          ? "bg-background/40 backdrop-blur-2xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] shadow-black/40"
-          : "bg-background/20 backdrop-blur-xl border-white/5",
+          ? "bg-background/60 backdrop-blur-3xl border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] shadow-blue-500/10 py-2 px-4 md:px-6"
+          : "bg-background/30 backdrop-blur-xl border-white/5 shadow-2xl py-3 px-5 md:px-8",
+        isAdultMode && "border-red-500/20 shadow-red-500/5",
         isTutorialActive && "pointer-events-none"
       )}>
-        <div className="flex items-center justify-between h-18 md:h-22">
-          {isSearchExpanded ? (
-            <div className="flex-1 flex items-center gap-3 animate-fade-in px-2">
-              <Search className="w-5 h-5 text-blue-500 shrink-0" />
-              <form onSubmit={handleSearch} className="flex-1">
-                <input
-                  autoFocus
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onBlur={() => !searchQuery && setIsSearchExpanded(false)}
-                  placeholder="Search movies, TV shows..."
-                  className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-white placeholder:text-white/20 text-base py-2"
-                />
-              </form>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="w-10 h-10 rounded-full text-white/40 hover:text-white shrink-0"
-                onClick={() => {
-                  setIsSearchExpanded(false);
-                  setSearchQuery("");
-                }}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-          ) : (
-            <>
-              {/* Logo */}
-          <Link to="/" id="navbar-logo" className="flex items-center gap-3 group shrink-0">
+        <div className="flex items-center justify-between">
+          
+          {/* Logo Section */}
+          <Link to="/" className="flex items-center gap-3 group shrink-0 relative z-10">
             <div className="relative">
-              <div className="absolute inset-0 bg-blue-500/20 blur-lg rounded-full animate-pulse group-hover:bg-blue-500/40 transition-all" />
+              <div className={cn(
+                "absolute inset-0 blur-xl rounded-full transition-all duration-500",
+                isAdultMode ? "bg-red-500/20 group-hover:bg-red-500/40" : "bg-blue-500/20 group-hover:bg-blue-500/40"
+              )} />
               <img 
                 src={branding.appLogo} 
                 alt="App Logo" 
-                className="relative w-11 h-11 md:w-12 md:h-12 object-cover rounded-full border border-white/10 shadow-2xl group-hover:scale-105 transition-all duration-300"
+                className={cn(
+                  "relative object-cover rounded-full border border-white/20 shadow-2xl transition-all duration-500",
+                  isScrolled ? "w-10 h-10 group-hover:scale-105" : "w-12 h-12 group-hover:scale-110",
+                  isAdultMode && "border-red-500/40"
+                )}
               />
             </div>
-            <div className="flex flex-col -space-y-1.5 hidden sm:flex">
-              <span className="text-xl md:text-2xl font-display font-black tracking-tighter text-white group-hover:text-blue-400 transition-colors">
+            <div className="flex flex-col -space-y-1 hidden sm:flex">
+              <span className={cn(
+                "font-display font-black tracking-tighter text-white transition-all duration-300",
+                isScrolled ? "text-xl" : "text-2xl",
+                isAdultMode ? "group-hover:text-red-400" : "group-hover:text-blue-400"
+              )}>
                 JARVIS
               </span>
-              <span className="text-xs md:text-sm font-display font-black tracking-[0.3em] text-blue-500 group-hover:text-white transition-colors">
+              <span className={cn(
+                "text-[10px] font-display font-black tracking-[0.4em] transition-colors",
+                isAdultMode ? "text-red-500" : "text-blue-500"
+              )}>
                 HUB
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          {!isAdultMode ? (
-            <div id="navbar-links" className="hidden lg:flex items-center gap-2 xl:gap-4 ml-4 xl:ml-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={cn(
-                    "flex items-center gap-2 text-[10px] xl:text-[11px] font-black uppercase tracking-[0.15em] px-2 xl:px-3 py-2 rounded-full transition-all duration-300",
-                    location.pathname === link.to
-                      ? "bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-white/10"
-                      : link.to === "/admin" 
-                        ? "text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
-                        : "text-white/40 hover:text-white hover:bg-white/5"
-                  )}
-                >
-                  {link.icon && <link.icon className="w-3.5 h-3.5" />}
-                  <span className="hidden xl:block">{link.label}</span>
-                  {location.pathname === link.to && <span className="xl:hidden">{link.label}</span>}
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="hidden lg:flex flex-1 justify-center ml-4">
-              <Button 
-                onClick={() => navigate("/")}
-                variant="outline"
-                className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-full h-10 px-6 font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.15)] transition-all"
+          {/* Centered Navigation Pills (Desktop) */}
+          <div className={cn(
+            "hidden lg:flex items-center absolute left-1/2 -translate-x-1/2 bg-white/5 p-1.5 rounded-full border border-white/10 shadow-inner backdrop-blur-md transition-all duration-300",
+            isSearchExpanded ? "opacity-0 pointer-events-none scale-95" : "opacity-100 scale-100"
+          )}>
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={cn(
+                  "flex items-center gap-2 text-[10px] xl:text-[11px] font-bold uppercase tracking-[0.15em] px-3 xl:px-4 py-2 rounded-full transition-all duration-300 relative overflow-hidden group",
+                  location.pathname === link.to
+                    ? "text-white shadow-md"
+                    : "text-white/50 hover:text-white"
+                )}
               >
-                Exit to Normal Mode
-              </Button>
-            </div>
-          )}
+                {/* Active Background Glow */}
+                {location.pathname === link.to && (
+                  <div className={cn(
+                    "absolute inset-0 rounded-full z-0",
+                    isAdultMode 
+                      ? "bg-gradient-to-r from-red-600/80 to-orange-600/80" 
+                      : "bg-gradient-to-r from-blue-600/80 to-purple-600/80"
+                  )} />
+                )}
+                {/* Hover Background Glow */}
+                {location.pathname !== link.to && (
+                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-full z-0 transition-colors" />
+                )}
+                
+                <span className="relative z-10 flex items-center gap-1.5">
+                  {link.icon && <link.icon className="w-3.5 h-3.5" />}
+                  {link.label}
+                </span>
+              </Link>
+            ))}
+          </div>
 
-          {/* Search and Mobile Menu */}
-          <div className="flex items-center gap-3 lg:gap-6">
-            {!isAdultMode && (
-              <form onSubmit={handleSearch} id="navbar-search" className="hidden lg:flex items-center group">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-blue-500 transition-colors" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search Movies"
-                  className="w-40 xl:w-60 pl-11 pr-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-full text-[12px] placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
-                />
-              </div>
-            </form>
+          {/* Right Section: Search & Auth */}
+          <div className="flex items-center gap-2 md:gap-4 relative z-10">
+            {/* Adult Mode Exit Button */}
+            {isAdultMode && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden xl:flex rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 text-[10px] font-bold uppercase tracking-widest px-4 h-9"
+                onClick={() => navigate("/")}
+              >
+                Exit
+              </Button>
             )}
-            
-            {user ? (
-              <div className="flex items-center gap-3 lg:gap-5">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  id="settings-btn"
-                  className="hidden lg:flex rounded-full hover:bg-white/10 w-10 h-10 lg:w-11 lg:h-11"
-                  onClick={() => navigate("/settings")}
+
+            {/* Search Toggle / Input */}
+            <div className={cn(
+              "flex items-center transition-all duration-300 overflow-hidden bg-white/5 rounded-full border border-white/10",
+              isSearchExpanded ? "w-48 md:w-64 px-1" : "w-10 md:w-11"
+            )}>
+              {isSearchExpanded ? (
+                <form onSubmit={handleSearch} className="flex-1 flex items-center h-10 md:h-11 px-2">
+                  <Search className="w-4 h-4 text-blue-400 shrink-0 mr-2" />
+                  <input
+                    autoFocus
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onBlur={() => !searchQuery && setIsSearchExpanded(false)}
+                    placeholder="Search..."
+                    className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-white text-xs placeholder:text-white/30"
+                  />
+                  <button type="button" onClick={() => setIsSearchExpanded(false)} className="text-white/40 hover:text-white">
+                    <X className="w-4 h-4" />
+                  </button>
+                </form>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-full text-white/50 hover:text-white hover:bg-white/10"
+                  onClick={() => setIsSearchExpanded(true)}
                 >
-                  <Settings className="w-5 h-5 text-white/40" />
+                  <Search className="w-4 h-4 md:w-5 md:h-5" />
                 </Button>
+              )}
+            </div>
+
+            {/* Auth / Settings Desktop */}
+            <div className="hidden lg:flex items-center gap-2">
+              {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full hover-glow">
-                      <Avatar className="h-10 w-10 border-2 border-primary/20">
-                        <AvatarFallback className="bg-primary/10 text-primary uppercase">
+                    <Button variant="ghost" className={cn(
+                      "relative h-11 w-11 rounded-full border-2 transition-all p-0 overflow-hidden shadow-lg",
+                      isAdultMode ? "border-red-500/30 hover:border-red-500" : "border-blue-500/30 hover:border-blue-500"
+                    )}>
+                      <Avatar className="h-full w-full">
+                        <AvatarFallback className={cn(
+                          "text-white font-bold uppercase text-sm",
+                          isAdultMode ? "bg-gradient-to-br from-red-600 to-orange-600" : "bg-gradient-to-br from-blue-600 to-purple-600"
+                        )}>
                           {user.name?.substring(0, 2)}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 glass border-white/10" align="end">
-                    <DropdownMenuLabel className="font-normal">
+                  <DropdownMenuContent className="w-56 glass border-white/10 mt-2 rounded-2xl" align="end">
+                    <DropdownMenuLabel className="font-normal py-3">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.name}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                        <p className="text-sm font-bold leading-none">{user.name}</p>
+                        <p className="text-xs leading-none text-white/50 mt-1">{user.email}</p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-white/10" />
                     
                     {(user.email?.toLowerCase() === "admin@gmail.com" || user.isAdmin) && (
-                      <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer text-blue-400 hover:bg-blue-400/10 focus:text-blue-400">
-                        <Settings className="mr-2 h-4 w-4" />
+                      <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer text-blue-400 hover:bg-blue-500/20 py-2.5 focus:text-blue-400 rounded-xl mx-1">
+                        <Shield className="mr-2 h-4 w-4" />
                         Admin Dashboard
                       </DropdownMenuItem>
                     )}
 
-                    <DropdownMenuItem onClick={() => navigate("/watchlist")} className="cursor-pointer hover:bg-white/5">
-                      <Heart className="mr-2 h-4 w-4" />
+                    <DropdownMenuItem onClick={() => navigate("/watchlist")} className="cursor-pointer hover:bg-white/10 py-2.5 rounded-xl mx-1">
+                      <Heart className="mr-2 h-4 w-4 text-pink-400" />
                       Watchlist
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/history")} className="cursor-pointer hover:bg-white/5">
-                      <History className="mr-2 h-4 w-4" />
-                      Watch History
+                    <DropdownMenuItem onClick={() => navigate("/history")} className="cursor-pointer hover:bg-white/10 py-2.5 rounded-xl mx-1">
+                      <History className="mr-2 h-4 w-4 text-purple-400" />
+                      History
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer hover:bg-white/5">
-                      <Settings className="mr-2 h-4 w-4" />
+                    <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer hover:bg-white/10 py-2.5 rounded-xl mx-1">
+                      <Settings className="mr-2 h-4 w-4 text-gray-400" />
                       Settings
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-white/10" />
-                    <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-400 hover:bg-red-400/10 focus:text-red-400">
+                    <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-400 hover:bg-red-500/20 py-2.5 focus:text-red-400 rounded-xl mx-1 mb-1">
                       <LogOut className="mr-2 h-4 w-4" />
                       Log out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 lg:gap-5">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  id="settings-btn-alt"
-                  className="hidden lg:flex rounded-full hover:bg-white/10 w-10 h-10 lg:w-11 lg:h-11"
-                  onClick={() => navigate("/settings")}
-                >
-                  <Settings className="w-5 h-5 text-white/40" />
-                </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="hidden lg:flex items-center gap-2 rounded-full px-5 lg:px-6 h-10 hover-glow font-black text-[12px] uppercase tracking-[0.1em]"
-                  onClick={() => navigate("/auth")}
-                >
-                  <User className="w-4 h-4" />
-                  Sign In
-                </Button>
-              </div>
-            )}
-
-            {/* Mobile Controls */}
-            <div className="flex items-center gap-1 lg:hidden">
-              {isAdultMode ? (
-                <Button 
-                  onClick={() => navigate("/")}
-                  variant="outline"
-                  size="sm"
-                  className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-full px-3 text-[10px] font-bold uppercase tracking-widest mr-2"
-                >
-                  Exit
-                </Button>
               ) : (
                 <Button
-                  id="search-btn-mobile"
-                  variant="ghost"
-                  size="icon"
-                  className="w-10 h-10 rounded-full text-white/40 hover:text-white"
-                  onClick={() => setIsSearchExpanded(true)}
+                  variant="default"
+                  className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold uppercase tracking-widest text-[10px] px-6 h-11 border-none shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] transition-all"
+                  onClick={() => navigate("/auth")}
                 >
-                  <Search className="w-5 h-5" />
-                </Button>
-              )}
-              
-              <Button
-                id="settings-btn-mobile"
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 rounded-full text-white/40 hover:text-white"
-                onClick={() => navigate("/settings")}
-              >
-                <Settings className="w-5 h-5" />
-              </Button>
-              
-              {!isAdultMode && (
-                <Button
-                  id="menu-btn-mobile"
-                  variant="ghost"
-                  size="icon"
-                  className="w-10 h-10 rounded-full text-white/40 hover:text-white"
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                >
-                  {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                  <User className="w-4 h-4 mr-2" />
+                  Sign In
                 </Button>
               )}
             </div>
-          </div>
-        </>
-      )}
-    </div>
 
-        {/* Mobile Menu */}
+            {/* Mobile Menu Toggle */}
+            <div className="lg:hidden flex items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 rounded-full text-white/50 hover:text-white hover:bg-white/10 bg-white/5 border border-white/10"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-3 border-t border-white/10 animate-fade-in">
-            <div className="flex flex-col gap-1">
+          <div className="lg:hidden mt-4 pt-4 border-t border-white/10 animate-fade-in pb-2">
+            <div className="flex flex-col gap-1.5">
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200",
+                    "flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 font-bold",
                     location.pathname === link.to
-                      ? "bg-white/15 text-foreground"
-                      : link.to === "/admin"
-                        ? "text-blue-400 hover:bg-blue-400/10"
-                        : "text-muted-foreground hover:bg-white/10 hover:text-foreground"
+                      ? isAdultMode 
+                        ? "bg-gradient-to-r from-red-600/20 to-orange-600/20 text-white border border-red-500/30"
+                        : "bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white border border-blue-500/30"
+                      : "text-white/50 hover:bg-white/10 hover:text-white"
                   )}
                 >
-                  {link.icon && <link.icon className="w-5 h-5" />}
+                  {link.icon && <link.icon className={cn("w-5 h-5", location.pathname === link.to ? (isAdultMode ? "text-red-400" : "text-blue-400") : "")} />}
                   {link.label}
                 </Link>
               ))}
-              <div className="pt-2">
+              
+              <div className="mt-4 pt-4 border-t border-white/10">
                 {user ? (
                   <>
                     <Button
                       variant="outline"
-                      className="w-full flex items-center justify-center gap-2 rounded-xl h-12 border-red-400/20 text-red-400 hover:bg-red-400/10"
+                      className="w-full mt-2 flex items-center justify-center gap-2 rounded-2xl h-12 border-red-500/30 text-red-400 hover:bg-red-500/20 font-bold uppercase tracking-widest text-xs"
                       onClick={logout}
                     >
-                      <LogOut className="w-5 h-5" />
-                      Log out of Hub
+                      <LogOut className="w-4 h-4" />
+                      Log out
                     </Button>
                   </>
                 ) : (
                   <Button
-                    className="w-full flex items-center justify-center gap-2 rounded-xl h-12 hover-glow"
+                    className="w-full flex items-center justify-center gap-2 rounded-2xl h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold uppercase tracking-widest border-none shadow-lg"
                     onClick={() => navigate("/auth")}
                   >
                     <User className="w-5 h-5" />
                     Sign In
                   </Button>
                 )}
-                <Button
-                  variant="ghost"
-                  className="w-full mt-1 flex items-center justify-center gap-2 rounded-xl h-12 hover:bg-white/5 text-muted-foreground"
-                  onClick={() => navigate("/settings")}
-                >
-                  <Settings className="w-5 h-5" />
-                  Settings & Calibration
-                </Button>
               </div>
             </div>
           </div>

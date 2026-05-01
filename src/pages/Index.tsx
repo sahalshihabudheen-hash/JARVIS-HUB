@@ -3,7 +3,6 @@ import { useQuery, useQueries } from "@tanstack/react-query";
 import { X, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import HomeNavbar from "@/components/HomeNavbar";
 import HeroSection from "@/components/HeroSection";
 import MediaRow from "@/components/MediaRow";
 import ContinueWatching from "@/components/ContinueWatching";
@@ -270,7 +269,7 @@ const Index = () => {
   
   return (
     <div className="min-h-screen bg-background relative pt-4">
-      <HomeNavbar />
+      <Navbar />
 
       {/* Ad Blocker Warning Popup */}
       {showAdWarning && (
