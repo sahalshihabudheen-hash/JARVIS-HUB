@@ -143,12 +143,12 @@ const WatchPage = () => {
       // Initial update (0 increment)
       if (!isIncognito) updateHistory(0);
 
-      // Start interval to track progress (every 20 seconds for higher resolution)
+      // Start interval to sync state (but don't manually increment time as it causes jumps)
       const interval = setInterval(() => {
         if (document.visibilityState === 'visible' && !isIncognito) {
-          updateHistory(20);
+          updateHistory(0); // Just heartbeat/sync the current known state
         }
-      }, 20000);
+      }, 30000);
 
       return () => clearInterval(interval);
     }

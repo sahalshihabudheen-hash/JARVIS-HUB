@@ -313,9 +313,17 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
         {/* Persistent Stealth Shield (Manual) */}
         {shieldActive && !showOverlay && (
           <div 
-            className="absolute inset-0 z-40 bg-transparent cursor-default"
-            title="Stealth Shield Active - No clicks allowed"
-          />
+            className="absolute inset-0 z-40 bg-transparent cursor-pointer flex items-center justify-center group/shield"
+            onClick={() => {
+              setShieldActive(false);
+              toast.success("Shield disengaged - Controls unlocked");
+            }}
+          >
+            <div className="opacity-0 group-hover/shield:opacity-100 transition-opacity bg-black/60 px-4 py-2 rounded-full border border-red-500/50 text-red-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              Shield Active: Click to Unlock Player
+            </div>
+          </div>
         )}
         
         {/* Remote Control Panel Overlay (visible specifically when shield is active or hovered) */}
