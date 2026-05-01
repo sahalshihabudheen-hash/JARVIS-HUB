@@ -54,18 +54,22 @@ const Navbar = () => {
     { to: "/tv", label: "TV Shows", icon: Tv },
     { to: "/anime", label: "Anime", icon: Sparkles },
     { to: "/news", label: "News", icon: Newspaper },
+    ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
+  ];
+
+  const allLinks = [
+    ...navLinks,
     ...(user ? [
       { to: "/watchlist", label: "Watchlist", icon: Heart },
       { to: "/history", label: "History", icon: History },
     ] : []),
-    ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
   return (
     <nav className="fixed top-4 left-0 right-0 z-50 px-4 md:px-8 flex justify-center pointer-events-none">
       <div className={cn(
-        "pointer-events-auto w-full max-w-6xl rounded-[2.5rem] transition-all duration-500 border overflow-hidden",
+        "pointer-events-auto w-full max-w-5xl rounded-[2.5rem] transition-all duration-500 border overflow-hidden",
         isScrolled
           ? "bg-background/60 backdrop-blur-3xl border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] shadow-blue-500/10 py-2 px-4 md:px-6"
           : "bg-background/30 backdrop-blur-xl border-white/5 shadow-2xl py-3 px-5 md:px-8",
@@ -91,7 +95,7 @@ const Navbar = () => {
                 )}
               />
             </div>
-            <div className="flex flex-col -space-y-1 hidden sm:flex">
+            <div className="flex flex-col -space-y-1 hidden sm:flex whitespace-nowrap">
               <span className={cn(
                 "font-display font-black tracking-tighter text-white transition-all duration-300",
                 isScrolled ? "text-xl" : "text-2xl",
@@ -118,7 +122,7 @@ const Navbar = () => {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  "flex items-center gap-2 text-[10px] xl:text-[11px] font-bold uppercase tracking-[0.15em] px-3 xl:px-4 py-2 rounded-full transition-all duration-300 relative overflow-hidden group",
+                  "flex items-center gap-1.5 text-[10px] xl:text-[11px] font-bold uppercase tracking-[0.15em] px-3 xl:px-4 py-2 rounded-full transition-all duration-300 relative overflow-hidden group",
                   location.pathname === link.to
                     ? "text-white shadow-md"
                     : "text-white/50 hover:text-white"
@@ -277,7 +281,7 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="lg:hidden mt-4 pt-4 border-t border-white/10 animate-fade-in pb-2">
             <div className="flex flex-col gap-1.5">
-              {navLinks.map((link) => (
+              {allLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
