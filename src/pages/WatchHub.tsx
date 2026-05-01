@@ -156,7 +156,6 @@ const WatchHub = () => {
     details?.default_thumb || details?.thumbnail || "";
 
   return (
-  return (
     <div className="min-h-screen bg-[#020202] text-white selection:bg-blue-500/30 selection:text-blue-200 relative overflow-hidden">
       {/* Animated Mesh Background */}
       <div className="fixed inset-0 mesh-gradient opacity-20 pointer-events-none" />

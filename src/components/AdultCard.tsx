@@ -134,8 +134,6 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
 
   return (
     <>
-  return (
-    <>
       <div
         className={cn(
           "group relative block rounded-2xl overflow-hidden transition-all duration-700 hover:scale-[1.04] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#050505] border border-white/5 cursor-pointer",
