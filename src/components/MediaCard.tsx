@@ -119,8 +119,6 @@ const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardP
         {year && (
           <div className="flex items-center gap-2 mt-1.5">
             <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{year}</p>
-            <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
-            <p className="text-[9px] text-highlight/60 font-black uppercase tracking-tighter">System Approved</p>
           </div>
         )}
       </div>

@@ -161,7 +161,7 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
                 }}
               >
                 <Play className="w-5 h-5 mr-3 fill-current" />
-                Initiate Stream
+                Watch Now
               </Button>
             </Link>
             <Link to={linkPath}>
