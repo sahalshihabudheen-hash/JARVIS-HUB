@@ -83,7 +83,7 @@ const Index = () => {
     queryFn: () => {
       // If India, show strictly Indian content for this row
       if (location?.country === "IN") {
-        return discoverMovies({ with_origin_country: "IN", region: "IN", sort_by: "popularity.desc" });
+        return discoverMovies({ region: "IN", sort_by: "popularity.desc" });
       }
       return getNowPlayingMovies(1, location?.country);
     },
@@ -95,7 +95,7 @@ const Index = () => {
     queryFn: () => {
       // If India, show strictly Indian content for this row
       if (location?.country === "IN") {
-        return discoverMovies({ with_origin_country: "IN", region: "IN", "primary_release_date.gte": new Date().toISOString().split('T')[0] });
+        return discoverMovies({ region: "IN", "primary_release_date.gte": new Date().toISOString().split('T')[0] });
       }
       return getUpcomingMovies(1, location?.country);
     },
@@ -168,7 +168,6 @@ const Index = () => {
       };
 
       if (isIndia) {
-        params.with_origin_country = "IN";
         params.with_original_language = regionalContext.language;
       } else {
         params.with_origin_country = location?.country || "";
@@ -195,7 +194,6 @@ const Index = () => {
       };
 
       if (isIndia) {
-        params.with_origin_country = "IN";
         params.with_original_language = regionalContext.language;
       } else {
         params.with_origin_country = location?.country || "";

@@ -72,7 +72,7 @@ const Spotlight = ({ x, y, w, h }: { x: number; y: number; w: number; h: number 
     <div className="fixed inset-0 z-[1450] pointer-events-none">
       {/* Dark mask with hole */}
       <div
-        className="absolute inset-0 bg-black/80"
+        className="absolute inset-0 bg-black/60"
         style={{
           clipPath: `polygon(0 0,0 100%,${left}px 100%,${left}px ${top}px,${left + width}px ${top}px,${left + width}px ${top + height}px,${left}px ${top + height}px,${left}px 100%,100% 100%,100% 0)`,
         }}
@@ -182,19 +182,23 @@ const JarvisTutorial = () => {
     }
   };
 
-  // ── Auto-start: PS2 intro on every page load when user is logged in ──
+  // ── Auto-start: PS2 intro on initial landing only ──
   useEffect(() => {
-    if (!user || location.pathname === "/auth" || location.pathname === "/admin") return;
+    // Only show if user is logged in and on the homepage
+    if (!user || location.pathname !== "/" || location.pathname === "/auth" || location.pathname === "/admin") return;
+    
+    // Only show if it hasn't been shown in this tab session yet
     if (!shouldShowStartup(!!user) || isActive || showPS2Intro) return;
 
-    // Show intro shortly after arriving at home (gives page time to render)
+    // Show intro shortly after arriving (gives page time to render)
     const t = setTimeout(() => {
       sessionStorage.setItem("jarvis_intro_played", "true");
       setShowPS2Intro(true);
     }, 400);
     return () => clearTimeout(t);
+  // We only want this to run once on mount or when auth state becomes available
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, location.pathname]);
+  }, [user?.uid]);
 
   // ── Tutorial Steps ──
   const steps = [
@@ -320,7 +324,7 @@ const JarvisTutorial = () => {
 
       {/* ── Full dark backdrop for non-target steps ── */}
       {!coords && (
-        <div className="absolute inset-0 bg-black/85">
+        <div className="absolute inset-0 bg-black/70">
           <div className="absolute inset-0 grid-overlay opacity-10" />
         </div>
       )}

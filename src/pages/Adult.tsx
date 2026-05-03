@@ -31,7 +31,7 @@ const Adult = () => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 80);
   };
-  const [isBlurred, setIsBlurred] = useState(true);
+  const [isBlurred, setIsBlurred] = useState(false);
   const [privateMode, setPrivateMode] = useState(() => localStorage.getItem("adult_private_mode") === "true");
   const [showGenreHub, setShowGenreHub] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem("adult_onboarding_done"));
@@ -1038,7 +1038,7 @@ const Adult = () => {
 
       {/* Onboarding Modal */}
       {showOnboarding && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in p-4">
           <div className="max-w-xl w-full bg-card border border-white/10 rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 shadow-3xl text-center space-y-8 max-h-[95vh] overflow-y-auto">
             <div className="space-y-3">
               <div className="mx-auto w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6">

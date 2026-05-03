@@ -24,9 +24,9 @@ const TVShows = () => {
     }
     switch (category) {
       case "top_rated": return getTopRatedTVShows(page);
-      case "malayalam": return discoverTV({ with_original_language: "ml", with_origin_country: "IN" }, page);
-      case "hindi": return discoverTV({ with_original_language: "hi", with_origin_country: "IN" }, page);
-      case "tamil": return discoverTV({ with_original_language: "ta", with_origin_country: "IN" }, page);
+      case "malayalam": return discoverTV({ with_original_language: "ml" }, page);
+      case "hindi": return discoverTV({ with_original_language: "hi" }, page);
+      case "tamil": return discoverTV({ with_original_language: "ta" }, page);
       default: return getPopularTVShows(page);
     }
   };

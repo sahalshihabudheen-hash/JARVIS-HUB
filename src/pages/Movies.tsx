@@ -31,9 +31,9 @@ const Movies = () => {
       case "top_rated": return getTopRatedMovies(page);
       case "now_playing": return getNowPlayingMovies(page, location?.country);
       case "upcoming": return getUpcomingMovies(page, location?.country);
-      case "malayalam": return discoverMovies({ with_original_language: "ml", with_origin_country: "IN" }, page);
-      case "hindi": return discoverMovies({ with_original_language: "hi", with_origin_country: "IN" }, page);
-      case "tamil": return discoverMovies({ with_original_language: "ta", with_origin_country: "IN" }, page);
+      case "malayalam": return discoverMovies({ with_original_language: "ml" }, page);
+      case "hindi": return discoverMovies({ with_original_language: "hi" }, page);
+      case "tamil": return discoverMovies({ with_original_language: "ta" }, page);
       default: return getPopularMovies(page, location?.country);
     }
   };
