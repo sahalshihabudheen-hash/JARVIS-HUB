@@ -25,7 +25,10 @@ const JarvisOrb = () => {
   const { isListening, isWakeWordActive, isWaitingForCommand, startListening } = useJarvisVoice();
 
   useEffect(() => {
-    // Initialize background listening for "Hey Jarvis" after page load
+    // Only auto-start if the user has enabled it in Settings (defaults to true)
+    const isEnabled = localStorage.getItem("jarvis_voice_enabled") !== "false";
+    if (!isEnabled) return;
+
     const timer = setTimeout(() => {
        startListening();
     }, 2000);

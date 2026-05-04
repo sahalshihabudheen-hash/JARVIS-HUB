@@ -18,7 +18,9 @@ import {
   Lock,
   Eye,
   Bell,
-  Sparkles
+  Sparkles,
+  Mic,
+  MicOff
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -31,6 +33,20 @@ const Settings = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [userName, setUserName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [jarvisVoiceEnabled, setJarvisVoiceEnabled] = useState<boolean>(
+    () => localStorage.getItem("jarvis_voice_enabled") !== "false"
+  );
+
+  const toggleJarvisVoice = () => {
+    const next = !jarvisVoiceEnabled;
+    setJarvisVoiceEnabled(next);
+    localStorage.setItem("jarvis_voice_enabled", String(next));
+    if (next) {
+      toast.success("Vocal Uplink Enabled — Say 'Hey Jarvis' to activate.", { icon: "🎙️" });
+    } else {
+      toast.info("Vocal Uplink Disabled — JARVIS is standing by silently.", { icon: "🔇" });
+    }
+  };
 
   // Sync username when user object is available
   useEffect(() => {
@@ -413,6 +429,83 @@ const Settings = () => {
                {activeTab === "general" && (
                  <div className="space-y-8 relative z-10">
                     <div className="space-y-6">
+
+                        {/* JARVIS Vocal Intelligence */}
+                        <div>
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+                              <Mic className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h3 className="font-black uppercase tracking-widest text-sm">JARVIS Vocal Intelligence</h3>
+                              <p className="text-[10px] text-muted-foreground">Configure the "Hey Jarvis" wake-word system.</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-3">
+                            {/* Main Toggle */}
+                            <div
+                              onClick={toggleJarvisVoice}
+                              className={cn(
+                                "flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all duration-300 group",
+                                jarvisVoiceEnabled
+                                  ? "bg-blue-500/10 border-blue-500/30 hover:border-blue-500/50"
+                                  : "bg-white/5 border-white/10 hover:border-white/20"
+                              )}
+                            >
+                              <div className="flex items-center gap-4">
+                                {jarvisVoiceEnabled
+                                  ? <Mic className="w-5 h-5 text-blue-400 animate-pulse" />
+                                  : <MicOff className="w-5 h-5 text-white/30" />
+                                }
+                                <div>
+                                  <p className="font-bold">
+                                    {jarvisVoiceEnabled ? "Vocal Uplink: ONLINE" : "Vocal Uplink: OFFLINE"}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {jarvisVoiceEnabled
+                                      ? 'JARVIS is listening for "Hey Jarvis" in the background.'
+                                      : "Click to enable background voice detection."}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className={cn(
+                                "w-12 h-6 rounded-full border flex items-center px-1 transition-all duration-500",
+                                jarvisVoiceEnabled
+                                  ? "bg-blue-500/30 border-blue-500/40"
+                                  : "bg-white/10 border-white/20"
+                              )}>
+                                <div className={cn(
+                                  "w-4 h-4 rounded-full transition-all duration-500",
+                                  jarvisVoiceEnabled
+                                    ? "bg-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.8)] ml-auto"
+                                    : "bg-white/40"
+                                )} />
+                              </div>
+                            </div>
+
+                            {/* Info cards */}
+                            {jarvisVoiceEnabled && (
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-1">Wake Word</p>
+                                  <p className="text-sm font-bold italic">"Hey Jarvis"</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-green-400 mb-1">Response</p>
+                                  <p className="text-sm font-bold italic">"Hello [Name]..."</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-yellow-400 mb-1">Best Browser</p>
+                                  <p className="text-sm font-bold">Chrome / Edge</p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="border-t border-white/10" />
+
                         <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
                            <div className="flex items-center gap-4">
                               <Bell className="w-5 h-5 text-primary" />
