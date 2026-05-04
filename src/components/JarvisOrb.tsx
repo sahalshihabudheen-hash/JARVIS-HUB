@@ -9,16 +9,20 @@ import {
   LayoutDashboard,
   LogOut,
   X,
-  Sparkles
+  Sparkles,
+  Mic,
+  Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
+import { useJarvisVoice } from "@/hooks/useJarvisVoice";
 
 const JarvisOrb = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isListening, startListening } = useJarvisVoice();
 
   const protocols = [
     { name: "Search Node", icon: Search, action: () => navigate("/search"), color: "text-blue-400" },
@@ -55,6 +59,22 @@ const JarvisOrb = () => {
             </div>
           </button>
         ))}
+
+        {/* Voice Command Button */}
+        <button
+          onClick={() => {
+            startListening();
+            setIsOpen(false);
+          }}
+          className="group flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-blue-500/10 backdrop-blur-2xl border border-blue-500/20 hover:border-blue-500/40 transition-all hover:translate-x-[-8px] shadow-[0_0_20px_rgba(59,130,246,0.2)]"
+        >
+          <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 group-hover:text-blue-300 transition-colors">
+            Vocal Uplink
+          </span>
+          <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400 animate-pulse">
+            <Mic className="w-4 h-4" />
+          </div>
+        </button>
         
         <button
           onClick={() => {
@@ -88,10 +108,13 @@ const JarvisOrb = () => {
         {/* Core */}
         <div className={cn(
           "relative w-12 h-12 rounded-full flex items-center justify-center border-2 border-white/20 shadow-[0_0_20px_rgba(59,130,246,0.5)] overflow-hidden transition-all duration-500",
-          isOpen ? "bg-white/10" : "bg-black/40 backdrop-blur-md"
+          isOpen ? "bg-white/10" : "bg-black/40 backdrop-blur-md",
+          isListening && "border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.8)] scale-110"
         )}>
           {isOpen ? (
             <X className="w-6 h-6 text-white" />
+          ) : isListening ? (
+             <Activity className="w-6 h-6 text-blue-400 animate-pulse" />
           ) : (
             <div className="relative">
               <Zap className="w-6 h-6 text-blue-400 fill-current animate-pulse" />

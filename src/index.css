@@ -59,6 +59,12 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 10% 18%;
     --sidebar-ring: 0 0% 100%;
+
+    /* Dynamic Jarvis Theme Variables */
+    --jarvis-primary: 190 100% 50%;
+    --jarvis-accent: 280 100% 60%;
+    --jarvis-glow: 190 100% 50%;
+    --jarvis-bg-alpha: 0.05;
   }
 
   .dark {
@@ -245,12 +251,13 @@
 .mesh-gradient {
   background: linear-gradient(-45deg, 
     hsl(240, 15%, 5%), 
-    hsl(240, 20%, 8%), 
-    hsl(280, 20%, 10%), 
+    hsl(var(--jarvis-primary) / 0.05), 
+    hsl(var(--jarvis-accent) / 0.05), 
     hsl(240, 15%, 5%)
   );
   background-size: 400% 400%;
   animation: mesh-move 15s ease infinite;
+  transition: background 2s ease-in-out;
 }
 
 .glass-premium {

@@ -19,6 +19,7 @@ import Adult from "./pages/Adult";
 import WatchHub from "./pages/WatchHub";
 import News from "./pages/News";
 import NotFound from "./pages/NotFound";
+import RemoteControl from "./pages/RemoteControl";
 import { AuthProvider } from "./context/AuthContext";
 import { TutorialProvider } from "./context/TutorialContext";
 import { AdminProvider } from "./context/AdminContext";
@@ -43,6 +44,8 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { db } from "./lib/firebase";
 
 const StealthManager = () => {
   const navigate = useNavigate();
@@ -84,6 +87,56 @@ const StealthManager = () => {
   return null;
 };
 
+const RemoteListener = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) return;
+
+    const remoteDoc = doc(db, "remotes", user.uid);
+    const unsub = onSnapshot(remoteDoc, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        if (data.lastCommand && data.timestamp > Date.now() - 5000) {
+          // New command received within last 5 seconds
+          handleRemoteCommand(data.lastCommand, data.commandData);
+        }
+      }
+    });
+
+    // Mark display as online for the remote to see
+    setDoc(remoteDoc, { online: true, lastHeartbeat: Date.now() }, { merge: true });
+
+    return () => unsub();
+  }, [user, navigate]);
+
+  const handleRemoteCommand = (cmd: string, data: any) => {
+    switch (cmd) {
+      case "search":
+        if (data.query) {
+          toast.info(`Remote Protocol: Searching for ${data.query}`);
+          navigate(`/search?q=${encodeURIComponent(data.query)}`);
+        }
+        break;
+      case "navigate":
+        if (data.path) navigate(data.path);
+        break;
+      case "toggle_play":
+      case "seek":
+      case "volume_up":
+      case "volume_down":
+        // Dispatch to window for WatchPage to catch
+        window.dispatchEvent(new CustomEvent("jarvis-remote-cmd", { detail: { cmd, data } }));
+        break;
+      default:
+        console.log("Unknown remote command:", cmd);
+    }
+  };
+
+  return null;
+};
+
 const ProtectedLayout = () => {
   const { user } = useAuth();
   const { isMaintenanceMode } = useAdmin();
@@ -110,6 +163,7 @@ const App = () => (
                 <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.05),transparent_50%)] pointer-events-none -z-10" />
                 
                 <StealthManager />
+                <RemoteListener />
                 <CommandPalette />
                 <JarvisTutorial />
                 <JarvisOrb />
@@ -138,6 +192,7 @@ const App = () => (
                   <Route path="/hub/watch/:id" element={<WatchHub />} />
                   <Route path="/watch/adult/:id" element={<WatchHub />} />
                   <Route path="/admin" element={<Admin />} />
+                  <Route path="/remote" element={<RemoteControl />} />
                 </Route>
     
                 <Route path="*" element={<NotFound />} />

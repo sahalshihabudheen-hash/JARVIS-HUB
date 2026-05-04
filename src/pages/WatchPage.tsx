@@ -13,6 +13,8 @@ import { useAdmin } from "@/context/AdminContext";
 import { cn } from "@/lib/utils";
 import { saveWatchProgressCloud } from "@/lib/vidlink";
 import SeoMetadata from "@/components/SeoMetadata";
+import { GENRE_PALETTES, applyTheme, resetTheme } from "@/lib/theme-engine";
+import PauseAnalysisHUD from "@/components/PauseAnalysisHUD";
 
 const WatchPage = () => {
   const { type, id, season, episode } = useParams<{
@@ -32,6 +34,21 @@ const WatchPage = () => {
 
   const [selectedLang, setSelectedLang] = useState<string | undefined>(undefined);
   const [isIncognito, setIsIncognito] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        setIsPaused(prev => !prev);
+      }
+      if (e.code === "KeyX") {
+         // Manual X-Ray toggle
+         setIsPaused(prev => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const { data: movie } = useQuery({
     queryKey: ["movie", mediaId],
@@ -154,6 +171,17 @@ const WatchPage = () => {
     }
   }, [content?.id, episodeNum, user, title, type, isTV, seasonNum, currentEpisode, movie?.runtime, show?.episode_run_time, isIncognito]);
 
+  useEffect(() => {
+    if (content?.genres && content.genres.length > 0) {
+      const primaryGenreId = content.genres[0].id;
+      const palette = GENRE_PALETTES[primaryGenreId];
+      if (palette) {
+        applyTheme(palette);
+      }
+    }
+    return () => resetTheme();
+  }, [content]);
+
   return (
     <div className="min-h-screen bg-background">
       {content && (
@@ -260,16 +288,25 @@ const WatchPage = () => {
             </div>
           </div>
 
-          {/* Player */}
-          <VideoPlayer
-            type={type as "movie" | "tv"}
-            tmdbId={mediaId}
-            imdbId={movie?.imdb_id || show?.external_ids?.imdb_id}
-            season={seasonNum}
-            episode={episodeNum}
-            lang={selectedLang || content?.original_language}
-            onLangChange={(l) => setSelectedLang(l)}
-          />
+          {/* Player Container */}
+          <div className="relative group">
+            <VideoPlayer
+              type={type as "movie" | "tv"}
+              tmdbId={mediaId}
+              imdbId={movie?.imdb_id || show?.external_ids?.imdb_id}
+              season={seasonNum}
+              episode={episodeNum}
+              lang={selectedLang || content?.original_language}
+              onLangChange={(l) => setSelectedLang(l)}
+            />
+            
+            {/* Analysis HUD Overlay */}
+            <PauseAnalysisHUD 
+              isVisible={isPaused} 
+              movieTitle={title} 
+              cast={content?.credits?.cast} 
+            />
+          </div>
 
           {/* Cast Section */}
           {content?.credits?.cast && content.credits.cast.length > 0 && (

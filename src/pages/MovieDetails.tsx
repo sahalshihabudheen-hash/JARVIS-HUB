@@ -9,7 +9,9 @@ import SeoMetadata from "@/components/SeoMetadata";
 import { Button } from "@/components/ui/button";
 import { getMovieDetails, getSimilar, getBackdropUrl, getImageUrl } from "@/lib/tmdb";
 import { isInWatchlist, toggleWatchlist } from "@/lib/watchlist";
+import { GENRE_PALETTES, applyTheme, resetTheme } from "@/lib/theme-engine";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +30,17 @@ const MovieDetails = () => {
     queryFn: () => getMovieDetails(movieId),
     enabled: !!movieId,
   });
+
+  useEffect(() => {
+    if (movie?.genres && movie.genres.length > 0) {
+      const primaryGenreId = movie.genres[0].id;
+      const palette = GENRE_PALETTES[primaryGenreId];
+      if (palette) {
+        applyTheme(palette);
+      }
+    }
+    return () => resetTheme();
+  }, [movie]);
 
   const { data: similar } = useQuery({
     queryKey: ["similarMovies", movieId],
