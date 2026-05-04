@@ -26,7 +26,7 @@ interface AdultCardProps {
  *  swapping the last numeric segment. For other sources we just return
  *  the main thumb so the cycling still "works" (same image). */
 function getPreviewFrames(thumbnail: string): string[] {
-  if (!thumbnail) return [];
+  if (!thumbnail || typeof thumbnail !== 'string') return [];
 
   // Pornhub CDN thumbnails look like: .../1920/<id>/<frame>.jpg
   // We try frames 2-6 (index-based) by tweaking the last numeric filename
