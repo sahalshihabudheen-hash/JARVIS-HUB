@@ -23,10 +23,12 @@ import { AuthProvider } from "./context/AuthContext";
 import { TutorialProvider } from "./context/TutorialContext";
 import { AdminProvider } from "./context/AdminContext";
 import JarvisTutorial from "./components/JarvisTutorial";
+import { CommandPalette } from "./components/CommandPalette";
 import Admin from "./pages/Admin";
 import Maintenance from "./components/Maintenance";
 import { useAdmin } from "./context/AdminContext";
 import VerificationBanner from "./components/VerificationBanner";
+import JarvisOrb from "./components/JarvisOrb";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +42,7 @@ const queryClient = new QueryClient({
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 const StealthManager = () => {
   const navigate = useNavigate();
@@ -50,8 +53,7 @@ const StealthManager = () => {
       if (e.key === "Escape") {
         const now = Date.now();
         if (now - lastEscPress.current < 500) {
-          // Double tap detected
-          // Stealth mode active - no visual mask applied as per user request
+          // Double tap detected - Protocol Alpha
           
           // Mute and pause any HTML5 media elements
           document.querySelectorAll("video, audio").forEach((media: any) => {
@@ -59,8 +61,17 @@ const StealthManager = () => {
             media.muted = true;
           });
 
-          // Navigate to home to destroy video player iframes
+          // Change tab identity
+          document.title = "System Update | JARVIS Hub";
+          
+          // Navigate to home
           navigate("/", { replace: true });
+
+          // Sonner toast (imported via Toaster)
+          toast.info("Stealth Protocol Alpha Active", {
+            description: "Redirected to secure terminal.",
+            duration: 5000,
+          });
         }
         lastEscPress.current = now;
       }
@@ -99,7 +110,9 @@ const App = () => (
                 <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.05),transparent_50%)] pointer-events-none -z-10" />
                 
                 <StealthManager />
+                <CommandPalette />
                 <JarvisTutorial />
+                <JarvisOrb />
                 <VerificationBanner />
                 <Toaster />
                 <Sonner />

@@ -166,7 +166,21 @@ const WatchPage = () => {
       )}
       <Navbar />
 
-      <main className="pt-20 pb-16">
+      {/* Ambient Backdrop Glow */}
+      {content?.backdrop_path && (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 select-none">
+          <div 
+            className="absolute inset-0 bg-cover bg-center opacity-30 blur-[100px] scale-150 animate-pulse-slow"
+            style={{ 
+              backgroundImage: `url(${getImageUrl(content.backdrop_path, "w1280")})`,
+              transform: 'translateZ(0)'
+            }}
+          />
+          <div className="absolute inset-0 bg-background/60" />
+        </div>
+      )}
+
+      <main className="pt-20 pb-16 relative z-10">
         <div className="container">
           <div className="flex items-center justify-between mb-4">
             {/* Back Button */}

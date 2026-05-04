@@ -344,6 +344,10 @@ const Adult = () => {
                   <Flame className="w-4 h-4 animate-pulse" />
                   Premium Protocol v2.0
                 </div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[8px] font-bold uppercase tracking-widest ml-2 animate-in fade-in slide-in-from-left-4 duration-1000">
+                  <ShieldAlert className="w-3 h-3" />
+                  Stealth Key: Double ESC
+                </div>
                 <h1 className="text-4xl md:text-6xl font-display font-black tracking-tighter text-white drop-shadow-2xl animate-in fade-in slide-in-from-left-6 duration-1000">
                   THE <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-400 to-blue-400">HUB</span> EXPERIENCE
                 </h1>
