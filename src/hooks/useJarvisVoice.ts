@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 export const useJarvisVoice = () => {
   const [isListening, setIsListening] = useState(false);
@@ -9,6 +10,10 @@ export const useJarvisVoice = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const recognitionRef = useRef<any>(null);
+  // Use a ref to track waiting state inside callbacks without causing re-renders
+  const isWaitingRef = useRef(false);
+  const userRef = useRef(user);
+  userRef.current = user;
 
   const speak = (text: string) => {
     window.speechSynthesis.cancel();
@@ -47,9 +52,11 @@ export const useJarvisVoice = () => {
           .toLowerCase();
 
         // Stage 1: Waiting for Wake Word
-        if (!isWaitingForCommand) {
+        if (!isWaitingRef.current) {
           if (transcript.includes("hey jarvis") || transcript.includes("hi jarvis") || transcript.includes("hello jarvis")) {
-            const displayName = user?.displayName || user?.email?.split("@")[0] || "Agent";
+            const u = userRef.current;
+            const displayName = u?.displayName || u?.email?.split("@")[0] || "Agent";
+            isWaitingRef.current = true;
             setIsWaitingForCommand(true);
             setIsWakeWordActive(true);
             
@@ -61,11 +68,12 @@ export const useJarvisVoice = () => {
 
             // Clear the buffer by restarting
             setTimeout(() => {
-               recognitionRef.current.stop();
+               if (recognitionRef.current) recognitionRef.current.stop();
             }, 1000);
             
             // Timeout if no command is given
             setTimeout(() => {
+              isWaitingRef.current = false;
               setIsWaitingForCommand(false);
               setIsWakeWordActive(false);
             }, 10000);
@@ -73,11 +81,11 @@ export const useJarvisVoice = () => {
         } 
         // Stage 2: Processing the Command
         else {
-           // We look for any significant text after the greeting
            const lastResult = event.results[event.results.length - 1];
            if (lastResult.isFinal) {
              const command = lastResult[0].transcript.toLowerCase();
              handleCommand(command);
+             isWaitingRef.current = false;
              setIsWaitingForCommand(false);
              setIsWakeWordActive(false);
            }
@@ -100,7 +108,8 @@ export const useJarvisVoice = () => {
     try {
       recognitionRef.current.start();
     } catch (e) {}
-  }, [user, isWaitingForCommand]);
+  // Empty deps - recognition is only set up once; refs handle dynamic values
+  }, []);
 
   const handleCommand = (command: string) => {
     const cmd = command.trim().toLowerCase();

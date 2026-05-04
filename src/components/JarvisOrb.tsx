@@ -25,12 +25,13 @@ const JarvisOrb = () => {
   const { isListening, isWakeWordActive, isWaitingForCommand, startListening } = useJarvisVoice();
 
   useEffect(() => {
-    // Initialize background listening for "Hey Jarvis"
+    // Initialize background listening for "Hey Jarvis" after page load
     const timer = setTimeout(() => {
-       startListening(true);
-    }, 2000); // Wait for page load
+       startListening();
+    }, 2000);
     return () => clearTimeout(timer);
-  }, [startListening]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only run once on mount
 
   const protocols = [
     { name: "Search Node", icon: Search, action: () => navigate("/search"), color: "text-blue-400" },
