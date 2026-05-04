@@ -22,7 +22,7 @@ const JarvisOrb = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { isListening, isWakeWordActive, startListening } = useJarvisVoice();
+  const { isListening, isWakeWordActive, isWaitingForCommand, startListening } = useJarvisVoice();
 
   useEffect(() => {
     // Initialize background listening for "Hey Jarvis"
@@ -117,11 +117,11 @@ const JarvisOrb = () => {
         <div className={cn(
           "relative w-12 h-12 rounded-full flex items-center justify-center border-2 border-white/20 shadow-[0_0_20px_rgba(59,130,246,0.5)] overflow-hidden transition-all duration-500",
           isOpen ? "bg-white/10" : "bg-black/40 backdrop-blur-md",
-          (isListening || isWakeWordActive) && "border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.8)] scale-110"
+          (isListening || isWakeWordActive || isWaitingForCommand) && "border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.8)] scale-110"
         )}>
           {isOpen ? (
             <X className="w-6 h-6 text-white" />
-          ) : (isListening || isWakeWordActive) ? (
+          ) : (isListening || isWakeWordActive || isWaitingForCommand) ? (
              <Activity className="w-6 h-6 text-blue-400 animate-pulse" />
           ) : (
             <div className="relative">
