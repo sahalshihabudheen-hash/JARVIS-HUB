@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Play, Eye, Bookmark, BookmarkCheck } from "lucide-react";
+import { Play, Eye, Bookmark, BookmarkCheck, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { toggleAdultWatchlist, isInAdultWatchlist } from "@/lib/adult-watchlist";
