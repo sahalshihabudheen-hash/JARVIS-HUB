@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
-import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2 } from "lucide-react";
+import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2, Film, User } from "lucide-react";
 import { getAdultHistory, clearAdultHistory, AdultHistoryItem, syncAdultHistoryFromCloud } from "@/lib/adult-history";
 import { getAdultWatchlist, toggleAdultWatchlist, syncAdultWatchlistFromCloud } from "@/lib/adult-watchlist";
 
