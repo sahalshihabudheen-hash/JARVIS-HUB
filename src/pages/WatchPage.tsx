@@ -15,6 +15,8 @@ import { saveWatchProgressCloud } from "@/lib/vidlink";
 import SeoMetadata from "@/components/SeoMetadata";
 import { GENRE_PALETTES, applyTheme, resetTheme } from "@/lib/theme-engine";
 import PauseAnalysisHUD from "@/components/PauseAnalysisHUD";
+import { db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 const WatchPage = () => {
   const { type, id, season, episode } = useParams<{
@@ -79,13 +81,22 @@ const WatchPage = () => {
   // Log activity and Add to Continue Watching History
   useEffect(() => {
     if (content) {
+      const formattedTitle = isTV && currentEpisode 
+        ? `${title} (S${seasonNum}, Ep${episodeNum}: ${currentEpisode.name})`
+        : title;
+
+      // Sync Now Playing to Remote Control
+      if (user?.uid) {
+        setDoc(doc(db, "remotes", user.uid), {
+          nowPlaying: { title: formattedTitle, type, id: content.id }
+        }, { merge: true });
+      }
+
       // 1. Log Admin Activity
       if (user && user.email) {
         addActivity({
           userEmail: user.email,
-          mediaTitle: isTV && currentEpisode 
-            ? `${title} (S${seasonNum}, Ep${episodeNum}: ${currentEpisode.name})`
-            : title,
+          mediaTitle: formattedTitle,
           mediaType: type as "movie" | "tv",
           mediaPoster: `https://image.tmdb.org/t/p/w200${content.poster_path}`
         });
@@ -167,7 +178,14 @@ const WatchPage = () => {
         }
       }, 30000);
 
-      return () => clearInterval(interval);
+      return () => {
+        clearInterval(interval);
+        if (user?.uid) {
+          setDoc(doc(db, "remotes", user.uid), {
+            nowPlaying: null
+          }, { merge: true });
+        }
+      };
     }
   }, [content?.id, episodeNum, user, title, type, isTV, seasonNum, currentEpisode, movie?.runtime, show?.episode_run_time, isIncognito]);
 
