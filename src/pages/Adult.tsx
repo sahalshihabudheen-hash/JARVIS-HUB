@@ -268,58 +268,86 @@ const Adult = () => {
 
 
 
-  const videos = data?.videos?.map((v: any) => ({
-    id: v.video_id,
-    title: v.title,
-    url: v.url,
-    thumbnail: v.default_thumb,
-    duration: v.duration,
-    views: typeof v.views === "number" ? v.views.toLocaleString() : (v.views || ""),
-    rating: v.rating,
-    added: v.publish_date,
-    pornstars: v.pornstars || [],
-    source,
-  })) || [];
+  const videos = (data?.videos || []).map((v: any) => {
+    if (!v) return null;
+    return {
+      id: v.video_id || v.id || Math.random().toString(),
+      title: v.title || "Untitled Video",
+      url: v.url || "#",
+      thumbnail: v.default_thumb || v.thumbnail || "",
+      duration: v.duration || "",
+      views: typeof v.views === "number" ? v.views.toLocaleString() : (v.views || ""),
+      rating: v.rating || "",
+      added: v.publish_date || v.added || "",
+      pornstars: Array.isArray(v.pornstars) ? v.pornstars.filter((p: any) => typeof p === 'string') : [],
+      source: v.source || source,
+    };
+  }).filter(Boolean) as any[];
 
   // Extract unique pornstars from current page videos and find their representative thumb
-  const uniqueNames = Array.from(new Set(videos.flatMap((v: any) => v.pornstars || []))).filter(Boolean) as string[];
+  const uniqueNames = Array.from(new Set(videos.flatMap((v: any) => Array.isArray(v.pornstars) ? v.pornstars : [])))
+    .filter((name): name is string => typeof name === 'string' && name.length > 0);
   const usedThumbs = new Set<string>();
   
   const currentPagePornstars = uniqueNames.map(name => {
+    if (typeof name !== 'string') return null;
+    
     // Try to find a unique video where the name is in the title (solo/featured)
     let representativeVideo = videos.find((v: any) => 
-      (v.pornstars || []).includes(name) && 
-      (v.title || "").toLowerCase().includes(name.toLowerCase()) && 
+      v && 
+      Array.isArray(v.pornstars) && 
+      v.pornstars.includes(name) && 
+      typeof v.title === 'string' &&
+      v.title.toLowerCase().includes(name.toLowerCase()) && 
+      v.thumbnail &&
       !usedThumbs.has(v.thumbnail)
     );
     
     // Fallback 1: Any unique video thumbnail they appear in
     if (!representativeVideo) {
-      representativeVideo = videos.find((v: any) => (v.pornstars || []).includes(name) && !usedThumbs.has(v.thumbnail));
+      representativeVideo = videos.find((v: any) => 
+        v && 
+        Array.isArray(v.pornstars) && 
+        v.pornstars.includes(name) && 
+        v.thumbnail &&
+        !usedThumbs.has(v.thumbnail)
+      );
     }
 
     // Fallback 2: Just any video thumbnail they appear in (even if already used)
     if (!representativeVideo) {
-      representativeVideo = videos.find((v: any) => (v.pornstars || []).includes(name));
+      representativeVideo = videos.find((v: any) => 
+        v && 
+        Array.isArray(v.pornstars) && 
+        v.pornstars.includes(name) && 
+        v.thumbnail
+      );
     }
 
-    if (representativeVideo && name) {
+    if (representativeVideo && representativeVideo.thumbnail && name) {
       usedThumbs.add(representativeVideo.thumbnail);
       return {
         name,
-        id: name.toLowerCase().replace(/\s+/g, '-'),
+        id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         thumb: representativeVideo.thumbnail
       };
     }
     return null;
-  }).filter((star): star is any => star !== null).slice(0, 18);
+  }).filter((star): star is { name: string; id: string; thumb: string } => star !== null).slice(0, 18);
 
-  const regionalVideos = regionalData?.videos || [];
-  const regionalUniqueNames = Array.from(new Set(regionalVideos.flatMap((v: any) => v.pornstars || []))).filter(Boolean) as string[];
+  const regionalVideos = (regionalData?.videos || []).filter((v: any) => v !== null);
+  const regionalUniqueNames = Array.from(new Set(regionalVideos.flatMap((v: any) => Array.isArray(v.pornstars) ? v.pornstars : [])))
+    .filter((name): name is string => typeof name === 'string' && name.length > 0);
+
   const regionalStars = regionalUniqueNames.map(name => {
-    const v = regionalVideos.find((v: any) => (v.pornstars || []).includes(name));
-    return v && name ? { name, id: name.toLowerCase().replace(/\s+/g, '-'), thumb: v.default_thumb } : null;
-  }).filter(s => s !== null).slice(0, 9);
+    if (typeof name !== 'string') return null;
+    const v = regionalVideos.find((v: any) => v && Array.isArray(v.pornstars) && v.pornstars.includes(name));
+    return v && name ? { 
+      name, 
+      id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), 
+      thumb: v.default_thumb || v.thumbnail || "" 
+    } : null;
+  }).filter((s): s is { name: string; id: string; thumb: string } => s !== null).slice(0, 9);
 
 
   return (
