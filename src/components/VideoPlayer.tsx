@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
-import { ShieldAlert, Play } from "lucide-react";
+import { ShieldAlert, Play, Smartphone } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
@@ -348,7 +348,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
       </div>
 
       {/* Shield Controls */}
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 relative">
+      <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 relative">
 
         <Button
           id="shield-toggle-btn"
@@ -397,6 +397,21 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
               HARD ADBLOCK: OFF
             </span>
           )}
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            const url = `${window.location.origin}/remote`;
+            navigator.clipboard.writeText(url).then(() => toast.success("Remote link copied! Open it on your phone."));
+          }}
+          className="rounded-full px-6 transition-all duration-500 bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20"
+        >
+          <span className="flex items-center gap-2 uppercase font-bold text-[10px] tracking-widest">
+            <Smartphone className="w-4 h-4" />
+            GET REMOTE LINK
+          </span>
         </Button>
       </div>
 
