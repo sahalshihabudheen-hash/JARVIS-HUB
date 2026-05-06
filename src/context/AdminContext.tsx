@@ -187,6 +187,14 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const toggleAdmin = async (userId: string, currentStatus: boolean) => {
     try {
+      // Super Admin Check
+      const savedUserStr = localStorage.getItem("jarvis_user");
+      const savedUser = savedUserStr ? JSON.parse(savedUserStr) : null;
+      if (savedUser?.email !== "admin@gmail.com" && savedUser?.email !== "superadmin@gmail.com") {
+        toast.error("Access Denied: Only the Super Admin can modify admin permissions.");
+        return;
+      }
+
       const userDocId = userId.replace(/\./g, "_");
       const { doc: fsDoc, updateDoc } = await import("firebase/firestore");
       await updateDoc(fsDoc(db, "users", userDocId), {

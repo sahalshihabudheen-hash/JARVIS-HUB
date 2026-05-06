@@ -199,24 +199,27 @@ const UserManagement = () => {
                         {u.email !== currentUser?.email && !isOwner && (
                           <>
                             {(currentUser?.email === "admin@gmail.com" || currentUser?.email === "superadmin@gmail.com") && (
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => toggleAdultAccess(u.email, !!u.hasAdultAccess)}
-                                className={cn("w-9 h-9 rounded-xl border", u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-white/5 text-white/40 border-white/10")}
-                                title="Toggle Adult Access (Super Admin Only)"
-                              >
-                                <Flame className="w-4 h-4" />
-                              </Button>
+                              <>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => toggleAdultAccess(u.email, !!u.hasAdultAccess)}
+                                  className={cn("w-9 h-9 rounded-xl border", u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-white/5 text-white/40 border-white/10")}
+                                  title="Toggle Adult Access (Super Admin Only)"
+                                >
+                                  <Flame className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => toggleAdmin(u.email, !!u.isAdmin)}
+                                  className={cn("w-9 h-9 rounded-xl border", u.isAdmin ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-white/5 text-white/40 border-white/10")}
+                                  title="Toggle Admin Access (Super Admin Only)"
+                                >
+                                  <Shield className="w-4 h-4" />
+                                </Button>
+                              </>
                             )}
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => toggleAdmin(u.email, !!u.isAdmin)}
-                              className={cn("w-9 h-9 rounded-xl border", u.isAdmin ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-white/5 text-white/40 border-white/10")}
-                            >
-                              <Shield className="w-4 h-4" />
-                            </Button>
                           </>
                         )}
                         
