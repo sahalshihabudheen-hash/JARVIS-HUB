@@ -429,7 +429,8 @@ const Adult = () => {
                     {[
                       { id: "pornhub", label: "PH", color: "bg-orange-500" },
                       { id: "redtube", label: "RT", color: "bg-red-600" },
-                      { id: "eporner", label: "EP", color: "bg-blue-600" }
+                      { id: "eporner", label: "EP", color: "bg-blue-600" },
+                      { id: "avgle", label: "AVG", color: "bg-red-600" }
                     ].map((s) => (
                       <button
                         key={s.id}

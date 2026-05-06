@@ -79,6 +79,28 @@ export default async function handler(req: Request) {
           source: 'eporner'
         }));
       }
+    } else if (source === 'avgle') {
+      // Avgle API v1 search
+      const avgleUrl = `https://api.avgle.com/v1/search/${encodeURIComponent(query)}/${parseInt(page) - 1}?limit=30`;
+      const response = await fetch(avgleUrl);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.response && data.response.videos) {
+          videos = data.response.videos.map((v: any) => ({
+            video_id: v.vid,
+            title: v.title,
+            url: v.video_url,
+            default_thumb: v.preview_url,
+            duration: Math.floor(v.duration / 60) + ":" + (v.duration % 60).toString().padStart(2, '0'),
+            views: v.views,
+            rating: "95", // Avgle doesn't provide rating in search, defaulting to high for premium feel
+            publish_date: new Date(v.addtime * 1000).toISOString().split('T')[0],
+            pornstars: [],
+            tags: [],
+            source: 'avgle'
+          }));
+        }
+      }
     }
 
     return new Response(JSON.stringify({ videos }), {

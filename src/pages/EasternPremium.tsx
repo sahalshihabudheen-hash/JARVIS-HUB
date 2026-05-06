@@ -28,6 +28,7 @@ const EasternPremium = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [query, setQuery] = useState("jav");
+  const [source, setSource] = useState<"pornhub" | "avgle">("avgle");
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -46,9 +47,9 @@ const EasternPremium = () => {
   }, [user, navigate]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["eastern-videos", query, page],
+    queryKey: ["eastern-videos", query, page, source],
     queryFn: async () => {
-      return searchVideos(query, page, "pornhub"); // Primarily use pornhub for JAV/Korean codes
+      return searchVideos(query, page, source);
     },
   });
 
@@ -146,6 +147,25 @@ const EasternPremium = () => {
                   className="relative pl-12 pr-4 h-14 bg-black/60 backdrop-blur-2xl border-white/10 rounded-2xl focus:ring-red-500/50 focus:border-red-500/50 text-white placeholder:text-white/20 transition-all font-bold"
                 />
               </form>
+
+              <div className="flex bg-white/5 backdrop-blur-xl p-1 rounded-xl border border-white/10 shadow-2xl">
+                {[
+                  { id: "avgle", label: "AVG (JAV)", color: "bg-red-600" },
+                  { id: "pornhub", label: "PH (Global)", color: "bg-orange-500" }
+                ].map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => { setSource(s.id as any); setPage(1); }}
+                    className={cn(
+                      "flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-500",
+                      source === s.id ? `${s.color} text-white shadow-lg` : "text-white/30 hover:text-white/60"
+                    )}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+
               <div className="flex gap-2">
                 <Button 
                   onClick={() => navigate('/adult')} 
