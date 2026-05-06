@@ -58,8 +58,8 @@ const Navbar = () => {
       { to: "/watchlist", label: "Watchlist", icon: Heart },
       { to: "/", label: "History", icon: History },
     ] : []),
-    ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
-    ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
+    ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
+    ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
   const allLinks = navLinks;
@@ -236,7 +236,7 @@ const Navbar = () => {
                     <DropdownMenuSeparator className="bg-white/10 mx-1" />
                     
                     <div className="grid gap-1 mt-1">
-                      {(user.email?.toLowerCase() === "admin@gmail.com" || user.isAdmin) && (
+                      {((user.email?.toLowerCase() === "admin@gmail.com" || user.email?.toLowerCase() === "superadmin@gmail.com") || user.isAdmin) && (
                         <DropdownMenuItem onClick={() => navigate("/admin")} className="cursor-pointer text-blue-400 hover:bg-blue-500/20 py-3 focus:text-blue-400 rounded-xl px-3 transition-colors">
                           <Shield className="mr-3 h-4 w-4" />
                           <span className="font-bold text-xs uppercase tracking-wider">Admin Panel</span>

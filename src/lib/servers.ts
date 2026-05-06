@@ -9,9 +9,60 @@ export interface VideoServer {
 }
 
 export const videoServers: VideoServer[] = [
+  // ── Cleanest / Less-Ads (Recommended first) ─────────────────────────────────
+  {
+    id: "rivestream",
+    name: "🧹 RiveStream (Cleanest)",
+    getMovieUrl: (tmdbId) => `https://rivestream.live/embed?type=movie&id=${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://rivestream.live/embed?type=tv&id=${tmdbId}&season=${season}&episode=${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "vidsrcrip",
+    name: "🧹 VidSrc RIP (Clean)",
+    getMovieUrl: (tmdbId) => `https://vidsrc.rip/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.rip/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "nontongo",
+    name: "🧹 NontonGo (Clean)",
+    getMovieUrl: (tmdbId) => `https://www.nontongo.win/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://www.nontongo.win/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "embedsu",
+    name: "🧹 Embed.su (Clean)",
+    getMovieUrl: (tmdbId) => `https://embed.su/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://embed.su/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "vidsrcin",
+    name: "🇮🇳 Indian Mirror",
+    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.in/embed/movie/${tmdbId}${lang ? `?ds_lang=${lang}` : ""}`,
+    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.in/embed/tv/${tmdbId}/${season}/${episode}${lang ? `?ds_lang=${lang}` : ""}`,
+    supportsSandbox: true,
+  },
+  {
+    id: "111movies",
+    name: "🇮🇳 111Movies (Indian)",
+    getMovieUrl: (tmdbId) => `https://111movies.com/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://111movies.com/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
+  {
+    id: "frembed",
+    name: "🧹 Frembed (Less Ads)",
+    getMovieUrl: (_, imdbId) => imdbId ? `https://frembed.pro/api/film.php?id=${imdbId}` : ``,
+    getTVUrl: (_, season, episode, imdbId) => imdbId ? `https://frembed.pro/api/serie.php?id=${imdbId}&sa=${season}&epi=${episode}` : ``,
+    supportsSandbox: false,
+  },
+  // ── Standard Servers ────────────────────────────────────────────────────────
   {
     id: "superembed",
-    name: "SuperEmbed (Best/Clean)",
+    name: "SuperEmbed",
     getMovieUrl: (tmdbId, imdbId, lang) => {
       const base = imdbId ? `https://multiembed.mov/?video_id=${imdbId}` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`;
       return lang ? `${base}&lang=${lang === 'ml' ? 'ml' : lang}` : base;
@@ -31,7 +82,7 @@ export const videoServers: VideoServer[] = [
   },
   {
     id: "vidsrcto",
-    name: "VidSrc To (Stable)",
+    name: "VidSrc To",
     getMovieUrl: (tmdbId) => `https://vidsrc.to/embed/movie/${tmdbId}`,
     getTVUrl: (tmdbId, season, episode) => `https://vidsrc.to/embed/tv/${tmdbId}/${season}/${episode}`,
     supportsSandbox: true,
@@ -44,25 +95,11 @@ export const videoServers: VideoServer[] = [
     supportsSandbox: true,
   },
   {
-    id: "vidsrcin",
-    name: "Indian Mirror (Stable)",
-    getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.in/embed/movie/${tmdbId}${lang ? `?ds_lang=${lang}` : ""}`,
-    getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.in/embed/tv/${tmdbId}/${season}/${episode}${lang ? `?ds_lang=${lang}` : ""}`,
-    supportsSandbox: true,
-  },
-  {
     id: "moviesapi",
-    name: "MoviesAPI (Fast)",
+    name: "MoviesAPI",
     getMovieUrl: (tmdbId, _, lang) => `https://moviesapi.club/movie/${tmdbId}${lang ? `?lang=${lang}` : ""}`,
     getTVUrl: (tmdbId, season, episode, _, lang) => `https://moviesapi.club/tv/${tmdbId}-${season}-${episode}${lang ? `?lang=${lang}` : ""}`,
     supportsSandbox: true,
-  },
-  {
-    id: "embedsu",
-    name: "Embed.su (Clean)",
-    getMovieUrl: (tmdbId) => `https://embed.su/embed/movie/${tmdbId}`,
-    getTVUrl: (tmdbId, season, episode) => `https://embed.su/embed/tv/${tmdbId}/${season}/${episode}`,
-    supportsSandbox: false,
   },
   {
     id: "smashystream",
@@ -87,7 +124,7 @@ export const videoServers: VideoServer[] = [
   },
   {
     id: "autoembed",
-    name: "AutoEmbed (Fast)",
+    name: "AutoEmbed",
     getMovieUrl: (tmdbId) => `https://player.autoembed.cc/embed/movie/${tmdbId}`,
     getTVUrl: (tmdbId, season, episode) => `https://player.autoembed.cc/embed/tv/${tmdbId}/${season}/${episode}`,
     supportsSandbox: false,
@@ -115,7 +152,7 @@ export const videoServers: VideoServer[] = [
   },
   {
     id: "vidsrcvip",
-    name: "VIP Mirror (Less Ads)",
+    name: "VIP Mirror",
     getMovieUrl: (tmdbId, _, lang) => `https://vidsrc.vip/embed/movie/${tmdbId}${lang ? `?lang=${lang}` : ""}`,
     getTVUrl: (tmdbId, season, episode, _, lang) => `https://vidsrc.vip/embed/tv/${tmdbId}/${season}/${episode}${lang ? `?lang=${lang}` : ""}`,
     supportsSandbox: false,
@@ -146,11 +183,11 @@ export const videoServers: VideoServer[] = [
       return lang ? `${base}&lang=${lang}` : base;
     },
     supportsSandbox: false,
-  }
+  },
 ];
 
 export const getDefaultServer = (): string => {
-  return localStorage.getItem("preferredServer") || "superembed";
+  return localStorage.getItem("preferredServer") || "rivestream";
 };
 
 export const setDefaultServer = (serverId: string): void => {

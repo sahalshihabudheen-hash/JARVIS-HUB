@@ -6,9 +6,7 @@ import {
   Type, 
   FileText, 
   Users, 
-  Music, 
-  Gamepad2, 
-  Key, 
+  Link2,
   Wrench, 
   Settings 
 } from "lucide-react";
@@ -21,6 +19,7 @@ import Footer from "@/components/Footer";
 import { useAdmin } from "@/context/AdminContext";
 import { useAuth } from "@/context/AuthContext";
 import UserManagement from "@/components/UserManagement";
+import AdminStreamManager from "@/components/AdminStreamManager";
 import { cn } from "@/lib/utils";
 
 const Admin = () => {
@@ -39,6 +38,7 @@ const Admin = () => {
 
   const tabs = [
     { id: "users", label: "Users", icon: Users },
+    { id: "streams", label: "Streams", icon: Link2 },
     { id: "activity", label: "Activity", icon: ActivityIcon },
     { id: "maint", label: "Maint.", icon: Wrench },
     { id: "app", label: "App", icon: Settings },
@@ -63,7 +63,7 @@ const Admin = () => {
     }
   };
 
-  if (user?.email?.toLowerCase() !== "admin@gmail.com" && !user?.isAdmin) {
+  if (user?.email?.toLowerCase() !== "admin@gmail.com" && user?.email?.toLowerCase() !== "superadmin@gmail.com" && !user?.isAdmin) {
     return <Navigate to="/" replace />;
   }
 
@@ -99,6 +99,12 @@ const Admin = () => {
         <div className="space-y-8 min-h-[500px]">
           
           {activeTab === "users" && <UserManagement />}
+
+          {activeTab === "streams" && (
+            <div className="animate-fade-in max-w-4xl mx-auto">
+              <AdminStreamManager />
+            </div>
+          )}
 
           {activeTab === "activity" && (
             <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 md:p-8 shadow-2xl animate-fade-in max-w-4xl mx-auto">

@@ -98,7 +98,7 @@ export function CommandPalette() {
             </CommandItem>
           </CommandGroup>
           
-          {(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com") && (
+          {(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com") && (
             <>
               <CommandSeparator />
               <CommandGroup heading="Admin Terminal">

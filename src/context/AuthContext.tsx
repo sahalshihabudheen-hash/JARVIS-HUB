@@ -160,7 +160,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const storedPass = existingDoc.data().password;
         if (storedPass && password !== storedPass) {
           // Special exception for hardcoded admin password
-          const isHardAdmin = email.toLowerCase() === "admin@gmail.com" && (password === "jarvisadmin" || password === "admin123");
+          const isHardAdmin = (email.toLowerCase() === "admin@gmail.com" || email.toLowerCase() === "superadmin@gmail.com") && (password === "jarvisadmin" || password === "admin123");
           if (!isHardAdmin) {
             throw new Error("Invalid access key: credentials do not match stored protocol.");
           }
@@ -231,7 +231,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isp = "BSNL Internet";
     }
 
-    const isAdmin = email.toLowerCase() === "admin@gmail.com";
+    const isAdmin = email.toLowerCase() === "admin@gmail.com" || email.toLowerCase() === "superadmin@gmail.com";
     const userData: User = { 
       uid: userDocId,
       email: email.toLowerCase(), 

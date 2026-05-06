@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
-import { ShieldAlert, Play, Smartphone } from "lucide-react";
+import { ShieldAlert, Play, Smartphone, Zap } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
+import { getCustomStream, CustomStream } from "@/lib/custom-streams";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
@@ -25,26 +26,46 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const toggleFullScreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch(err => {
-        console.error(`Error trying to enable fullscreen: ${err.message}`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  };
+  // Custom stream state
+  const [customStream, setCustomStream] = useState<CustomStream | null>(null);
+  const [customStreamChecked, setCustomStreamChecked] = useState(false);
 
-  const sendPlayerCommand = (command: string) => {
-    if (!iframeRef.current?.contentWindow) return;
-    const win = iframeRef.current.contentWindow;
-    // Broadcast standard play/pause commands to the iframe
-    win.postMessage(command, '*');
-    win.postMessage({ type: command }, '*');
-    win.postMessage({ cmd: command }, '*');
-    win.postMessage({ event: 'command', func: command }, '*');
-    win.postMessage(JSON.stringify({ event: 'command', func: command }), '*');
-  };
+  // Fetch custom stream override from Firebase
+  useEffect(() => {
+    let cancelled = false;
+    setCustomStreamChecked(false);
+    getCustomStream(type, tmdbId).then(stream => {
+      if (cancelled) return;
+      if (stream) {
+        setCustomStream(stream);
+        setCurrentServer("custom");
+        toast.success(`🇮🇳 Custom ${stream.language.toUpperCase()} stream found — ${stream.quality}`, {
+          style: { background: "#0a1a0a", border: "1px solid #22c55e", color: "#22c55e" },
+          duration: 4000,
+        });
+      } else {
+        setCustomStream(null);
+      }
+      setCustomStreamChecked(true);
+    });
+    return () => { cancelled = true; };
+  }, [type, tmdbId]);
+
+  // Build available server list — prepend custom if available
+  const availableServers = customStream
+    ? [
+        {
+          id: "custom",
+          name: `🇮🇳 Custom Direct (${customStream.language.toUpperCase()} · ${customStream.quality})`,
+          getMovieUrl: () => customStream.streamUrl,
+          getTVUrl: () => customStream.streamUrl,
+          supportsSandbox: false,
+        },
+        ...videoServers,
+      ]
+    : videoServers;
+
+  const { user } = useAuth();
 
   const [showOverlay, setShowOverlay] = useState(true);
   const [isPlayingIntro, setIsPlayingIntro] = useState(false);
@@ -58,14 +79,28 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     if (isActive && step === 3) nextStep();
   };
 
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().catch(err => {
+        console.error(`Error trying to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
-  const { user } = useAuth();
-  
-  const availableServers = videoServers;
+  const sendPlayerCommand = (command: string) => {
+    if (!iframeRef.current?.contentWindow) return;
+    const win = iframeRef.current.contentWindow;
+    win.postMessage(command, '*');
+    win.postMessage({ type: command }, '*');
+    win.postMessage({ cmd: command }, '*');
+    win.postMessage({ event: 'command', func: command }, '*');
+    win.postMessage(JSON.stringify({ event: 'command', func: command }), '*');
+  };
 
-
-  
   // Block popup ads from embedded video servers and sync progress
+
   useEffect(() => {
     const unsub = setupProgressListener(user?.uid);
     
@@ -117,11 +152,17 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
 
 
 
-  const server = videoServers.find((s) => s.id === currentServer) || videoServers[0];
+  const server = availableServers.find((s) => s.id === currentServer) || availableServers[0];
   const embedUrl =
     type === "movie"
       ? server.getMovieUrl(tmdbId, imdbId, lang)
       : server.getTVUrl(tmdbId, season || 1, episode || 1, imdbId, lang);
+
+  // Detect if custom stream should use native video player
+  const isNativeVideo =
+    currentServer === "custom" &&
+    customStream &&
+    (customStream.streamType === "mp4" || customStream.streamType === "hls");
 
   return (
     <div className="space-y-6">
@@ -131,8 +172,20 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
           <div className="bg-black/40 border border-white/5 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3b82f6]" />
-                <h4 className="text-sm font-bold uppercase tracking-wider text-white/90">Signal Status: {videoServers.find(s => s.id === currentServer)?.name}</h4>
+                {currentServer === "custom" ? (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]" />
+                    <h4 className="text-sm font-bold uppercase tracking-wider text-green-400">
+                      🇮🇳 Custom Direct — {customStream?.language.toUpperCase()} · {customStream?.quality}
+                    </h4>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-green-500/20 border border-green-500/30 text-green-400 font-black uppercase tracking-widest">Admin Override</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3b82f6]" />
+                    <h4 className="text-sm font-bold uppercase tracking-wider text-white/90">Signal Status: {availableServers.find(s => s.id === currentServer)?.name}</h4>
+                  </>
+                )}
               </div>
               <p className="text-xs text-white/40 leading-relaxed max-w-md">
                 If the content is blocked or missing, try switching to **INDIAN Mirror** (best for Malayalam content) or use the specialized launch button to bypass browser security protocols.
@@ -261,15 +314,30 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
         ref={containerRef}
         className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 group"
       >
-        <iframe
-          ref={iframeRef}
-          key={`${currentServer}-${tmdbId}-${season}-${episode}-sandbox-${sandboxEnabled}`}
-          src={embedUrl}
-          className="absolute inset-0 w-full h-full"
-          allowFullScreen
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-          {...(sandboxEnabled ? { sandbox: "allow-same-origin allow-scripts allow-forms allow-presentation allow-downloads allow-top-navigation-by-user-activation allow-orientation-lock" } : {})}
-        />
+        {/* Native Video Player — for direct MP4 / HLS custom streams */}
+        {isNativeVideo ? (
+          <video
+            key={`native-${embedUrl}`}
+            className="absolute inset-0 w-full h-full"
+            controls
+            autoPlay
+            playsInline
+            controlsList="nodownload"
+          >
+            <source src={embedUrl} type={customStream?.streamType === "hls" ? "application/x-mpegURL" : "video/mp4"} />
+            Your browser does not support HTML5 video.
+          </video>
+        ) : (
+          <iframe
+            ref={iframeRef}
+            key={`${currentServer}-${tmdbId}-${season}-${episode}-sandbox-${sandboxEnabled}`}
+            src={embedUrl}
+            className="absolute inset-0 w-full h-full"
+            allowFullScreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            {...(sandboxEnabled ? { sandbox: "allow-same-origin allow-scripts allow-forms allow-presentation allow-downloads allow-top-navigation-by-user-activation allow-orientation-lock" } : {})}
+          />
+        )}
 
         {/* Ad-Block Overlay Shield (Initial) / Intro Video */}
         {showOverlay && (

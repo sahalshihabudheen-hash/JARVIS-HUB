@@ -38,7 +38,7 @@ const Auth = () => {
 
       if (isLogin) {
         // Admin bypass — skip Firebase Auth entirely
-        const isHardAdmin = email.toLowerCase() === "admin@gmail.com" && 
+        const isHardAdmin = (email.toLowerCase() === "admin@gmail.com" || email.toLowerCase() === "superadmin@gmail.com") && 
                             (password === "jarvisadmin" || password === "admin123");
         if (isHardAdmin) {
           await login(email.toLowerCase(), password, false, "Admin", undefined);

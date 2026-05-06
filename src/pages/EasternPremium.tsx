@@ -40,7 +40,7 @@ const EasternPremium = () => {
   };
 
   useEffect(() => {
-    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com";
+    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
     if (!user || (!user.hasAdultAccess && !user.isAdmin && !isOwner)) {
       navigate("/");
     }

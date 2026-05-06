@@ -100,7 +100,7 @@ const Settings = () => {
   };
 
   const isGoogleUser = user?.photoURL?.includes("googleusercontent.com");
-  const roleType = user?.email === "admin@gmail.com" ? "OWNER" : (user?.isAdmin ? "ADMIN" : "MEMBER");
+  const roleType = (user?.email === "admin@gmail.com" || user?.email === "superadmin@gmail.com") ? "OWNER" : (user?.isAdmin ? "ADMIN" : "MEMBER");
 
   const genres = [
     { id: 28, name: "Action", icon: "⚔️" },

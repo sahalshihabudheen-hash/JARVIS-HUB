@@ -107,7 +107,7 @@ const UserManagement = () => {
             </thead>
             <tbody className="divide-y divide-white/5">
               {filteredUsers.map((u) => {
-                const isOwner = u.email === "admin@gmail.com";
+                const isOwner = u.email === "admin@gmail.com" || u.email === "superadmin@gmail.com";
                 const isOnline = isActuallyOnline(u);
 
                 return (
@@ -198,14 +198,17 @@ const UserManagement = () => {
                       <div className="flex items-center justify-end gap-1.5 transition-opacity">
                         {u.email !== currentUser?.email && !isOwner && (
                           <>
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              onClick={() => toggleAdultAccess(u.email, !!u.hasAdultAccess)}
-                              className={cn("w-9 h-9 rounded-xl border", u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-white/5 text-white/40 border-white/10")}
-                            >
-                              <Flame className="w-4 h-4" />
-                            </Button>
+                            {(currentUser?.email === "admin@gmail.com" || currentUser?.email === "superadmin@gmail.com") && (
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => toggleAdultAccess(u.email, !!u.hasAdultAccess)}
+                                className={cn("w-9 h-9 rounded-xl border", u.hasAdultAccess ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-white/5 text-white/40 border-white/10")}
+                                title="Toggle Adult Access (Super Admin Only)"
+                              >
+                                <Flame className="w-4 h-4" />
+                              </Button>
+                            )}
                             <Button 
                               variant="ghost" 
                               size="icon"
@@ -224,7 +227,7 @@ const UserManagement = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-[#1A1A1A] border-white/10 rounded-2xl p-2 w-48 shadow-2xl">
-                            {currentUser?.email === "admin@gmail.com" && (
+                            {(currentUser?.email === "admin@gmail.com" || currentUser?.email === "superadmin@gmail.com") && (
                               <DropdownMenuItem 
                                 onClick={() => setEditingPassword({ email: u.email, value: u.password || "" })}
                                 className="rounded-xl focus:bg-blue-500/10 focus:text-blue-400 gap-3"
