@@ -16,6 +16,7 @@ import Auth from "./pages/Auth";
 import Settings from "./pages/Settings";
 import History from "./pages/History";
 import Adult from "./pages/Adult";
+import EasternPremium from "./pages/EasternPremium";
 import WatchHub from "./pages/WatchHub";
 import News from "./pages/News";
 import NotFound from "./pages/NotFound";
@@ -188,6 +189,7 @@ const App = () => (
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/history" element={<History />} />
                   <Route path="/adult" element={<Adult />} />
+                  <Route path="/adult/eastern" element={<EasternPremium />} />
                   <Route path="/news" element={<News />} />
                   <Route path="/hub/watch/:id" element={<WatchHub />} />
                   <Route path="/watch/adult/:id" element={<WatchHub />} />

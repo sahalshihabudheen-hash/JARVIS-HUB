@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
-import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2, Film, User } from "lucide-react";
+import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2, Film, User, ChevronRight } from "lucide-react";
 import { getAdultHistory, clearAdultHistory, AdultHistoryItem, syncAdultHistoryFromCloud } from "@/lib/adult-history";
 import { getAdultWatchlist, toggleAdultWatchlist, syncAdultWatchlistFromCloud } from "@/lib/adult-watchlist";
 
@@ -689,9 +689,16 @@ const Adult = () => {
                   <p className="text-[10px] font-bold text-red-500/60 uppercase tracking-[0.3em] mt-1">JAV & Korean Specialized Protocols</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
                 <div className="h-px w-20 bg-gradient-to-r from-transparent to-white/10 hidden md:block" />
-                <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">Select Node</span>
+                <Button 
+                  onClick={() => navigate('/adult/eastern')}
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full h-9 px-6 bg-red-600/10 border-red-500/20 text-red-400 hover:bg-red-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(220,38,38,0.2)]"
+                >
+                  View Full Eastern Hub <ChevronRight className="w-3 h-3 ml-2" />
+                </Button>
               </div>
             </div>
 
