@@ -205,11 +205,41 @@ const Adult = () => {
     { label: "Abaya",           value: 'abaya arab' },
   ];
 
+  const javSeries = [
+    { label: "SAME-024", value: "SAME-024" },
+    { label: "HMN-464", value: "HMN-464" },
+    { label: "TPPN-243", value: "TPPN-243" },
+    { label: "BDA-181", value: "BDA-181" },
+    { label: "JUFE-376", value: "JUFE-376" },
+    { label: "URKK-087", value: "URKK-087" },
+    { label: "MEYD-788", value: "MEYD-788" },
+    { label: "AQSH-102", value: "AQSH-102" },
+    { label: "DASS-165", value: "DASS-165" },
+    { label: "PPPE-125", value: "PPPE-125" },
+    { label: "BDO KIE", value: "bdo kie" },
+    { label: "NEBO Series", value: "NEBO-" },
+    { label: "RKI Series", value: "RKI-" },
+    { label: "JUFE Series", value: "JUFE-" },
+    { label: "WAAA Series", value: "WAAA-" },
+  ];
+
+  const koreanPremium = [
+    { label: "Korean BJ", value: "korean bj" },
+    { label: "Korean Adult Movie", value: "korean adult movie" },
+    { label: "Korean Amateur", value: "korean amateur" },
+    { label: "Korean Dance", value: "korean dance adult" },
+    { label: "Korean Massage", value: "korean massage" },
+    { label: "K-Drama Adult", value: "korean drama adult" },
+  ];
+
 
   const asianGenres = [
     { label: "Japanese", value: "japanese" },
+    { label: "JAV Premium", value: "jav" },
+    { label: "Uncensored JAV", value: "jav uncensored" },
     { label: "Chinese", value: "chinese" },
     { label: "Korean", value: "korean" },
+    { label: "Korean BJ", value: "korean bj" },
     { label: "Asian", value: "asian" },
     { label: "Thai", value: "thai" },
     { label: "Indian", value: "indian" },
@@ -642,6 +672,77 @@ const Adult = () => {
 
             </div>
           )}
+
+
+          {/* Premium Eastern Gateway Section */}
+          <div className="mb-16">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 px-1">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-red-500 blur-xl opacity-20 animate-pulse" />
+                  <div className="relative p-3 bg-red-500/20 rounded-2xl border border-red-500/30">
+                    <Globe className="w-6 h-6 text-red-500" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-display font-black text-white uppercase italic tracking-tighter">Eastern Premium <span className="text-red-500">Gateway</span></h3>
+                  <p className="text-[10px] font-bold text-red-500/60 uppercase tracking-[0.3em] mt-1">JAV & Korean Specialized Protocols</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-px w-20 bg-gradient-to-r from-transparent to-white/10 hidden md:block" />
+                <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">Select Node</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* JAV Series Ribbon */}
+              <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> JAV Premium Series
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {javSeries.map((s) => (
+                    <button
+                      key={s.value}
+                      onClick={() => { setQuery(s.value); setPage(1); scrollToResults(); }}
+                      className={cn(
+                        "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300",
+                        query === s.value
+                          ? "bg-red-600 border-red-500 text-white shadow-[0_0_20px_rgba(220,38,38,0.3)]"
+                          : "bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white hover:border-white/10"
+                      )}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Korean Premium Ribbon */}
+              <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Korean Adult Niche
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {koreanPremium.map((s) => (
+                    <button
+                      key={s.value}
+                      onClick={() => { setQuery(s.value); setPage(1); scrollToResults(); }}
+                      className={cn(
+                        "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300",
+                        query === s.value
+                          ? "bg-blue-600 border-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.3)]"
+                          : "bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white hover:border-white/10"
+                      )}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
 
 
           {/* Top Studios Row */}
