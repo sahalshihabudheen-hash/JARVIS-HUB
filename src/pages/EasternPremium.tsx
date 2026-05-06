@@ -198,7 +198,12 @@ const EasternPremium = () => {
                   {javSeries.map((s) => (
                     <button
                       key={s.value}
-                      onClick={() => { setQuery(s.value); setPage(1); scrollToResults(); }}
+                      onClick={() => { 
+                        setSource("avgle"); 
+                        setQuery(s.value); 
+                        setPage(1); 
+                        scrollToResults(); 
+                      }}
                       className={cn(
                         "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-300",
                         query === s.value
