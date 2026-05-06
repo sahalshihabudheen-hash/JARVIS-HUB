@@ -80,14 +80,12 @@ export default async function handler(req: Request) {
         }));
       }
     } else if (source === 'avgle') {
-      // Avgle API v1: https://api.avgle.com/v1/search/{query}/{page}
-      // Or for JAV codes: https://api.avgle.com/v1/jav/{query}/{page}
       const isJavCode = /^[a-z0-9]+-[0-9]+$/i.test(query.trim()) || (query.trim().includes("-") && query.length > 4);
       let endpoint = isJavCode ? 'jav' : 'search';
       const avglePage = Math.max(0, parseInt(page) - 1);
       
-      const fetchFromAvgle = async (targetEndpoint: string) => {
-        const avgleUrl = `https://api.avgle.com/v1/${targetEndpoint}/${encodeURIComponent(query)}/${avglePage}`;
+      const fetchFromAvgle = async (q: string, targetEndpoint: string) => {
+        const avgleUrl = `https://api.avgle.com/v1/${targetEndpoint}/${encodeURIComponent(q)}/${avglePage}`;
         const response = await fetch(avgleUrl, {
           headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -113,15 +111,41 @@ export default async function handler(req: Request) {
         return [];
       };
 
-      videos = await fetchFromAvgle(endpoint);
+      videos = await fetchFromAvgle(query, endpoint);
       
-      // Fallback: If JAV endpoint returned nothing for a JAV-like code, try regular search
-      if (videos.length === 0 && endpoint === 'jav') {
-        videos = await fetchFromAvgle('search');
+      // Try without hyphen if it failed
+      if (videos.length === 0 && query.includes("-")) {
+        videos = await fetchFromAvgle(query.replace("-", ""), endpoint);
       }
-      // Fallback: If search returned nothing, try JAV endpoint just in case
-      else if (videos.length === 0 && endpoint === 'search' && query.length > 3) {
-        videos = await fetchFromAvgle('jav');
+      
+      // Fallback: If JAV endpoint returned nothing, try regular search
+      if (videos.length === 0 && endpoint === 'jav') {
+        videos = await fetchFromAvgle(query, 'search');
+      }
+
+      // GLOBAL FALLBACK: If Avgle is completely failing (possibly IP blocked), fallback to Pornhub with JAV tags
+      if (videos.length === 0) {
+        const phQuery = isJavCode ? `${query} JAV Japanese` : query;
+        const pornhubUrl = `https://www.pornhub.com/webmasters/search?search=${encodeURIComponent(phQuery.trim())}&page=${page}&thumbsize=large_number`;
+        const response = await fetch(pornhubUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          videos = (data.videos || []).map((v: any) => ({
+            video_id: v.video_id,
+            title: v.title,
+            url: v.url,
+            default_thumb: v.default_thumb,
+            duration: v.duration,
+            views: v.views,
+            rating: v.rating,
+            publish_date: v.publish_date,
+            pornstars: (v.pornstars || []).map((p: any) => typeof p === 'string' ? p : p.pornstar_name),
+            tags: (v.tags || []).map((t: any) => typeof t === 'string' ? t : t.tag_name),
+            source: 'pornhub'
+          }));
+        }
       }
     }
 
