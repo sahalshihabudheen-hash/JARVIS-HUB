@@ -83,9 +83,9 @@ export function CommandPalette() {
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading="Personal Archive">
-            <CommandItem onSelect={() => runCommand(() => navigate("/history"))}>
+            <CommandItem onSelect={() => runCommand(() => navigate("/"))}>
               <History className="mr-2 h-4 w-4" />
-              <span>Watch History</span>
+              <span>History (Home)</span>
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => navigate("/watchlist"))}>
               <History className="mr-2 h-4 w-4" />

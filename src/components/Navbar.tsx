@@ -56,7 +56,7 @@ const Navbar = () => {
     { to: "/news", label: "News", icon: Newspaper },
     ...(user ? [
       { to: "/watchlist", label: "Watchlist", icon: Heart },
-      { to: "/history", label: "History", icon: History },
+      { to: "/", label: "History", icon: History },
     ] : []),
     ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
@@ -247,7 +247,7 @@ const Navbar = () => {
                         <Heart className="mr-3 h-4 w-4 text-pink-400" />
                         <span className="font-bold text-xs uppercase tracking-wider">My Watchlist</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/history")} className="cursor-pointer hover:bg-white/10 py-3 rounded-xl px-3 transition-colors">
+                      <DropdownMenuItem onClick={() => navigate("/")} className="cursor-pointer hover:bg-white/10 py-3 rounded-xl px-3 transition-colors">
                         <History className="mr-3 h-4 w-4 text-purple-400" />
                         <span className="font-bold text-xs uppercase tracking-wider">History</span>
                       </DropdownMenuItem>
