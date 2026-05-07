@@ -50,7 +50,17 @@ import { db } from "./lib/firebase";
 
 const StealthManager = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const lastEscPress = useRef<number>(0);
+  const isFirstLoad = useRef(true);
+
+  useEffect(() => {
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+    } else {
+      (window as any).__jarvis_internal = true;
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
