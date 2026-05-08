@@ -41,7 +41,7 @@ const queryClient = new QueryClient({
   },
 });
 
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
