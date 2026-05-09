@@ -15,6 +15,7 @@ import {
   Shield,
   LayoutDashboard,
   Sparkles,
+  Heart,
 } from "lucide-react";
 
 import {
@@ -83,12 +84,12 @@ export function CommandPalette() {
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading="Personal Archive">
-            <CommandItem onSelect={() => runCommand(() => navigate("/"))}>
+            <CommandItem onSelect={() => runCommand(() => navigate("/history"))}>
               <History className="mr-2 h-4 w-4" />
-              <span>History (Home)</span>
+              <span>Watch History</span>
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => navigate("/watchlist"))}>
-              <History className="mr-2 h-4 w-4" />
+              <Heart className="mr-2 h-4 w-4 text-pink-400" />
               <span>Watchlist</span>
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => navigate("/settings"))}>

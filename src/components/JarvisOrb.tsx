@@ -39,7 +39,7 @@ const JarvisOrb = () => {
   const protocols = [
     { name: "Search Node", icon: Search, action: () => navigate("/search"), color: "text-blue-400" },
     { name: "Global Trending", icon: TrendingUp, action: () => navigate("/"), color: "text-green-400" },
-    { name: "Access History", icon: History, action: () => navigate("/"), color: "text-purple-400" },
+    { name: "Access History", icon: History, action: () => navigate("/history"), color: "text-purple-400" },
     { name: "Admin Terminal", icon: LayoutDashboard, action: () => navigate("/admin"), color: "text-yellow-400", adminOnly: true },
     { name: "Privacy Sync", icon: ShieldCheck, action: () => navigate("/settings"), color: "text-cyan-400" },
   ];
