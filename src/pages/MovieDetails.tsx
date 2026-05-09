@@ -15,6 +15,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const MovieDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const movieId = parseInt(id || "0");
   const [inWatchlist, setInWatchlist] = useState(false);

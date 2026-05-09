@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Play, Star } from "lucide-react";
 import { MediaItem, getImageUrl, getTrailerKey } from "@/lib/tmdb";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ interface MediaCardProps {
 }
 
 const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardProps) => {
+  const navigate = useNavigate();
   const { isActive, step, nextStep } = useTutorial();
   const type = mediaType || item.media_type || "movie";
   const title = item.title || item.name || "Untitled";
@@ -85,16 +86,17 @@ const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardP
         
         {/* Play Button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
-          <Link 
-            to={type === "movie" ? `/watch/movie/${item.id}` : `/watch/tv/${item.id}/1/1`}
-            className="w-14 h-14 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center shadow-2xl border border-white/20 transform scale-75 group-hover:scale-100 transition-transform duration-500 hover:bg-primary/40 pointer-events-auto"
+          <button 
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               if (isActive && step === 1) nextStep();
+              navigate(type === "movie" ? `/watch/movie/${item.id}` : `/watch/tv/${item.id}/1/1`);
             }}
+            className="w-14 h-14 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center shadow-2xl border border-white/20 transform scale-75 group-hover:scale-100 transition-transform duration-500 hover:bg-primary/40 pointer-events-auto"
           >
             <Play className="w-6 h-6 text-primary-foreground fill-current ml-1" />
-          </Link>
+          </button>
         </div>
 
         {/* Rating Badge */}
