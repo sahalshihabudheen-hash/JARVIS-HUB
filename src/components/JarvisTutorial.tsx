@@ -277,39 +277,49 @@ const JarvisTutorial = () => {
   // ── Balloon position ──
   const BALLOON_W = isMobile ? window.innerWidth - 32 : 380;
   // Reduce height on mobile to keep it compact
-  const BALLOON_H = currentStep.interactive === "genres" ? (isMobile ? 480 : 540) : (isMobile ? 240 : 430);
-  const balloonStyle: React.CSSProperties = {};
-  let nibPos = "bottom";
+  const BALLOON_H = currentStep.interactive === "genres" ? (isMobile ? 420 : 540) : (isMobile ? 220 : 430);
+  let finalStyle: React.CSSProperties = {};
+  let nibPos = "none";
 
   if (isMobile) {
     // Mobile: Always at bottom like a sheet
-    balloonStyle.bottom = 20;
-    balloonStyle.left = 16;
-    balloonStyle.right = 16;
-    nibPos = "none";
+    finalStyle = {
+      bottom: 20,
+      left: 16,
+      right: 16,
+      width: BALLOON_W,
+    };
   } else if (coords) {
     const spaceBelow = window.innerHeight - coords.y - coords.height;
     const spaceAbove = coords.y;
 
     if (spaceBelow >= BALLOON_H + 20) {
-      balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
+      finalStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
       nibPos = "top";
     } else if (spaceAbove >= BALLOON_H + 20) {
-      balloonStyle.top = Math.max(10, coords.y - BALLOON_H - 16);
+      finalStyle.top = Math.max(10, coords.y - BALLOON_H - 16);
       nibPos = "bottom";
     } else {
-      balloonStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
+      finalStyle.top = Math.min(coords.y + coords.height + 16, window.innerHeight - BALLOON_H - 10);
       nibPos = "top";
     }
 
     // Clamp top to always be on-screen
-    if (typeof balloonStyle.top === "number") {
-      balloonStyle.top = Math.max(10, Math.min(balloonStyle.top, window.innerHeight - BALLOON_H - 10));
+    if (typeof finalStyle.top === "number") {
+      finalStyle.top = Math.max(10, Math.min(finalStyle.top, window.innerHeight - BALLOON_H - 10));
     }
 
     // Horizontal alignment: center on target but clamp to screen
     const idealLeft = coords.x + coords.width / 2 - BALLOON_W / 2;
-    balloonStyle.left = Math.max(16, Math.min(idealLeft, window.innerWidth - BALLOON_W - 16));
+    finalStyle.left = Math.max(16, Math.min(idealLeft, window.innerWidth - BALLOON_W - 16));
+  } else {
+    // Desktop without coords
+    finalStyle = {
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: BALLOON_W,
+    };
   }
 
   const handleNext = () => { playClick(); nextStep(); };
@@ -341,17 +351,8 @@ const JarvisTutorial = () => {
 
       {/* ── Tour Balloon ── */}
       <div
-        className="absolute pointer-events-auto z-[1600]"
-        style={
-          coords
-            ? { ...balloonStyle, width: BALLOON_W }
-            : {
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: BALLOON_W,
-              }
-        }
+        className="absolute pointer-events-auto z-[1600] transition-all duration-300"
+        style={finalStyle}
       >
         {/* Nib (arrow) */}
         {coords && nibPos === "top" && (
@@ -423,7 +424,7 @@ const JarvisTutorial = () => {
 
             {/* Genre Selector */}
             {currentStep.interactive === "genres" && typingDone && (
-              <div className="grid grid-cols-2 xs:grid-cols-3 gap-2 mb-4 max-h-[250px] overflow-y-auto pr-1">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4 max-h-[200px] overflow-y-auto pr-1">
                 {[
                   { id: 28, name: "Action", icon: "⚔️" },
                   { id: 878, name: "Sci-Fi", icon: "🚀" },
@@ -440,9 +441,9 @@ const JarvisTutorial = () => {
             )}
 
             {/* Footer */}
-            <div className="flex items-center justify-between pt-3 border-t border-white/8 gap-3">
+            <div className="flex flex-wrap items-center justify-between pt-3 border-t border-white/8 gap-y-3 gap-x-2">
               {/* Progress dots */}
-              <div className="flex gap-1 items-center">
+              <div className="flex gap-1 items-center shrink-0">
                 {steps.map((_, i) => (
                   <div
                     key={i}
@@ -458,7 +459,7 @@ const JarvisTutorial = () => {
               </div>
 
               {/* Buttons */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 ml-auto">
                 {step > 0 && (
                   <Button
                     variant="ghost"

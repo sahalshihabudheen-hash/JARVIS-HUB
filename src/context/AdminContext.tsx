@@ -109,7 +109,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Real-time Users from Firestore
     try {
-      const q = collection(db, "users");
+      const q = query(collection(db, "users"), orderBy("email", "asc"));
       unsubscribe = onSnapshot(q, 
         (snapshot) => {
           const fetchedUsers = snapshot.docs.map(doc => ({
@@ -120,7 +120,12 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         },
         (err) => {
           console.error("Users listener error:", err);
-          toast.error("Protocol Error: Unable to sync users. Check Firestore rules.");
+          // Fallback to unordered if index is missing
+          const qSimple = collection(db, "users");
+          onSnapshot(qSimple, (s) => {
+            const users = s.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
+            setUsers(users);
+          });
         }
       );
     } catch (e) { console.error("Failed to subscribe to users:", e); }

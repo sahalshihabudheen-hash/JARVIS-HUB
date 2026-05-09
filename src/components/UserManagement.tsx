@@ -48,10 +48,18 @@ const UserManagement = () => {
   };
 
   const filteredUsers = users.filter(u => {
-    if (!u || !u.email) return false;
-    return (u.email || "").toLowerCase().includes(searchTerm.toLowerCase()) || 
-           (u.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-           (u.location || "").toLowerCase().includes(searchTerm.toLowerCase());
+    if (!u) return false;
+    const search = searchTerm.toLowerCase();
+    const email = (u.email || "").toLowerCase();
+    const name = (u.name || "").toLowerCase();
+    const location = (u.location || "").toLowerCase();
+    const isp = (u.isp || "").toLowerCase();
+
+    if (!search) return true;
+    return email.includes(search) || 
+           name.includes(search) || 
+           location.includes(search) ||
+           isp.includes(search);
   });
 
   return (
@@ -93,8 +101,8 @@ const UserManagement = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+        <div className="overflow-x-auto overflow-y-auto max-h-[70vh]">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02]">

@@ -82,7 +82,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between gap-4 relative z-10">
           
           {/* Logo Section */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0 relative">
+          <Link id="navbar-logo" to="/" className="flex items-center gap-3 group shrink-0 relative">
             <div className="relative">
               <div className={cn(
                 "absolute inset-0 blur-xl rounded-full transition-all duration-700 animate-pulse",
@@ -117,7 +117,7 @@ const Navbar = () => {
           </Link>
 
           {/* Centered Navigation Pills (Desktop) */}
-          <div className={cn(
+          <div id="navbar-links" className={cn(
             "hidden lg:flex items-center flex-1 justify-center transition-all duration-500",
             isSearchExpanded ? "opacity-0 pointer-events-none scale-95" : "opacity-100 scale-100"
           )}>
@@ -174,7 +174,7 @@ const Navbar = () => {
             )}
 
             {/* Search Toggle / Input */}
-            <div className={cn(
+            <div id="navbar-search" className={cn(
               "flex items-center transition-all duration-500 overflow-hidden bg-white/5 rounded-full border border-white/10 shadow-inner",
               isSearchExpanded ? "w-48 md:w-64 px-1" : "w-10 md:w-11"
             )}>
@@ -211,7 +211,7 @@ const Navbar = () => {
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className={cn(
+                    <Button id="settings-btn" variant="ghost" className={cn(
                       "relative h-11 w-11 rounded-full border-2 transition-all p-0 overflow-hidden shadow-xl hover:scale-105 active:scale-95 duration-300",
                       isAdultMode ? "border-red-500/40 hover:border-red-500" : "border-blue-500/40 hover:border-blue-500"
                     )}>
@@ -279,6 +279,7 @@ const Navbar = () => {
             {/* Mobile Menu Toggle */}
             <div className="lg:hidden flex items-center">
               <Button
+                id="menu-btn-mobile"
                 variant="ghost"
                 size="icon"
                 className="w-10 h-10 rounded-full text-white/40 hover:text-white hover:bg-white/10 bg-white/5 border border-white/10 transition-all active:scale-90"
@@ -316,8 +317,17 @@ const Navbar = () => {
                 {user ? (
                   <>
                     <Button
+                      id="settings-btn-mobile"
                       variant="outline"
-                      className="w-full mt-2 flex items-center justify-center gap-2 rounded-2xl h-12 border-red-500/30 text-red-400 hover:bg-red-500/20 font-bold uppercase tracking-widest text-xs"
+                      className="w-full mt-2 flex items-center justify-center gap-2 rounded-2xl h-12 border-white/10 text-white/70 hover:bg-white/5 font-bold uppercase tracking-widest text-xs mb-2"
+                      onClick={() => navigate("/settings")}
+                    >
+                      <Settings className="w-4 h-4" />
+                      Settings
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full flex items-center justify-center gap-2 rounded-2xl h-12 border-red-500/30 text-red-400 hover:bg-red-500/20 font-bold uppercase tracking-widest text-xs"
                       onClick={logout}
                     >
                       <LogOut className="w-4 h-4" />

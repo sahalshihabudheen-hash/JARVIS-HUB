@@ -300,7 +300,7 @@ const Index = () => {
         />
         
         <div className="container mx-auto -mt-20 relative z-10 space-y-12">
-          <div id="watchlist-row pb-8">
+          <div id="watchlist-row" className="pb-8">
             <ContinueWatching />
           </div>
 
