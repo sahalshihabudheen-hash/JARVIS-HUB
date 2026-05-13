@@ -16,7 +16,7 @@ import { getUserLocation } from "@/lib/tmdb";
 import { MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const Adult = () => {
+const AdultCatalog = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [query, setQuery] = useState("all");
@@ -1238,4 +1238,4 @@ const Adult = () => {
   );
 };
 
-export default Adult;
+export default AdultCatalog;

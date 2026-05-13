@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield, History, Flame, Newspaper, LogOut, Settings, Download } from "lucide-react";
+import { Search, Menu, X, Film, Tv, Sparkles, Heart, User, Shield, History, Flame, Newspaper, LogOut, Settings, Download, Gamepad2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -60,6 +60,7 @@ const Navbar = () => {
       { to: "/history", label: "History", icon: History },
     ] : []),
     ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
+    ...(isAdultMode ? [{ to: "/adult/games", label: "Games", icon: Gamepad2 }] : []),
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
