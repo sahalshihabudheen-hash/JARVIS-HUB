@@ -123,6 +123,8 @@ const Downloads = () => {
   const executeDownload = (url: string, name: string) => {
     const a = document.createElement('a');
     a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
     a.download = `${name}.mp4`;
     document.body.appendChild(a);
     a.click();
