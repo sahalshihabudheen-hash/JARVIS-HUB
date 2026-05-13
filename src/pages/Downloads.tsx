@@ -34,14 +34,14 @@ const SOURCES: DownloadSource[] = [
     quality: "4K UHD", 
     type: "Local Proxy", 
     icon: Zap,
-    getUrl: (id, type) => `https://vidsrc.xyz/embed/${type === 'movie' ? 'movie' : 'tv'}/${id}`
+    getUrl: (id, type) => `https://rivestream.live/embed?type=${type}&id=${id}`
   },
   { 
     name: "Source Alpha", 
     quality: "1080p", 
     type: "Mirror", 
     icon: Monitor,
-    getUrl: (id, type) => `https://vidsrc.to/embed/${type}/${id}`
+    getUrl: (id, type) => `https://vidsrc.rip/embed/${type}/${id}`
   },
   { 
     name: "Source Beta", 
@@ -67,6 +67,7 @@ const Downloads = () => {
   const [loading, setLoading] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<any | null>(null);
   const [downloadProgress, setDownloadProgress] = useState<{id: string, progress: number} | null>(null);
+  const [downloadModalUrl, setDownloadModalUrl] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleSearch = async (e?: React.FormEvent) => {
@@ -121,14 +122,7 @@ const Downloads = () => {
   };
 
   const executeDownload = (url: string, name: string) => {
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.download = `${name}.mp4`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    setDownloadModalUrl(url);
     setDownloadReady(null);
   };
 
@@ -322,6 +316,37 @@ const Downloads = () => {
       </main>
 
       <Footer />
+
+      {downloadModalUrl && (
+        <div className="fixed inset-0 z-[99999] flex flex-col bg-black/95 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-300">
+          <div className="flex items-center justify-between p-4 bg-black/50 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <Download className="w-5 h-5 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-white uppercase tracking-widest text-sm">Download Protocol Active</h3>
+                <p className="text-[10px] text-white/50 uppercase tracking-widest">Follow the source instructions to finalize the download.</p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setDownloadModalUrl(null)} 
+              className="text-white hover:bg-red-500/20 border-white/10 hover:border-red-500/50 hover:text-red-400 font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all"
+            >
+              Abort / Close
+            </Button>
+          </div>
+          <div className="flex-1 w-full h-full bg-[#050505]">
+            <iframe 
+              src={downloadModalUrl} 
+              className="w-full h-full border-none" 
+              allowFullScreen
+              sandbox="allow-same-origin allow-scripts allow-forms allow-downloads"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
