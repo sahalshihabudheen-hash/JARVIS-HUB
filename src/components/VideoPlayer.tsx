@@ -150,6 +150,35 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
 
 
 
+
+
+  const handleServerChange = (serverId: string) => {
+    setCurrentServer(serverId);
+    setDefaultServer(serverId);
+    setShowOverlay(true);
+    setShieldActive(false);
+  };
+
+  // Auto-switch to Indian mirror for Malayalam content
+  useEffect(() => {
+    if (lang === 'ml' && currentServer !== "111movies" && !customStream) {
+      handleServerChange("111movies");
+      toast.info("Switching to 111Movies Mirror for best Malayalam experience");
+    }
+  }, [lang, customStream]);
+
+  const server = availableServers.find((s) => s.id === currentServer) || availableServers[0];
+  const embedUrl =
+    type === "movie"
+      ? server.getMovieUrl(tmdbId, imdbId, lang)
+      : server.getTVUrl(tmdbId, season || 1, episode || 1, imdbId, lang);
+
+  // Detect if custom stream should use native video player
+  const isNativeVideo =
+    currentServer === "custom" &&
+    customStream &&
+    (customStream.streamType === "mp4" || customStream.streamType === "hls");
+
   // Effect to listen for remote commands
   useEffect(() => {
     const handleRemoteCommand = (e: Event) => {
@@ -197,33 +226,6 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     window.addEventListener("jarvis-remote-cmd", handleRemoteCommand);
     return () => window.removeEventListener("jarvis-remote-cmd", handleRemoteCommand);
   }, [isNativeVideo]);
-
-  const handleServerChange = (serverId: string) => {
-    setCurrentServer(serverId);
-    setDefaultServer(serverId);
-    setShowOverlay(true);
-    setShieldActive(false);
-  };
-
-  // Auto-switch to Indian mirror for Malayalam content
-  useEffect(() => {
-    if (lang === 'ml' && currentServer !== "111movies" && !customStream) {
-      handleServerChange("111movies");
-      toast.info("Switching to 111Movies Mirror for best Malayalam experience");
-    }
-  }, [lang, customStream]);
-
-  const server = availableServers.find((s) => s.id === currentServer) || availableServers[0];
-  const embedUrl =
-    type === "movie"
-      ? server.getMovieUrl(tmdbId, imdbId, lang)
-      : server.getTVUrl(tmdbId, season || 1, episode || 1, imdbId, lang);
-
-  // Detect if custom stream should use native video player
-  const isNativeVideo =
-    currentServer === "custom" &&
-    customStream &&
-    (customStream.streamType === "mp4" || customStream.streamType === "hls");
 
   return (
     <div className="space-y-6">
