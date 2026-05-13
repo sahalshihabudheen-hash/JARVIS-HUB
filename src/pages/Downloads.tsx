@@ -59,6 +59,7 @@ const Downloads = () => {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<any | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState<{id: string, progress: number} | null>(null);
   const navigate = useNavigate();
 
   const handleSearch = async (e?: React.FormEvent) => {
@@ -81,12 +82,31 @@ const Downloads = () => {
     }
   };
 
-  const openDownload = (source: DownloadSource, media: any) => {
-    const url = source.getUrl(media.id.toString(), media.media_type as 'movie' | 'tv');
-    toast.success(`Initializing Download: ${source.name}`, {
-      description: "Redirecting to high-speed download gateway."
+  const simulateDownload = (source: DownloadSource, media: any) => {
+    const id = media.id.toString();
+    setDownloadProgress({ id, progress: 0 });
+    
+    toast.info(`Acquiring Protocol: ${media.title || media.name}`, {
+      description: "Establishing secure link to high-speed gateway..."
     });
-    window.open(url, '_blank');
+
+    let prog = 0;
+    const interval = setInterval(() => {
+      prog += Math.random() * 15;
+      if (prog >= 100) {
+        prog = 100;
+        clearInterval(interval);
+        setTimeout(() => {
+          setDownloadProgress(null);
+          const url = source.getUrl(id, media.media_type as 'movie' | 'tv');
+          toast.success("Acquisition Complete", {
+            description: "Redirecting to high-speed download node."
+          });
+          window.open(url, '_blank');
+        }, 800);
+      }
+      setDownloadProgress({ id, progress: prog });
+    }, 400);
   };
 
   return (
@@ -144,65 +164,86 @@ const Downloads = () => {
 
         {/* Results Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
-          {results.map((item, idx) => (
-            <div 
-              key={item.id} 
-              className="group relative animate-in fade-in slide-in-from-bottom-4 duration-700"
-              style={{ animationDelay: `${idx * 50}ms` }}
-            >
-              {/* Media Card */}
-              <div className="relative aspect-[2/3] rounded-3xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl transition-all duration-500 group-hover:scale-[1.02] group-hover:border-blue-500/50">
-                {item.poster_path ? (
-                  <img 
-                    src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} 
-                    alt={item.title || item.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-white/10">
-                    <Film className="w-12 h-12" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">No Poster</span>
+          {results.map((item, idx) => {
+            const isDownloading = downloadProgress?.id === item.id.toString();
+            return (
+              <div 
+                key={item.id} 
+                className="group relative animate-in fade-in slide-in-from-bottom-4 duration-700"
+                style={{ animationDelay: `${idx * 50}ms` }}
+              >
+                {/* Media Card */}
+                <div className="relative aspect-[2/3] rounded-3xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl transition-all duration-500 group-hover:scale-[1.02] group-hover:border-blue-500/50">
+                  {item.poster_path ? (
+                    <img 
+                      src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} 
+                      alt={item.title || item.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-white/10">
+                      <Film className="w-12 h-12" />
+                      <span className="text-[10px] font-black uppercase tracking-widest">No Poster</span>
+                    </div>
+                  )}
+                  
+                  {/* Overlay with Download Info */}
+                  <div className={cn(
+                    "absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6 transition-opacity duration-500",
+                    isDownloading ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                  )}>
+                    {isDownloading ? (
+                      <div className="space-y-4 pb-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 animate-pulse">Acquiring...</span>
+                          <span className="text-[10px] font-black text-white/60">{Math.round(downloadProgress.progress)}%</span>
+                        </div>
+                        <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-blue-500 transition-all duration-300"
+                            style={{ width: `${downloadProgress.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                         <div className="flex flex-col gap-2">
+                           {SOURCES.map((source) => (
+                             <button
+                               key={source.name}
+                               onClick={() => simulateDownload(source, item)}
+                               className="w-full flex items-center justify-between gap-3 bg-white/10 hover:bg-blue-600 text-white p-3 rounded-xl backdrop-blur-md transition-all group/btn active:scale-95"
+                             >
+                               <div className="flex items-center gap-2">
+                                 <source.icon className="w-3.5 h-3.5 text-blue-400 group-hover/btn:text-white transition-colors" />
+                                 <span className="text-[10px] font-black uppercase tracking-widest">{source.name}</span>
+                               </div>
+                               <ChevronRight className="w-3 h-3 text-white/30" />
+                             </button>
+                           ))}
+                         </div>
+                      </div>
+                    )}
                   </div>
-                )}
-                
-                {/* Overlay with Download Info */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                  <div className="space-y-4">
-                     <div className="flex flex-col gap-2">
-                       {SOURCES.map((source) => (
-                         <button
-                           key={source.name}
-                           onClick={() => openDownload(source, item)}
-                           className="w-full flex items-center justify-between gap-3 bg-white/10 hover:bg-blue-600 text-white p-3 rounded-xl backdrop-blur-md transition-all group/btn active:scale-95"
-                         >
-                           <div className="flex items-center gap-2">
-                             <source.icon className="w-3.5 h-3.5 text-blue-400 group-hover/btn:text-white transition-colors" />
-                             <span className="text-[10px] font-black uppercase tracking-widest">{source.name}</span>
-                           </div>
-                           <ChevronRight className="w-3 h-3 text-white/30" />
-                         </button>
-                       ))}
-                     </div>
+
+                  {/* Badge */}
+                  <div className="absolute top-4 right-4 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10">
+                    {item.media_type === 'movie' ? <Film className="w-3 h-3" /> : <Tv className="w-3 h-3" />}
                   </div>
                 </div>
 
-                {/* Badge */}
-                <div className="absolute top-4 right-4 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10">
-                  {item.media_type === 'movie' ? <Film className="w-3 h-3" /> : <Tv className="w-3 h-3" />}
+                {/* Media Title */}
+                <div className="mt-4 px-2">
+                  <h3 className="font-bold text-[13px] md:text-sm text-white line-clamp-1 group-hover:text-blue-400 transition-colors">
+                    {item.title || item.name}
+                  </h3>
+                  <p className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em] mt-1">
+                    {item.release_date?.split('-')[0] || item.first_air_date?.split('-')[0] || 'N/A'} • {item.media_type}
+                  </p>
                 </div>
               </div>
-
-              {/* Media Title */}
-              <div className="mt-4 px-2">
-                <h3 className="font-bold text-[13px] md:text-sm text-white line-clamp-1 group-hover:text-blue-400 transition-colors">
-                  {item.title || item.name}
-                </h3>
-                <p className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em] mt-1">
-                  {item.release_date?.split('-')[0] || item.first_air_date?.split('-')[0] || 'N/A'} • {item.media_type}
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           {results.length === 0 && !loading && query && (
             <div className="col-span-full py-32 flex flex-col items-center text-center gap-6 animate-fade-in">
