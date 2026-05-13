@@ -82,9 +82,12 @@ const Downloads = () => {
     }
   };
 
+  const [downloadReady, setDownloadReady] = useState<{id: string, url: string} | null>(null);
+
   const simulateDownload = (source: DownloadSource, media: any) => {
     const id = media.id.toString();
     setDownloadProgress({ id, progress: 0 });
+    setDownloadReady(null);
     
     toast.info(`Acquiring Protocol: ${media.title || media.name}`, {
       description: "Establishing secure link to high-speed gateway..."
@@ -99,26 +102,25 @@ const Downloads = () => {
         setTimeout(() => {
           setDownloadProgress(null);
           const url = source.getUrl(id, media.media_type as 'movie' | 'tv');
-          
-          if (source.name === "Direct Node") {
-            // Direct Acquisition: Bypass window.open if possible
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${media.title || media.name}.mp4`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          } else {
-            window.open(url, '_blank');
-          }
+          setDownloadReady({ id, url });
           
           toast.success("Acquisition Complete", {
-            description: "Target asset delivered to system downloads."
+            description: "Target asset is ready for secure local storage."
           });
         }, 800);
       }
       setDownloadProgress({ id, progress: prog });
     }, 400);
+  };
+
+  const executeDownload = (url: string, name: string) => {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name}.mp4`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setDownloadReady(null);
   };
 
   return (
@@ -178,6 +180,8 @@ const Downloads = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
           {results.map((item, idx) => {
             const isDownloading = downloadProgress?.id === item.id.toString();
+            const isReady = downloadReady?.id === item.id.toString();
+            
             return (
               <div 
                 key={item.id} 
@@ -202,7 +206,7 @@ const Downloads = () => {
                   {/* Overlay with Download Info */}
                   <div className={cn(
                     "absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6 transition-opacity duration-500",
-                    isDownloading ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                    (isDownloading || isReady) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                   )}>
                     {isDownloading ? (
                       <div className="space-y-4 pb-4">
@@ -216,6 +220,22 @@ const Downloads = () => {
                             style={{ width: `${downloadProgress.progress}%` }}
                           />
                         </div>
+                      </div>
+                    ) : isReady ? (
+                      <div className="space-y-3 pb-2 animate-in zoom-in-95 duration-500">
+                        <button
+                          onClick={() => executeDownload(downloadReady.url, item.title || item.name)}
+                          className="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-[0_0_30px_rgba(37,99,235,0.4)] flex items-center justify-center gap-3 active:scale-95 transition-all"
+                        >
+                          <Download className="w-4 h-4" />
+                          Finalize Acquisition
+                        </button>
+                        <button 
+                          onClick={() => setDownloadReady(null)}
+                          className="w-full bg-white/5 hover:bg-white/10 text-white/40 p-2 rounded-xl text-[9px] font-black uppercase tracking-widest"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     ) : (
                       <div className="space-y-4">
