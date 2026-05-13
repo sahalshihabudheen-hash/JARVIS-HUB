@@ -1,7 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
-import { ShieldAlert, Play, Smartphone, Zap } from "lucide-react";
+import { ShieldAlert, Play, Smartphone, Zap, QrCode } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { getCustomStream, CustomStream } from "@/lib/custom-streams";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
@@ -142,6 +149,54 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
   }, [user?.uid, sandboxEnabled]);
 
 
+
+  // Effect to listen for remote commands
+  useEffect(() => {
+    const handleRemoteCommand = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { cmd, data } = customEvent.detail;
+      
+      if (isNativeVideo) {
+        const video = containerRef.current?.querySelector('video');
+        if (video) {
+          switch (cmd) {
+            case "toggle_play":
+              video.paused ? video.play() : video.pause();
+              break;
+            case "seek":
+              video.currentTime += (data?.amount || 0);
+              break;
+            case "volume_up":
+              video.volume = Math.min(1, video.volume + 0.1);
+              break;
+            case "volume_down":
+              video.volume = Math.max(0, video.volume - 0.1);
+              break;
+          }
+        }
+      } else {
+        // Iframe player
+        switch (cmd) {
+          case "toggle_play":
+            sendPlayerCommand("play");
+            sendPlayerCommand("pause"); 
+            break;
+          case "seek":
+            sendPlayerCommand("seek");
+            break;
+          case "volume_up":
+            sendPlayerCommand("volumeUp");
+            break;
+          case "volume_down":
+            sendPlayerCommand("volumeDown");
+            break;
+        }
+      }
+    };
+
+    window.addEventListener("jarvis-remote-cmd", handleRemoteCommand);
+    return () => window.removeEventListener("jarvis-remote-cmd", handleRemoteCommand);
+  }, [isNativeVideo]);
 
   const handleServerChange = (serverId: string) => {
     setCurrentServer(serverId);
@@ -477,20 +532,47 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
           )}
         </Button>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            const url = `${window.location.origin}/remote`;
-            navigator.clipboard.writeText(url).then(() => toast.success("Remote link copied! Open it on your phone."));
-          }}
-          className="rounded-full px-6 transition-all duration-500 bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20"
-        >
-          <span className="flex items-center gap-2 uppercase font-bold text-[10px] tracking-widest">
-            <Smartphone className="w-4 h-4" />
-            GET REMOTE LINK
-          </span>
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full px-6 transition-all duration-500 bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20"
+            >
+              <span className="flex items-center gap-2 uppercase font-bold text-[10px] tracking-widest">
+                <QrCode className="w-4 h-4" />
+                REMOTE QR & LINK
+              </span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md bg-black/95 border-white/10 text-white">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-display font-black text-center text-blue-400">Scan to Control</DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col items-center justify-center p-6 gap-6">
+              <div className="p-4 bg-white rounded-2xl">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.origin + '/remote')}`} 
+                  alt="Remote QR Code" 
+                  className="w-48 h-48"
+                />
+              </div>
+              <p className="text-xs text-white/50 text-center max-w-[250px]">
+                Scan this QR code with your phone to use it as a remote control for the player.
+              </p>
+              <Button
+                variant="outline"
+                className="w-full bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20 font-bold tracking-widest"
+                onClick={() => {
+                  const url = `${window.location.origin}/remote`;
+                  navigator.clipboard.writeText(url).then(() => toast.success("Remote link copied! Open it on your phone."));
+                }}
+              >
+                COPY DIRECT LINK
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="pt-2 flex flex-col items-center gap-4">

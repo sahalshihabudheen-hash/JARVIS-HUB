@@ -134,6 +134,9 @@ const RemoteListener = () => {
       case "navigate":
         if (data.path) navigate(data.path);
         break;
+      case "close_player":
+        navigate(-1);
+        break;
       case "toggle_play":
       case "seek":
       case "volume_up":
