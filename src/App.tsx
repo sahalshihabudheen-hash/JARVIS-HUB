@@ -19,6 +19,7 @@ import Adult from "./pages/Adult";
 import EasternPremium from "./pages/EasternPremium";
 import WatchHub from "./pages/WatchHub";
 import News from "./pages/News";
+import Downloads from "./pages/Downloads";
 import NotFound from "./pages/NotFound";
 import RemoteControl from "./pages/RemoteControl";
 import { AuthProvider } from "./context/AuthContext";
@@ -161,7 +162,6 @@ const ProtectedLayout = () => {
   return <Outlet />;
 };
 
-import Downloads from "./pages/Downloads";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
