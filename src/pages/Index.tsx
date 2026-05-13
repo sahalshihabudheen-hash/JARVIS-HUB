@@ -300,7 +300,7 @@ const Index = () => {
         />
         
         <div className="container mx-auto -mt-20 relative z-10 space-y-12">
-          <div id="watchlist-row" className="pb-8">
+          <div className="pb-8">
             <ContinueWatching />
           </div>
 
@@ -358,12 +358,14 @@ const Index = () => {
                   )}
                </div>
 
-               <MediaRow
-                  title="Current Blockbusters"
-                  items={regionalNow?.results || []}
-                  mediaType="movie"
-                  isLoading={regionalLoading}
-                />
+               <div id="regional-cinema-row">
+                 <MediaRow
+                    title="Current Blockbusters"
+                    items={regionalNow?.results || []}
+                    mediaType="movie"
+                    isLoading={regionalLoading}
+                  />
+                </div>
                 
                 <MediaRow
                   title="New Releases"

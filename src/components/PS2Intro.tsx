@@ -17,6 +17,9 @@ const CinematicIntro = ({ onComplete }: { onComplete: () => void }) => {
   const [hasStarted, setHasStarted] = useState(false);
 
   const startIntro = () => {
+    const audio = new Audio("/ps2_start_up.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(e => console.error("Audio play failed:", e));
     setHasStarted(true);
   };
 

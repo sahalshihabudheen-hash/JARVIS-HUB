@@ -208,7 +208,7 @@ const JarvisTutorial = () => {
     { target: isMobile ? "search-btn-mobile" : "navbar-search",  title: "Search",               description: "Looking for something specific? Search for any movie, show, actor, or director here.", icon: Search },
     { target: null,             title: "Pick Your Genres",     description: "Select the genres you love! I'll personalize your home page based on what you pick.", icon: Cpu, interactive: "genres" },
     { target: "hero-watch-btn", title: "Watch Now",            description: "Hit this button to start watching instantly. It's the fastest way to jump into a movie or show.", icon: Cpu },
-    { target: "watchlist-row",  title: "Your Watchlist",       description: "Tap the heart icon on any movie or show to save it to your watchlist for later.", icon: Heart },
+    { target: "regional-cinema-row",  title: "Your Watchlist",       description: "Tap the heart icon on any movie or show to save it to your watchlist for later.", icon: Heart },
     { target: isMobile ? "settings-btn-mobile" : "settings-btn",   title: "Settings",             description: "Customize your experience — change your region, manage preferences, and more.", icon: SettingsIcon },
     { target: null,             title: "You're All Set!",      description: "That's everything! Enjoy JARVIS HUB. I'll be here if you need me. Happy streaming!", icon: ShieldAlert },
   ];
@@ -228,6 +228,8 @@ const JarvisTutorial = () => {
           setCoords(null);
           return;
         }
+        
+        // Add a small delay for the scroll to finish before taking final coords
         setCoords({ x: r.left, y: r.top, width: r.width, height: r.height });
       } else {
         setCoords(null);
@@ -235,6 +237,9 @@ const JarvisTutorial = () => {
     };
 
     updateCoords();
+    
+    // Periodically re-check coordinates to handle layout shifts or image loads
+    const interval = setInterval(updateCoords, 500);
 
     // Re-calculate on resize
     window.addEventListener("resize", updateCoords);
@@ -248,7 +253,10 @@ const JarvisTutorial = () => {
       }
     }
 
-    return () => window.removeEventListener("resize", updateCoords);
+    return () => {
+      window.removeEventListener("resize", updateCoords);
+      clearInterval(interval);
+    };
   }, [step, isActive, isMobile]);
 
   if (!user || location.pathname === "/auth" || location.pathname === "/admin") return null;

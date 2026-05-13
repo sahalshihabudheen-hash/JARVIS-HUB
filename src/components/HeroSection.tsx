@@ -154,7 +154,7 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
                 size="lg" 
                 className="h-12 px-8 rounded-full bg-white text-black hover:bg-white/90 font-bold text-sm transition-all active:scale-95"
                 onClick={() => {
-                  if (isActive && step === 2) nextStep();
+                  if (isActive && step === 5) nextStep();
                 }}
               >
                 <Play className="w-4 h-4 mr-2 fill-current" />
