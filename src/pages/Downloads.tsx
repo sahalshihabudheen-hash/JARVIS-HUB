@@ -30,32 +30,32 @@ interface DownloadSource {
 
 const SOURCES: DownloadSource[] = [
   { 
-    name: "Direct Node", 
-    quality: "4K UHD", 
+    name: "Indian Node Primary", 
+    quality: "1080p UHD", 
     type: "Local Proxy", 
     icon: Zap,
-    getUrl: (id, type) => `https://rivestream.live/embed?type=${type}&id=${id}`
+    getUrl: (id, type) => `https://111movies.com/${type}/${id}`
   },
   { 
-    name: "Source Alpha", 
+    name: "Indian Node Secondary", 
     quality: "1080p", 
     type: "Mirror", 
     icon: Monitor,
-    getUrl: (id, type) => `https://vidsrc.rip/embed/${type}/${id}`
+    getUrl: (id, type) => `https://vidsrc.in/embed/${type}/${id}`
   },
   { 
-    name: "Source Beta", 
-    quality: "720p", 
-    type: "Mobile", 
+    name: "Global Fallback", 
+    quality: "720p/1080p", 
+    type: "Cloud", 
     icon: Smartphone,
     getUrl: (id, type) => `https://embed.su/embed/${type}/${id}`
   },
   { 
-    name: "Source Gamma", 
-    quality: "BlueRay", 
-    type: "Cloud Node", 
+    name: "Premium Core", 
+    quality: "4K BlueRay", 
+    type: "Direct Node", 
     icon: ExternalLink,
-    getUrl: (id, type) => `https://multiembed.mov/?video_id=${id}&tmdb=1`
+    getUrl: (id, type) => `https://vidlink.pro/${type}/${id}`
   }
 ];
 
