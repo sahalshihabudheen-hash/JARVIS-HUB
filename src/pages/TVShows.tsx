@@ -5,6 +5,7 @@ import MediaCard from "@/components/MediaCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { getPopularTVShows, getTopRatedTVShows, getTVGenres, discoverTV } from "@/lib/tmdb";
+import { cn } from "@/lib/utils";
 
 type Category = "popular" | "top_rated" | "genre" | "malayalam" | "hindi" | "tamil";
 

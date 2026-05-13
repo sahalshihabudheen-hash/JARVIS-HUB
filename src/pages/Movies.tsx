@@ -5,6 +5,7 @@ import MediaCard from "@/components/MediaCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { getPopularMovies, getTopRatedMovies, getNowPlayingMovies, getUpcomingMovies, getMovieGenres, discoverMovies, getUserLocation } from "@/lib/tmdb";
+import { cn } from "@/lib/utils";
 
 type Category = "popular" | "top_rated" | "now_playing" | "upcoming" | "genre" | "malayalam" | "hindi" | "tamil";
 

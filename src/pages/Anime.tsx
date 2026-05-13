@@ -5,6 +5,7 @@ import MediaCard from "@/components/MediaCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { discoverTV, discoverMovies, SearchResult } from "@/lib/tmdb";
+import { cn } from "@/lib/utils";
 
 const ANIME_GENRE_ID = "16"; // Animation genre for both TV and Movies
 const ANIME_KEYWORD = "210024"; // Anime keyword in TMDB
