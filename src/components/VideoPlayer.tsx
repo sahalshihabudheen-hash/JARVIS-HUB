@@ -70,7 +70,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
   const [showOverlay, setShowOverlay] = useState(true);
   const [isPlayingIntro, setIsPlayingIntro] = useState(false);
   const [shieldActive, setShieldActive] = useState(false);
-  const [sandboxEnabled, setSandboxEnabled] = useState(true);
+  const [sandboxEnabled, setSandboxEnabled] = useState(false);
 
   const handleIntroEnd = () => {
     setIsPlayingIntro(false);
@@ -148,15 +148,6 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     setDefaultServer(serverId);
     setShowOverlay(true);
     setShieldActive(false);
-    
-    // Automatically enable Hard Ad Block for 111Movies to handle aggressive popups
-    if (serverId === "111movies") {
-      setSandboxEnabled(true);
-      toast.info("Hard Ad-Shield engaged for 111Movies Mirror", {
-        icon: "🛡️",
-        style: { background: "#0a1a0a", border: "1px solid #22c55e", color: "#22c55e" }
-      });
-    }
   };
 
   // Auto-switch to Indian mirror for Malayalam content
