@@ -14,28 +14,16 @@ const T = {
 const CinematicIntro = ({ onComplete }: { onComplete: () => void }) => {
   const [phase, setPhase] = useState(0);
   const [visible, setVisible] = useState(true);
-  const [hasStarted, setHasStarted] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    // Attempt auto-play on mount
+  const startIntro = () => {
     const audio = new Audio("/ps2_start_up.mp3");
     audio.volume = 0.5;
     audioRef.current = audio;
-    audio.play().catch(e => {
-      console.warn("Audio auto-play blocked by browser. Proceeding silently.");
-    });
-    
-    // In case the user interaction is strictly required for any part of the UI
-    // we keep the logic but let it run automatically.
-  }, []);
-
-  const startIntro = () => {
-    // Fallback for manual trigger if needed
-    if (audioRef.current && audioRef.current.paused) {
-      audioRef.current.play().catch(() => {});
-    }
+    audio.play().catch(e => console.error("Audio play failed:", e));
+    setHasStarted(true);
   };
 
   useEffect(() => {
@@ -87,6 +75,44 @@ const CinematicIntro = ({ onComplete }: { onComplete: () => void }) => {
         />
       </div>
 
+
+      {/* ── Initial Start Screen ── */}
+      {!hasStarted && (
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-black/80 pointer-events-auto backdrop-blur-md animate-fade-in">
+          <div className="text-center space-y-12 max-w-sm px-6">
+            <div className="relative group cursor-pointer" onClick={startIntro}>
+               <div className="absolute inset-0 bg-blue-500/30 blur-[60px] animate-pulse rounded-full" />
+               <div className="relative w-28 h-28 mx-auto rounded-full border border-white/20 flex items-center justify-center p-1 bg-white/5 backdrop-blur-2xl transition-all duration-700 group-hover:scale-110 shadow-[0_0_50px_rgba(34,211,238,0.2)]">
+                 <div className="w-full h-full rounded-full overflow-hidden border border-white/10 shadow-inner">
+                   <img src="/JARVIS2.gif" alt="Initialize Core" className="w-full h-full object-cover brightness-110" />
+                 </div>
+               </div>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="flex flex-col items-center gap-2">
+                <h2 className="text-white font-display font-black tracking-tighter text-4xl uppercase leading-tight">
+                   JARVIS <span className="text-blue-400">HUB</span>
+                </h2>
+                <div className="w-12 h-0.5 bg-blue-500/50 rounded-full" />
+              </div>
+              <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.5em] font-sans">
+                 Secure Link Ready
+              </p>
+            </div>
+
+            <button
+               onClick={startIntro}
+               className="group relative px-12 py-4 bg-transparent transition-all active:scale-95"
+            >
+               <div className="absolute inset-0 bg-blue-600 rounded-full group-hover:bg-blue-500 transition-all duration-300 shadow-[0_0_30px_rgba(37,99,235,0.4)]" />
+               <span className="relative text-white font-display font-black uppercase text-[11px] tracking-[0.4em]">
+                  Initialize Stream
+               </span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Central Orb & Scan ── */}
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
