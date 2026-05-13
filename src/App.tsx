@@ -175,14 +175,14 @@ const App = () => (
                 <div className="fixed inset-0 mesh-gradient opacity-10 pointer-events-none -z-10" />
                 <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.05),transparent_50%)] pointer-events-none -z-10" />
                 
-                <StealthManager />
-                <RemoteListener />
-                <CommandPalette />
+                {/* <StealthManager /> */}
+                {/* <RemoteListener /> */}
+                {/* <CommandPalette /> */}
                 {/* <JarvisTutorial /> */}
-                <JarvisOrb />
-                <VerificationBanner />
-                <Toaster />
-                <Sonner />
+                {/* <JarvisOrb /> */}
+                {/* <VerificationBanner /> */}
+                {/* <Toaster /> */}
+                {/* <Sonner /> */}
                 <Routes>
                   <Route path="/auth" element={<Auth />} />
                 
