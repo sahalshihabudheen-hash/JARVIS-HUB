@@ -617,9 +617,10 @@ const AdultCatalog = () => {
                       <h4 className="text-[11px] font-bold text-white/60 line-clamp-1 group-hover:text-purple-400 transition-colors uppercase tracking-wide">{item.title}</h4>
                     </div>
                   </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
       {/* Interactive Games Hub Banner */}
       <div className="mb-16 container px-4 md:px-6">
