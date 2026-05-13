@@ -101,7 +101,7 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
     >
       {/* Background Image */}
       <div className={cn(
-        "absolute inset-0 transition-all duration-500 ease-in-out",
+        "absolute inset-0 transition-all duration-1000 ease-in-out",
         animating ? "opacity-0 scale-105" : "opacity-100 scale-100"
       )}>
         <img
@@ -109,8 +109,8 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
           alt={title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
-        <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
       </div>
 
       {/* Glow Effect */}
@@ -123,44 +123,41 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
           animating ? "opacity-0 translate-y-8 scale-95" : "opacity-100 translate-y-0 scale-100"
         )}>
           {/* Badge */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-highlight/20 backdrop-blur-md border border-highlight/30 text-highlight text-[10px] font-black uppercase tracking-[0.3em]">
-              <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-              Featured Intelligence
+          <div className="flex items-center gap-3 mb-6">
+            <div className="px-3 py-1 rounded-md bg-white/10 backdrop-blur-md border border-white/10 text-white/90 text-[10px] font-bold uppercase tracking-widest">
+              {type === "movie" ? "Movie" : "TV Show"}
             </div>
             {rating && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-xs font-bold text-yellow-400">
-                <Star className="w-4 h-4 fill-current" />
+              <div className="flex items-center gap-1 text-xs font-medium text-white/80">
+                <Star className="w-3.5 h-3.5 fill-white text-white" />
                 <span>{rating}</span>
               </div>
             )}
-            {year && <span className="text-xs font-black text-white/40 uppercase tracking-widest">{year}</span>}
+            {year && <span className="text-xs font-medium text-white/60">{year}</span>}
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl md:text-8xl font-display font-black mb-6 leading-[0.9] tracking-tighter text-white drop-shadow-2xl">
+          <h1 className="text-6xl md:text-8xl font-display font-bold mb-4 leading-none tracking-tight text-white">
             {title}
           </h1>
 
           {/* Overview */}
-          <p className="text-white/60 text-sm md:text-lg leading-relaxed mb-8 line-clamp-3 max-w-2xl font-medium italic">
+          <p className="text-white/70 text-base md:text-lg leading-relaxed mb-10 line-clamp-2 max-w-xl">
             {current.overview}
           </p>
 
           {/* Buttons */}
-          <div className="flex flex-wrap items-center gap-6">
-            <Link to={watchPath} className="group/btn relative">
-              {/* Prism Border Effect */}
-              <div className="absolute inset-0 rounded-2xl bg-[conic-gradient(from_0deg,transparent_0,rgba(59,130,246,0.5)_25%,transparent_50%,rgba(147,51,234,0.5)_75%,transparent_100%)] animate-[spin_3s_linear_infinite] opacity-0 group-hover/btn:opacity-100 transition-opacity blur-[2px]" />
+          <div className="flex flex-wrap items-center gap-4">
+            <Link to={watchPath}>
               <Button 
                 id="hero-watch-btn"
                 size="lg" 
-                className="relative h-16 px-10 rounded-2xl bg-white text-black hover:bg-white/90 font-black uppercase tracking-[0.2em] text-xs transition-transform active:scale-95 shadow-2xl"
+                className="h-12 px-8 rounded-full bg-white text-black hover:bg-white/90 font-bold text-sm transition-all active:scale-95"
                 onClick={() => {
                   if (isActive && step === 2) nextStep();
                 }}
               >
-                <Play className="w-5 h-5 mr-3 fill-current" />
+                <Play className="w-4 h-4 mr-2 fill-current" />
                 Watch Now
               </Button>
             </Link>
@@ -169,10 +166,9 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
                 id="hero-more-info-btn"
                 size="lg" 
                 variant="outline" 
-                className="h-16 px-10 rounded-2xl border-white/10 bg-white/5 backdrop-blur-xl hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-black uppercase tracking-[0.2em] text-xs text-white/70 hover:text-white"
+                className="h-12 px-8 rounded-full border-white/20 bg-white/10 backdrop-blur-xl hover:bg-white/20 transition-all font-bold text-sm text-white"
               >
-                <Info className="w-5 h-5 mr-3" />
-                Data Archive
+                More Info
               </Button>
             </Link>
           </div>

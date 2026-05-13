@@ -82,36 +82,20 @@ const Navbar = () => {
         <div className="flex items-center justify-between gap-4 relative z-10">
           
           {/* Logo Section */}
-          <Link id="navbar-logo" to="/" className="flex items-center gap-3 group shrink-0 relative">
+          <Link id="navbar-logo" to="/" className="flex items-center gap-2 group shrink-0 relative">
             <div className="relative">
-              <div className={cn(
-                "absolute inset-0 blur-xl rounded-full transition-all duration-700 animate-pulse",
-                isAdultMode ? "bg-red-500/30 group-hover:bg-red-500/50" : "bg-blue-500/30 group-hover:bg-blue-500/50"
-              )} />
               <img 
                 src={branding.appLogo} 
                 alt="App Logo" 
                 className={cn(
-                  "relative object-cover rounded-full border border-white/20 shadow-2xl transition-all duration-500 group-hover:rotate-[360deg]",
-                  isScrolled ? "w-9 h-9" : "w-10 h-10",
-                  isAdultMode && "border-red-500/40"
+                  "relative object-cover rounded-xl transition-all duration-500",
+                  isScrolled ? "w-8 h-8" : "w-9 h-9"
                 )}
               />
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full animate-ping opacity-75" />
             </div>
-            <div className="flex flex-col -space-y-1 hidden xl:flex whitespace-nowrap">
-              <span className={cn(
-                "font-display font-black tracking-tighter text-white transition-all duration-500",
-                isScrolled ? "text-lg" : "text-xl",
-                isAdultMode ? "group-hover:text-red-400" : "group-hover:text-blue-400"
-              )}>
+            <div className="flex flex-col -space-y-1 hidden sm:flex">
+              <span className="font-display font-bold tracking-tight text-white text-lg">
                 JARVIS
-              </span>
-              <span className={cn(
-                "text-[9px] font-display font-black tracking-[0.4em] transition-colors",
-                isAdultMode ? "text-red-500" : "text-blue-500"
-              )}>
-                HUB
               </span>
             </div>
           </Link>
@@ -121,39 +105,24 @@ const Navbar = () => {
             "hidden lg:flex items-center flex-1 justify-center transition-all duration-500",
             isSearchExpanded ? "opacity-0 pointer-events-none scale-95" : "opacity-100 scale-100"
           )}>
-            <div className="flex items-center bg-white/5 p-1 rounded-full border border-white/10 shadow-inner backdrop-blur-xl">
+            <div className="flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
                   className={cn(
-                    "flex items-center gap-1.5 text-[9px] xl:text-[10px] font-bold uppercase tracking-[0.15em] px-3 xl:px-4 py-2 rounded-full transition-all duration-500 relative overflow-hidden group whitespace-nowrap",
+                    "flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-full transition-all duration-300 relative group",
                     location.pathname === link.to
-                      ? "text-white shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                      : "text-white/40 hover:text-white"
+                      ? "text-white bg-white/10"
+                      : "text-white/60 hover:text-white hover:bg-white/5"
                   )}
                 >
-                  {/* Active Background with Shimmer */}
-                  {location.pathname === link.to && (
-                    <>
-                      <div className={cn(
-                        "absolute inset-0 rounded-full z-0 animate-pulse",
-                        isAdultMode 
-                          ? "bg-gradient-to-r from-red-600 to-orange-500" 
-                          : "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600"
-                      )} />
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer-slide z-[1]" />
-                    </>
-                  )}
-                  {/* Hover Background Glow */}
-                  {location.pathname !== link.to && (
-                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-full z-0 transition-all duration-300 scale-0 group-hover:scale-100" />
-                  )}
-                  
-                  <span className="relative z-10 flex items-center gap-1.5 drop-shadow-sm">
-                    {link.icon && <link.icon className={cn("w-3 h-3 transition-transform duration-500 group-hover:scale-110", location.pathname === link.to ? "text-white" : "group-hover:text-white")} />}
+                  <span className="relative z-10 flex items-center gap-2">
                     {link.label}
                   </span>
+                  {location.pathname === link.to && (
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full translate-y-2" />
+                  )}
                 </Link>
               ))}
             </div>

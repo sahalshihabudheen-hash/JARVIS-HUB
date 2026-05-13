@@ -25,16 +25,16 @@ import { addToAdultHistory } from "@/lib/adult-history";
 import { useTutorial } from "@/context/TutorialContext";
 
 const GENRE_LABELS: Record<number, string> = {
-  28: "Combat & Action Protocols",
-  878: "Cybernetic & Sci-Fi Realities",
-  27: "Dark & Horror Encounters",
-  35: "Humor & Comedy Modules",
-  53: "Infiltration & Thriller Operations",
-  10749: "Diplomacy & Romance Files",
-  18: "Social & Drama Simulations",
-  16: "Holographic & Animated Data",
-  14: "Mystical & Fantasy Realms",
-  9648: "Encrypted & Mystery Logs",
+  28: "Action",
+  878: "Sci-Fi",
+  27: "Horror",
+  35: "Comedy",
+  53: "Thriller",
+  10749: "Romance",
+  18: "Drama",
+  16: "Animation",
+  14: "Fantasy",
+  9648: "Mystery",
 };
 
 const Index = () => {
@@ -306,74 +306,41 @@ const Index = () => {
 
           {/* Precise Location Banner */}
           {location && !location.latitude && (
-            <div className="mx-4 p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
+            <div className="mx-4 p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-full bg-blue-500/20">
-                  <ShieldAlert className="w-5 h-5 text-blue-400" />
-                </div>
+                <ShieldAlert className="w-5 h-5 text-primary" />
                 <div>
-                  <p className="text-sm font-medium text-white">Enhance your experience in {location.city || location.region || location.country_name}?</p>
-                  <p className="text-xs text-white/60">Get ultra-precise local content by enabling browser location.</p>
-                  {location.isp && <p className="text-[10px] text-blue-400/60 mt-1 uppercase font-bold tracking-widest">Detected ISP: {location.isp}</p>}
+                  <p className="text-sm font-medium text-white">Personalize for {location.city || location.region || location.country_name}?</p>
+                  <p className="text-xs text-white/50">Enable location for better local content recommendations.</p>
                 </div>
               </div>
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="border-blue-500/30 hover:bg-blue-500/20 text-blue-400"
+                className="rounded-full border-white/20 hover:bg-white/10"
                 onClick={() => {
                   getUserLocation(true).then(setLocation);
                 }}
               >
-                Enable Precision
+                Enable
               </Button>
-
             </div>
           )}
 
-          {/* REGIONAL CINEMA HUB - DYNAMIC BASED ON LOCATION (Global Support) */}
+          {/* REGIONAL CINEMA HUB */}
           {location && (
-            <div className="space-y-8 bg-primary/[0.02] border-y border-white/[0.02] py-10 -mx-4 px-4 overflow-hidden">
-               {/* Kerala Specials Injection */}
-               {regionalContext.region === "Kerala" && (
-                 <div className="mb-12 animate-fade-in px-4">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-2 h-8 bg-green-500 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.3)]" />
-                      <div>
-                        <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
-                          Malayalam / <span className="text-green-500">Kerala Specials</span>
-                        </h2>
-                        <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mt-1">Native content protocol active</p>
-                      </div>
-                    </div>
-                    <MediaRow
-                      title="Kerala's Most Streamed"
-                      items={regionalNow?.results?.slice(0, 10) || []}
-                      mediaType="movie"
-                      isLoading={regionalLoading}
-                    />
-                 </div>
-               )}
+            <div className="space-y-4 py-4 px-4 overflow-hidden bg-white/2 bg-gradient-to-b from-white/[0.02] to-transparent rounded-3xl mx-4">
+               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
+                    {regionalContext.title} Cinema
+                  </h2>
 
-               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2 px-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-8 bg-blue-500 rounded-full" />
-                    <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
-                      {regionalContext.title} <span className="text-blue-500">Cinema Hub</span>
-                    </h2>
-                  </div>
-
-                  {/* Quick Region Switcher if generic/Hindi is detected */}
                   {location?.country === "IN" && regionalContext.language === "hi" && (
-                    <div className="flex flex-wrap items-center gap-2 animate-fade-in bg-white/[0.03] p-1.5 rounded-2xl border border-white/5">
-                       <span className="text-[10px] font-black uppercase text-white/40 px-2">Focus on:</span>
+                    <div className="flex flex-wrap items-center gap-2">
                        {[
-                         { id: "kerala", label: "Malayalam", icon: "🌴" },
-                         { id: "tamil", label: "Tamil", icon: "🛕" },
-                         { id: "telugu", label: "Telugu", icon: "🐘" },
-                         { id: "karnataka", label: "Kannada", icon: "🏛️" },
-                         { id: "bengal", label: "Bengali", icon: "🎨" },
-                         { id: "maharashtra", label: "Marathi", icon: "🎭" },
+                         { id: "kerala", label: "Malayalam" },
+                         { id: "tamil", label: "Tamil" },
+                         { id: "telugu", label: "Telugu" },
                        ].map((r) => (
                          <button
                            key={r.id}
@@ -382,9 +349,9 @@ const Index = () => {
                              localStorage.setItem(focusKey, r.id);
                              window.location.reload();
                            }}
-                           className="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:border-blue-500/50 hover:bg-blue-500/20 text-[10px] font-bold uppercase transition-all flex items-center gap-1.5 whitespace-nowrap"
+                           className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-bold uppercase transition-all"
                          >
-                           <span>{r.icon}</span> {r.label}
+                           {r.label}
                          </button>
                        ))}
                     </div>
@@ -392,21 +359,14 @@ const Index = () => {
                </div>
 
                <MediaRow
-                  title={`🔥 Current Blockbusters (${regionalContext.region})`}
+                  title="Current Blockbusters"
                   items={regionalNow?.results || []}
                   mediaType="movie"
                   isLoading={regionalLoading}
                 />
                 
                 <MediaRow
-                  title={`${regionalContext.title} Evergreens`}
-                  items={regionalNow?.results?.slice().reverse() || []}
-                  mediaType="movie"
-                  isLoading={regionalLoading}
-                />
-
-                <MediaRow
-                  title={`🆕 New ${regionalContext.title} Releases`}
+                  title="New Releases"
                   items={regionalUpcoming?.results || []}
                   mediaType="movie"
                   isLoading={regionalUpcomingLoading}
@@ -415,26 +375,19 @@ const Index = () => {
           )}
           
           {/* SPECIAL COLLECTIONS SECTION */}
-          <div className="pt-8">
-             <div className="flex items-center gap-3 mb-6 px-4">
-                <div className="w-2 h-8 bg-yellow-500 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.3)]" />
-                <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-white">
-                  Special <span className="text-yellow-500">Global Collections</span>
-                </h2>
-             </div>
-             
+          <div className="pt-4 px-4 md:px-0">
              <MediaRow
-                title="🌍 worldwide Anticipated Operations"
-                items={worldwideUpcoming?.results || []}
-                mediaType="movie"
-                isLoading={worldwideLoading}
-              />
-
-             <MediaRow
-                title="📈 Global Trending Streams"
+                title="Global Trending"
                 items={trending || []}
                 mediaType="movie"
                 isLoading={trendingLoading}
+              />
+
+             <MediaRow
+                title="Most Anticipated"
+                items={worldwideUpcoming?.results || []}
+                mediaType="movie"
+                isLoading={worldwideLoading}
               />
           </div>
 

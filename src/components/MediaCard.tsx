@@ -46,16 +46,14 @@ const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardP
     <Link
       to={linkPath}
       className={cn(
-        "group relative block rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.05] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] z-0 hover:z-10 bg-card border border-white/5",
+        "group relative block rounded-2xl overflow-hidden transition-all duration-500 googletv-focus bg-card border border-white/5",
         className
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Premium Prism Border (Hover) */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none z-[15] overflow-hidden">
-        <div className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0,rgba(59,130,246,0.1)_25%,transparent_50%,rgba(147,51,234,0.1)_75%,transparent_100%)] animate-[spin_4s_linear_infinite]" />
-      </div>
+      {/* Glow Effect (Hover) */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[15] shadow-[0_0_30px_rgba(var(--primary),0.3)]" />
 
       {/* Poster */}
       <div className="relative aspect-[2/3] overflow-hidden bg-secondary">
@@ -101,27 +99,25 @@ const MediaCard = ({ item, mediaType, className, showRating = true }: MediaCardP
 
         {/* Rating Badge */}
         {showRating && item.vote_average > 0 && (
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl glass text-[10px] font-black z-20 bg-black/40 border border-yellow-500/20 text-yellow-500">
-            <Star className="w-3 h-3 fill-yellow-500" />
+          <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-md glass text-[10px] font-bold z-20">
+            <Star className="w-3 h-3 fill-white text-white" />
             <span>{rating}</span>
           </div>
         )}
 
         {/* Type Badge */}
-        <div className="absolute top-3 left-3 px-2.5 py-1.5 rounded-xl bg-highlight/20 backdrop-blur-md text-highlight text-[9px] font-black uppercase tracking-widest border border-highlight/30 z-20">
-          {type === "tv" ? "TV SERIES" : "CINEMA"}
+        <div className="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/40 backdrop-blur-md text-white/80 text-[9px] font-bold uppercase tracking-wider border border-white/10 z-20">
+          {type === "tv" ? "TV" : "Movie"}
         </div>
       </div>
 
       {/* Info */}
-      <div className="p-4 bg-card/80 backdrop-blur-xl relative z-20 border-t border-white/5">
-        <h3 className="font-bold text-sm truncate group-hover:text-highlight transition-colors tracking-tight">
+      <div className="p-3 bg-card relative z-20 border-t border-white/5">
+        <h3 className="font-medium text-xs truncate text-white/90 group-hover:text-white transition-colors">
           {title}
         </h3>
         {year && (
-          <div className="flex items-center gap-2 mt-1.5">
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{year}</p>
-          </div>
+          <p className="text-[10px] text-white/40 mt-0.5">{year}</p>
         )}
       </div>
     </Link>

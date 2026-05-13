@@ -6,17 +6,23 @@
 
 @layer base {
   :root {
-    --background: 240 10% 4%;
+    /* Google TV Tokens */
+    --googletv-bg: 240 10% 2%;
+    --googletv-surface: 240 10% 6%;
+    --googletv-focus: 210 100% 50%;
+    --googletv-glow: 210 100% 50% / 0.3;
+    
+    --background: var(--googletv-bg);
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 6%;
+    --card: var(--googletv-surface);
     --card-foreground: 0 0% 98%;
 
     --popover: 240 10% 8%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 190 100% 50%;
-    --primary-foreground: 190 100% 5%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 100% 5%;
 
     --secondary: 220 20% 12%;
     --secondary-foreground: 0 0% 98%;
@@ -24,34 +30,29 @@
     --muted: 220 20% 16%;
     --muted-foreground: 220 10% 64%;
 
-    --accent: 190 100% 50%;
-    --accent-foreground: 190 100% 5%;
+    --accent: 210 100% 50%;
+    --accent-foreground: 210 100% 5%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 18%;
-    --input: 220 20% 18%;
-    --ring: 190 100% 50%;
+    --border: 220 20% 12%;
+    --input: 220 20% 12%;
+    --ring: 210 100% 50%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     /* Custom tokens */
-    --highlight: 190 100% 50%;
-    --gradient-hero: linear-gradient(180deg, hsl(220 30% 5% / 0) 0%, hsl(220 30% 4%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(220 20% 10%) 0%, hsl(220 20% 6%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(190 100% 50%) 0%, hsl(210 100% 40%) 100%);
-    --gradient-glow: radial-gradient(ellipse at center, hsl(190 100% 50% / 0.15) 0%, transparent 70%);
+    --highlight: 210 100% 50%;
+    --gradient-hero: linear-gradient(0deg, hsl(var(--background)) 0%, transparent 100%);
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(240 10% 4%) 100%);
     
-    --shadow-glow: 0 0 30px hsl(190 100% 50% / 0.4);
-    --shadow-glow-hover: 0 0 50px hsl(190 100% 50% / 0.6);
-    --shadow-card: 0 4px 24px hsl(220 30% 2% / 0.4);
-    --shadow-card-hover: 0 8px 40px hsl(220 30% 2% / 0.6);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.2);
+    --shadow-focus: 0 0 0 4px hsl(var(--primary) / 0.4), 0 0 20px hsl(var(--primary) / 0.6);
     
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-cinematic: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 
-    --sidebar-background: 240 10% 4%;
+    --sidebar-background: var(--googletv-bg);
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 0 0% 100%;
     --sidebar-primary-foreground: 240 10% 4%;
@@ -61,9 +62,9 @@
     --sidebar-ring: 0 0% 100%;
 
     /* Dynamic Jarvis Theme Variables */
-    --jarvis-primary: 190 100% 50%;
+    --jarvis-primary: 210 100% 50%;
     --jarvis-accent: 280 100% 60%;
-    --jarvis-glow: 190 100% 50%;
+    --jarvis-glow: 210 100% 50%;
     --jarvis-bg-alpha: 0.05;
   }
 
@@ -96,12 +97,14 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    letter-spacing: -0.01em;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
@@ -148,30 +151,21 @@
   }
 
   .glass {
-    background: hsl(240 10% 8% / 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: hsla(var(--googletv-surface) / 0.6);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid hsla(0, 0%, 100%, 0.1);
   }
 
-  .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(190 100% 50%) 0%, hsl(210 100% 40%) 100%);
+  .googletv-focus {
+    transition: var(--transition-cinematic);
   }
 
-  .text-highlight {
-    color: hsl(var(--highlight));
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.6s ease-out forwards;
-  }
-
-  .animate-scale-in {
-    animation: scaleIn 0.4s ease-out forwards;
+  .googletv-focus:hover {
+    transform: scale(1.08);
+    box-shadow: var(--shadow-focus);
+    z-index: 20;
+    border-color: hsl(var(--primary));
   }
 
   .hide-scrollbar {
