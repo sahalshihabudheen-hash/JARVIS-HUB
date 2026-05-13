@@ -102,6 +102,7 @@ const StealthManager = () => {
 const RemoteListener = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const lastTimestamp = useRef<number | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -110,9 +111,13 @@ const RemoteListener = () => {
     const unsub = onSnapshot(remoteDoc, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
-        if (data.lastCommand && data.timestamp > Date.now() - 5000) {
-          // New command received within last 5 seconds
-          handleRemoteCommand(data.lastCommand, data.commandData);
+        if (data.lastCommand && data.timestamp) {
+          if (lastTimestamp.current === null) {
+            lastTimestamp.current = data.timestamp;
+          } else if (data.timestamp !== lastTimestamp.current) {
+            lastTimestamp.current = data.timestamp;
+            handleRemoteCommand(data.lastCommand, data.commandData);
+          }
         }
       }
     });
