@@ -52,6 +52,8 @@ const SOURCES: DownloadSource[] = [
   }
 ];
 
+import { searchMulti } from "@/lib/tmdb";
+
 const Downloads = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -65,13 +67,14 @@ const Downloads = () => {
 
     setLoading(true);
     try {
-      const API_KEY = "3fd2be3d0c73ad2a66d788414a306859";
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}&include_adult=false`
-      );
-      const data = await response.json();
+      const data = await searchMulti(query);
       setResults(data.results.filter((r: any) => r.media_type === 'movie' || r.media_type === 'tv'));
+      
+      if (data.results.length === 0) {
+        toast.info("Target search yielded no results in the database.");
+      }
     } catch (error) {
+      console.error("Search Error:", error);
       toast.error("Transmission Failure: Node search unavailable.");
     } finally {
       setLoading(false);
