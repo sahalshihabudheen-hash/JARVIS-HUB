@@ -178,7 +178,7 @@ const App = () => (
                 <StealthManager />
                 <RemoteListener />
                 <CommandPalette />
-                <JarvisTutorial />
+                {/* <JarvisTutorial /> */}
                 <JarvisOrb />
                 <VerificationBanner />
                 <Toaster />
