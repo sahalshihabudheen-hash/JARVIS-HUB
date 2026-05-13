@@ -8,7 +8,8 @@ import {
   Users, 
   Link2,
   Wrench, 
-  Settings 
+  Settings,
+  LayoutList
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ import { useAdmin } from "@/context/AdminContext";
 import { useAuth } from "@/context/AuthContext";
 import UserManagement from "@/components/UserManagement";
 import AdminStreamManager from "@/components/AdminStreamManager";
+import AdminPlaylistManager from "@/components/AdminPlaylistManager";
 import { cn } from "@/lib/utils";
 
 const Admin = () => {
@@ -39,6 +41,7 @@ const Admin = () => {
   const tabs = [
     { id: "users", label: "Users", icon: Users },
     { id: "streams", label: "Streams", icon: Link2 },
+    { id: "playlists", label: "Playlists", icon: LayoutList },
     { id: "activity", label: "Activity", icon: ActivityIcon },
     { id: "maint", label: "Maint.", icon: Wrench },
     { id: "app", label: "App", icon: Settings },
@@ -74,20 +77,20 @@ const Admin = () => {
       <main className="container max-w-6xl mx-auto pt-28 pb-20 px-4">
         
         {/* Navigation Tabs Bar */}
-        <div className="bg-[#1a1a1a]/80 backdrop-blur-md border border-white/5 p-1.5 rounded-2xl mb-12 flex flex-wrap justify-center gap-1 shadow-2xl sticky top-24 z-40">
+        <div className="bg-[#1a1a1a]/80 backdrop-blur-md border border-white/5 p-1.5 rounded-2xl mb-12 flex flex-wrap justify-center gap-1 shadow-2xl sticky top-24 z-40 overflow-x-auto scrollbar-none">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 relative group",
+                "flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 relative group shrink-0",
                 activeTab === tab.id 
                   ? "bg-white/10 text-white shadow-lg" 
                   : "text-white/40 hover:text-white/70 hover:bg-white/5"
               )}
             >
               <tab.icon className={cn("w-4 h-4", activeTab === tab.id ? "text-blue-500" : "text-inherit")} />
-              <span className="text-sm font-medium">{tab.label}</span>
+              <span className="text-[11px] font-black uppercase tracking-widest">{tab.label}</span>
               {activeTab === tab.id && (
                 <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-500 rounded-full shadow-[0_0_10px_#3b82f6]" />
               )}
@@ -103,6 +106,12 @@ const Admin = () => {
           {activeTab === "streams" && (
             <div className="animate-fade-in max-w-4xl mx-auto">
               <AdminStreamManager />
+            </div>
+          )}
+
+          {activeTab === "playlists" && (
+            <div className="animate-fade-in max-w-5xl mx-auto">
+              <AdminPlaylistManager />
             </div>
           )}
 
@@ -389,17 +398,6 @@ const Admin = () => {
                   </p>
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* Placeholder for other tabs */}
-          {["playlists"].includes(activeTab) && (
-            <div className="flex flex-col items-center justify-center py-40 bg-[#111] border border-white/5 rounded-3xl animate-fade-in">
-              <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
-                <Wrench className="w-10 h-10 text-white/20" />
-              </div>
-              <h3 className="text-xl font-bold text-white/80 capitalize">{activeTab} module</h3>
-              <p className="text-white/30 text-sm mt-1">System interface under development</p>
             </div>
           )}
         </div>
