@@ -23,7 +23,11 @@
 ## 5. UI/UX Polish
 - [ ] Improve the loading state for the dynamic Actress section.
 - [ ] Add "Watch Later" support for Adult videos.
-- [ ] Optimize mobile layout for the new Actress portraits.
+## 6. Direct Download Core (Final Fix)
+- [ ] Implement a server-side proxy or high-fidelity scraper to get direct MP4 links.
+- [ ] Remove all external mirror redirects to ensure 100% "on-site" download experience.
+- [ ] Finalize the progress bar logic to represent real data transmission speeds.
+- [ ] Implement multi-node fallback to ensure "Media Unavailable" errors are zeroed out.
 
 ---
 *Created on 2026-04-28*
