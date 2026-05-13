@@ -46,7 +46,6 @@ import { Navigate, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { toast } from "sonner";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "./lib/firebase";
 import { getRemoteSessionId } from "./lib/utils";
@@ -126,7 +125,7 @@ const RemoteListener = () => {
     setDoc(remoteDoc, { online: true, lastHeartbeat: Date.now() }, { merge: true });
 
     return () => unsub();
-  }, [user, navigate]);
+  }, [navigate]);
 
   const handleRemoteCommand = (cmd: string, data: any) => {
     switch (cmd) {
