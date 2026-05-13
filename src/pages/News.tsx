@@ -105,7 +105,7 @@ function NewsCard({
           </p>
           <h3
             className={cn(
-              "font-display font-bold text-white group-hover:text-blue-400 transition-colors leading-tight",
+              "font-bold text-white group-hover:text-blue-400 transition-colors leading-tight",
               featured ? "text-xl md:text-3xl" : "text-sm line-clamp-3"
             )}
           >
@@ -162,8 +162,8 @@ const News = () => {
   const totalPages = Math.ceil((data?.total || 0) / (data?.perPage || 20));
 
   const TABS = [
-    { id: "ott", label: "OTT Spotlight", icon: Tv },
-    { id: "regional", label: userLocation?.region ? `News in ${userLocation.region}` : "Local News", icon: MapPin },
+    { id: "ott", label: "Entertainment", icon: Tv },
+    { id: "regional", label: userLocation?.region ? `News in ${userLocation.region}` : "Local", icon: MapPin },
   ];
 
   return (
@@ -180,8 +180,8 @@ const News = () => {
                 <Newspaper className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-5xl font-display font-bold tracking-tight">
-                  {category === 'regional' ? 'Regional OTT' : 'OTT Spotlight'}
+                <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
+                  {category === 'regional' ? 'Local News' : 'Entertainment'}
                 </h1>
                 <p className="text-xs font-bold text-white/30 uppercase tracking-[0.2em] mt-1">
                   {category === 'regional' 
@@ -349,7 +349,7 @@ const News = () => {
                     <Clock className="w-3 h-3" />
                     <span>Published {timeAgo(selectedArticle.pubDate)}</span>
                   </div>
-                  <DialogTitle className="text-2xl md:text-3xl font-display font-bold leading-tight text-white">
+                  <DialogTitle className="text-2xl md:text-3xl font-bold leading-tight text-white">
                     {selectedArticle.title}
                   </DialogTitle>
                 </div>
@@ -361,7 +361,7 @@ const News = () => {
                   
                   <div className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-4">
                     <p className="text-white/40 text-xs font-bold uppercase tracking-widest leading-relaxed">
-                      This is a news summary provided by JARVIS Hub. To read the complete investigative report and all details, please visit the official source.
+                      Summary provided by the platform. For full coverage and investigative details, please visit the official source.
                     </p>
                     <a 
                       href={selectedArticle.link}

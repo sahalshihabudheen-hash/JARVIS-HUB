@@ -136,7 +136,7 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
     <>
       <div
         className={cn(
-          "group relative block rounded-2xl overflow-hidden transition-all duration-700 hover:scale-[1.04] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#050505] border border-white/5 cursor-pointer",
+          "group relative block rounded-2xl overflow-hidden transition-all duration-300 googletv-focus bg-[#050505] border border-white/5 cursor-pointer",
           className
         )}
         onMouseEnter={!isTouchDevice ? startPreview : undefined}
@@ -186,7 +186,7 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
           {isHovered && (
             <div className="absolute top-3 left-3 z-20 animate-in zoom-in-95 fade-in duration-300">
               <span className="px-2.5 py-1 rounded-lg bg-pink-600/90 backdrop-blur-md text-[8px] font-black tracking-[0.2em] uppercase text-white shadow-xl border border-white/20">
-                Live Preview
+                Preview
               </span>
             </div>
           )}
@@ -198,18 +198,6 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
               isHovered ? "opacity-80" : "opacity-40 group-hover:opacity-60"
             )}
           />
-
-          {/* Desktop play button overlay */}
-          <div
-            className={cn(
-              "absolute inset-0 flex items-center justify-center transition-all duration-500 z-10",
-              isHovered ? "opacity-100 scale-100" : "opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-90"
-            )}
-          >
-            <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl transition-transform hover:scale-110">
-              <Play className="w-6 h-6 text-white fill-current ml-1 drop-shadow-lg" />
-            </div>
-          </div>
 
           {/* Rating Badge */}
           {video.rating && (
@@ -225,40 +213,29 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
               >
                 {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
               </button>
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl backdrop-blur-md text-[10px] font-black text-yellow-400 bg-black/40 border border-yellow-500/20 shadow-lg">
-                <Star className="w-3 h-3 fill-current" />
-                <span>{video.rating}%</span>
-              </div>
             </div>
           )}
 
           {/* Duration badge */}
-          <div className="absolute bottom-3 right-3 px-2.5 py-1.5 rounded-xl backdrop-blur-md text-[9px] font-black text-white/90 bg-black/60 border border-white/10 z-10 tracking-widest shadow-lg">
+          <div className="absolute bottom-3 right-3 px-2 py-1 rounded-md backdrop-blur-md text-[10px] font-bold text-white bg-black/60 border border-white/10 z-10 shadow-lg">
             {video.duration}
           </div>
         </div>
 
         {/* ── Info row ── */}
-        <div className="p-5 space-y-3 bg-[#050505] relative z-10">
-          <h3 className="font-display font-bold text-sm line-clamp-1 leading-snug group-hover:text-pink-400 transition-colors tracking-tight">
+        <div className="p-4 space-y-2 bg-[#050505] relative z-10">
+          <h3 className="font-bold text-sm line-clamp-1 leading-snug group-hover:text-pink-400 transition-colors">
             {video.title}
           </h3>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 text-[10px] font-bold text-white/30 uppercase tracking-widest">
+            <div className="flex items-center gap-3 text-[10px] font-bold text-white/30 uppercase tracking-widest">
               <div className="flex items-center gap-1.5">
-                <Eye className="w-3 h-3 text-blue-500" />
-                <span>{video.views}</span>
+                <span>{video.views} views</span>
               </div>
-              {video.source && (
-                <div className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[8px] text-white/20">
-                  {video.source.toUpperCase()}
-                </div>
-              )}
             </div>
-            <div className="flex items-center gap-1.5 text-pink-500/50 group-hover:text-pink-500 transition-colors">
-               <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-               <span className="text-[8px] font-black uppercase tracking-widest">Premium</span>
+            <div className="flex items-center gap-1.5 text-pink-500/50">
+               <span className="text-[8px] font-bold uppercase tracking-widest">Premium</span>
             </div>
           </div>
         </div>

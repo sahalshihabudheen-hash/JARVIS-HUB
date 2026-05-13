@@ -49,15 +49,15 @@ const Search = () => {
       <main className="pt-24 pb-16">
         <div className="container">
           {/* Search Input */}
-          <div className="max-w-2xl mx-auto mb-12">
-            <div className="relative">
-              <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+          <div className="max-w-3xl mx-auto mb-16">
+            <div className="relative group">
+              <SearchIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-white/20 group-focus-within:text-primary transition-colors" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search movies, TV shows, anime..."
-                className="w-full pl-14 pr-6 py-4 bg-secondary border border-border rounded-2xl text-lg placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                className="w-full pl-16 pr-8 py-6 bg-white/5 border border-white/10 rounded-full text-xl placeholder:text-white/20 focus:outline-none focus:bg-white/10 focus:border-primary/50 transition-all shadow-2xl"
                 autoFocus
               />
             </div>

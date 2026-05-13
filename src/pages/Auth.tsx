@@ -111,11 +111,11 @@ const Auth = () => {
       <div className="w-full max-w-md animate-scale-in relative z-10">
         <Button
           variant="ghost"
-          className="mb-8 text-muted-foreground hover:text-primary transition-colors"
+          className="mb-8 text-white/40 hover:text-white transition-colors"
           onClick={() => navigate("/")}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Terminal
+          Back to Home
         </Button>
 
         <div className="glass border border-white/10 p-8 rounded-3xl shadow-2xl">
@@ -125,11 +125,11 @@ const Auth = () => {
               alt="JARVIS Logo" 
               className="w-16 h-16 object-cover rounded-full mb-4 shadow-[0_0_20px_hsl(var(--primary)/0.4)] animate-pulse"
             />
-            <h1 className="text-3xl font-display font-bold tracking-tighter mb-2">
-              JARVIS<span className="text-blue-500 ml-1">HUB</span>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">
+              JARVIS<span className="text-primary ml-1">HUB</span>
             </h1>
-            <p className="text-muted-foreground text-sm">
-              {isLogin ? "Access your secure media hub" : "Initialize your viewer credentials"}
+            <p className="text-white/40 text-sm">
+              {isLogin ? "Sign in to your account" : "Create your account"}
             </p>
           </div>
 
@@ -139,8 +139,8 @@ const Auth = () => {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   type="email"
-                  placeholder="Intelligence ID (Email)"
-                  className="pl-10 bg-white/5 border-white/10 focus:border-blue-500 transition-all rounded-xl"
+                  placeholder="Email"
+                  className="pl-10 bg-white/5 border-white/10 focus:border-primary transition-all rounded-xl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -152,8 +152,8 @@ const Auth = () => {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   type="password"
-                  placeholder="Security Key (Password)"
-                  className="pl-10 bg-white/5 border-white/10 focus:border-blue-500 transition-all rounded-xl"
+                  placeholder="Password"
+                  className="pl-10 bg-white/5 border-white/10 focus:border-primary transition-all rounded-xl"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -164,9 +164,9 @@ const Auth = () => {
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full h-12 rounded-xl font-semibold bg-blue-600 hover:bg-blue-500 text-white hover-glow transition-all disabled:opacity-50"
+              className="w-full h-12 rounded-full font-bold bg-white text-black hover:bg-white/90 transition-all disabled:opacity-50"
             >
-              {loading ? "Establishing Protocol..." : (isLogin ? "Initialize Access" : "Create Protocols")}
+              {loading ? "Signing in..." : (isLogin ? "Sign In" : "Create Account")}
             </Button>
           </form>
 
@@ -175,7 +175,7 @@ const Auth = () => {
               <span className="w-full border-t border-white/10"></span>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">External Auth Protocols</span>
+              <span className="bg-background px-2 text-white/20">or continue with</span>
             </div>
           </div>
 
@@ -195,9 +195,9 @@ const Auth = () => {
           <div className="mt-8 text-center text-sm">
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-muted-foreground hover:text-blue-500 transition-colors underline underline-offset-4"
+              className="text-white/40 hover:text-primary transition-colors underline underline-offset-4"
             >
-              {isLogin ? "Need a new access ID?" : "Already have credentials? Access here"}
+              {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
           </div>
         </div>

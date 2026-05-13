@@ -62,11 +62,15 @@ const Movies = () => {
           <h1 className="text-3xl md:text-4xl font-display font-bold mb-8">Movies</h1>
 
           {/* Categories */}
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="flex flex-wrap gap-3 mb-4">
             {categories.map((cat) => (
               <Button
                 key={cat.key}
-                variant={category === cat.key ? "default" : "outline"}
+                variant={category === cat.key ? "default" : "secondary"}
+                className={cn(
+                  "rounded-full px-6 transition-all duration-300",
+                  category === cat.key ? "bg-white text-black hover:bg-white/90" : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                )}
                 onClick={() => {
                   setCategory(cat.key as Category);
                   setSelectedGenre(null);
@@ -79,12 +83,16 @@ const Movies = () => {
           </div>
 
           {/* Genres */}
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="flex flex-wrap gap-2 mb-10 pb-4 border-b border-white/5">
             {genres?.map((genre) => (
               <Button
                 key={genre.id}
-                variant={selectedGenre === genre.id ? "default" : "secondary"}
+                variant="ghost"
                 size="sm"
+                className={cn(
+                  "rounded-full px-4 py-1 h-auto text-[10px] font-bold uppercase tracking-wider transition-all",
+                  selectedGenre === genre.id ? "bg-primary/20 text-primary border border-primary/20" : "text-white/40 hover:text-white hover:bg-white/5"
+                )}
                 onClick={() => {
                   setSelectedGenre(genre.id);
                   setCategory("genre");
@@ -112,19 +120,21 @@ const Movies = () => {
               </div>
 
               {/* Pagination */}
-              <div className="flex justify-center gap-4 mt-12">
+              <div className="flex justify-center items-center gap-6 mt-16">
                 <Button
-                  variant="outline"
+                  variant="ghost"
+                  className="rounded-full px-6 hover:bg-white/5 text-white/60 hover:text-white"
                   disabled={page === 1}
                   onClick={() => setPage(p => p - 1)}
                 >
                   Previous
                 </Button>
-                <span className="flex items-center text-muted-foreground">
-                  Page {page} of {data?.total_pages || 1}
+                <span className="text-sm font-medium text-white/40">
+                  {page} / {data?.total_pages || 1}
                 </span>
                 <Button
-                  variant="outline"
+                  variant="ghost"
+                  className="rounded-full px-6 hover:bg-white/5 text-white/60 hover:text-white"
                   disabled={page >= (data?.total_pages || 1)}
                   onClick={() => setPage(p => p + 1)}
                 >

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Play, Tv, Share2, Ghost } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Download, Play, Tv, Share2, Ghost, Zap, ShieldAlert } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
 import Footer from "@/components/Footer";
@@ -242,18 +242,18 @@ const WatchPage = () => {
 
             {/* Incognito Toggle */}
             <Button
-              variant={isIncognito ? "default" : "outline"}
+              variant="ghost"
               size="sm"
               onClick={() => setIsIncognito(!isIncognito)}
               className={cn(
-                "rounded-full px-4 transition-all duration-300",
+                "rounded-full px-4 py-5 transition-all duration-300 font-bold text-xs uppercase tracking-widest",
                 isIncognito 
-                  ? "bg-purple-500/20 text-purple-400 border-purple-500/50 hover:bg-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]" 
-                  : "bg-white/5 text-white/50 border-white/10 hover:text-white"
+                  ? "bg-primary text-black hover:bg-primary/90 shadow-[0_0_20px_rgba(var(--primary),0.3)]" 
+                  : "bg-white/5 text-white/50 border border-white/10 hover:text-white hover:bg-white/10"
               )}
             >
               <Ghost className={cn("w-4 h-4 mr-2", isIncognito ? "animate-pulse" : "")} />
-              {isIncognito ? "INCOGNITO ACTIVE" : "GO INCOGNITO"}
+              {isIncognito ? "Incognito Active" : "Go Incognito"}
             </Button>
           </div>
 
@@ -270,38 +270,23 @@ const WatchPage = () => {
               )}
             </div>
             
-            <div className="flex flex-wrap gap-2 shrink-0">
+            <div className="flex flex-wrap gap-3 shrink-0">
               <Button 
-                variant="outline" 
-                className="bg-primary/10 border-primary/20 hover:bg-primary/20 hover:border-primary/50 text-primary transition-all shadow-[0_0_15px_rgba(34,211,238,0.15)] font-bold"
+                variant="secondary" 
+                className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold px-6"
                 onClick={() => {
                   const url = window.location.href;
                   if (navigator.share) {
-                    navigator.share({
-                      title: title,
-                      url: url
-                    }).catch(() => {
-                      navigator.clipboard.writeText(url).then(() => {
-                        toast.success("Link copied!");
-                      });
+                    navigator.share({ title: title, url: url }).catch(() => {
+                      navigator.clipboard.writeText(url).then(() => toast.success("Link copied!"));
                     });
                   } else {
-                    navigator.clipboard.writeText(url).then(() => {
-                      toast.success("Link copied! Share it with your friends.");
-                    });
+                    navigator.clipboard.writeText(url).then(() => toast.success("Link copied!"));
                   }
                 }}
               >
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
-              </Button>
-              <Button 
-                variant="outline" 
-                className="bg-white/5 border-white/10 hover:bg-white/10 text-white transition-all"
-                onClick={() => toast.info("To download: Play the video, and look for the download icon (⬇) inside the player controls at the bottom right.", { duration: 6000 })}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download
               </Button>
             </div>
           </div>
@@ -326,12 +311,42 @@ const WatchPage = () => {
             />
           </div>
 
+          {/* Quick Guide for New Users */}
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center mb-3">
+                <Play className="w-4 h-4 text-blue-400" />
+              </div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-2">How to Watch</h4>
+              <p className="text-[11px] text-white/40 leading-relaxed">
+                Click the large Play button to start. If the movie doesn't load, try switching to a different **Mirror** below the player.
+              </p>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center mb-3">
+                <Zap className="w-4 h-4 text-green-400" />
+              </div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-2">Mirror Selection</h4>
+              <p className="text-[11px] text-white/40 leading-relaxed">
+                Each mirror is a different server. **111Movies** is recommended for Malayalam, Tamil, and Hindi content.
+              </p>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center mb-3">
+                <ShieldAlert className="w-4 h-4 text-red-400" />
+              </div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-2">Blocking Ads</h4>
+              <p className="text-[11px] text-white/40 leading-relaxed">
+                Enable **Stealth Shield** or **Hard Adblock** to stop annoying popups. Unlock the shield to pause or use controls.
+              </p>
+            </div>
+          </div>
+
           {/* Cast Section */}
           {content?.credits?.cast && content.credits.cast.length > 0 && (
             <div className="mt-12">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-1.5 h-6 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
-                <h2 className="text-xl font-display font-bold">Cast & Crew</h2>
+              <div className="flex items-center gap-2 mb-6">
+                <h2 className="text-xl font-bold text-white/90">Cast & Crew</h2>
               </div>
               <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {content.credits.cast.slice(0, 15).map((actor) => (
@@ -356,9 +371,8 @@ const WatchPage = () => {
           {isTV && (
             <div className="mt-6">
               {/* More Episodes Heading */}
-              <div className="mt-12 mb-6 flex items-center justify-between">
-                <h2 className="text-xl md:text-2xl font-display font-bold">Episodes</h2>
-                <div className="h-px flex-1 bg-white/10 mx-6 hidden sm:block" />
+              <div className="mt-12 mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-white/90">Episodes</h2>
               </div>
 
               {/* Episode Navigation */}

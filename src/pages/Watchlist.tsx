@@ -34,9 +34,8 @@ const Watchlist = () => {
       <Navbar />
 
       <main className="container pt-24 pb-16">
-        <div className="flex items-center gap-3 mb-8">
-          <Heart className="w-8 h-8 text-highlight fill-highlight" />
-          <h1 className="text-3xl md:text-4xl font-display font-bold">My Watchlist</h1>
+        <div className="flex items-center gap-3 mb-10 border-b border-white/5 pb-6">
+          <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tight">Watchlist</h1>
         </div>
 
         {items.length === 0 ? (

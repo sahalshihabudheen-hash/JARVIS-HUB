@@ -17,7 +17,7 @@ import { useTutorial } from "@/context/TutorialContext";
 import { useAdmin } from "@/context/AdminContext";
 
 const Navbar = () => {
-  const { isActive: isTutorialActive } = useTutorial();
+  const { isActive: isTutorialActive, startTutorial } = useTutorial();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -125,6 +125,16 @@ const Navbar = () => {
                   )}
                 </Link>
               ))}
+              
+              <button
+                onClick={() => {
+                  navigate("/");
+                  setTimeout(startTutorial, 500);
+                }}
+                className="flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-full text-blue-400/60 hover:text-blue-400 hover:bg-blue-500/5 transition-all duration-300"
+              >
+                Help
+              </button>
             </div>
           </div>
 

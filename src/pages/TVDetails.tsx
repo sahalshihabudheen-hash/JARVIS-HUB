@@ -117,8 +117,8 @@ const TVDetails = () => {
             alt={show.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/40" />
-          <div className="absolute inset-0 gradient-hero" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-transparent" />
         </div>
 
         <div className="container relative z-10 py-16">
@@ -189,13 +189,13 @@ const TVDetails = () => {
               <div className="flex flex-wrap gap-4 mt-8">
                 {isReleased && validSeasons.length > 0 ? (
                   <Link to={`/watch/tv/${show.id}/1/1`}>
-                    <Button size="lg" className="hover-glow bg-primary text-black font-semibold rounded-full px-8 shadow-[0_0_20px_rgba(34,211,238,0.4)]">
+                    <Button size="lg" className="rounded-full bg-white text-black hover:bg-white/90 font-bold px-8 transition-all active:scale-95">
                       <Play className="w-5 h-5 mr-2 fill-current" />
                       Watch Now
                     </Button>
                   </Link>
                 ) : !isReleased ? (
-                  <Button size="lg" onClick={handleNotify} className="hover-glow bg-purple-500 text-white font-semibold rounded-full px-8 shadow-[0_0_20px_rgba(168,85,247,0.4)]">
+                  <Button size="lg" onClick={handleNotify} className="rounded-full bg-primary text-black font-bold px-8">
                     <Bell className="w-5 h-5 mr-2" />
                     Notify when launched
                   </Button>
@@ -229,9 +229,8 @@ const TVDetails = () => {
       {/* Trailers Section */}
       {trailers.length > 0 && (
         <section className="container py-12 border-t border-white/5">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
-            <h2 className="text-2xl font-display font-bold">Trailers & Clips</h2>
+          <div className="flex items-center gap-2 mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-white/90">Trailers & Clips</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {trailers.slice(0, 3).map((trailer) => (
@@ -325,9 +324,8 @@ const TVDetails = () => {
       {/* Cast Section */}
       {show.credits?.cast && show.credits.cast.length > 0 && (
         <section className="container py-12 border-t border-white/5">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1.5 h-6 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
-            <h2 className="text-2xl font-display font-bold">Series Cast</h2>
+          <div className="flex items-center gap-2 mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-white/90">Series Cast</h2>
           </div>
           <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide">
             {show.credits.cast.slice(0, 12).map((actor) => (

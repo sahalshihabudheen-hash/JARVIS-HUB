@@ -198,18 +198,11 @@ const History = () => {
       
       <main className="container pt-32 pb-24">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 border-b border-white/10 pb-12">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-primary/20 p-3 rounded-2xl border border-primary/30 rotate-3 hover:rotate-0 transition-transform duration-500">
-                <HistoryIcon className="w-8 h-8 text-primary shadow-glow" />
-              </div>
-              <h1 className="text-4xl md:text-6xl font-display font-black tracking-tighter uppercase italic italic">
-                Central <span className="text-primary italic animate-pulse">Archive</span>
-              </h1>
-            </div>
-            <p className="text-muted-foreground max-w-xl text-sm md:text-base font-medium leading-relaxed uppercase tracking-wider opacity-60">
-              Protocol: Synchronizing watch history across all devices. Resume your last operation from any node in the Jarvis network.
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 border-b border-white/5 pb-8">
+          <div className="space-y-2">
+            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tight">History</h1>
+            <p className="text-white/40 text-sm md:text-base max-w-xl">
+              Resume where you left off. Your watch progress is synced across all devices.
             </p>
           </div>
 
@@ -236,25 +229,20 @@ const History = () => {
           </div>
         ) : (
           <>
-            {/* Search History Section (New) */}
+            {/* Search History Section */}
             {searchHistory.length > 0 && (
-              <div className="mb-24">
-                <div className="flex items-center gap-4 mb-8 px-4 md:px-0">
-                  <div className="w-2 h-8 bg-yellow-500 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.5)]" />
-                  <h2 className="text-3xl font-display font-bold tracking-tighter uppercase italic flex items-center gap-4">
-                    <SearchIcon className="w-8 h-8 text-yellow-500" />
-                    Neural <span className="text-yellow-500/80">Search Fragments</span>
-                  </h2>
+              <div className="mb-16">
+                <div className="flex items-center gap-4 mb-6">
+                  <h2 className="text-xl font-bold text-white/80">Recent Searches</h2>
                 </div>
-                <div className="flex flex-wrap gap-3 px-4 md:px-0">
+                <div className="flex flex-wrap gap-2 px-4 md:px-0">
                   {searchHistory.map((item, idx) => (
                     <Link 
                       key={idx}
                       to={`/search?q=${encodeURIComponent(item.query)}`}
-                      className="px-6 py-3 rounded-2xl bg-white/5 border border-white/5 hover:border-yellow-500/30 hover:bg-yellow-500/5 text-sm font-bold transition-all flex items-center gap-3 group hover:scale-105"
+                      className="px-5 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-bold transition-all"
                     >
-                      <Rocket className="w-4 h-4 text-white/20 group-hover:text-yellow-500 transition-colors" />
-                      <span className="tracking-wide">{item.query}</span>
+                      {item.query}
                     </Link>
                   ))}
                 </div>
@@ -273,10 +261,10 @@ const History = () => {
                 </Button>
               </div>
             ) : (
-              <div className="space-y-4">
-                {animations.length > 0 && <HistorySection title="Animated Prototypes" items={animations} icon={Palette} colorClass="text-pink-500" bgClass="bg-pink-500 shadow-pink-500/50" />}
-                {movies.length > 0 && <HistorySection title="Cinematic Records" items={movies} icon={Film} colorClass="text-blue-500" bgClass="bg-blue-500 shadow-blue-500/50" />}
-                {tvShows.length > 0 && <HistorySection title="Serialized Protocols" items={tvShows} icon={BrainCircuit} colorClass="text-cyan-500" bgClass="bg-cyan-500 shadow-cyan-500/50" />}
+              <div className="space-y-12">
+                {animations.length > 0 && <HistorySection title="Animation" items={animations} icon={Palette} colorClass="text-pink-500" bgClass="bg-pink-500" />}
+                {movies.length > 0 && <HistorySection title="Movies" items={movies} icon={Film} colorClass="text-blue-500" bgClass="bg-blue-500" />}
+                {tvShows.length > 0 && <HistorySection title="TV Shows" items={tvShows} icon={BrainCircuit} colorClass="text-cyan-500" bgClass="bg-cyan-500" />}
               </div>
             )}
           </>

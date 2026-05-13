@@ -48,25 +48,24 @@ const Anime = () => {
           <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">Anime & Animation</h1>
           <p className="text-muted-foreground mb-6">Discover popular animated series and movies</p>
 
-          <div className="flex flex-wrap gap-2 mb-8">
-            <Button
-              variant={category === "tv" ? "default" : "outline"}
-              onClick={() => { setCategory("tv"); setPage(1); }}
-            >
-              Anime Series
-            </Button>
-            <Button
-              variant={category === "movie" ? "default" : "outline"}
-              onClick={() => { setCategory("movie"); setPage(1); }}
-            >
-              Anime Movies
-            </Button>
-            <Button
-              variant={category === "standard" ? "default" : "outline"}
-              onClick={() => { setCategory("standard"); setPage(1); }}
-            >
-              Standard Animation Movies
-            </Button>
+          <div className="flex flex-wrap gap-3 mb-10 pb-6 border-b border-white/5">
+            {[
+              { key: "tv", label: "Anime Series" },
+              { key: "movie", label: "Anime Movies" },
+              { key: "standard", label: "Standard Animation" },
+            ].map((cat) => (
+              <Button
+                key={cat.key}
+                variant={category === cat.key ? "default" : "secondary"}
+                className={cn(
+                  "rounded-full px-6 transition-all duration-300",
+                  category === cat.key ? "bg-white text-black hover:bg-white/90" : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                )}
+                onClick={() => { setCategory(cat.key as AnimeCategory); setPage(1); }}
+              >
+                {cat.label}
+              </Button>
+            ))}
           </div>
 
           {/* Grid */}
@@ -89,19 +88,21 @@ const Anime = () => {
               </div>
 
               {/* Pagination */}
-              <div className="flex justify-center gap-4 mt-12">
+              <div className="flex justify-center items-center gap-6 mt-16">
                 <Button
-                  variant="outline"
+                  variant="ghost"
+                  className="rounded-full px-6 hover:bg-white/5 text-white/60 hover:text-white"
                   disabled={page === 1}
                   onClick={() => setPage(p => p - 1)}
                 >
                   Previous
                 </Button>
-                <span className="flex items-center text-muted-foreground">
-                  Page {page} of {data?.total_pages || 1}
+                <span className="text-sm font-medium text-white/40">
+                  {page} / {data?.total_pages || 1}
                 </span>
                 <Button
-                  variant="outline"
+                  variant="ghost"
+                  className="rounded-full px-6 hover:bg-white/5 text-white/60 hover:text-white"
                   disabled={page >= (data?.total_pages || 1)}
                   onClick={() => setPage(p => p + 1)}
                 >

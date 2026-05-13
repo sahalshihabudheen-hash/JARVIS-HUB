@@ -143,8 +143,8 @@ const Settings = () => {
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
-    { id: "calibration", label: "Calibration", icon: RefreshCcw },
-    { id: "security", label: "Security", icon: Shield },
+    { id: "calibration", label: "Preferences", icon: RefreshCcw },
+    { id: "security", label: "Privacy", icon: Shield },
     { id: "general", label: "General", icon: SettingsIcon },
   ];
 
@@ -156,11 +156,11 @@ const Settings = () => {
         <div className="container max-w-5xl">
           <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <h1 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-tighter mb-2">
-                Central <span className="text-primary">Settings</span>
+              <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2">
+                Settings
               </h1>
-              <p className="text-muted-foreground text-lg">
-                Manage your terminal configuration and security protocols.
+              <p className="text-white/40 text-lg">
+                Manage your account, preferences, and security.
               </p>
             </div>
           </header>
@@ -207,7 +207,7 @@ const Settings = () => {
                      <div className="flex-1 space-y-6 w-full">
                        {/* Name Sync */}
                        <div className="space-y-2">
-                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Identity Tag</p>
+                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Display Name</p>
                          <div className="flex items-center gap-3">
                            <input 
                              value={userName}
@@ -227,7 +227,7 @@ const Settings = () => {
 
                        {/* GIF Link Sync */}
                        <div className="space-y-2">
-                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Avatar Link (GIF/PNG)</p>
+                         <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold ml-1">Profile Photo URL</p>
                          <div className="flex items-center gap-3">
                            <input 
                              value={avatarUrl}
@@ -294,7 +294,7 @@ const Settings = () => {
                         </Button>
                       )}
                       <Button onClick={logout} variant="outline" className="rounded-xl border-red-500/20 text-red-500 hover:bg-red-500/10">
-                         Disconnect Hub Session
+                         Sign Out
                       </Button>
                    </div>
                  </div>
@@ -305,7 +305,7 @@ const Settings = () => {
                    <div>
                      <h3 className="text-xl font-bold uppercase tracking-tighter mb-2 flex items-center gap-2">
                         <RefreshCcw className="w-5 h-5 text-primary" />
-                        System Re-Initialization
+                        Interactive Tutorial
                      </h3>
                      <p className="text-muted-foreground text-sm mb-6">
                         Re-initialize the JARVIS assistant to refresh your knowledge of the terminal's security protocols.
@@ -328,7 +328,7 @@ const Settings = () => {
 
                    <div className="pt-8 border-t border-white/10">
                      <h3 className="text-xl font-bold uppercase tracking-tighter mb-4 flex items-center gap-2">
-                        ⭐ Genre Calibration
+                        Genre Preferences
                         <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full ml-2">Dynamic</span>
                      </h3>
                      <p className="text-muted-foreground text-sm mb-6">
@@ -363,7 +363,7 @@ const Settings = () => {
                          <div className="flex items-center gap-4">
                             <Lock className="w-5 h-5 text-primary" />
                             <div>
-                               <p className="font-bold">Stealth Shield</p>
+                               <p className="font-bold">Anti-Redirect Shield</p>
                                <p className="text-xs text-muted-foreground text-balance">Anti-redirection script active during playback.</p>
                             </div>
                          </div>
@@ -376,7 +376,7 @@ const Settings = () => {
                          <div className="flex items-center gap-4">
                             <Eye className="w-5 h-5 text-primary" />
                             <div>
-                               <p className="font-bold">Privacy Scrubber</p>
+                               <p className="font-bold">Auto-Clear History</p>
                                <p className="text-xs text-muted-foreground">Automatically clears watch history on session end.</p>
                             </div>
                          </div>

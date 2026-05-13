@@ -139,8 +139,8 @@ const AdminStreamManager = () => {
             <Link2 className="text-green-400 w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white/90 tracking-tight">Custom Stream Override</h2>
-            <p className="text-xs text-white/40 mt-0.5">Manually add any working stream link for any movie or show</p>
+            <h2 className="text-lg font-bold text-white/90 tracking-tight">Custom Streams</h2>
+            <p className="text-xs text-white/40 mt-0.5">Add or manage manual stream links for movies and shows</p>
           </div>
         </div>
         <div className="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
@@ -239,7 +239,7 @@ const AdminStreamManager = () => {
               className="bg-black/40 border-white/10 focus-visible:ring-green-500/50 rounded-xl h-11 font-mono text-sm"
             />
             <p className="text-[10px] text-white/20 mt-1.5 leading-relaxed">
-              Any working URL: embed player link, direct MP4, HLS .m3u8 — anything you find on Telegram or piracy sites
+              Supports any valid video URL, including direct links and embed players.
             </p>
           </div>
 
@@ -318,7 +318,7 @@ const AdminStreamManager = () => {
           <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
             <AlertCircle className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
             <p className="text-[11px] text-blue-400/80 leading-relaxed">
-              Once saved, this stream will appear as <strong className="text-blue-300">🇮🇳 Custom Direct</strong> — pinned as the <strong>first server</strong> in the player for this movie. All users will see it automatically.
+              Once saved, this stream will be available for all users on the content's watch page.
             </p>
           </div>
         </div>

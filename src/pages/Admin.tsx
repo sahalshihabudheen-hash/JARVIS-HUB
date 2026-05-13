@@ -114,8 +114,9 @@ const Admin = () => {
                     <ActivityIcon className="text-blue-500 w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold tracking-tight text-white/90">Live Activity Stream</h2>
-                    <p className="text-sm text-white/40 mt-0.5">Real-time viewing log from all users</p>
+                  <div>
+                    <h2 className="text-xl font-bold tracking-tight text-white/90">Activity Feed</h2>
+                    <p className="text-sm text-white/40 mt-0.5">Real-time watch history across the platform</p>
                   </div>
                 </div>
                 {activityLog.length > 0 && (
@@ -340,40 +341,36 @@ const Admin = () => {
                   <Wrench className="text-blue-500 w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold tracking-tight text-white/90">Maintenance Protocols</h2>
-                  <p className="text-sm text-white/40 mt-1">Control system-wide access and upgrades</p>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className={cn(
-                  "p-6 rounded-2xl border transition-all duration-500",
-                  isMaintenanceMode 
-                    ? "bg-blue-500/10 border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.05)]" 
-                    : "bg-black/20 border-white/5"
-                )}>
-                  <div className="flex items-center justify-between gap-6">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className={cn("font-bold text-lg", isMaintenanceMode ? "text-blue-500" : "text-white")}>
-                          System Maintenance
-                        </h3>
-                        {isMaintenanceMode && (
-                          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3b82f6]" />
-                        )}
+                  <h2 className="text-xl font-bold tracking-tight text-white/90">Maintenance</h2>
+                  <p className="text-sm text-white/40 mt-1">Manage system status and availability</p>
+                <div className="space-y-6">
+                  <div className={cn(
+                    "p-6 rounded-2xl border transition-all duration-500",
+                    isMaintenanceMode 
+                      ? "bg-blue-500/10 border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.05)]" 
+                      : "bg-black/20 border-white/5"
+                  )}>
+                    <div className="flex items-center justify-between gap-6">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className={cn("font-bold text-lg", isMaintenanceMode ? "text-blue-500" : "text-white")}>
+                            Maintenance Mode
+                          </h3>
+                          {isMaintenanceMode && (
+                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3b82f6]" />
+                          )}
+                        </div>
+                        <p className="text-sm text-white/40 leading-relaxed">
+                          When active, all non-admin users will see the "Under Maintenance" screen. Administrators will still have full access.
+                        </p>
                       </div>
-                      <p className="text-sm text-white/40 leading-relaxed">
-                        When active, all non-admin users will see the "Under Maintenance" screen. Administrators will still have full access to the interface to perform tests or updates.
-                      </p>
-                    </div>
-                    
-                    <button 
-                      onClick={toggleMaintenanceMode}
-                      className={cn(
-                        "relative w-16 h-8 rounded-full transition-all duration-300 overflow-hidden shrink-0",
-                        isMaintenanceMode ? "bg-blue-500 shadow-[0_0_15px_#3b82f6]" : "bg-white/10"
-                      )}
-                    >
+                      <button 
+                        onClick={toggleMaintenanceMode}
+                        className={cn(
+                          "relative w-16 h-8 rounded-full transition-all duration-300 overflow-hidden shrink-0",
+                          isMaintenanceMode ? "bg-blue-500 shadow-[0_0_15px_#3b82f6]" : "bg-white/10"
+                        )}
+                      >
                       <div className={cn(
                         "absolute top-1 bottom-1 w-6 bg-white rounded-full transition-all duration-300 shadow-lg",
                         isMaintenanceMode ? "left-9" : "left-1"
@@ -385,7 +382,7 @@ const Admin = () => {
                 <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 flex items-start gap-3">
                   <Settings className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
                   <p className="text-[11px] text-blue-400/80 font-medium leading-relaxed">
-                    Maintenance mode is synced in real-time via JARVIS Neural Core. Once toggled, all active sessions worldwide will be redirected instantly without requiring a page refresh.
+                    Maintenance mode is synced in real-time. Once toggled, all active sessions will be redirected instantly.
                   </p>
                 </div>
               </div>

@@ -150,7 +150,13 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     setShieldActive(false);
   };
 
-
+  // Auto-switch to Indian mirror for Malayalam content
+  useEffect(() => {
+    if (lang === 'ml' && currentServer !== "111movies" && !customStream) {
+      handleServerChange("111movies");
+      toast.info("Switching to 111Movies Mirror for best Malayalam experience");
+    }
+  }, [lang, customStream]);
 
   const server = availableServers.find((s) => s.id === currentServer) || availableServers[0];
   const embedUrl =
@@ -209,10 +215,10 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                       if (onLangChange) {
                         onLangChange(l.id);
                         
-                        // Force switch to Indian Mirror for ML/HI/TA/TE as it's more reliable for these
-                        if (["hi", "ml", "ta", "te"].includes(l.id) && currentServer !== "vidsrcin") {
-                          handleServerChange("vidsrcin");
-                          toast.info(`Switching to Indian Mirror for ${l.name} audio track...`);
+                        // Force switch to 111Movies Mirror for ML/HI/TA/TE as it's more reliable for these
+                        if (["hi", "ml", "ta", "te"].includes(l.id) && currentServer !== "111movies") {
+                          handleServerChange("111movies");
+                          toast.info(`Switching to 111Movies Mirror for ${l.name} audio track...`);
                         } else {
                           toast.success(`Switching to ${l.name} audio track...`);
                         }
@@ -364,15 +370,19 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                 </video>
               </div>
             ) : (
-              <div className="text-center animate-pulse-glow">
-                <div className="w-20 h-20 rounded-full border-2 border-primary/50 flex items-center justify-center mb-4 mx-auto shadow-[0_0_30px_rgba(34,211,238,0.4)]">
-                  <div className="w-16 h-16 rounded-full border border-primary flex items-center justify-center bg-primary/5">
-                    <Play className="w-8 h-8 text-primary fill-primary ml-1" />
+              <div className="text-center animate-pulse-glow group">
+                <div className="w-24 h-24 rounded-full border-2 border-primary/30 flex items-center justify-center mb-6 mx-auto shadow-[0_0_50px_rgba(34,211,238,0.2)] group-hover:scale-110 transition-transform duration-500">
+                  <div className="w-20 h-20 rounded-full border border-primary flex items-center justify-center bg-primary/10 shadow-inner">
+                    <Play className="w-10 h-10 text-primary fill-primary ml-1" />
                   </div>
                 </div>
-                <p className="text-primary font-display font-semibold tracking-widest text-sm uppercase">
-                  Initialize Secure Stream
+                <h2 className="text-white font-bold text-xl mb-2 tracking-tight">Ready to Stream?</h2>
+                <p className="text-primary/70 font-medium tracking-widest text-[10px] uppercase">
+                  Tap anywhere to start
                 </p>
+                <div className="mt-8 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[9px] text-white/40 uppercase tracking-widest max-w-[200px] mx-auto">
+                  Mirrors & Ad-Shield loaded
+                </div>
               </div>
             )}
           </div>

@@ -416,19 +416,15 @@ const Adult = () => {
             
             <div className="relative p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
               <div className="flex-1 space-y-6 text-center md:text-left">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] font-black uppercase tracking-[0.3em] animate-in fade-in slide-in-from-left-4 duration-700">
-                  <Flame className="w-4 h-4 animate-pulse" />
-                  Premium Protocol v2.0
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] font-bold uppercase tracking-widest">
+                  <Flame className="w-4 h-4" />
+                  Trending Content
                 </div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[8px] font-bold uppercase tracking-widest ml-2 animate-in fade-in slide-in-from-left-4 duration-1000">
-                  <ShieldAlert className="w-3 h-3" />
-                  Stealth Key: Double ESC
-                </div>
-                <h1 className="text-4xl md:text-6xl font-display font-black tracking-tighter text-white drop-shadow-2xl animate-in fade-in slide-in-from-left-6 duration-1000">
-                  THE <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-400 to-blue-400">HUB</span> EXPERIENCE
+                <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-white">
+                  Adult <span className="text-pink-500">Hub</span>
                 </h1>
-                <p className="text-white/50 text-sm md:text-lg max-w-xl font-medium leading-relaxed animate-in fade-in slide-in-from-left-8 duration-1000 delay-200">
-                  Access the world's most advanced adult entertainment catalog. Encrypted, private, and optimized for maximum visual fidelity.
+                <p className="text-white/50 text-sm md:text-lg max-w-xl leading-relaxed">
+                  The ultimate collection of adult entertainment. High quality, private, and always available.
                 </p>
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
                    <div className="flex bg-white/5 backdrop-blur-xl p-1.5 rounded-2xl border border-white/10 shadow-2xl">
@@ -459,10 +455,10 @@ const Adult = () => {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within/search:text-pink-400 transition-colors z-10" />
                   <Input
                     type="text"
-                    placeholder="Search discovery node..."
+                    placeholder="Search videos..."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    className="relative pl-12 pr-4 h-14 bg-black/60 backdrop-blur-2xl border-white/10 rounded-2xl focus:ring-pink-500/50 focus:border-pink-500/50 text-white placeholder:text-white/20 transition-all font-bold"
+                    className="relative pl-12 pr-4 h-14 bg-white/5 border-white/10 rounded-full focus:border-pink-500 focus:ring-0 text-white placeholder:text-white/20 transition-all font-bold"
                   />
                 </form>
                 
@@ -499,11 +495,10 @@ const Adult = () => {
                <div className="relative p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 rounded-[2.2rem] bg-[#050505]/80 backdrop-blur-3xl overflow-hidden">
                 <div className="relative z-10 flex flex-col items-center md:items-start text-center md:text-left">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-400">Localized Uplink</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">Regional Content</span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-display font-black tracking-tighter text-white">CONTENT IN {location.toUpperCase()}</h2>
-                  <p className="text-white/40 text-sm mt-3 max-w-lg font-medium leading-relaxed italic">Synchronizing with regional servers for maximum throughput and local relevance.</p>
+                  <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Popular in {location}</h2>
+                  <p className="text-white/40 text-sm mt-2 max-w-lg">Content tailored specifically to your region for better relevance.</p>
                 </div>
                 <Button 
                   onClick={() => {
@@ -593,9 +588,9 @@ const Adult = () => {
             ) : (
               <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {adultHistory.map((item) => (
-                  <div key={item.id} className="flex-shrink-0 w-64 group relative">
+                  <div key={item.id} className="flex-shrink-0 w-64 group relative block rounded-2xl overflow-hidden transition-all duration-300 googletv-focus bg-[#050505] border border-white/5 cursor-pointer">
                     <div className={cn(
-                      "relative aspect-video rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 group-hover:border-purple-500/30",
+                      "relative aspect-video rounded-2xl overflow-hidden border border-white/5 transition-all duration-300",
                       isBlurred ? "blur-md hover:blur-none" : ""
                     )}>
                       <img 
@@ -618,7 +613,9 @@ const Adult = () => {
                         </div>
                       )}
                     </div>
-                    <h4 className="mt-3 text-[11px] font-bold text-white/60 line-clamp-1 group-hover:text-purple-400 transition-colors uppercase tracking-wide">{item.title}</h4>
+                    <div className="p-3">
+                      <h4 className="text-[11px] font-bold text-white/60 line-clamp-1 group-hover:text-purple-400 transition-colors uppercase tracking-wide">{item.title}</h4>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -634,18 +631,9 @@ const Adult = () => {
                     <Star className="w-5 h-5 text-green-500" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-display font-bold text-white">Actresses near {location.split(',')[0]}</h3>
-                    <p className="text-[10px] font-bold text-green-500/60 uppercase tracking-widest mt-0.5">Regional Performer Protocol</p>
+                    <h3 className="text-xl font-display font-bold text-white">Performers near {location.split(',')[0]}</h3>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setQuery(`${location.split(',')[0]} pornstar`)}
-                  className="text-xs font-bold text-white/40 hover:text-white"
-                >
-                  View All
-                </Button>
               </div>
               
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-4 md:gap-6">
@@ -692,28 +680,15 @@ const Adult = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-display font-black text-white uppercase italic tracking-tighter">Eastern Premium <span className="text-red-500">Gateway</span></h3>
-                  <p className="text-[10px] font-bold text-red-500/60 uppercase tracking-[0.3em] mt-1">JAV & Korean Specialized Protocols</p>
+                  <h3 className="text-2xl font-display font-black text-white uppercase italic tracking-tighter">Eastern Hub</h3>
                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="h-px w-20 bg-gradient-to-r from-transparent to-white/10 hidden md:block" />
-                <Button 
-                  onClick={() => navigate('/adult/eastern')}
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full h-9 px-6 bg-red-600/10 border-red-500/20 text-red-400 hover:bg-red-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(220,38,38,0.2)]"
-                >
-                  View Full Eastern Hub <ChevronRight className="w-3 h-3 ml-2" />
-                </Button>
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* JAV Series Ribbon */}
               <div className="space-y-4">
                 <h4 className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> JAV Premium Series
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> JAV
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {javSeries.map((s) => (
@@ -738,10 +713,9 @@ const Adult = () => {
                 </div>
               </div>
 
-              {/* Korean Premium Ribbon */}
               <div className="space-y-4">
                 <h4 className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Korean Adult Niche
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Korean
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {koreanPremium.map((s) => (
@@ -766,7 +740,7 @@ const Adult = () => {
 
           {/* Top Studios Row */}
           <div className="mb-12 overflow-hidden">
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/30 mb-6 ml-1">Featured Networks</h3>
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/30 mb-6 ml-1">Networks</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-4">
               {topStudios.map((studio) => (
                 <button
@@ -785,12 +759,9 @@ const Adult = () => {
             </div>
           </div>
 
-          {/* ═══════════════════════════════════════
-               PREMIUM DISCOVERY RIBBON
-          ═══════════════════════════════════════ */}
           <div className="mb-12 relative">
             <div className="flex items-center justify-between mb-4 px-2">
-              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white/40">Browse Categories</h3>
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white/40">Browse</h3>
               <Button 
                 variant="outline" 
                 size="sm"
@@ -803,11 +774,10 @@ const Adult = () => {
                 )}
               >
                 <Filter className="w-3 h-3 mr-2" />
-                Advanced Filters
+                Filters
               </Button>
             </div>
 
-            {/* Categories Ribbon */}
             <div className="flex overflow-x-auto pb-4 gap-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
               {categories.map((cat) => (
                 <button
@@ -825,15 +795,13 @@ const Adult = () => {
               ))}
             </div>
 
-            {/* Collapsible Advanced Filters Panel */}
             {showAdvancedFilters && (
               <div className="mt-4 rounded-3xl border border-white/10 bg-black/40 backdrop-blur-2xl overflow-hidden shadow-2xl animate-in slide-in-from-top-4 fade-in duration-300">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-8">
                   
-                  {/* Trending Tags Section */}
                   <div>
                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-500 mb-4 flex items-center gap-2">
-                      <Flame className="w-3 h-3" /> Trending Tags
+                      <Flame className="w-3 h-3" /> Trending
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {popularTags.map((tag) => (
@@ -853,10 +821,9 @@ const Adult = () => {
                     </div>
                   </div>
 
-                  {/* Asian & Regional Section */}
                   <div>
                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-4 flex items-center gap-2">
-                      <Globe className="w-3 h-3" /> Asian & Regional
+                      <Globe className="w-3 h-3" /> Global
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {asianGenres.map((genre) => (
@@ -876,10 +843,9 @@ const Adult = () => {
                     </div>
                   </div>
 
-                  {/* Hijab & Muslim Section */}
                   <div>
                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-4 flex items-center gap-2">
-                      <Star className="w-3 h-3" /> Exclusive Niches
+                      <Star className="w-3 h-3" /> Niches
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {hijabShows.slice(0, 8).map((s) => (
@@ -899,10 +865,9 @@ const Adult = () => {
                     </div>
                   </div>
 
-                  {/* TeamSkeet Section */}
                   <div className="lg:col-span-2">
                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-4 flex items-center gap-2">
-                      <Film className="w-3 h-3" /> TeamSkeet Network
+                      <Film className="w-3 h-3" /> Network
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {teamSkeetShows.slice(0, 10).map((show) => (
@@ -922,10 +887,9 @@ const Adult = () => {
                     </div>
                   </div>
 
-                  {/* Body Type Section */}
                   <div className="lg:col-span-3 pt-6 border-t border-white/10">
                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-4 flex items-center gap-2">
-                      <User className="w-3 h-3" /> Body Type Matrix
+                      <User className="w-3 h-3" /> Style
                     </h4>
                     <div className="flex flex-wrap gap-3">
                       {breastSizes.map((bs) => {
@@ -961,7 +925,6 @@ const Adult = () => {
             )}
           </div>
 
-          {/* Grid Header */}
           <div ref={resultsRef} className="flex items-center justify-between mb-8 scroll-mt-28">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-orange-500/20 rounded-xl">
@@ -971,9 +934,8 @@ const Adult = () => {
                 {query === "all" ? "Trending Right Now" : `Results for "${query}"`}
               </h2>
             </div>
-            <div className="flex items-center gap-2 text-xs font-medium text-white/40">
-              <Filter className="w-4 h-4" />
-              <span>Sorted by Popularity</span>
+            <div className="flex items-center gap-1.5 text-pink-500/50">
+               <span className="text-[8px] font-bold uppercase tracking-widest">Premium</span>
             </div>
           </div>
 
