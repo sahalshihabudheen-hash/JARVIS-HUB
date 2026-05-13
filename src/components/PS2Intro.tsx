@@ -16,9 +16,12 @@ const CinematicIntro = ({ onComplete }: { onComplete: () => void }) => {
   const [visible, setVisible] = useState(true);
   const [hasStarted, setHasStarted] = useState(false);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const startIntro = () => {
     const audio = new Audio("/ps2_start_up.mp3");
     audio.volume = 0.5;
+    audioRef.current = audio;
     audio.play().catch(e => console.error("Audio play failed:", e));
     setHasStarted(true);
   };
@@ -38,7 +41,13 @@ const CinematicIntro = ({ onComplete }: { onComplete: () => void }) => {
       }, T.COMPLETE),
     ];
 
-    return () => timers.forEach(clearTimeout);
+    return () => {
+      timers.forEach(clearTimeout);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
   }, [onComplete, hasStarted]);
 
   if (!visible || typeof document === 'undefined') return null;

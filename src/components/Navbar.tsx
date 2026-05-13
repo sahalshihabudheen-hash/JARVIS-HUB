@@ -54,6 +54,7 @@ const Navbar = () => {
     { to: "/tv", label: "TV Shows", icon: Tv },
     { to: "/anime", label: "Anime", icon: Sparkles },
     { to: "/news", label: "News", icon: Newspaper },
+    { to: "/downloads", label: "Downloads", icon: Download },
     ...(user ? [
       { to: "/watchlist", label: "Watchlist", icon: Heart },
       { to: "/history", label: "History", icon: History },

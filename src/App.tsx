@@ -161,6 +161,8 @@ const ProtectedLayout = () => {
   return <Outlet />;
 };
 
+import Downloads from "./pages/Downloads";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AdminProvider>
@@ -201,6 +203,7 @@ const App = () => (
                   <Route path="/adult" element={<Adult />} />
                   <Route path="/adult/eastern" element={<EasternPremium />} />
                   <Route path="/news" element={<News />} />
+                  <Route path="/downloads" element={<Downloads />} />
                   <Route path="/hub/watch/:id" element={<WatchHub />} />
                   <Route path="/watch/adult/:id" element={<WatchHub />} />
                   <Route path="/admin" element={<Admin />} />
