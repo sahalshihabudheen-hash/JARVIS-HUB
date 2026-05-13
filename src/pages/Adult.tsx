@@ -45,42 +45,6 @@ const Adult = () => {
     }
   });
 
-  const [activeGame, setActiveGame] = useState<string | null>(null);
-  const adultGames = [
-    {
-      id: "harem-hotel",
-      title: "Harem Hotel",
-      thumb: "https://img.itch.zone/aW1nLzQ4MjIzNzkucG5n/315x250%23c/4%2BJ2fM.png",
-      description: "Manage your own hotel and interact with beautiful staff members.",
-      tags: ["Management", "3D", "Dating Sim"],
-      url: "https://itch.io/embed-upload/dummy1", // Replace with real itch.io embed url
-    },
-    {
-      id: "summertime-saga",
-      title: "Summertime Saga",
-      thumb: "https://img.itch.zone/aW1nLzg3MTgwNTguanBn/315x250%23c/8s3bZl.jpg",
-      description: "A high-quality visual novel dating sim with an expansive story.",
-      tags: ["Visual Novel", "2D", "Story"],
-      url: "https://itch.io/embed-upload/dummy2",
-    },
-    {
-      id: "waifu-hub",
-      title: "Waifu Hub",
-      thumb: "https://img.itch.zone/aW1nLzIyMDgxNTguanBn/315x250%23c/hY6O1g.jpg",
-      description: "Interview girls for your agency in this fun, interactive experience.",
-      tags: ["Anime", "Simulation"],
-      url: "https://itch.io/embed-upload/dummy3",
-    },
-    {
-      id: "breeding-season",
-      title: "Breeding Season",
-      thumb: "https://img.itch.zone/aW1nLzEzNTk0MDIucG5n/315x250%23c/7xJg9K.png",
-      description: "Farm management and breeding simulator.",
-      tags: ["Management", "Farming"],
-      url: "https://itch.io/embed-upload/dummy4",
-    }
-  ];
-
   const [source, setSource] = useState<"pornhub" | "redtube" | "eporner">("pornhub");
   const [adultHistory, setAdultHistory] = useState<AdultHistoryItem[]>([]);
 
@@ -653,65 +617,37 @@ const Adult = () => {
                       <h4 className="text-[11px] font-bold text-white/60 line-clamp-1 group-hover:text-purple-400 transition-colors uppercase tracking-wide">{item.title}</h4>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
           </div>
+        )}
+      </div>
 
-          {/* Interactive Games Section */}
-          <div className="mb-16">
-            <div className="flex items-center justify-between mb-8 px-1">
+      {/* Interactive Games Hub Banner */}
+      <div className="mb-16 container px-4 md:px-6">
+        <div 
+          onClick={() => navigate("/adult/games")}
+          className="group relative cursor-pointer p-1 rounded-[2.5rem] bg-gradient-to-r from-blue-600/20 via-cyan-400/20 to-blue-600/20 border border-white/5 shadow-2xl overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-10 transition-opacity" />
+          <div className="relative p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 rounded-[2.2rem] bg-[#050505]/80 backdrop-blur-3xl overflow-hidden">
+            <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
               <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-blue-500 blur-xl opacity-20 animate-pulse" />
-                  <div className="relative p-3 bg-blue-500/20 rounded-2xl border border-blue-500/30">
-                    <Gamepad2 className="w-6 h-6 text-blue-500" />
-                  </div>
+                <div className="p-3 bg-blue-500/20 rounded-2xl">
+                  <Gamepad2 className="w-8 h-8 text-blue-400" />
                 </div>
-                <div>
-                  <h3 className="text-2xl font-display font-black text-white uppercase italic tracking-tighter">Interactive Games</h3>
-                  <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-1">Play HTML5 games directly in your browser</p>
-                </div>
+                <h3 className="text-3xl md:text-4xl font-display font-black text-white uppercase italic tracking-tighter">Games Hub</h3>
               </div>
+              <p className="text-white/40 text-sm max-w-lg leading-relaxed">
+                Interactive simulation engine enabled. Access the full library of high-fidelity adult HTML5 games directly within the JARVIS terminal.
+              </p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {adultGames.map(game => (
-                <div key={game.id} className="group relative rounded-[2rem] bg-white/5 border border-white/10 overflow-hidden hover:border-blue-500/50 transition-all duration-500">
-                  <div className="aspect-[4/3] relative overflow-hidden">
-                    <img 
-                      src={game.thumb} 
-                      alt={game.title} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
-                    
-                    {/* Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-sm">
-                      <button 
-                        onClick={() => setActiveGame(game.url)}
-                        className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.6)] hover:scale-110 active:scale-95 transition-all"
-                      >
-                        <Play className="w-6 h-6 text-white fill-current ml-1" />
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="p-6 relative">
-                    <h4 className="text-lg font-bold text-white mb-2">{game.title}</h4>
-                    <p className="text-xs text-white/50 line-clamp-2 mb-4">{game.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {game.tags.map(tag => (
-                        <span key={tag} className="px-2 py-1 rounded-md bg-white/5 text-[9px] font-bold uppercase tracking-widest text-white/40">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Button 
+              className="bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-10 h-16 font-black uppercase tracking-widest text-xs shadow-2xl group-hover:scale-105 transition-all"
+            >
+              Initialize Hub <ChevronRight className="w-4 h-4 ml-2" />
+            </Button>
           </div>
+        </div>
+      </div>
 
           {/* Regional Actresses Section */}
           {location && (
@@ -1292,44 +1228,12 @@ const Adult = () => {
               </Button>
               <p className="text-[10px] text-white/20 mt-4 uppercase tracking-[0.2em] font-black">Secure • Private • Encrypted</p>
             </div>
+            </div>
           </div>
         </div>
       )}
 
       <Footer />
-
-      {/* Interactive Game Modal */}
-      {activeGame && (
-        <div className="fixed inset-0 z-[99999] flex flex-col bg-black/95 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-300">
-          <div className="flex items-center justify-between p-4 bg-black/50 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                <Gamepad2 className="w-5 h-5 text-blue-500" />
-              </div>
-              <div>
-                <h3 className="font-bold text-white uppercase tracking-widest text-sm">Game Engine Active</h3>
-                <p className="text-[10px] text-white/50 uppercase tracking-widest">Running interactive HTML5 instance</p>
-              </div>
-            </div>
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveGame(null)} 
-              className="text-white hover:bg-red-500/20 border-white/10 hover:border-red-500/50 hover:text-red-400 font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all"
-            >
-              Exit Game
-            </Button>
-          </div>
-          <div className="flex-1 w-full h-full bg-[#0a0a0a] flex items-center justify-center relative">
-            <iframe 
-              src={activeGame} 
-              className="w-full h-full max-w-6xl max-h-[85vh] border-none shadow-2xl rounded-xl bg-black" 
-              allowFullScreen
-              sandbox="allow-same-origin allow-scripts allow-forms"
-            />
-          </div>
-        </div>
-      )}
-
     </div>
   );
 };
