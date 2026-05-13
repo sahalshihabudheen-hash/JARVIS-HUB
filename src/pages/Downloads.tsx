@@ -34,7 +34,7 @@ const SOURCES: DownloadSource[] = [
     quality: "4K UHD", 
     type: "Local Proxy", 
     icon: Zap,
-    getUrl: (id, type) => `https://vidsrc.me/download/${type === 'movie' ? 'movie' : 'tv'}?tmdb=${id}`
+    getUrl: (id, type) => `https://vidsrc.xyz/embed/${type === 'movie' ? 'movie' : 'tv'}/${id}`
   },
   { 
     name: "Source Alpha", 
@@ -49,6 +49,13 @@ const SOURCES: DownloadSource[] = [
     type: "Mobile", 
     icon: Smartphone,
     getUrl: (id, type) => `https://embed.su/embed/${type}/${id}`
+  },
+  { 
+    name: "Source Gamma", 
+    quality: "BlueRay", 
+    type: "Cloud Node", 
+    icon: ExternalLink,
+    getUrl: (id, type) => `https://multiembed.mov/?video_id=${id}&tmdb=1`
   }
 ];
 
