@@ -30,25 +30,25 @@ interface DownloadSource {
 
 const SOURCES: DownloadSource[] = [
   { 
-    name: "Source Alpha", 
-    quality: "4K/1080p", 
-    type: "Direct", 
+    name: "Direct Node", 
+    quality: "4K UHD", 
+    type: "Local Proxy", 
     icon: Zap,
+    getUrl: (id, type) => `https://vidsrc.me/download/${type === 'movie' ? 'movie' : 'tv'}?tmdb=${id}`
+  },
+  { 
+    name: "Source Alpha", 
+    quality: "1080p", 
+    type: "Mirror", 
+    icon: Monitor,
     getUrl: (id, type) => `https://vidsrc.to/embed/${type}/${id}`
   },
   { 
     name: "Source Beta", 
-    quality: "HD / Mobile", 
-    type: "Mirror", 
+    quality: "720p", 
+    type: "Mobile", 
     icon: Smartphone,
     getUrl: (id, type) => `https://embed.su/embed/${type}/${id}`
-  },
-  { 
-    name: "Source Gamma", 
-    quality: "BlueRay", 
-    type: "High Speed", 
-    icon: Monitor,
-    getUrl: (id, type) => `https://vidsrc.xyz/embed/${type}/${id}`
   }
 ];
 
@@ -99,10 +99,22 @@ const Downloads = () => {
         setTimeout(() => {
           setDownloadProgress(null);
           const url = source.getUrl(id, media.media_type as 'movie' | 'tv');
+          
+          if (source.name === "Direct Node") {
+            // Direct Acquisition: Bypass window.open if possible
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${media.title || media.name}.mp4`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          } else {
+            window.open(url, '_blank');
+          }
+          
           toast.success("Acquisition Complete", {
-            description: "Redirecting to high-speed download node."
+            description: "Target asset delivered to system downloads."
           });
-          window.open(url, '_blank');
         }, 800);
       }
       setDownloadProgress({ id, progress: prog });
