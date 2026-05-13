@@ -15,6 +15,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSearchParams } from "react-router-dom";
 import { doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
@@ -22,17 +23,21 @@ import { toast } from "sonner";
 const RemoteControl = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [command, setCommand] = useState<string>("");
   const [deviceConnected, setDeviceConnected] = useState(false);
   const [currentMedia, setCurrentMedia] = useState<any>(null);
 
+  const sessionParam = searchParams.get("session");
+  const remoteId = sessionParam ? `remote_${sessionParam}` : (user ? `remote_${user.uid}` : null);
+
   useEffect(() => {
-    if (!user) {
+    if (!remoteId) {
       navigate("/auth");
       return;
     }
 
-    const remoteDoc = doc(db, "remotes", user.uid);
+    const remoteDoc = doc(db, "remotes", remoteId);
     const unsub = onSnapshot(remoteDoc, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
@@ -48,11 +53,11 @@ const RemoteControl = () => {
       unsub();
       updateDoc(remoteDoc, { online: false });
     };
-  }, [user, navigate]);
+  }, [remoteId, navigate]);
 
   const sendCommand = async (cmd: string, data?: any) => {
-    if (!user) return;
-    const remoteDoc = doc(db, "remotes", user.uid);
+    if (!remoteId) return;
+    const remoteDoc = doc(db, "remotes", remoteId);
     await updateDoc(remoteDoc, {
       lastCommand: cmd,
       commandData: data || {},
@@ -61,7 +66,7 @@ const RemoteControl = () => {
     toast.success(`Protocol ${cmd.toUpperCase()} Dispatched`);
   };
 
-  if (!user) return null;
+  if (!remoteId) return null;
 
   return (
     <div className="min-h-screen bg-[#020202] text-white p-6 flex flex-col items-center justify-center font-sans">

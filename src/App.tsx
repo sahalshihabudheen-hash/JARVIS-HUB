@@ -46,8 +46,10 @@ import { Navigate, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { toast } from "sonner";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "./lib/firebase";
+import { getRemoteSessionId } from "./lib/utils";
 
 const StealthManager = () => {
   const navigate = useNavigate();
@@ -100,14 +102,12 @@ const StealthManager = () => {
 };
 
 const RemoteListener = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const lastTimestamp = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!user) return;
-
-    const remoteDoc = doc(db, "remotes", user.uid);
+    const sessionId = getRemoteSessionId();
+    const remoteDoc = doc(db, "remotes", `remote_${sessionId}`);
     const unsub = onSnapshot(remoteDoc, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
@@ -193,6 +193,7 @@ const App = () => (
                 <Sonner />
                 <Routes>
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/remote" element={<RemoteControl />} />
                 
                 {/* Protected Routes */}
                 <Route element={<ProtectedLayout />}>
@@ -215,7 +216,6 @@ const App = () => (
                   <Route path="/hub/watch/:id" element={<WatchHub />} />
                   <Route path="/watch/adult/:id" element={<WatchHub />} />
                   <Route path="/admin" element={<Admin />} />
-                  <Route path="/remote" element={<RemoteControl />} />
                 </Route>
     
                 <Route path="*" element={<NotFound />} />

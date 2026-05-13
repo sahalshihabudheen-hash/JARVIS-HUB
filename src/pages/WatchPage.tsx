@@ -17,6 +17,7 @@ import { GENRE_PALETTES, applyTheme, resetTheme } from "@/lib/theme-engine";
 import PauseAnalysisHUD from "@/components/PauseAnalysisHUD";
 import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { getRemoteSessionId } from "@/lib/utils";
 
 const WatchPage = () => {
   const { type, id, season, episode } = useParams<{
@@ -86,11 +87,12 @@ const WatchPage = () => {
         : title;
 
       // Sync Now Playing to Remote Control
-      if (user?.uid) {
-        setDoc(doc(db, "remotes", user.uid), {
-          nowPlaying: { title: formattedTitle, type, id: content.id }
-        }, { merge: true });
-      }
+      const sessionId = getRemoteSessionId();
+      const remoteId = `remote_${sessionId}`;
+      
+      setDoc(doc(db, "remotes", remoteId), {
+        nowPlaying: { title: formattedTitle, type, id: content.id }
+      }, { merge: true });
 
       // 1. Log Admin Activity
       if (user && user.email) {
@@ -180,11 +182,10 @@ const WatchPage = () => {
 
       return () => {
         clearInterval(interval);
-        if (user?.uid) {
-          setDoc(doc(db, "remotes", user.uid), {
-            nowPlaying: null
-          }, { merge: true });
-        }
+        const currentSessionId = getRemoteSessionId();
+        setDoc(doc(db, "remotes", `remote_${currentSessionId}`), {
+          nowPlaying: null
+        }, { merge: true });
       };
     }
   }, [content?.id, episodeNum, user, title, type, isTV, seasonNum, currentEpisode, movie?.runtime, show?.episode_run_time, isIncognito]);

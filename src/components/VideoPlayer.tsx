@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { getCustomStream, CustomStream } from "@/lib/custom-streams";
+import { getRemoteSessionId } from "@/lib/utils";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
@@ -554,7 +555,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
             <div className="flex flex-col items-center justify-center p-6 gap-6">
               <div className="p-4 bg-white rounded-2xl">
                 <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.origin + '/remote')}`} 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.origin + '/remote?session=' + getRemoteSessionId())}`} 
                   alt="Remote QR Code" 
                   className="w-48 h-48"
                 />
@@ -566,7 +567,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                 variant="outline"
                 className="w-full bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20 font-bold tracking-widest"
                 onClick={() => {
-                  const url = `${window.location.origin}/remote`;
+                  const url = `${window.location.origin}/remote?session=${getRemoteSessionId()}`;
                   navigator.clipboard.writeText(url).then(() => toast.success("Remote link copied! Open it on your phone."));
                 }}
               >
