@@ -47,6 +47,66 @@ const ADULT_GAMES = [
     url: "/play/breeding-season",
     views: "3.5M",
     rating: "95%"
+  },
+  {
+    id: "camp-pinewood",
+    title: "Camp Pinewood",
+    thumb: "https://images.unsplash.com/photo-1533630654593-b222d5d44449?w=800&auto=format&fit=crop",
+    description: "Welcome to summer camp! Meet the counselors and campers.",
+    tags: ["Visual Novel", "Comedy"],
+    url: "/play/camp-pinewood",
+    views: "5.2M",
+    rating: "96%"
+  },
+  {
+    id: "milfy-city",
+    title: "Milfy City",
+    thumb: "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&auto=format&fit=crop",
+    description: "Navigate city life and meet interesting local women.",
+    tags: ["3D", "Sandbox"],
+    url: "/play/milfy-city",
+    views: "4.8M",
+    rating: "94%"
+  },
+  {
+    id: "eternum",
+    title: "Eternum",
+    thumb: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&auto=format&fit=crop",
+    description: "Dive into a groundbreaking virtual reality server.",
+    tags: ["Sci-Fi", "Mystery"],
+    url: "/play/eternum",
+    views: "6.1M",
+    rating: "99%"
+  },
+  {
+    id: "treasure-of-nadia",
+    title: "Treasure of Nadia",
+    thumb: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop",
+    description: "Follow your father's footsteps in the treasure hunting business.",
+    tags: ["Adventure", "Puzzle"],
+    url: "/play/treasure-of-nadia",
+    views: "7.3M",
+    rating: "97%"
+  },
+  {
+    id: "being-a-dik",
+    title: "Being a DIK",
+    thumb: "https://images.unsplash.com/photo-1541535881962-3bb380b08458?w=800&auto=format&fit=crop",
+    description: "Navigate college life, fraternities, and relationships.",
+    tags: ["College", "Drama"],
+    url: "/play/being-a-dik",
+    views: "9.2M",
+    rating: "98%"
+  },
+  {
+    id: "my-cute-roommate",
+    title: "My Cute Roommate",
+    thumb: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=800&auto=format&fit=crop",
+    description: "Move in with your high school friend in the city.",
+    tags: ["Comedy", "Romance"],
+    url: "/play/my-cute-roommate",
+    views: "3.9M",
+    rating: "91%"
   }
 ];
 

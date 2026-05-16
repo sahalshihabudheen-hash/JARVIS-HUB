@@ -38,6 +38,60 @@ const GAME_DATA: Record<string, any> = {
       { speaker: "You", text: "What's going on in the barn?" },
       { speaker: "Farmhand", text: "It's mating season, and the livestock are getting restless. We need to handle this personally." }
     ]
+  },
+  "camp-pinewood": {
+    bg: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=1200&auto=format&fit=crop",
+    character: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&auto=format&fit=crop",
+    dialogues: [
+      { speaker: "Counselor", text: "Welcome to Camp Pinewood! I hope you're ready for an unforgettable summer." },
+      { speaker: "You", text: "I sure am. Where do I drop my bags?" },
+      { speaker: "Counselor", text: "Right this way. Let me introduce you to the rest of the staff." }
+    ]
+  },
+  "milfy-city": {
+    bg: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&auto=format&fit=crop",
+    character: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop",
+    dialogues: [
+      { speaker: "Neighbor", text: "Oh, hey! I didn't see you there. Have you lived here long?" },
+      { speaker: "You", text: "Just moved in, actually." },
+      { speaker: "Neighbor", text: "Well, if you ever need any 'help' getting settled, just knock on my door." }
+    ]
+  },
+  "eternum": {
+    bg: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop",
+    character: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&auto=format&fit=crop",
+    dialogues: [
+      { speaker: "System", text: "Welcome to Eternum. Synchronizing neural link..." },
+      { speaker: "You", text: "Whoa, this feels incredibly real." },
+      { speaker: "Guide", text: "That's the point. Welcome to the ultimate virtual reality." }
+    ]
+  },
+  "treasure-of-nadia": {
+    bg: "https://images.unsplash.com/photo-1533630654593-b222d5d44449?w=1200&auto=format&fit=crop",
+    character: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&auto=format&fit=crop",
+    dialogues: [
+      { speaker: "Librarian", text: "I found some of your father's old notes. They point to a hidden temple." },
+      { speaker: "You", text: "Let me see those. I need to figure out his last location." },
+      { speaker: "Librarian", text: "Be careful. Many have gone looking for the treasure of Nadia, but few return." }
+    ]
+  },
+  "being-a-dik": {
+    bg: "https://images.unsplash.com/photo-1541535881962-3bb380b08458?w=1200&auto=format&fit=crop",
+    character: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&auto=format&fit=crop",
+    dialogues: [
+      { speaker: "Roommate", text: "Are you ready for the frat party tonight? It's going to be insane." },
+      { speaker: "You", text: "I don't know, I should probably study..." },
+      { speaker: "Roommate", text: "Come on, man! College is about making memories, not just reading books." }
+    ]
+  },
+  "my-cute-roommate": {
+    bg: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=1200&auto=format&fit=crop",
+    character: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop",
+    dialogues: [
+      { speaker: "Roommate", text: "Hey! It's so good to see you again. My place is your place." },
+      { speaker: "You", text: "Thanks for letting me crash here while I look for a job." },
+      { speaker: "Roommate", text: "No problem at all! Let me show you to your room..." }
+    ]
   }
 };
 
