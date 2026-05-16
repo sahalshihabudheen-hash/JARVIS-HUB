@@ -14,7 +14,7 @@ const ADULT_GAMES = [
     thumb: "https://img.itch.zone/aW1nLzQ4MjIzNzkucG5n/315x250%23c/4%2BJ2fM.png",
     description: "Manage your own hotel and interact with beautiful staff members.",
     tags: ["Management", "3D", "Dating Sim"],
-    url: "https://itch.io/embed-upload/dummy1", // Replace with real itch.io embed url
+    url: "https://playcanv.as/p/2OlkUaxF/", // PlayCanvas Swooop
     views: "2.4M",
     rating: "98%"
   },
@@ -24,7 +24,7 @@ const ADULT_GAMES = [
     thumb: "https://img.itch.zone/aW1nLzg3MTgwNTguanBn/315x250%23c/8s3bZl.jpg",
     description: "A high-quality visual novel dating sim with an expansive story.",
     tags: ["Visual Novel", "2D", "Story"],
-    url: "https://itch.io/embed-upload/dummy2",
+    url: "https://hextris.io/",
     views: "8.1M",
     rating: "99%"
   },
@@ -34,7 +34,7 @@ const ADULT_GAMES = [
     thumb: "https://img.itch.zone/aW1nLzIyMDgxNTguanBn/315x250%23c/hY6O1g.jpg",
     description: "Interview girls for your agency in this fun, interactive experience.",
     tags: ["Anime", "Simulation"],
-    url: "https://itch.io/embed-upload/dummy3",
+    url: "https://macek.github.io/pacman/",
     views: "1.2M",
     rating: "92%"
   },
@@ -44,7 +44,7 @@ const ADULT_GAMES = [
     thumb: "https://img.itch.zone/aW1nLzEzNTk0MDIucG5n/315x250%23c/7xJg9K.png",
     description: "Farm management and breeding simulator.",
     tags: ["Management", "Farming"],
-    url: "https://itch.io/embed-upload/dummy4",
+    url: "https://play2048.co/",
     views: "3.5M",
     rating: "95%"
   }
