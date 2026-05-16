@@ -22,6 +22,7 @@ import WatchHub from "./pages/WatchHub";
 import News from "./pages/News";
 import Downloads from "./pages/Downloads";
 import AdultGames from "./pages/AdultGames";
+import GameEngine from "./pages/GameEngine";
 import NotFound from "./pages/NotFound";
 import RemoteControl from "./pages/RemoteControl";
 import { AuthProvider } from "./context/AuthContext";
@@ -215,6 +216,7 @@ const App = () => (
                   <Route path="/adult/eastern" element={<EasternPremium />} />
                   <Route path="/adult/games" element={<AdultGames />} />
                   <Route path="/adult/games/:id" element={<AdultGames />} />
+                  <Route path="/play/:gameId" element={<GameEngine />} />
                   <Route path="/news" element={<News />} />
                   <Route path="/downloads" element={<Downloads />} />
                   <Route path="/hub/watch/:id" element={<WatchHub />} />

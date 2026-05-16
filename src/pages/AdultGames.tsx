@@ -14,7 +14,7 @@ const ADULT_GAMES = [
     thumb: "https://img.itch.zone/aW1nLzQ4MjIzNzkucG5n/315x250%23c/4%2BJ2fM.png",
     description: "Manage your own hotel and interact with beautiful staff members.",
     tags: ["Management", "3D", "Dating Sim"],
-    url: "https://playcanv.as/p/2OlkUaxF/", // PlayCanvas Swooop
+    url: "/play/harem-hotel", // GameEngine
     views: "2.4M",
     rating: "98%"
   },
@@ -24,7 +24,7 @@ const ADULT_GAMES = [
     thumb: "https://img.itch.zone/aW1nLzg3MTgwNTguanBn/315x250%23c/8s3bZl.jpg",
     description: "A high-quality visual novel dating sim with an expansive story.",
     tags: ["Visual Novel", "2D", "Story"],
-    url: "https://hextris.io/",
+    url: "/play/summertime-saga",
     views: "8.1M",
     rating: "99%"
   },
@@ -34,7 +34,7 @@ const ADULT_GAMES = [
     thumb: "https://img.itch.zone/aW1nLzIyMDgxNTguanBn/315x250%23c/hY6O1g.jpg",
     description: "Interview girls for your agency in this fun, interactive experience.",
     tags: ["Anime", "Simulation"],
-    url: "https://macek.github.io/pacman/",
+    url: "/play/waifu-hub",
     views: "1.2M",
     rating: "92%"
   },
@@ -44,7 +44,7 @@ const ADULT_GAMES = [
     thumb: "https://img.itch.zone/aW1nLzEzNTk0MDIucG5n/315x250%23c/7xJg9K.png",
     description: "Farm management and breeding simulator.",
     tags: ["Management", "Farming"],
-    url: "https://play2048.co/",
+    url: "/play/breeding-season",
     views: "3.5M",
     rating: "95%"
   }
