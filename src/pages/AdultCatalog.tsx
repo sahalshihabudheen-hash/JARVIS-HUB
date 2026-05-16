@@ -1229,7 +1229,6 @@ const AdultCatalog = () => {
               </Button>
               <p className="text-[10px] text-white/20 mt-4 uppercase tracking-[0.2em] font-black">Secure • Private • Encrypted</p>
             </div>
-            </div>
           </div>
         </div>
       )}
