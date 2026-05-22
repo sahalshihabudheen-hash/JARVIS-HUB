@@ -87,6 +87,20 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
     if (isActive && step === 3) nextStep();
   };
 
+  // Fallback timer for intro video to prevent black screen hang
+  useEffect(() => {
+    let timer: any = null;
+    if (isPlayingIntro) {
+      timer = setTimeout(() => {
+        console.warn("[VideoPlayer] Intro video playback timed out. Auto-skipping to player.");
+        handleIntroEnd();
+      }, 7000); // skip after 7 seconds max
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isPlayingIntro]);
+
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
       containerRef.current?.requestFullscreen().catch(err => {
@@ -423,9 +437,20 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                   playsInline
                   className="w-full h-full object-contain"
                   onEnded={handleIntroEnd}
+                  onError={handleIntroEnd}
                 >
                   <source src="/JARVIS-VDO-INTRO.mp4" type="video/mp4" />
                 </video>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleIntroEnd();
+                  }}
+                  className="absolute bottom-6 right-6 z-50 px-4 py-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/10 hover:border-white/20 transition-all text-xs font-bold uppercase tracking-widest text-white/80 hover:text-white flex items-center gap-2 shadow-2xl"
+                >
+                  Skip Intro
+                  <Zap className="w-3.5 h-3.5 text-blue-400" />
+                </button>
               </div>
             ) : (
               <div className="text-center animate-pulse-glow group">

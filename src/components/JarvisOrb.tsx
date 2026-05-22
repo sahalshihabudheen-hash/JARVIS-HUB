@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { 
   Zap, 
   History, 
@@ -22,6 +22,7 @@ const JarvisOrb = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isListening, isWakeWordActive, isWaitingForCommand, startListening } = useJarvisVoice();
 
   useEffect(() => {
@@ -35,6 +36,11 @@ const JarvisOrb = () => {
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty deps - only run once on mount
+
+  // Hide on auth, admin, remote screens, or if user is not logged in
+  if (!user || location.pathname === "/auth" || location.pathname === "/admin" || location.pathname === "/remote") {
+    return null;
+  }
 
   const protocols = [
     { name: "Search Node", icon: Search, action: () => navigate("/search"), color: "text-blue-400" },
@@ -108,7 +114,7 @@ const JarvisOrb = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-700 hover:scale-110 group",
+          "relative w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-700 hover:scale-110 group",
           isOpen ? "rotate-180" : "animate-float"
         )}
       >
@@ -119,7 +125,7 @@ const JarvisOrb = () => {
         
         {/* Core */}
         <div className={cn(
-          "relative w-12 h-12 rounded-full flex items-center justify-center border-2 border-white/20 shadow-[0_0_20px_rgba(59,130,246,0.5)] overflow-hidden transition-all duration-500",
+          "relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 border-white/20 shadow-[0_0_20px_rgba(59,130,246,0.5)] overflow-hidden transition-all duration-500",
           isOpen ? "bg-white/10" : "bg-black/40 backdrop-blur-md",
           (isListening || isWakeWordActive || isWaitingForCommand) && "border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.8)] scale-110"
         )}>
