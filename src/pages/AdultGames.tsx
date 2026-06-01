@@ -180,6 +180,217 @@ const ADULT_GAMES = [
     views: "3.9M",
     rating: "91%"
   },
+  // ── More Top Games ───────────────────────────
+  {
+    id: "wild-life",
+    title: "Wild Life",
+    thumb: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&auto=format&fit=crop",
+    description: "An open-world RPG set on an alien planet with stunning graphics and full freedom of exploration.",
+    tags: ["RPG", "Open World", "3D"],
+    url: "/play/wild-life",
+    views: "6.4M",
+    rating: "97%"
+  },
+  {
+    id: "man-of-the-house",
+    title: "Man of the House",
+    thumb: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&auto=format&fit=crop",
+    description: "Take charge of your household and build relationships with the women in your life.",
+    tags: ["Simulation", "3D", "Romance"],
+    url: "/play/man-of-the-house",
+    views: "5.5M",
+    rating: "95%"
+  },
+  {
+    id: "halfway-house",
+    title: "Halfway House",
+    thumb: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&auto=format&fit=crop",
+    description: "You run a halfway house. Your tenants have stories — and secrets. A dark, emotional drama.",
+    tags: ["Drama", "Mystery", "Visual Novel"],
+    url: "/play/halfway-house",
+    views: "3.1M",
+    rating: "93%"
+  },
+  {
+    id: "university-of-problems",
+    title: "University of Problems",
+    thumb: "https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop",
+    description: "Survive university life, pass exams, and juggle a cast of unforgettable characters.",
+    tags: ["College", "Comedy", "Visual Novel"],
+    url: "/play/university-of-problems",
+    views: "2.7M",
+    rating: "90%"
+  },
+  {
+    id: "office-romance",
+    title: "Office Romance",
+    thumb: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop",
+    description: "Love finds you at work. Navigate office politics, promotions, and passionate connections.",
+    tags: ["Romance", "3D", "Slice of Life"],
+    url: "/play/office-romance",
+    views: "2.3M",
+    rating: "88%"
+  },
+  {
+    id: "stranded-in-space",
+    title: "Stranded in Space",
+    thumb: "https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=800&auto=format&fit=crop",
+    description: "Adrift in the cosmos with an AI companion — a sci-fi romance with branching choices.",
+    tags: ["Sci-Fi", "Romance", "Visual Novel"],
+    url: "/play/stranded-in-space",
+    views: "1.9M",
+    rating: "87%"
+  },
+  {
+    id: "hero-party-must-fall",
+    title: "Hero Party Must Fall",
+    thumb: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&auto=format&fit=crop",
+    description: "You're the villain's agent. Seduce and corrupt the hero's party before they reach the dungeon.",
+    tags: ["Fantasy", "RPG", "Strategy"],
+    url: "/play/hero-party-must-fall",
+    views: "2.1M",
+    rating: "92%"
+  },
+  {
+    id: "sunshine-love",
+    title: "Sunshine Love",
+    thumb: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop",
+    description: "A sunny coastal resort, two paths, and a summer you'll never forget.",
+    tags: ["Visual Novel", "Romance", "3D"],
+    url: "/play/sunshine-love",
+    views: "3.4M",
+    rating: "94%"
+  },
+  {
+    id: "peasant-quest",
+    title: "Peasant's Quest",
+    thumb: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop",
+    description: "Rise from peasant to legend in this medieval RPG loaded with humor, battles, and romance.",
+    tags: ["RPG", "Fantasy", "Comedy"],
+    url: "/play/peasant-quest",
+    views: "4.6M",
+    rating: "96%"
+  },
+  {
+    id: "freeloading-family",
+    title: "Freeloading Family",
+    thumb: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&auto=format&fit=crop",
+    description: "Your extended family moves in. Chaos ensues in this heartfelt and hilarious visual novel.",
+    tags: ["Family Drama", "Comedy", "Visual Novel"],
+    url: "/play/freeloading-family",
+    views: "3.7M",
+    rating: "92%"
+  },
+  {
+    id: "good-girl-gone-bad",
+    title: "Good Girl Gone Bad",
+    thumb: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop",
+    description: "Play as Ashley — a shy good girl thrust into a world of temptation and difficult choices.",
+    tags: ["Female Lead", "Drama", "Visual Novel"],
+    url: "/play/good-girl-gone-bad",
+    views: "4.2M",
+    rating: "93%"
+  },
+  {
+    id: "lust-academy",
+    title: "Lust Academy",
+    thumb: "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&auto=format&fit=crop",
+    description: "A magical university where secrets and spells go hand-in-hand with romance and mystery.",
+    tags: ["Fantasy", "Magic", "Visual Novel"],
+    url: "/play/lust-academy",
+    views: "3.0M",
+    rating: "90%"
+  },
+  {
+    id: "desert-stalker",
+    title: "Desert Stalker",
+    thumb: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&auto=format&fit=crop",
+    description: "A post-apocalyptic wasteland, a ruthless warlord, and the women who survive under his reign.",
+    tags: ["Post-Apocalyptic", "Dark", "3D"],
+    url: "/play/desert-stalker",
+    views: "2.8M",
+    rating: "91%"
+  },
+  {
+    id: "timestamps",
+    title: "Timestamps: Interrupted",
+    thumb: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop",
+    description: "Time loops, glitching realities, and a love story told across broken timelines.",
+    tags: ["Sci-Fi", "Thriller", "Visual Novel"],
+    url: "/play/timestamps",
+    views: "2.0M",
+    rating: "89%"
+  },
+  {
+    id: "the-iron-trial",
+    title: "The Iron Trial",
+    thumb: "https://images.unsplash.com/photo-1536514072410-5019a3c69182?w=800&auto=format&fit=crop",
+    description: "A fantasy war epic where your choices as a general shape the fate of kingdoms and hearts.",
+    tags: ["Fantasy", "Strategy", "Epic"],
+    url: "/play/the-iron-trial",
+    views: "1.6M",
+    rating: "88%"
+  },
+  {
+    id: "corrupted-kingdoms",
+    title: "Corrupted Kingdoms",
+    thumb: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&auto=format&fit=crop",
+    description: "Inherit a kingdom. Discover magic. Build alliances with legendary creatures and rulers.",
+    tags: ["Fantasy", "RPG", "Harem"],
+    url: "/play/corrupted-kingdoms",
+    views: "3.3M",
+    rating: "94%"
+  },
+  {
+    id: "our-fate",
+    title: "Our Fate",
+    thumb: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&auto=format&fit=crop",
+    description: "A slow-burn romance between childhood friends reconnecting as adults. Emotional and heartfelt.",
+    tags: ["Romance", "Drama", "Visual Novel"],
+    url: "/play/our-fate",
+    views: "2.2M",
+    rating: "92%"
+  },
+  {
+    id: "depraved-awakening",
+    title: "Depraved Awakening",
+    thumb: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&auto=format&fit=crop",
+    description: "A detective thriller where noir atmosphere meets dark temptation at every turn.",
+    tags: ["Noir", "Thriller", "Visual Novel"],
+    url: "/play/depraved-awakening",
+    views: "1.8M",
+    rating: "87%"
+  },
+  {
+    id: "zombie-retreat",
+    title: "Zombie's Retreat",
+    thumb: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&auto=format&fit=crop",
+    description: "Survive the zombie apocalypse at a mountain retreat — with some unexpected company.",
+    tags: ["Survival", "Comedy", "Visual Novel"],
+    url: "/play/zombie-retreat",
+    views: "2.5M",
+    rating: "90%"
+  },
+  {
+    id: "lust-epidemic",
+    title: "Lust Epidemic",
+    thumb: "https://images.unsplash.com/photo-1547941126-3d5322b218b0?w=800&auto=format&fit=crop",
+    description: "Stranded at college after a storm hits. Only you and the women left on campus.",
+    tags: ["Comedy", "Simulation", "Visual Novel"],
+    url: "/play/lust-epidemic",
+    views: "4.9M",
+    rating: "95%"
+  },
+  {
+    id: "family-man",
+    title: "Family Man",
+    thumb: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&auto=format&fit=crop",
+    description: "Balancing family, work, and secret desires — a grounded suburban drama with deep choices.",
+    tags: ["Drama", "Slice of Life", "3D"],
+    url: "/play/family-man",
+    views: "1.7M",
+    rating: "86%"
+  },
 ];
 
 const AdultGames = () => {
