@@ -8,72 +8,33 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
 const ADULT_GAMES = [
+  // ── Top Tier ────────────────────────────────
   {
-    id: "harem-hotel",
-    title: "Harem Hotel",
-    thumb: "https://img.itch.zone/aW1nLzQ4MjIzNzkucG5n/315x250%23c/4%2BJ2fM.png",
-    description: "Manage your own hotel and interact with beautiful staff members.",
-    tags: ["Management", "3D", "Dating Sim"],
-    url: "/play/harem-hotel", // GameEngine
-    views: "2.4M",
+    id: "being-a-dik",
+    title: "Being a DIK",
+    thumb: "https://images.unsplash.com/photo-1541535881962-3bb380b08458?w=800&auto=format&fit=crop",
+    description: "Navigate college life, fraternities, and relationships in this award-winning 3D visual novel.",
+    tags: ["College", "Drama", "3D"],
+    url: "/play/being-a-dik",
+    views: "9.2M",
     rating: "98%"
   },
   {
     id: "summertime-saga",
     title: "Summertime Saga",
     thumb: "https://img.itch.zone/aW1nLzg3MTgwNTguanBn/315x250%23c/8s3bZl.jpg",
-    description: "A high-quality visual novel dating sim with an expansive story.",
+    description: "A high-quality visual novel dating sim with an expansive open-world story.",
     tags: ["Visual Novel", "2D", "Story"],
     url: "/play/summertime-saga",
     views: "8.1M",
     rating: "99%"
   },
   {
-    id: "waifu-hub",
-    title: "Waifu Hub",
-    thumb: "https://img.itch.zone/aW1nLzIyMDgxNTguanBn/315x250%23c/hY6O1g.jpg",
-    description: "Interview girls for your agency in this fun, interactive experience.",
-    tags: ["Anime", "Simulation"],
-    url: "/play/waifu-hub",
-    views: "1.2M",
-    rating: "92%"
-  },
-  {
-    id: "breeding-season",
-    title: "Breeding Season",
-    thumb: "https://img.itch.zone/aW1nLzEzNTk0MDIucG5n/315x250%23c/7xJg9K.png",
-    description: "Farm management and breeding simulator.",
-    tags: ["Management", "Farming"],
-    url: "/play/breeding-season",
-    views: "3.5M",
-    rating: "95%"
-  },
-  {
-    id: "camp-pinewood",
-    title: "Camp Pinewood",
-    thumb: "https://images.unsplash.com/photo-1533630654593-b222d5d44449?w=800&auto=format&fit=crop",
-    description: "Welcome to summer camp! Meet the counselors and campers.",
-    tags: ["Visual Novel", "Comedy"],
-    url: "/play/camp-pinewood",
-    views: "5.2M",
-    rating: "96%"
-  },
-  {
-    id: "milfy-city",
-    title: "Milfy City",
-    thumb: "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&auto=format&fit=crop",
-    description: "Navigate city life and meet interesting local women.",
-    tags: ["3D", "Sandbox"],
-    url: "/play/milfy-city",
-    views: "4.8M",
-    rating: "94%"
-  },
-  {
     id: "eternum",
     title: "Eternum",
     thumb: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&auto=format&fit=crop",
-    description: "Dive into a groundbreaking virtual reality server.",
-    tags: ["Sci-Fi", "Mystery"],
+    description: "Dive into a groundbreaking sci-fi virtual reality server with stunning visuals.",
+    tags: ["Sci-Fi", "Mystery", "3D"],
     url: "/play/eternum",
     views: "6.1M",
     rating: "99%"
@@ -82,32 +43,143 @@ const ADULT_GAMES = [
     id: "treasure-of-nadia",
     title: "Treasure of Nadia",
     thumb: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop",
-    description: "Follow your father's footsteps in the treasure hunting business.",
-    tags: ["Adventure", "Puzzle"],
+    description: "Follow your father's footsteps in a thrilling treasure hunting adventure.",
+    tags: ["Adventure", "Puzzle", "3D"],
     url: "/play/treasure-of-nadia",
     views: "7.3M",
     rating: "97%"
   },
+  // ── Newly Added ─────────────────────────────
   {
-    id: "being-a-dik",
-    title: "Being a DIK",
-    thumb: "https://images.unsplash.com/photo-1541535881962-3bb380b08458?w=800&auto=format&fit=crop",
-    description: "Navigate college life, fraternities, and relationships.",
-    tags: ["College", "Drama"],
-    url: "/play/being-a-dik",
-    views: "9.2M",
+    id: "confined-with-goddesses",
+    title: "Confined With Goddesses",
+    thumb: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=800&auto=format&fit=crop",
+    description: "Trapped in a fantasy realm with divine beings — build bonds and unlock their secrets.",
+    tags: ["Fantasy", "Harem", "Visual Novel"],
+    url: "/play/confined-with-goddesses",
+    views: "4.7M",
+    rating: "96%"
+  },
+  {
+    id: "horny-tycoon",
+    title: "Horny Tycoon",
+    thumb: "https://images.unsplash.com/photo-1549637642-7dbb35deef81?w=800&auto=format&fit=crop",
+    description: "Build your entertainment empire from the ground up. Hire, manage, and expand your business.",
+    tags: ["Tycoon", "Management", "Simulation"],
+    url: "/play/horny-tycoon",
+    views: "3.8M",
+    rating: "93%"
+  },
+  {
+    id: "lewd-island",
+    title: "Lewd Island",
+    thumb: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&auto=format&fit=crop",
+    description: "Stranded on a tropical island with survivors — build your colony and relationships.",
+    tags: ["Survival", "Sandbox", "3D"],
+    url: "/play/lewd-island",
+    views: "2.9M",
+    rating: "91%"
+  },
+  {
+    id: "acting-lessons",
+    title: "Acting Lessons",
+    thumb: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&auto=format&fit=crop",
+    description: "A heartfelt story about a film student and the actress that changes his life forever.",
+    tags: ["Drama", "Romance", "Story"],
+    url: "/play/acting-lessons",
+    views: "5.1M",
+    rating: "97%"
+  },
+  {
+    id: "milf-next-door",
+    title: "MILF Next Door",
+    thumb: "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&auto=format&fit=crop",
+    description: "Your new neighbor is more interesting than expected. A slow-burn suburban story.",
+    tags: ["Romance", "3D", "Comedy"],
+    url: "/play/milf-next-door",
+    views: "4.4M",
+    rating: "94%"
+  },
+  {
+    id: "girls-hostel",
+    title: "Girls Hostel",
+    thumb: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop",
+    description: "You've accidentally been placed in the wrong hostel. What could go wrong?",
+    tags: ["Comedy", "Slice of Life", "Anime"],
+    url: "/play/girls-hostel",
+    views: "3.2M",
+    rating: "89%"
+  },
+  {
+    id: "sisterly-lust",
+    title: "Sisterly Lust",
+    thumb: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&auto=format&fit=crop",
+    description: "Reconnect with family you barely know in this taboo romance visual novel.",
+    tags: ["Visual Novel", "Family Drama"],
+    url: "/play/sisterly-lust",
+    views: "5.8M",
+    rating: "95%"
+  },
+  {
+    id: "city-of-broken-dreamers",
+    title: "City of Broken Dreamers",
+    thumb: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&auto=format&fit=crop",
+    description: "A cyberpunk noir thriller with deep choices, factions, and stunning 3D renders.",
+    tags: ["Cyberpunk", "Thriller", "3D"],
+    url: "/play/city-of-broken-dreamers",
+    views: "4.0M",
+    rating: "96%"
+  },
+  {
+    id: "harem-hotel",
+    title: "Harem Hotel",
+    thumb: "https://img.itch.zone/aW1nLzQ4MjIzNzkucG5n/315x250%23c/4%2BJ2fM.png",
+    description: "Manage your own hotel and build relationships with its beautiful staff members.",
+    tags: ["Management", "3D", "Dating Sim"],
+    url: "/play/harem-hotel",
+    views: "2.4M",
     rating: "98%"
+  },
+  {
+    id: "milfy-city",
+    title: "Milfy City",
+    thumb: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&auto=format&fit=crop",
+    description: "Navigate city life and meet interesting local women in this open-world sim.",
+    tags: ["3D", "Sandbox", "Open World"],
+    url: "/play/milfy-city",
+    views: "4.8M",
+    rating: "94%"
+  },
+  {
+    id: "waifu-hub",
+    title: "Waifu Hub",
+    thumb: "https://img.itch.zone/aW1nLzIyMDgxNTguanBn/315x250%23c/hY6O1g.jpg",
+    description: "Interview anime girls for your agency in this fun, interactive simulation.",
+    tags: ["Anime", "Simulation"],
+    url: "/play/waifu-hub",
+    views: "1.2M",
+    rating: "92%"
+  },
+  {
+    id: "camp-pinewood",
+    title: "Camp Pinewood",
+    thumb: "https://images.unsplash.com/photo-1533630654593-b222d5d44449?w=800&auto=format&fit=crop",
+    description: "Welcome to summer camp! Meet the counselors and campers in this comedy adventure.",
+    tags: ["Visual Novel", "Comedy"],
+    url: "/play/camp-pinewood",
+    views: "5.2M",
+    rating: "96%"
   },
   {
     id: "my-cute-roommate",
     title: "My Cute Roommate",
     thumb: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=800&auto=format&fit=crop",
-    description: "Move in with your high school friend in the city.",
-    tags: ["Comedy", "Romance"],
+    description: "Move in with your high school friend in a big city and navigate new relationships.",
+    tags: ["Comedy", "Romance", "Slice of Life"],
     url: "/play/my-cute-roommate",
     views: "3.9M",
     rating: "91%"
-  }
+  },
 ];
 
 const AdultGames = () => {

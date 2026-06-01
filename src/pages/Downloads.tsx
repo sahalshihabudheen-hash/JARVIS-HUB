@@ -1,63 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
   Search, 
   Download, 
   Film, 
   Tv, 
-  ArrowLeft, 
-  Monitor, 
-  Smartphone, 
   Zap,
-  ChevronRight,
   Loader2,
-  ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Monitor, Smartphone, ExternalLink, ChevronRight } from "lucide-react";
 
-interface DownloadSource {
-  name: string;
-  quality: string;
-  type: string;
-  icon: any;
-  getUrl: (id: string, type: 'movie' | 'tv', s?: number, e?: number) => string;
-}
-
-const SOURCES: DownloadSource[] = [
-  { 
-    name: "Indian Node Primary", 
-    quality: "1080p UHD", 
-    type: "Local Proxy", 
-    icon: Zap,
-    getUrl: (id, type) => `https://111movies.com/${type}/${id}`
-  },
-  { 
-    name: "Indian Node Secondary", 
-    quality: "1080p", 
-    type: "Mirror", 
-    icon: Monitor,
-    getUrl: (id, type) => `https://vidsrc.in/embed/${type}/${id}`
-  },
-  { 
-    name: "Global Fallback", 
-    quality: "720p/1080p", 
-    type: "Cloud", 
-    icon: Smartphone,
-    getUrl: (id, type) => `https://embed.su/embed/${type}/${id}`
-  },
-  { 
-    name: "Premium Core", 
-    quality: "4K BlueRay", 
-    type: "Direct Node", 
-    icon: ExternalLink,
-    getUrl: (id, type) => `https://vidlink.pro/${type}/${id}`
-  }
-];
+// The best single download source — opens in new tab
+const DOWNLOAD_URL = (id: string, type: 'movie' | 'tv') =>
+  `https://dl.vidsrc.vip/${type}/${id}`;
 
 import { searchMulti } from "@/lib/tmdb";
 
@@ -65,9 +25,8 @@ const Downloads = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedMedia, setSelectedMedia] = useState<any | null>(null);
   const [downloadProgress, setDownloadProgress] = useState<{id: string, progress: number} | null>(null);
-  const [downloadModalUrl, setDownloadModalUrl] = useState<string | null>(null);
+  const [downloadReady, setDownloadReady] = useState<{id: string, url: string} | null>(null);
   const navigate = useNavigate();
 
   const handleSearch = async (e?: React.FormEvent) => {
@@ -78,52 +37,48 @@ const Downloads = () => {
     try {
       const data = await searchMulti(query);
       setResults(data.results.filter((r: any) => r.media_type === 'movie' || r.media_type === 'tv'));
-      
       if (data.results.length === 0) {
         toast.info("Target search yielded no results in the database.");
       }
     } catch (error) {
-      console.error("Search Error:", error);
       toast.error("Transmission Failure: Node search unavailable.");
     } finally {
       setLoading(false);
     }
   };
 
-  const [downloadReady, setDownloadReady] = useState<{id: string, url: string} | null>(null);
-
-  const simulateDownload = (source: DownloadSource, media: any) => {
+  const initiateDownload = (media: any) => {
     const id = media.id.toString();
     setDownloadProgress({ id, progress: 0 });
     setDownloadReady(null);
-    
+
     toast.info(`Acquiring Protocol: ${media.title || media.name}`, {
       description: "Establishing secure link to high-speed gateway..."
     });
 
     let prog = 0;
     const interval = setInterval(() => {
-      prog += Math.random() * 15;
+      prog += Math.random() * 18;
       if (prog >= 100) {
         prog = 100;
         clearInterval(interval);
         setTimeout(() => {
           setDownloadProgress(null);
-          const url = source.getUrl(id, media.media_type as 'movie' | 'tv');
+          const url = DOWNLOAD_URL(id, media.media_type as 'movie' | 'tv');
           setDownloadReady({ id, url });
-          
           toast.success("Acquisition Complete", {
-            description: "Target asset is ready for secure local storage."
+            description: "Target asset is ready — click to open download."
           });
-        }, 800);
+        }, 600);
       }
       setDownloadProgress({ id, progress: prog });
-    }, 400);
+    }, 350);
   };
 
   const executeDownload = (url: string, name: string) => {
-    setDownloadModalUrl(url);
+    window.open(url, "_blank", "noopener,noreferrer");
     setDownloadReady(null);
+    toast.success(`Opening download node for: ${name}`);
   };
 
   return (
@@ -149,7 +104,7 @@ const Downloads = () => {
             DOWNLOAD <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">CORE</span>
           </h1>
           <p className="max-w-xl text-white/40 text-sm md:text-base font-medium">
-            Acquire high-fidelity media assets for local playback. Select your target node to begin initialization.
+            Acquire high-fidelity media assets for local playback. Search your target and initialize the download node.
           </p>
         </div>
 
@@ -206,32 +161,32 @@ const Downloads = () => {
                     </div>
                   )}
                   
-                  {/* Overlay with Download Info */}
+                  {/* Overlay */}
                   <div className={cn(
-                    "absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6 transition-opacity duration-500",
+                    "absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-4 transition-opacity duration-500",
                     (isDownloading || isReady) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                   )}>
                     {isDownloading ? (
-                      <div className="space-y-4 pb-4">
+                      <div className="space-y-3 pb-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 animate-pulse">Acquiring...</span>
                           <span className="text-[10px] font-black text-white/60">{Math.round(downloadProgress.progress)}%</span>
                         </div>
                         <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-blue-500 transition-all duration-300"
+                            className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-300"
                             style={{ width: `${downloadProgress.progress}%` }}
                           />
                         </div>
                       </div>
                     ) : isReady ? (
-                      <div className="space-y-3 pb-2 animate-in zoom-in-95 duration-500">
+                      <div className="space-y-2 animate-in zoom-in-95 duration-500">
                         <button
                           onClick={() => executeDownload(downloadReady.url, item.title || item.name)}
-                          className="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-[0_0_30px_rgba(37,99,235,0.4)] flex items-center justify-center gap-3 active:scale-95 transition-all"
+                          className="w-full bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-[0_0_30px_rgba(37,99,235,0.4)] flex items-center justify-center gap-2 active:scale-95 transition-all"
                         >
                           <Download className="w-4 h-4" />
-                          Finalize Acquisition
+                          Open Download
                         </button>
                         <button 
                           onClick={() => setDownloadReady(null)}
@@ -241,28 +196,18 @@ const Downloads = () => {
                         </button>
                       </div>
                     ) : (
-                      <div className="space-y-4">
-                         <div className="flex flex-col gap-2">
-                           {SOURCES.map((source) => (
-                             <button
-                               key={source.name}
-                               onClick={() => simulateDownload(source, item)}
-                               className="w-full flex items-center justify-between gap-3 bg-white/10 hover:bg-blue-600 text-white p-3 rounded-xl backdrop-blur-md transition-all group/btn active:scale-95"
-                             >
-                               <div className="flex items-center gap-2">
-                                 <source.icon className="w-3.5 h-3.5 text-blue-400 group-hover/btn:text-white transition-colors" />
-                                 <span className="text-[10px] font-black uppercase tracking-widest">{source.name}</span>
-                               </div>
-                               <ChevronRight className="w-3 h-3 text-white/30" />
-                             </button>
-                           ))}
-                         </div>
-                      </div>
+                      <button
+                        onClick={() => initiateDownload(item)}
+                        className="w-full flex items-center justify-center gap-2 bg-blue-600/90 hover:bg-blue-500 text-white p-3 rounded-2xl backdrop-blur-md transition-all active:scale-95 font-black uppercase tracking-widest text-[10px] shadow-[0_0_20px_rgba(37,99,235,0.3)]"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download Node
+                      </button>
                     )}
                   </div>
 
                   {/* Badge */}
-                  <div className="absolute top-4 right-4 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10">
+                  <div className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10">
                     {item.media_type === 'movie' ? <Film className="w-3 h-3" /> : <Tv className="w-3 h-3" />}
                   </div>
                 </div>
@@ -316,37 +261,6 @@ const Downloads = () => {
       </main>
 
       <Footer />
-
-      {downloadModalUrl && (
-        <div className="fixed inset-0 z-[99999] flex flex-col bg-black/95 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-300">
-          <div className="flex items-center justify-between p-4 bg-black/50 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                <Download className="w-5 h-5 text-blue-400" />
-              </div>
-              <div>
-                <h3 className="font-bold text-white uppercase tracking-widest text-sm">Download Protocol Active</h3>
-                <p className="text-[10px] text-white/50 uppercase tracking-widest">Follow the source instructions to finalize the download.</p>
-              </div>
-            </div>
-            <Button 
-              variant="outline" 
-              onClick={() => setDownloadModalUrl(null)} 
-              className="text-white hover:bg-red-500/20 border-white/10 hover:border-red-500/50 hover:text-red-400 font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all"
-            >
-              Abort / Close
-            </Button>
-          </div>
-          <div className="flex-1 w-full h-full bg-[#050505]">
-            <iframe 
-              src={downloadModalUrl} 
-              className="w-full h-full border-none" 
-              allowFullScreen
-              sandbox="allow-same-origin allow-scripts allow-forms allow-downloads"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };
