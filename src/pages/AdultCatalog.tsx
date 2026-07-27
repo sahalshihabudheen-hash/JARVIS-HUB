@@ -80,13 +80,15 @@ const AdultCatalog = () => {
   const [location, setLocation] = useState<string>("");
 
   useEffect(() => {
-    // Prevent direct access from browser history, bookmarks, or refresh
-    if (!(window as any).__jarvis_internal) {
+    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
+    const hasAuthorizedAccess = user && (user.hasAdultAccess || user.isAdmin || isOwner);
+
+    // Prevent direct access from browser history, bookmarks, or refresh unless authorized
+    if (!(window as any).__jarvis_internal && !hasAuthorizedAccess) {
       navigate("/", { replace: true });
       return;
     }
 
-    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
     if (!user || (!user.hasAdultAccess && !user.isAdmin && !isOwner)) {
       navigate("/");
     }
@@ -964,7 +966,20 @@ const AdultCatalog = () => {
             </div>
             <div className="flex items-center gap-1.5 text-pink-500/50">
                <span className="text-[8px] font-bold uppercase tracking-widest">Premium</span>
-            </div>
+          </div>
+
+          {/* ISP Warning Tip */}
+          <div className="mb-6 bg-pink-500/5 backdrop-blur-xl border border-pink-500/10 p-5 rounded-2xl flex flex-col sm:flex-row items-center gap-4 shadow-xl">
+             <div className="p-3 bg-pink-500/10 rounded-xl shrink-0">
+                <ShieldAlert className="w-5 h-5 text-pink-400" />
+             </div>
+             <div className="space-y-1 text-center sm:text-left">
+                <h4 className="text-xs font-black text-pink-400 uppercase tracking-widest">Streaming Notice (Bypass Blocked Videos)</h4>
+                <p className="text-[11px] text-white/50 leading-relaxed font-medium">
+                  If videos fail to load or show connection errors, adult sites are likely blocked by your ISP. 
+                  Please **use a VPN** or try toggling **Mirror Mode** inside the video player page.
+                </p>
+             </div>
           </div>
 
           {/* Grid */}

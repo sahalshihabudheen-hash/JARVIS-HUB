@@ -83,7 +83,7 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
   const handleIntroEnd = () => {
     setIsPlayingIntro(false);
     setShowOverlay(false);
-    setShieldActive(true);
+    setShieldActive(false);
     if (isActive && step === 3) nextStep();
   };
 

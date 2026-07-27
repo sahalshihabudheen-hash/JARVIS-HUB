@@ -82,6 +82,27 @@ export default async function handler(req: Request) {
           tags: []
         };
       }
+    } else if (source === 'avgle') {
+      const avgleUrl = `https://api.avgle.com/v1/video/${id}`;
+      const response = await fetch(avgleUrl);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.response && data.response.video) {
+          const v = data.response.video;
+          videoData = {
+            video_id: v.vid,
+            title: v.title,
+            url: v.embedded_url || v.video_url || `https://avgle.com/embed/${v.vid}`,
+            default_thumb: v.preview_url,
+            duration: typeof v.duration === 'number' ? Math.floor(v.duration / 60) + ":" + (v.duration % 60).toString().padStart(2, '0') : (v.duration || ""),
+            views: v.viewnumber || 0,
+            rating: "95",
+            publish_date: v.addtime ? new Date(v.addtime * 1000).toISOString().split('T')[0] : "",
+            pornstars: [],
+            tags: []
+          };
+        }
+      }
     }
 
     if (!videoData) {

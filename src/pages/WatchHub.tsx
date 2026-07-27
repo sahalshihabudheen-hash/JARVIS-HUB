@@ -80,15 +80,18 @@ const WatchHub = () => {
   const source = searchParams.get("source") || "pornhub";
   const hasFetchedRelated = useRef(false);
   const [isIncognito, setIsIncognito] = useState(false);
+  const [useMirror, setUseMirror] = useState(true);
 
   useEffect(() => {
-    // Prevent direct access from browser history, bookmarks, or refresh
-    if (!(window as any).__jarvis_internal) {
+    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
+    const hasAuthorizedAccess = user && (user.hasAdultAccess || user.isAdmin || isOwner);
+
+    // Prevent direct access from browser history, bookmarks, or refresh unless authorized
+    if (!(window as any).__jarvis_internal && !hasAuthorizedAccess) {
       navigate("/", { replace: true });
       return;
     }
 
-    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
     if (!user || (!user.hasAdultAccess && !user.isAdmin && !isOwner)) {
       navigate("/");
     }
@@ -154,9 +157,15 @@ const WatchHub = () => {
   if (!id) return null;
 
   let embedUrl = "";
-  if (source === "pornhub") embedUrl = `https://www.pornhub.com/embed/${id}`;
-  else if (source === "redtube") embedUrl = `https://embed.redtube.com/?id=${id}`;
-  else if (source === "eporner") embedUrl = `https://www.eporner.com/embed/${id}/`;
+  if (source === "pornhub") {
+    embedUrl = useMirror ? `https://www.pornhub.org/embed/${id}` : `https://www.pornhub.com/embed/${id}`;
+  } else if (source === "redtube") {
+    embedUrl = useMirror ? `https://embed.redtubefree.com/?id=${id}` : `https://embed.redtube.com/?id=${id}`;
+  } else if (source === "eporner") {
+    embedUrl = `https://www.eporner.com/embed/${id}/`;
+  } else if (source === "avgle") {
+    embedUrl = `https://avgle.com/embed/${id}`;
+  }
 
   const videoThumb =
     details?.default_thumb || details?.thumbnail || "";
@@ -200,6 +209,22 @@ const WatchHub = () => {
                 <Ghost className={cn("w-4 h-4 mr-2", isIncognito ? "animate-pulse" : "")} />
                 {isIncognito ? "Incognito Active" : "Go Incognito"}
               </Button>
+
+              {(source === "pornhub" || source === "redtube") && (
+                <Button
+                  variant={useMirror ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setUseMirror(!useMirror)}
+                  className={cn(
+                    "rounded-full px-6 h-11 font-bold uppercase tracking-widest text-[10px] transition-all duration-500",
+                    useMirror 
+                      ? "bg-emerald-600/20 text-emerald-400 border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.3)]" 
+                      : "bg-white/5 text-white/50 border-white/10 hover:text-white"
+                  )}
+                >
+                  {useMirror ? "Mirror Active (.ORG)" : "Standard Mode (.COM)"}
+                </Button>
+              )}
             </div>
           </div>
 

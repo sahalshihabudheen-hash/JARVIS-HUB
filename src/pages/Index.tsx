@@ -327,55 +327,6 @@ const Index = () => {
             </div>
           )}
 
-          {/* REGIONAL CINEMA HUB */}
-          {location && (
-            <div className="space-y-4 py-4 px-4 overflow-hidden bg-white/2 bg-gradient-to-b from-white/[0.02] to-transparent rounded-3xl mx-4">
-               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                  <h2 className="text-xl md:text-2xl font-bold text-white">
-                    {regionalContext.title} Cinema
-                  </h2>
-
-                  {location?.country === "IN" && regionalContext.language === "hi" && (
-                    <div className="flex flex-wrap items-center gap-2">
-                       {[
-                         { id: "kerala", label: "Malayalam" },
-                         { id: "tamil", label: "Tamil" },
-                         { id: "telugu", label: "Telugu" },
-                       ].map((r) => (
-                         <button
-                           key={r.id}
-                           onClick={() => {
-                             const focusKey = user?.uid ? `user_regional_focus_${user.uid}` : "user_regional_focus";
-                             localStorage.setItem(focusKey, r.id);
-                             window.location.reload();
-                           }}
-                           className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-bold uppercase transition-all"
-                         >
-                           {r.label}
-                         </button>
-                       ))}
-                    </div>
-                  )}
-               </div>
-
-               <div id="regional-cinema-row">
-                 <MediaRow
-                    title="Current Blockbusters"
-                    items={regionalNow?.results || []}
-                    mediaType="movie"
-                    isLoading={regionalLoading}
-                  />
-                </div>
-                
-                <MediaRow
-                  title="New Releases"
-                  items={regionalUpcoming?.results || []}
-                  mediaType="movie"
-                  isLoading={regionalUpcomingLoading}
-                />
-            </div>
-          )}
-          
           {/* SPECIAL COLLECTIONS SECTION */}
           <div className="pt-4 px-4 md:px-0">
              <MediaRow

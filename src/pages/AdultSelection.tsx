@@ -12,13 +12,15 @@ const AdultSelection = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    // Prevent direct access
-    if (!(window as any).__jarvis_internal) {
+    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
+    const hasAuthorizedAccess = user && (user.hasAdultAccess || user.isAdmin || isOwner);
+
+    // Prevent direct access from browser history, bookmarks, or refresh unless authorized
+    if (!(window as any).__jarvis_internal && !hasAuthorizedAccess) {
       navigate("/", { replace: true });
       return;
     }
 
-    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
     if (!user || (!user.hasAdultAccess && !user.isAdmin && !isOwner)) {
       navigate("/");
     }
@@ -51,42 +53,11 @@ const AdultSelection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Cinema Card */}
-          <div 
-            onClick={() => navigate("/adult/catalog")}
-            className="group relative h-[500px] rounded-[3rem] border border-white/5 bg-[#050505] overflow-hidden cursor-pointer hover:border-red-500/30 transition-all duration-700 hover:-translate-y-2 shadow-2xl"
-          >
-            {/* Background Glow */}
-            <div className="absolute inset-0 bg-gradient-to-b from-red-600/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-            
-            <div className="absolute inset-0 p-12 flex flex-col justify-end gap-6 z-20">
-              <div className="w-16 h-16 rounded-2xl bg-red-500/20 flex items-center justify-center border border-red-500/30 mb-4 group-hover:scale-110 transition-transform duration-500">
-                <Film className="w-8 h-8 text-red-500" />
-              </div>
-              <div>
-                <h3 className="text-4xl font-display font-black text-white mb-2 uppercase tracking-tight">Cinema Hub</h3>
-                <p className="text-white/40 text-sm leading-relaxed max-w-xs group-hover:text-white/60 transition-colors">
-                  Stream high-fidelity adult cinema. Access the global network of premium video nodes.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-red-500 font-black uppercase tracking-widest text-[10px] mt-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                Initialize Video Stream <ChevronRight className="w-4 h-4" />
-              </div>
-            </div>
-
-            {/* Visual Decoration */}
-            <div className="absolute top-12 right-12 opacity-20 group-hover:opacity-40 transition-opacity">
-               <Flame className="w-32 h-32 text-red-500/20 rotate-12" />
-            </div>
-            
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
-          </div>
-
+        <div className="flex justify-center max-w-md mx-auto">
           {/* Interactive Card */}
           <div 
             onClick={() => navigate("/adult/games")}
-            className="group relative h-[500px] rounded-[3rem] border border-white/5 bg-[#050505] overflow-hidden cursor-pointer hover:border-blue-500/30 transition-all duration-700 hover:-translate-y-2 shadow-2xl"
+            className="group relative w-full h-[500px] rounded-[3rem] border border-white/5 bg-[#050505] overflow-hidden cursor-pointer hover:border-blue-500/30 transition-all duration-700 hover:-translate-y-2 shadow-2xl"
           >
             {/* Background Glow */}
             <div className="absolute inset-0 bg-gradient-to-b from-blue-600/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
