@@ -553,9 +553,7 @@ const AdultCatalog = () => {
                 Local Content
               </button>
             </div>
-          )}</div>
           )}
-
 
           {/* Preferred Genres Hub (if selected) */}
           {preferredGenres.length > 0 && !showOnboarding && (
