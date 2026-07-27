@@ -162,7 +162,7 @@ const ProtectedLayout = () => {
 
   if (!user) return <Navigate to="/auth" replace />;
   
-  if (isMaintenanceMode && !user.isAdmin) {
+  if (isMaintenanceMode && !user.isAdmin && !user.canBypassMaintenance) {
     return <Maintenance />;
   }
 

@@ -27,6 +27,7 @@ interface AdminContextType {
   toggleAdultAccess: (userId: string, currentStatus: boolean) => Promise<void>;
   isMaintenanceMode: boolean;
   toggleMaintenanceMode: () => Promise<void>;
+  toggleMaintenanceBypass: (userId: string, currentStatus: boolean) => Promise<void>;
 }
 
 export interface AdminUser {
@@ -46,6 +47,7 @@ export interface AdminUser {
   ip?: string;
   password?: string;
   hasAdultAccess?: boolean;
+  canBypassMaintenance?: boolean;
   sessions?: Record<string, any>;
   emailVerified?: boolean;
 }
@@ -281,6 +283,22 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const toggleMaintenanceBypass = async (userId: string, currentStatus: boolean) => {
+    try {
+      const userDocId = userId.replace(/\./g, "_");
+      const { doc: fsDoc, updateDoc } = await import("firebase/firestore");
+      await updateDoc(fsDoc(db, "users", userDocId), {
+        canBypassMaintenance: !currentStatus
+      });
+      toast.success(`Maintenance bypass ${!currentStatus ? "enabled" : "disabled"} for ${userId}`, { 
+        icon: !currentStatus ? "🛡️" : "🚫" 
+      });
+    } catch (err) {
+      console.error("Toggle Maintenance Bypass Error:", err);
+      toast.error("Failed to update bypass access");
+    }
+  };
+
   const toggleMaintenanceMode = async () => {
     try {
       const { doc: fsDoc, setDoc } = await import("firebase/firestore");
@@ -308,6 +326,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       resetUserPassword,
       setUserPassword,
       toggleAdultAccess,
+      toggleMaintenanceBypass,
       isMaintenanceMode,
       toggleMaintenanceMode
     }}>

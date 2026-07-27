@@ -399,122 +399,161 @@ const AdultCatalog = () => {
     } : null;
   }).filter((s): s is { name: string; id: string; thumb: string } => s !== null).slice(0, 9);
 
-
   return (
-    <div className="min-h-screen bg-[#020202] text-white selection:bg-pink-500/30 selection:text-pink-200 relative overflow-hidden">
-      {/* Animated Mesh Background */}
-      <div className="fixed inset-0 mesh-gradient opacity-30 pointer-events-none" />
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(236,72,153,0.15),transparent_50%)] pointer-events-none" />
-      
+    <div className="min-h-screen bg-[#080808] text-white selection:bg-pink-500/30 selection:text-pink-200 relative overflow-hidden">
+      {/* Ambient Background */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,rgba(236,72,153,0.08),transparent_60%)] pointer-events-none" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(168,85,247,0.05),transparent_50%)] pointer-events-none" />
+
       <Navbar />
 
-      <main className="relative pt-28 pb-16 z-10">
+      <main className="relative pt-24 pb-16 z-10">
         <div className="container px-4 md:px-6">
-          
-          {/* Premium Hero Section */}
-          <div className="relative mb-12 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl group/hero">
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-600/20 via-purple-900/20 to-blue-900/20 group-hover/hero:scale-105 transition-transform duration-1000" />
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
-            
-            <div className="relative p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
-              <div className="flex-1 space-y-6 text-center md:text-left">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[10px] font-bold uppercase tracking-widest">
-                  <Flame className="w-4 h-4" />
-                  Trending Content
+
+          {/* ── HERO SECTION ── */}
+          <div className="mb-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Flame className="w-5 h-5 text-pink-500" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-pink-500/70">Premium Adult Hub</span>
+                  {location && (
+                    <span className="flex items-center gap-1 text-[10px] text-white/30 font-medium">
+                      <MapPin className="w-3 h-3" /> {location}
+                    </span>
+                  )}
                 </div>
-                <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-white">
-                  Adult <span className="text-pink-500">Hub</span>
+                <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white">
+                  Adult <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">Hub</span>
                 </h1>
-                <p className="text-white/50 text-sm md:text-lg max-w-xl leading-relaxed">
-                  The ultimate collection of adult entertainment. High quality, private, and always available.
-                </p>
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-                   <div className="flex bg-white/5 backdrop-blur-xl p-1.5 rounded-2xl border border-white/10 shadow-2xl">
-                    {[
-                      { id: "pornhub", label: "PH", color: "bg-orange-500" },
-                      { id: "redtube", label: "RT", color: "bg-red-600" },
-                      { id: "eporner", label: "EP", color: "bg-blue-600" },
-                      { id: "avgle", label: "AVG", color: "bg-red-600" }
-                    ].map((s) => (
-                      <button
-                        key={s.id}
-                        onClick={() => { setSource(s.id as any); setPage(1); }}
-                        className={cn(
-                          "px-6 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500",
-                          source === s.id ? `${s.color} text-white shadow-[0_0_20px_rgba(0,0,0,0.5)] scale-105` : "text-white/30 hover:text-white/60"
-                        )}
-                      >
-                        {s.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
 
-              <div className="w-full md:w-80 space-y-4 animate-in fade-in zoom-in-95 duration-1000">
-                <form onSubmit={handleSearch} className="relative group/search">
-                  <div className="absolute inset-0 bg-pink-500/20 blur-xl opacity-0 group-hover/search:opacity-100 transition-opacity duration-500 rounded-full" />
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within/search:text-pink-400 transition-colors z-10" />
-                  <Input
-                    type="text"
-                    placeholder="Search videos..."
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    className="relative pl-12 pr-4 h-14 bg-white/5 border-white/10 rounded-full focus:border-pink-500 focus:ring-0 text-white placeholder:text-white/20 transition-all font-bold"
-                  />
-                </form>
-                
-                <div className="grid grid-cols-2 gap-3">
-                   <Button
-                    variant="outline"
-                    onClick={() => setIsBlurred(!isBlurred)}
-                    className={cn(
-                      "rounded-2xl border-white/5 h-12 font-bold uppercase tracking-widest text-[10px] transition-all duration-500",
-                      isBlurred ? "bg-white/5 text-white/40" : "bg-blue-600/20 text-blue-400 border-blue-500/30 shadow-[0_0_20px_rgba(37,99,235,0.2)]"
-                    )}
-                  >
-                    {isBlurred ? <><EyeOff className="w-4 h-4 mr-2" /> Blurred</> : <><Eye className="w-4 h-4 mr-2" /> Visible</>}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setPrivateMode(!privateMode)}
-                    className={cn(
-                      "rounded-2xl border-white/5 h-12 font-bold uppercase tracking-widest text-[10px] transition-all duration-500",
-                      privateMode ? "bg-purple-600/20 text-purple-400 border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.2)]" : "bg-white/5 text-white/40"
-                    )}
-                  >
-                    <ShieldAlert className="w-4 h-4 mr-2" /> {privateMode ? "Private" : "Public"}
-                  </Button>
+              {/* Right — controls */}
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* Source Switcher */}
+                <div className="flex bg-white/5 backdrop-blur p-1 rounded-xl border border-white/10">
+                  {[
+                    { id: "pornhub", label: "PornHub", short: "PH", color: "bg-orange-500" },
+                    { id: "redtube",  label: "RedTube",  short: "RT", color: "bg-red-600" },
+                    { id: "eporner", label: "ePorner",  short: "EP", color: "bg-blue-600" },
+                  ].map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => { setSource(s.id as any); setPage(1); }}
+                      className={cn(
+                        "px-3 md:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300",
+                        source === s.id ? `${s.color} text-white shadow-lg` : "text-white/40 hover:text-white/70"
+                      )}
+                    >
+                      <span className="hidden md:inline">{s.label}</span>
+                      <span className="md:hidden">{s.short}</span>
+                    </button>
+                  ))}
                 </div>
+
+                {/* Blur & Private toggles */}
+                <button
+                  onClick={() => setIsBlurred(!isBlurred)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-2 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all",
+                    isBlurred ? "bg-blue-500/20 border-blue-500/40 text-blue-400" : "bg-white/5 border-white/10 text-white/40 hover:text-white"
+                  )}
+                >
+                  {isBlurred ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  <span className="hidden sm:inline">{isBlurred ? "Blurred" : "Visible"}</span>
+                </button>
+                <button
+                  onClick={() => setPrivateMode(!privateMode)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-2 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all",
+                    privateMode ? "bg-purple-500/20 border-purple-500/40 text-purple-400" : "bg-white/5 border-white/10 text-white/40 hover:text-white"
+                  )}
+                >
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{privateMode ? "Private" : "Public"}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="relative max-w-2xl">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 z-10" />
+              <Input
+                type="text"
+                placeholder="Search performers, categories, studios..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="pl-11 pr-28 h-12 bg-white/5 border-white/10 rounded-2xl focus:border-pink-500 focus:ring-0 text-white placeholder:text-white/20 text-sm"
+              />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={() => { setSearchInput(""); setQuery("all"); setPage(1); }}
+                  className="absolute right-20 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              <Button
+                type="submit"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 px-4 rounded-xl bg-pink-600 hover:bg-pink-500 text-xs font-bold"
+              >
+                Search
+              </Button>
+            </form>
+          </div>
+
+          {/* ── STICKY QUICK-CATEGORY BAR ── */}
+          <div className="sticky top-20 z-30 -mx-4 px-4 md:mx-0 md:px-0 mb-8">
+            <div className="bg-[#080808]/90 backdrop-blur-xl border-b border-white/5 py-3">
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.value}
+                    onClick={() => { setQuery(cat.value); setSearchInput(""); setPage(1); scrollToResults(); }}
+                    className={cn(
+                      "flex-shrink-0 px-4 h-9 rounded-xl text-[11px] font-bold border transition-all duration-200",
+                      query === cat.value
+                        ? "bg-pink-600 border-pink-500 text-white shadow-[0_0_15px_rgba(236,72,153,0.3)]"
+                        : "bg-white/5 border-white/5 text-white/50 hover:bg-white/10 hover:text-white"
+                    )}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setShowGenreHub(true)}
+                  className="flex-shrink-0 px-4 h-9 rounded-xl text-[11px] font-bold border border-white/10 bg-white/5 text-white/50 hover:text-white flex items-center gap-1.5 transition-all"
+                >
+                  <LayoutGrid className="w-3 h-3" /> More
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Location Banner */}
+          {/* Location Banner — compact */}
           {location && (
-            <div className="mb-12 p-1 rounded-[2.5rem] bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 border border-white/5 shadow-2xl relative group overflow-hidden">
-               <div className="absolute inset-0 mesh-gradient opacity-10" />
-               <div className="relative p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 rounded-[2.2rem] bg-[#050505]/80 backdrop-blur-3xl overflow-hidden">
-                <div className="relative z-10 flex flex-col items-center md:items-start text-center md:text-left">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">Regional Content</span>
-                  </div>
-                  <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Popular in {location}</h2>
-                  <p className="text-white/40 text-sm mt-2 max-w-lg">Content tailored specifically to your region for better relevance.</p>
+            <div className="mb-10 flex items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
+                <div>
+                  <p className="text-sm font-bold text-white">Showing content for <span className="text-blue-400">{location}</span></p>
+                  <p className="text-[11px] text-white/30 mt-0.5">Tap a region-based category to explore local content</p>
                 </div>
-                <Button 
-                  onClick={() => {
-                    const searchTerm = location.toLowerCase().includes("kerala") ? "Malayalam" : location;
-                    setQuery(`${searchTerm} porn`);
-                    setPage(1);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="relative z-10 bg-white text-black hover:bg-white/90 rounded-2xl w-full md:w-auto px-12 h-16 font-black uppercase tracking-widest text-xs shadow-2xl hover:scale-105 transition-transform"
-                >
-                  Explore Kerala Origin
-                </Button>
               </div>
+              <button
+                onClick={() => {
+                  const searchTerm = location.toLowerCase().includes("kerala") ? "Malayalam" : location.split(',')[0];
+                  setQuery(searchTerm);
+                  setPage(1);
+                  scrollToResults();
+                }}
+                className="shrink-0 px-4 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 text-[11px] font-bold hover:bg-blue-600/30 transition-all"
+              >
+                Local Content
+              </button>
             </div>
+          )}</div>
           )}
 
 

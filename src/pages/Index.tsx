@@ -212,6 +212,35 @@ const Index = () => {
     queryFn: () => getUpcomingMovies(1), // No region = Worldwide
   });
 
+  // Country-specific popular movies
+  const { data: countryMovies, isLoading: countryLoading } = useQuery({
+    queryKey: ["countryMovies", location?.country],
+    queryFn: () => discoverMovies({
+      with_origin_country: location!.country,
+      sort_by: "popularity.desc",
+    }),
+    enabled: !!location?.country,
+  });
+
+  // State/Region-specific movies (language-based for India, country-filtered otherwise)
+  const { data: stateMovies, isLoading: stateLoading } = useQuery({
+    queryKey: ["stateMovies", location?.country, location?.region_code],
+    queryFn: () => {
+      const rc = location!.region_code.toUpperCase();
+      const langMap: Record<string, string> = {
+        KL: "ml", TN: "ta", AP: "te", TG: "te",
+        KA: "kn", MH: "mr", GJ: "gu", PB: "pa",
+        WB: "bn", OR: "or", AS: "as",
+      };
+      const lang = langMap[rc];
+      if (lang) {
+        return discoverMovies({ with_original_language: lang, sort_by: "popularity.desc" });
+      }
+      return discoverMovies({ with_origin_country: location!.country, sort_by: "vote_average.desc", "vote_count.gte": "100" });
+    },
+    enabled: !!location?.region_code,
+  });
+
   // Genre specific queries for personalized hub
   const { data: actionMovies } = useQuery({
     queryKey: ["genreAction"],
@@ -335,6 +364,26 @@ const Index = () => {
                 mediaType="movie"
                 isLoading={trendingLoading}
               />
+
+             {/* Country-based row */}
+             {location?.country && (
+               <MediaRow
+                 title={`🌍 Popular in ${location.country_name}`}
+                 items={countryMovies?.results || []}
+                 mediaType="movie"
+                 isLoading={countryLoading}
+               />
+             )}
+
+             {/* State/Region-based row */}
+             {location?.region && (
+               <MediaRow
+                 title={`📍 Trending in ${location.region}`}
+                 items={stateMovies?.results || []}
+                 mediaType="movie"
+                 isLoading={stateLoading}
+               />
+             )}
 
              <MediaRow
                 title="Most Anticipated"

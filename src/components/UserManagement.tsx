@@ -12,7 +12,8 @@ import {
   RefreshCw,
   MoreVertical,
   Check,
-  AlertCircle
+  AlertCircle,
+  Wrench
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const UserManagement = () => {
-  const { users, refreshData, toggleAdmin, deleteUser, setUserPassword, toggleAdultAccess } = useAdmin();
+  const { users, refreshData, toggleAdmin, deleteUser, setUserPassword, toggleAdultAccess, toggleMaintenanceBypass } = useAdmin();
   const { user: currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [editingPassword, setEditingPassword] = useState<{ email: string, value: string } | null>(null);
@@ -198,6 +199,11 @@ const UserManagement = () => {
                             Unverified
                           </Badge>
                         )}
+                        {u.canBypassMaintenance && (
+                          <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter">
+                            Bypass Maint
+                          </Badge>
+                        )}
                       </div>
                     </td>
 
@@ -218,15 +224,26 @@ const UserManagement = () => {
                               </Button>
                             )}
                             {(currentUser?.email === "admin@gmail.com" || currentUser?.email === "superadmin@gmail.com") && (
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => toggleAdmin(u.email, !!u.isAdmin)}
-                                className={cn("w-9 h-9 rounded-xl border", u.isAdmin ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-white/5 text-white/40 border-white/10")}
-                                title="Toggle Admin Access (Super Admin Only)"
-                              >
-                                <Shield className="w-4 h-4" />
-                              </Button>
+                              <>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => toggleAdmin(u.email, !!u.isAdmin)}
+                                  className={cn("w-9 h-9 rounded-xl border", u.isAdmin ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-white/5 text-white/40 border-white/10")}
+                                  title="Toggle Admin Access (Super Admin Only)"
+                                >
+                                  <Shield className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => toggleMaintenanceBypass(u.email, !!u.canBypassMaintenance)}
+                                  className={cn("w-9 h-9 rounded-xl border", u.canBypassMaintenance ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" : "bg-white/5 text-white/40 border-white/10")}
+                                  title="Toggle Maintenance Bypass"
+                                >
+                                  <Wrench className="w-4 h-4" />
+                                </Button>
+                              </>
                             )}
                           </>
                         )}

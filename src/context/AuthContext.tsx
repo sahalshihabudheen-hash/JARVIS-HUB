@@ -14,6 +14,7 @@ interface User {
   ip?: string;
   password?: string;
   hasAdultAccess?: boolean;
+  canBypassMaintenance?: boolean;
   emailVerified?: boolean;
 }
 
