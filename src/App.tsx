@@ -15,14 +15,11 @@ import Watchlist from "./pages/Watchlist";
 import Auth from "./pages/Auth";
 import Settings from "./pages/Settings";
 import History from "./pages/History";
-import AdultSelection from "./pages/AdultSelection";
 import AdultCatalog from "./pages/AdultCatalog";
 import EasternPremium from "./pages/EasternPremium";
 import WatchHub from "./pages/WatchHub";
 import News from "./pages/News";
 import Downloads from "./pages/Downloads";
-import AdultGames from "./pages/AdultGames";
-import GameEngine from "./pages/GameEngine";
 import NotFound from "./pages/NotFound";
 import RemoteControl from "./pages/RemoteControl";
 import { AuthProvider } from "./context/AuthContext";
@@ -211,12 +208,9 @@ const App = () => (
                   <Route path="/watch/:type/:id/:season/:episode" element={<WatchPage />} />
                    <Route path="/settings" element={<Settings />} />
                   <Route path="/history" element={<History />} />
-                  <Route path="/adult" element={<AdultSelection />} />
+                  <Route path="/adult" element={<Navigate to="/adult/catalog" replace />} />
                   <Route path="/adult/catalog" element={<AdultCatalog />} />
                   <Route path="/adult/eastern" element={<EasternPremium />} />
-                  <Route path="/adult/games" element={<AdultGames />} />
-                  <Route path="/adult/games/:id" element={<AdultGames />} />
-                  <Route path="/play/:gameId" element={<GameEngine />} />
                   <Route path="/news" element={<News />} />
                   <Route path="/downloads" element={<Downloads />} />
                   <Route path="/hub/watch/:id" element={<WatchHub />} />

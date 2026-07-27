@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { searchVideos } from "@/lib/hub";
-import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2, Film, User, ChevronRight, Gamepad2 } from "lucide-react";
+import { Search, Flame, Eye, EyeOff, LayoutGrid, X, Star, ShieldAlert, Zap, Filter, Globe, History, Play, Trash2, Film, User, ChevronRight } from "lucide-react";
 import { getAdultHistory, clearAdultHistory, AdultHistoryItem, syncAdultHistoryFromCloud } from "@/lib/adult-history";
 import { getAdultWatchlist, toggleAdultWatchlist, syncAdultWatchlistFromCloud } from "@/lib/adult-watchlist";
 
@@ -624,33 +624,7 @@ const AdultCatalog = () => {
             )}
           </div>
 
-      {/* Interactive Games Hub Banner */}
-      <div className="mb-16 container px-4 md:px-6">
-        <div 
-          onClick={() => navigate("/adult/games")}
-          className="group relative cursor-pointer p-1 rounded-[2.5rem] bg-gradient-to-r from-blue-600/20 via-cyan-400/20 to-blue-600/20 border border-white/5 shadow-2xl overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-10 transition-opacity" />
-          <div className="relative p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 rounded-[2.2rem] bg-[#050505]/80 backdrop-blur-3xl overflow-hidden">
-            <div className="flex flex-col items-center md:items-start text-center md:text-left gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-500/20 rounded-2xl">
-                  <Gamepad2 className="w-8 h-8 text-blue-400" />
-                </div>
-                <h3 className="text-3xl md:text-4xl font-display font-black text-white uppercase italic tracking-tighter">Games Hub</h3>
-              </div>
-              <p className="text-white/40 text-sm max-w-lg leading-relaxed">
-                Interactive simulation engine enabled. Access the full library of high-fidelity adult HTML5 games directly within the JARVIS terminal.
-              </p>
-            </div>
-            <Button 
-              className="bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-10 h-16 font-black uppercase tracking-widest text-xs shadow-2xl group-hover:scale-105 transition-all"
-            >
-              Initialize Hub <ChevronRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-        </div>
-      </div>
+
 
           {/* Regional Actresses Section */}
           {location && (
