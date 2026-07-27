@@ -180,18 +180,18 @@ const WatchHub = () => {
 
       <main className="relative pt-28 pb-16 z-10">
         <div className="container max-w-7xl px-4 md:px-6">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <Button
               variant="ghost"
-              className="hover:bg-white/5 -ml-4 rounded-xl px-4 h-11 text-white/50 hover:text-white transition-all"
+              className="hover:bg-white/5 -ml-2 md:-ml-4 rounded-xl px-4 h-11 text-white/50 hover:text-white transition-all w-fit"
               onClick={() => navigate(-1)}
             >
               <ChevronLeft className="w-5 h-5 mr-2" />
               Return to Catalog
             </Button>
             
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+              <div className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Stream Secured</span>
               </div>
@@ -398,7 +398,7 @@ const WatchHub = () => {
                         name={name}
                         thumb={videoThumb}
                         onSearch={(n) =>
-                          navigate(`/adult?search=${encodeURIComponent(n)}`)
+                          navigate(`/adult/catalog?search=${encodeURIComponent(n)}`)
                         }
                       />
                     ))}
