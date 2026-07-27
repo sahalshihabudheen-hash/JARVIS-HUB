@@ -966,6 +966,7 @@ const AdultCatalog = () => {
             </div>
             <div className="flex items-center gap-1.5 text-pink-500/50">
                <span className="text-[8px] font-bold uppercase tracking-widest">Premium</span>
+            </div>
           </div>
 
           {/* ISP Warning Tip */}
@@ -976,8 +977,8 @@ const AdultCatalog = () => {
              <div className="space-y-1 text-center sm:text-left">
                 <h4 className="text-xs font-black text-pink-400 uppercase tracking-widest">Streaming Notice (Bypass Blocked Videos)</h4>
                 <p className="text-[11px] text-white/50 leading-relaxed font-medium">
-                  If videos fail to load or show connection errors, adult sites are likely blocked by your ISP. 
-                  Please **use a VPN** or try toggling **Mirror Mode** inside the video player page.
+                  If videos fail to load or show connection errors, adult sites are likely blocked by your ISP.{" "}
+                  Please <strong>use a VPN</strong> or try toggling <strong>Mirror Mode</strong> inside the video player page.
                 </p>
              </div>
           </div>
