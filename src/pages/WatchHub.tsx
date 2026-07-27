@@ -87,7 +87,7 @@ const WatchHub = () => {
     const hasAuthorizedAccess = user && (user.hasAdultAccess || user.isAdmin || isOwner);
 
     // Prevent direct access from browser history, bookmarks, or refresh unless authorized
-    if (!(window as any).__jarvis_internal && !hasAuthorizedAccess) {
+    if (!(window as any).__jarvis_internal) {
       navigate("/", { replace: true });
       return;
     }
