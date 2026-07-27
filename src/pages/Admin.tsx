@@ -9,7 +9,8 @@ import {
   Link2,
   Wrench, 
   Settings,
-  LayoutList
+  LayoutList,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,9 +26,10 @@ import AdminPlaylistManager from "@/components/AdminPlaylistManager";
 import { cn } from "@/lib/utils";
 
 const Admin = () => {
-  const { branding, updateBranding, activityLog, isMaintenanceMode, toggleMaintenanceMode } = useAdmin();
+  const { branding, updateBranding, activityLog, isMaintenanceMode, toggleMaintenanceMode, users, toggleMaintenanceBypass } = useAdmin();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("users");
+  const [maintSearch, setMaintSearch] = useState("");
   
   // App Branding State
   const [appName, setAppName] = useState(branding.appName);
@@ -396,6 +398,69 @@ const Admin = () => {
                   <p className="text-[11px] text-blue-400/80 font-medium leading-relaxed">
                     Maintenance mode is synced in real-time. Once toggled, all active sessions will be redirected instantly.
                   </p>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-white/5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-white">Allowed Users</h3>
+                      <p className="text-sm text-white/40">Select users who can bypass maintenance mode.</p>
+                    </div>
+                    <div className="relative w-full sm:w-64">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                      <Input
+                        placeholder="Search users..."
+                        value={maintSearch}
+                        onChange={(e) => setMaintSearch(e.target.value)}
+                        className="bg-white/[0.03] border-none pl-10 rounded-xl h-10 text-sm focus-visible:ring-blue-500/50 w-full"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    {users
+                      .filter(u => 
+                        !maintSearch || 
+                        u.email?.toLowerCase().includes(maintSearch.toLowerCase()) || 
+                        u.name?.toLowerCase().includes(maintSearch.toLowerCase())
+                      )
+                      .map(u => (
+                        <div key={u.id || u.email} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-500 font-bold text-sm shrink-0">
+                              {(u.name?.[0] || u.email?.[0] || "?").toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-bold text-white text-sm truncate">{u.name || u.email?.split('@')[0]}</p>
+                              <p className="text-[10px] text-white/40 truncate">{u.email}</p>
+                            </div>
+                          </div>
+                          
+                          <button
+                            onClick={() => toggleMaintenanceBypass(u.email, !!u.canBypassMaintenance)}
+                            className={cn(
+                              "relative w-11 h-6 rounded-full transition-all duration-300 shrink-0",
+                              u.canBypassMaintenance ? "bg-blue-500" : "bg-white/10"
+                            )}
+                          >
+                            <div className={cn(
+                              "absolute top-1 bottom-1 w-4 bg-white rounded-full transition-all duration-300 shadow-sm",
+                              u.canBypassMaintenance ? "left-6" : "left-1"
+                            )} />
+                          </button>
+                        </div>
+                    ))}
+                    
+                    {users.filter(u => 
+                      !maintSearch || 
+                      u.email?.toLowerCase().includes(maintSearch.toLowerCase()) || 
+                      u.name?.toLowerCase().includes(maintSearch.toLowerCase())
+                    ).length === 0 && (
+                      <div className="text-center py-8 text-white/30 text-sm">
+                        No users found
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
