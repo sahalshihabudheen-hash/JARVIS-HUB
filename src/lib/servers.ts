@@ -10,13 +10,13 @@ export interface VideoServer {
 
 export const videoServers: VideoServer[] = [
   // ── Cleanest / Less-Ads (Recommended first) ─────────────────────────────────
-  {
-    id: "rivestream",
-    name: "🧹 RiveStream (Cleanest)",
-    getMovieUrl: (tmdbId) => `https://rivestream.live/embed?type=movie&id=${tmdbId}`,
-    getTVUrl: (tmdbId, season, episode) => `https://rivestream.live/embed?type=tv&id=${tmdbId}&season=${season}&episode=${episode}`,
-    supportsSandbox: false,
-  },
+//   {
+//     id: "rivestream",
+//     name: "🧹 RiveStream (Cleanest)",
+//     getMovieUrl: (tmdbId) => `https://rivestream.live/embed?type=movie&id=${tmdbId}`,
+//     getTVUrl: (tmdbId, season, episode) => `https://rivestream.live/embed?type=tv&id=${tmdbId}&season=${season}&episode=${episode}`,
+//     supportsSandbox: false,
+//   },
   {
     id: "vidsrcrip",
     name: "🧹 VidSrc RIP (Clean)",
@@ -58,6 +58,20 @@ export const videoServers: VideoServer[] = [
     getMovieUrl: (_, imdbId) => imdbId ? `https://frembed.pro/api/film.php?id=${imdbId}` : ``,
     getTVUrl: (_, season, episode, imdbId) => imdbId ? `https://frembed.pro/api/serie.php?id=${imdbId}&sa=${season}&epi=${episode}` : ``,
     supportsSandbox: false,
+  },
+  {
+    id: "vidsrcnl",
+    name: "VidSrc NL",
+    getMovieUrl: (tmdbId) => `https://vidsrc.nl/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.nl/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: true,
+  },
+  {
+    id: "vidsrcpm",
+    name: "VidSrc PM",
+    getMovieUrl: (tmdbId) => `https://vidsrc.pm/embed/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://vidsrc.pm/embed/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: true,
   },
   // ── Standard Servers ────────────────────────────────────────────────────────
   {
@@ -187,7 +201,11 @@ export const videoServers: VideoServer[] = [
 ];
 
 export const getDefaultServer = (): string => {
-  return localStorage.getItem("preferredServer") || "rivestream";
+  const preferred = localStorage.getItem("preferredServer");
+  if (preferred && preferred !== "rivestream") {
+    return preferred;
+  }
+  return "vidsrcrip";
 };
 
 export const setDefaultServer = (serverId: string): void => {
