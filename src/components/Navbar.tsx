@@ -55,10 +55,8 @@ const Navbar = () => {
     { to: "/anime", label: "Anime", icon: Sparkles },
     { to: "/news", label: "News", icon: Newspaper },
     { to: "/downloads", label: "Downloads", icon: Download },
-    ...(user ? [
-      { to: "/watchlist", label: "Watchlist", icon: Heart },
-      { to: "/history", label: "History", icon: History },
-    ] : []),
+    { to: "/watchlist", label: "Watchlist", icon: Heart },
+    { to: "/history", label: "History", icon: History },
     ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com" ? [{ to: "/adult", label: "Adult", icon: Flame }] : []),
     ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com" ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
   ];
