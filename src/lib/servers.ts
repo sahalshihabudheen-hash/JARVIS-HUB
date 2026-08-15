@@ -9,6 +9,14 @@ export interface VideoServer {
 }
 
 export const videoServers: VideoServer[] = [
+  // ── Download Nodes ──────────────────────────────────────────────────────────
+  {
+    id: "downloadnode",
+    name: "📥 Download Node (Direct)",
+    getMovieUrl: (tmdbId) => `https://dl.vidsrc.vip/movie/${tmdbId}`,
+    getTVUrl: (tmdbId, season, episode) => `https://dl.vidsrc.vip/tv/${tmdbId}/${season}/${episode}`,
+    supportsSandbox: false,
+  },
   // ── Cleanest / Less-Ads (Recommended first) ─────────────────────────────────
 //   {
 //     id: "rivestream",
