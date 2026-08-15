@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { setupProgressListener } from "@/lib/vidlink";
-import { ShieldAlert, Play, Smartphone, Zap, QrCode } from "lucide-react";
+import { ShieldAlert, Play, Smartphone, Zap, QrCode, Download } from "lucide-react";
 import { videoServers, getDefaultServer, setDefaultServer } from "@/lib/servers";
 import {
   Dialog,
@@ -317,6 +317,16 @@ const VideoPlayer = ({ type, tmdbId, imdbId, season, episode, lang, onLangChange
                   <div className="w-2 h-2 rounded-full bg-blue-500 group-hover:animate-ping" />
                   LAUNCH EXTERNAL NODE
                 </Button>
+                {currentServer === "111movies" && (
+                  <Button 
+                    variant="outline"
+                    className="bg-green-500/10 border-green-500/30 hover:bg-green-500/20 text-green-400 font-bold h-11 px-6 rounded-xl flex items-center gap-2 group transition-all"
+                    onClick={() => window.open(embedUrl, '_blank')}
+                  >
+                    <Download className="w-4 h-4" />
+                    DOWNLOAD
+                  </Button>
+                )}
                 <Button 
                   variant="outline"
                   className="bg-white/5 border-white/10 hover:bg-white/20 text-white font-bold h-11 px-6 rounded-xl flex items-center gap-2 transition-all"
