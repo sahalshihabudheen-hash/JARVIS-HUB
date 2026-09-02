@@ -180,33 +180,33 @@ const WatchHub = () => {
 
       <main className="relative pt-28 pb-16 z-10">
         <div className="container max-w-7xl px-4 md:px-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6">
             <Button
               variant="ghost"
-              className="hover:bg-white/5 -ml-2 md:-ml-4 rounded-xl px-4 h-11 text-white/50 hover:text-white transition-all w-fit"
+              className="hover:bg-white/5 -ml-2 md:-ml-4 rounded-xl px-3 h-10 text-white/50 hover:text-white transition-all w-fit text-xs"
               onClick={() => navigate(-1)}
             >
-              <ChevronLeft className="w-5 h-5 mr-2" />
+              <ChevronLeft className="w-4 h-4 mr-1.5" />
               Return to Catalog
             </Button>
             
-            <div className="flex flex-wrap items-center gap-2 md:gap-3">
-              <div className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20">
                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Stream Secured</span>
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-blue-400">Stream Secured</span>
               </div>
               <Button
                 variant={isIncognito ? "default" : "outline"}
                 size="sm"
                 onClick={() => setIsIncognito(!isIncognito)}
                 className={cn(
-                  "rounded-full px-6 h-11 font-bold uppercase tracking-widest text-[10px] transition-all duration-500",
+                  "rounded-full px-4 h-9 sm:h-10 font-bold uppercase tracking-widest text-[9px] sm:text-[10px] transition-all duration-500",
                   isIncognito 
                     ? "bg-purple-600/20 text-purple-400 border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.3)]" 
                     : "bg-white/5 text-white/50 border-white/10 hover:text-white"
                 )}
               >
-                <Ghost className={cn("w-4 h-4 mr-2", isIncognito ? "animate-pulse" : "")} />
+                <Ghost className={cn("w-3.5 h-3.5 mr-1.5", isIncognito ? "animate-pulse" : "")} />
                 {isIncognito ? "Incognito Active" : "Go Incognito"}
               </Button>
 
@@ -216,7 +216,7 @@ const WatchHub = () => {
                   size="sm"
                   onClick={() => setUseMirror(!useMirror)}
                   className={cn(
-                    "rounded-full px-6 h-11 font-bold uppercase tracking-widest text-[10px] transition-all duration-500",
+                    "rounded-full px-4 h-9 sm:h-10 font-bold uppercase tracking-widest text-[9px] sm:text-[10px] transition-all duration-500",
                     useMirror 
                       ? "bg-emerald-600/20 text-emerald-400 border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.3)]" 
                       : "bg-white/5 text-white/50 border-white/10 hover:text-white"
@@ -228,13 +228,13 @@ const WatchHub = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-12">
+          <div className="flex flex-col gap-8 md:gap-12">
             {/* ── Cinematic Player Container ── */}
             <div className="relative group/player">
               {/* Dynamic Glow Effect */}
-              <div className="absolute inset-0 bg-blue-600/20 blur-[100px] rounded-full opacity-50 group-hover/player:opacity-70 transition-opacity duration-1000" />
+              <div className="absolute inset-0 bg-blue-600/20 blur-[60px] md:blur-[100px] rounded-full opacity-40 group-hover/player:opacity-70 transition-opacity duration-1000" />
               
-              <div className="relative aspect-video bg-black rounded-[2.5rem] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-white/10 group-hover/player:border-blue-500/30 transition-all duration-700">
+              <div className="relative aspect-video bg-black rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-white/10 group-hover/player:border-blue-500/30 transition-all duration-700">
                 <iframe
                   src={embedUrl}
                   className="absolute inset-0 w-full h-full border-0"
@@ -247,22 +247,22 @@ const WatchHub = () => {
             </div>
 
             {/* ── Action Bar & Tip ── */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 bg-white/5 backdrop-blur-2xl border border-white/10 p-6 rounded-3xl flex items-center gap-6 shadow-xl relative overflow-hidden group">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+              <div className="md:col-span-2 bg-white/5 backdrop-blur-2xl border border-white/10 p-4 sm:p-6 rounded-2xl md:rounded-3xl flex items-center gap-4 sm:gap-6 shadow-xl relative overflow-hidden group">
                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                 <div className="p-4 bg-blue-600/20 rounded-2xl shrink-0 shadow-inner">
-                    <ExternalLink className="w-6 h-6 text-blue-400" />
+                 <div className="p-3 sm:p-4 bg-blue-600/20 rounded-xl sm:rounded-2xl shrink-0 shadow-inner">
+                    <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
                  </div>
                  <div className="space-y-1 relative z-10">
-                    <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Discovery Protocol</h3>
-                    <p className="text-xs text-white/40 leading-relaxed font-medium">
-                      Thumbnails <span className="text-blue-400">inside the player</span> are external nodes. To remain within the secure hub, use the <span className="text-blue-400">Related Catalog</span> below.
+                    <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-[0.2em]">Discovery Protocol</h3>
+                    <p className="text-[11px] sm:text-xs text-white/40 leading-relaxed font-medium">
+                      Thumbnails <span className="text-blue-400">inside player</span> are external nodes. Stay within secure hub using the <span className="text-blue-400">Related Catalog</span> below.
                     </p>
                  </div>
               </div>
 
               <div className="flex flex-col gap-3">
-                 <Button className="w-full h-full rounded-3xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-[0.2em] text-xs shadow-[0_10px_30px_rgba(37,99,235,0.3)] transition-all hover:scale-[1.02] active:scale-95">
+                 <Button className="w-full h-12 md:h-full rounded-2xl md:rounded-3xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-[0.2em] text-xs shadow-[0_10px_30px_rgba(37,99,235,0.3)] transition-all active:scale-95">
                     Download Node
                  </Button>
               </div>

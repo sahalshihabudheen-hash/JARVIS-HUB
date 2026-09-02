@@ -100,6 +100,15 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Outfit', 'Inter', sans-serif;
     letter-spacing: -0.01em;
+    /* Extra bottom padding on mobile so content clears the fixed bottom nav */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* On mobile (< lg), add bottom padding to avoid bottom nav overlap */
+  @media (max-width: 1023px) {
+    body {
+      padding-bottom: 5rem; /* ~80px clears the bottom nav bar */
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {

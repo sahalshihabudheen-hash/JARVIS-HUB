@@ -514,21 +514,21 @@ const AdultGames = () => {
         ) : (
           /* Render Catalog */
           <div className="animate-in fade-in duration-700">
-            <div className="flex flex-col items-center text-center mb-16">
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
-                <Gamepad2 className="w-4 h-4 text-blue-400" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">Interactive Portal</span>
+            <div className="flex flex-col items-center text-center mb-8 sm:mb-16">
+              <div className="inline-flex items-center gap-2 sm:gap-3 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4 sm:mb-6">
+                <Gamepad2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.25em] sm:tracking-[0.3em] text-blue-400">Interactive Portal</span>
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter italic mb-4">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-display font-black tracking-tighter italic mb-2 sm:mb-4">
                 ADULT <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">GAMES</span>
               </h1>
-              <p className="max-w-xl text-white/40 text-sm md:text-base font-medium">
+              <p className="max-w-xl text-white/40 text-xs sm:text-sm md:text-base font-medium">
                 Play premium HTML5 adult games directly in your browser. No downloads required.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">
               {ADULT_GAMES.map(game => (
                 <div key={game.id} className="group relative rounded-[2rem] bg-white/5 border border-white/10 overflow-hidden hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2">
                   <div className="aspect-[4/3] relative overflow-hidden">

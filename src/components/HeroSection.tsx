@@ -137,27 +137,27 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
           </div>
 
           {/* Title */}
-          <h1 className="text-6xl md:text-8xl font-display font-bold mb-4 leading-none tracking-tight text-white">
+          <h1 className="text-3xl sm:text-5xl md:text-8xl font-display font-bold mb-3 sm:mb-4 leading-tight sm:leading-none tracking-tight text-white line-clamp-2">
             {title}
           </h1>
 
           {/* Overview */}
-          <p className="text-white/70 text-base md:text-lg leading-relaxed mb-10 line-clamp-2 max-w-xl">
+          <p className="text-white/70 text-xs sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-10 line-clamp-2 max-w-xl">
             {current.overview}
           </p>
 
           {/* Buttons */}
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <Link to={watchPath}>
               <Button 
                 id="hero-watch-btn"
                 size="lg" 
-                className="h-12 px-8 rounded-full bg-white text-black hover:bg-white/90 font-bold text-sm transition-all active:scale-95"
+                className="h-10 sm:h-12 px-5 sm:px-8 rounded-full bg-white text-black hover:bg-white/90 font-bold text-xs sm:text-sm transition-all active:scale-95"
                 onClick={() => {
                   if (isActive && step === 5) nextStep();
                 }}
               >
-                <Play className="w-4 h-4 mr-2 fill-current" />
+                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-2 fill-current" />
                 Watch Now
               </Button>
             </Link>
@@ -166,7 +166,7 @@ const HeroSection = ({ items, isLoading }: HeroSectionProps) => {
                 id="hero-more-info-btn"
                 size="lg" 
                 variant="outline" 
-                className="h-12 px-8 rounded-full border-white/20 bg-white/10 backdrop-blur-xl hover:bg-white/20 transition-all font-bold text-sm text-white"
+                className="h-10 sm:h-12 px-5 sm:px-8 rounded-full border-white/20 bg-white/10 backdrop-blur-xl hover:bg-white/20 transition-all font-bold text-xs sm:text-sm text-white"
               >
                 More Info
               </Button>
