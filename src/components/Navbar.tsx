@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, X, Film, Tv, Sparkles, Heart, User, Shield, History, Flame, Newspaper, LogOut, Settings, Download } from "lucide-react";
+import { Search, X, Film, Tv, Sparkles, Heart, User, Shield, History, Flame, Newspaper, LogOut, Settings, Download, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -21,6 +21,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -35,6 +36,9 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setIsMoreMenuOpen(false);
+  }, [location.pathname]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +77,20 @@ const Navbar = () => {
     { to: "/watchlist", label: "Saved",  Icon: Heart },
   ];
 
+  // All extra services & features accessible via the "More" button
+  const moreDrawerLinks = [
+    { to: "/anime", label: "Anime", desc: "Latest series & movies", Icon: Sparkles, color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" },
+    { to: "/history", label: "History", desc: "Resume what you watched", Icon: History, color: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
+    { to: "/downloads", label: "Downloads", desc: "Offline content & files", Icon: Download, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
+    { to: "/news", label: "News", desc: "Film updates & pop culture", Icon: Newspaper, color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
+    ...(user?.hasAdultAccess || user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com" ? [
+      { to: "/adult/catalog", label: "Adult Zone", desc: "Private encrypted vault", Icon: Flame, color: "text-red-400 bg-red-500/10 border-red-500/20", isSpecialAdult: true }
+    ] : []),
+    ...(user?.isAdmin || user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com" ? [
+      { to: "/admin", label: "Admin Panel", desc: "Site & user controls", Icon: Shield, color: "text-blue-400 bg-blue-500/10 border-blue-500/20" }
+    ] : []),
+    { to: "/settings", label: "Settings", desc: "Theme & preferences", Icon: Settings, color: "text-gray-300 bg-white/10 border-white/15" },
+  ];
 
 
   return (
@@ -334,46 +352,188 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* ══ MOBILE BOTTOM NAV BAR ══ */}
+      {/* ══ MOBILE BOTTOM NAV BAR & MORE DRAWER ══ */}
       {!isTutorialActive && (
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none select-none">
-          <div
-            className={cn(
-              "pointer-events-auto mx-3 mb-3 rounded-[2rem] border backdrop-blur-3xl shadow-[0_-4px_30px_rgba(0,0,0,0.5)]",
-              isAdultMode
-                ? "bg-[#0c0101]/85 border-red-500/20"
-                : "bg-background/70 border-white/10"
-            )}
-          >
-            <div className="flex items-center justify-around px-2 py-1.5">
-              {mobileBottomTabs.map(({ to, label, Icon }) => {
-                const isActive = to === "/" ? location.pathname === "/" : location.pathname.startsWith(to);
-                return (
-                  <Link
-                    key={to}
-                    to={to}
-                    className={cn(
-                      "flex flex-col items-center gap-0.5 py-2 px-3 rounded-2xl transition-all duration-300 active:scale-90 min-w-[52px]",
-                      isActive
-                        ? isAdultMode ? "text-red-400 bg-red-500/10" : "text-blue-400 bg-blue-500/10"
-                        : "text-white/40"
-                    )}
-                  >
-                    <div className="relative flex items-center justify-center">
-                      <Icon className="w-[22px] h-[22px]" />
-                      {isActive && (
-                        <span className={cn("absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full", isAdultMode ? "bg-red-400" : "bg-blue-400")} />
+        <>
+          {/* Backdrop for More drawer */}
+          {isMoreMenuOpen && (
+            <div 
+              className="lg:hidden fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm animate-fade-in"
+              onClick={() => setIsMoreMenuOpen(false)}
+            />
+          )}
+
+          {/* Slide-up "More" Drawer */}
+          {isMoreMenuOpen && (
+            <div className={cn(
+              "lg:hidden fixed bottom-24 left-3 right-3 z-[70] p-4 rounded-[2.2rem] border backdrop-blur-3xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-6 duration-300",
+              isAdultMode 
+                ? "bg-[#0c0202]/95 border-red-500/25" 
+                : "bg-[#0b0c10]/95 border-white/10"
+            )}>
+              <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/10 px-2">
+                <div className="flex items-center gap-2">
+                  <div className={cn(
+                    "w-2 h-2 rounded-full",
+                    isAdultMode ? "bg-red-500 animate-pulse" : "bg-blue-500"
+                  )} />
+                  <span className="text-xs font-black uppercase tracking-[0.2em] text-white">
+                    Explore More
+                  </span>
+                </div>
+                <button 
+                  onClick={() => setIsMoreMenuOpen(false)}
+                  className="p-1 rounded-full text-white/40 hover:text-white transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Grid of extra buttons */}
+              <div className="grid grid-cols-2 gap-2 max-h-[55vh] overflow-y-auto pr-0.5 custom-scrollbar">
+                {moreDrawerLinks.map((item) => {
+                  const Icon = item.Icon;
+                  const isActive = location.pathname.startsWith(item.to);
+                  return (
+                    <button
+                      key={item.to}
+                      onClick={() => {
+                        if (item.isSpecialAdult) {
+                          (window as any).__jarvis_internal = true;
+                        }
+                        navigate(item.to);
+                        setIsMoreMenuOpen(false);
+                      }}
+                      className={cn(
+                        "flex items-center gap-3 p-2.5 rounded-2xl border text-left transition-all active:scale-95 group",
+                        isActive 
+                          ? isAdultMode 
+                            ? "bg-red-500/15 border-red-500/40 text-white" 
+                            : "bg-blue-500/15 border-blue-500/40 text-white"
+                          : "bg-white/[0.03] border-white/5 hover:bg-white/[0.08] hover:border-white/15"
                       )}
-                    </div>
-                    <span className={cn("text-[9px] font-bold uppercase tracking-wider leading-none mt-0.5", isActive ? "opacity-100" : "opacity-50")}>
-                      {label}
-                    </span>
-                  </Link>
-                );
-              })}
+                    >
+                      <div className={cn(
+                        "w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
+                        item.color
+                      )}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-white truncate leading-tight">
+                          {item.label}
+                        </p>
+                        <p className="text-[10px] text-white/40 truncate leading-normal">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Quick Actions (Sign in / Sign out & Help) */}
+              <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between gap-2 px-1">
+                <button
+                  onClick={() => {
+                    setIsMoreMenuOpen(false);
+                    navigate("/");
+                    setTimeout(startTutorial, 500);
+                  }}
+                  className="text-[11px] font-bold text-blue-400/80 hover:text-blue-300 py-1 px-2"
+                >
+                  Interactive Tutorial
+                </button>
+
+                {user ? (
+                  <button
+                    onClick={() => {
+                      setIsMoreMenuOpen(false);
+                      logout();
+                    }}
+                    className="flex items-center gap-1.5 text-[11px] font-bold text-red-400 hover:text-red-300 py-1 px-2"
+                  >
+                    <LogOut className="w-3 h-3" />
+                    Sign out
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setIsMoreMenuOpen(false);
+                      navigate("/auth");
+                    }}
+                    className="text-[11px] font-bold text-blue-400 hover:text-blue-300 py-1 px-2"
+                  >
+                    Sign in
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        </nav>
+          )}
+
+          {/* Main Floating Bottom Bar */}
+          <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none select-none">
+            <div
+              className={cn(
+                "pointer-events-auto mx-3 mb-3 rounded-[2rem] border backdrop-blur-3xl shadow-[0_-4px_30px_rgba(0,0,0,0.5)]",
+                isAdultMode
+                  ? "bg-[#0c0101]/85 border-red-500/20"
+                  : "bg-background/70 border-white/10"
+              )}
+            >
+              <div className="flex items-center justify-around px-1 py-1.5">
+                {mobileBottomTabs.map(({ to, label, Icon }) => {
+                  const isActive = to === "/" ? location.pathname === "/" : location.pathname.startsWith(to);
+                  return (
+                    <Link
+                      key={to}
+                      to={to}
+                      onClick={() => setIsMoreMenuOpen(false)}
+                      className={cn(
+                        "flex flex-col items-center gap-0.5 py-2 px-2.5 rounded-2xl transition-all duration-300 active:scale-90 min-w-[48px]",
+                        isActive && !isMoreMenuOpen
+                          ? isAdultMode ? "text-red-400 bg-red-500/10" : "text-blue-400 bg-blue-500/10"
+                          : "text-white/40"
+                      )}
+                    >
+                      <div className="relative flex items-center justify-center">
+                        <Icon className="w-[20px] h-[20px]" />
+                        {isActive && !isMoreMenuOpen && (
+                          <span className={cn("absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full", isAdultMode ? "bg-red-400" : "bg-blue-400")} />
+                        )}
+                      </div>
+                      <span className={cn("text-[9px] font-bold uppercase tracking-wider leading-none mt-0.5", isActive && !isMoreMenuOpen ? "opacity-100" : "opacity-50")}>
+                        {label}
+                      </span>
+                    </Link>
+                  );
+                })}
+
+                {/* ── MORE BUTTON ── */}
+                <button
+                  type="button"
+                  onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                  className={cn(
+                    "flex flex-col items-center gap-0.5 py-2 px-2.5 rounded-2xl transition-all duration-300 active:scale-90 min-w-[48px]",
+                    isMoreMenuOpen
+                      ? isAdultMode ? "text-red-400 bg-red-500/15" : "text-blue-400 bg-blue-500/15"
+                      : "text-white/40 hover:text-white/70"
+                  )}
+                >
+                  <div className="relative flex items-center justify-center">
+                    <MoreHorizontal className={cn("w-[20px] h-[20px] transition-transform", isMoreMenuOpen ? "rotate-90 text-white" : "")} />
+                    {isMoreMenuOpen && (
+                      <span className={cn("absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full", isAdultMode ? "bg-red-400" : "bg-blue-400")} />
+                    )}
+                  </div>
+                  <span className={cn("text-[9px] font-bold uppercase tracking-wider leading-none mt-0.5", isMoreMenuOpen ? "opacity-100" : "opacity-50")}>
+                    More
+                  </span>
+                </button>
+              </div>
+            </div>
+          </nav>
+        </>
       )}
     </>
   );
