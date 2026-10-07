@@ -145,6 +145,7 @@ const AdultCatalog = () => {
     { label: "Anal", value: "anal" },
     { label: "Amateur", value: "amateur" },
     { label: "BDSM", value: "bdsm" },
+    { label: "Rough Sex", value: "rough sex" },
     { label: "Big Tits", value: "big tits" },
     { label: "Blowjob", value: "blowjob" },
     { label: "Cumshot", value: "cumshot" },
@@ -262,6 +263,31 @@ const AdultCatalog = () => {
     { label: "Succubus Anime", value: "succubus hentai" },
     { label: "Hentai VR / SFM", value: "sfm hentai compilation" },
   ];
+
+  const roughSexCategories = [
+    { label: "🔥 Rough Sex",         value: "rough sex",                  desc: "Intense hardcore action" },
+    { label: "💢 Extra Rough",        value: "extra rough sex brutal",      desc: "Maximum intensity" },
+    { label: "🤜 Hard Choking",       value: "rough choking sex",           desc: "Breath control scenes" },
+    { label: "💪 Face Fuck",          value: "rough face fuck",             desc: "Aggressive deepthroat" },
+    { label: "🔗 Rough BDSM",        value: "rough bdsm bondage",          desc: "Tied & dominated" },
+    { label: "👊 Angry Sex",          value: "angry rough sex",             desc: "Passion-fuelled fury" },
+    { label: "😤 Domination",         value: "rough female domination",     desc: "She takes control" },
+    { label: "🎯 Rough Anal",         value: "rough anal sex",              desc: "Deep & hard anal" },
+    { label: "🔒 CNC",               value: "cnc rough sex roleplay",      desc: "Consensual non-consent" },
+    { label: "🏋 Manhandled",        value: "manhandled rough sex",        desc: "Tossed around & used" },
+    { label: "😈 Degradation",        value: "rough degradation dirty talk", desc: "Filthy talk & humiliation" },
+    { label: "🧲 Hair Pulling",       value: "rough sex hair pulling",      desc: "Savage hair grab scenes" },
+    { label: "💥 Piledriver",        value: "piledriver rough sex",        desc: "Deep pounding position" },
+    { label: "🤐 Gagged Rough",      value: "gagged rough sex",            desc: "Ball gag & restraints" },
+    { label: "😩 Crying Rough",       value: "rough sex crying orgasm",     desc: "Overwhelmed with pleasure" },
+    { label: "🧶 Rope Bondage",      value: "rope bondage rough sex",      desc: "Shibari-style sessions" },
+    { label: "📌 Pinned Down",        value: "pinned rough sex",            desc: "Held in place & wrecked" },
+    { label: "⛓ Slap & Spank",      value: "rough slapping spanking sex", desc: "Red cheeks guaranteed" },
+    { label: "🌊 Multiple Rough",     value: "multiple guys rough gangbang", desc: "Gangbang rough action" },
+    { label: "🔞 Raw Breeding",       value: "rough breeding creampie",     desc: "Intense creampie finish" },
+  ];
+
+
 
   const breastSizes = [
     { label: "Flat",        value: "flat chested",  icon: "(·)(·)",  accent: "text-sky-400    border-sky-500/30    hover:bg-sky-500/10" },
@@ -843,6 +869,98 @@ const AdultCatalog = () => {
             </div>
           </div>
 
+
+          {/* ── ROUGH SEX SECTION ── */}
+          <div className="mb-16">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 px-1">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-red-600 blur-xl opacity-30 animate-pulse" />
+                  <div className="relative p-3 bg-gradient-to-br from-red-600/20 to-orange-500/20 rounded-2xl border border-red-500/40">
+                    <Flame className="w-6 h-6 text-red-400" />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-2xl font-display font-black text-white uppercase italic tracking-tighter">
+                      Rough Sex Vault
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-red-600/20 to-orange-500/20 border border-red-500/30 text-[9px] font-black uppercase tracking-widest text-red-300">
+                      INTENSE • RAW • HARDCORE
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-white/40 font-medium mt-0.5">
+                    Extra rough, extra intense — sorted by your heat level
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => { setQuery("rough sex"); setPage(1); scrollToResults(); }}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-red-600/20 to-orange-500/20 border border-red-500/30 text-red-300 text-[11px] font-black uppercase tracking-widest hover:from-red-600/40 hover:to-orange-500/40 transition-all"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                Browse All Rough
+              </button>
+            </div>
+
+            {/* Sub-category grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-8">
+              {roughSexCategories.map((item) => {
+                const isActive = query === item.value;
+                return (
+                  <button
+                    key={item.value}
+                    onClick={() => { setQuery(item.value); setPage(1); scrollToResults(); }}
+                    className={cn(
+                      "relative group rounded-2xl border p-3 text-left transition-all duration-300 active:scale-95 overflow-hidden",
+                      isActive
+                        ? "bg-gradient-to-br from-red-700/40 to-orange-600/30 border-red-500/60 shadow-[0_0_25px_rgba(239,68,68,0.3)]"
+                        : "bg-white/[0.03] border-white/8 hover:bg-red-500/10 hover:border-red-500/30"
+                    )}
+                  >
+                    <div className={cn(
+                      "absolute inset-0 bg-gradient-to-br from-red-600/10 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
+                      isActive && "opacity-100"
+                    )} />
+                    <p className={cn(
+                      "text-[11px] font-black uppercase tracking-wide leading-tight relative z-10",
+                      isActive ? "text-white" : "text-white/60 group-hover:text-white"
+                    )}>
+                      {item.label}
+                    </p>
+                    <p className={cn(
+                      "text-[9px] font-medium mt-1 relative z-10",
+                      isActive ? "text-red-200/70" : "text-white/25 group-hover:text-white/40"
+                    )}>
+                      {item.desc}
+                    </p>
+                    {isActive && (
+                      <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Quick top-pick tags strip */}
+            <div className="flex flex-wrap gap-2">
+              {["rough sex pov", "rough sex missionary", "rough sex doggy", "slut rough sex", "rough sex outdoor", "rough sex hotel", "rough office sex", "rough sex compilation"].map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => { setQuery(tag); setPage(1); scrollToResults(); }}
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-200",
+                    query === tag
+                      ? "bg-red-600 border-red-400 text-white"
+                      : "bg-white/5 border-white/10 text-white/40 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-300"
+                  )}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Top Studios Row */}
           <div className="mb-12 overflow-hidden">
