@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Film, Gamepad2, ChevronRight, Flame, ShieldAlert, Sparkles } from "lucide-react";
+import { Film, Gamepad2, ChevronRight, Flame, ShieldAlert, Sparkles, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
@@ -97,6 +97,37 @@ const AdultSelection = () => {
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
           </div>
+        </div>
+
+        {/* AI Generator full-width card */}
+        <div
+          onClick={() => navigate("/adult/ai")}
+          className="group relative mt-4 sm:mt-6 h-[160px] sm:h-[180px] rounded-[2rem] border border-white/5 bg-[#050505] overflow-hidden cursor-pointer hover:border-purple-500/30 transition-all duration-700 hover:-translate-y-1 shadow-2xl max-w-2xl mx-auto w-full"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-pink-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          <div className="absolute inset-0 p-7 sm:p-10 flex flex-col justify-end gap-3 z-20">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30 group-hover:scale-110 transition-transform duration-500">
+                <Wand2 className="w-6 h-6 sm:w-7 sm:h-7 text-purple-400" />
+              </div>
+              <div>
+                <div className="flex items-center gap-3">
+                  <h3 className="text-2xl sm:text-3xl font-display font-black text-white uppercase tracking-tight">AI Generator</h3>
+                  <span className="px-2 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-[9px] font-black text-purple-300 uppercase tracking-widest">NEW ✨</span>
+                </div>
+                <p className="text-white/40 text-xs sm:text-sm leading-relaxed max-w-xs group-hover:text-white/60 transition-colors">
+                  Generate nude AI art from text. Unlimited • Free • Instant.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-purple-400 font-black uppercase tracking-widest text-[9px] sm:text-[10px] opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-500">
+              Launch AI Studio <ChevronRight className="w-3.5 h-3.5" />
+            </div>
+          </div>
+          <div className="absolute top-6 right-8 opacity-10 group-hover:opacity-30 transition-opacity">
+            <Sparkles className="w-24 h-24 sm:w-28 sm:h-28 text-purple-400 rotate-12" />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-10" />
         </div>
 
         <div className="mt-12 flex flex-col items-center gap-3 text-white/20 uppercase tracking-[0.3em] font-black text-[9px] animate-pulse">
