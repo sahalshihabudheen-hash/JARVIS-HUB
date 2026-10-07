@@ -539,6 +539,47 @@ const AdultCatalog = () => {
             </form>
           </div>
 
+          {/* ── AI TOOLS BANNER ── */}
+          <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* AI Image Generator */}
+            <button
+              onClick={() => navigate("/adult/ai")}
+              className="group relative flex items-center gap-4 p-4 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-600/10 to-pink-600/5 hover:from-purple-600/20 hover:to-pink-600/15 transition-all duration-300 hover:border-purple-400/50 text-left overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center flex-shrink-0 text-xl group-hover:scale-110 transition-transform">
+                🎨
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-black text-white uppercase tracking-tight">AI Image Studio</span>
+                  <span className="px-1.5 py-0.5 rounded-full bg-purple-500/30 border border-purple-400/30 text-[8px] font-black text-purple-300 uppercase">NEW</span>
+                </div>
+                <p className="text-[10px] text-white/40 mt-0.5">Generate nude AI art from text • Free • Instant</p>
+              </div>
+              <Zap className="w-4 h-4 text-purple-400 ml-auto flex-shrink-0 group-hover:text-purple-300" />
+            </button>
+
+            {/* AI Companion */}
+            <button
+              onClick={() => navigate("/adult/companion")}
+              className="group relative flex items-center gap-4 p-4 rounded-2xl border border-pink-500/30 bg-gradient-to-r from-pink-600/10 to-rose-600/5 hover:from-pink-600/20 hover:to-rose-600/15 transition-all duration-300 hover:border-pink-400/50 text-left overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-600 to-rose-500 flex items-center justify-center flex-shrink-0 text-xl group-hover:scale-110 transition-transform">
+                💬
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-black text-white uppercase tracking-tight">AI Companion</span>
+                  <span className="px-1.5 py-0.5 rounded-full bg-pink-500/30 border border-pink-400/30 text-[8px] font-black text-pink-300 uppercase">CHAT</span>
+                </div>
+                <p className="text-[10px] text-white/40 mt-0.5">Lexi • Aria • Sakura • Nova — flirty AI girls</p>
+              </div>
+              <Flame className="w-4 h-4 text-pink-400 ml-auto flex-shrink-0 group-hover:text-pink-300" />
+            </button>
+          </div>
+
           {/* ── STICKY QUICK-CATEGORY BAR ── */}
           <div className="sticky top-20 z-30 -mx-4 px-4 md:mx-0 md:px-0 mb-8">
             <div className="bg-[#080808]/90 backdrop-blur-xl border-b border-white/5 py-3">
