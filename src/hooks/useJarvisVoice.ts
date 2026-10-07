@@ -97,11 +97,8 @@ export const useJarvisVoice = () => {
         setIsListening(false);
         setIsWaitingForCommand(false);
       };
-
       recognitionRef.current.onend = () => {
         setIsListening(false);
-        // Persist the listener
-        try { recognitionRef.current.start(); } catch(e) {}
       };
     }
 

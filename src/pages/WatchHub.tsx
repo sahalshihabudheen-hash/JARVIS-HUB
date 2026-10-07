@@ -141,7 +141,20 @@ const WatchHub = () => {
       .finally(() => setRelatedLoading(false));
   }, [details, id, source]);
 
-  if (!id) return null;
+  if (!id || id === "undefined") {
+    return (
+      <div className="min-h-screen bg-[#020202] text-white flex flex-col items-center justify-center p-6">
+        <Navbar />
+        <div className="text-center space-y-4 max-w-md pt-20">
+          <h2 className="text-2xl font-black">Video Not Found</h2>
+          <p className="text-sm text-white/40">The requested video ID is missing or invalid. Please select another video from the catalog.</p>
+          <Button onClick={() => navigate("/adult/catalog")} className="bg-pink-600 hover:bg-pink-500">
+            Back to Catalog
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   let embedUrl = "";
   if (source === "pornhub") {

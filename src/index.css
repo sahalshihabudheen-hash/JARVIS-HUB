@@ -252,15 +252,11 @@
 }
 
 .mesh-gradient {
-  background: linear-gradient(-45deg, 
-    hsl(240, 15%, 5%), 
-    hsl(var(--jarvis-primary) / 0.05), 
-    hsl(var(--jarvis-accent) / 0.05), 
-    hsl(240, 15%, 5%)
+  background: radial-gradient(circle at 50% 0%, 
+    hsl(var(--jarvis-primary) / 0.04), 
+    transparent 60%
   );
-  background-size: 400% 400%;
-  animation: mesh-move 15s ease infinite;
-  transition: background 2s ease-in-out;
+  pointer-events: none;
 }
 
 .glass-premium {

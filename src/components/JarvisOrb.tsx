@@ -25,17 +25,8 @@ const JarvisOrb = () => {
   const location = useLocation();
   const { isListening, isWakeWordActive, isWaitingForCommand, startListening } = useJarvisVoice();
 
-  useEffect(() => {
-    // Only auto-start if the user has enabled it in Settings (defaults to true)
-    const isEnabled = localStorage.getItem("jarvis_voice_enabled") !== "false";
-    if (!isEnabled) return;
-
-    const timer = setTimeout(() => {
-       startListening();
-    }, 2000);
-    return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty deps - only run once on mount
+  // Only start listening when explicitly triggered by the user via button click
+  // (Disabled auto-start to prevent continuous CPU and microphone drain)
 
   // Hide on auth, admin, remote screens, or if user is not logged in
   if (!user || location.pathname === "/auth" || location.pathname === "/admin" || location.pathname === "/remote") {

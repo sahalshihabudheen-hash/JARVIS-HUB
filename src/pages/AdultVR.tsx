@@ -5,9 +5,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import { searchVideos } from "@/lib/hub";
+import AdultCard from "@/components/AdultCard";
 import {
-  ChevronLeft, Play, Eye, Clock, Zap, Star, Globe,
-  ChevronRight, RefreshCw, ExternalLink, Maximize2
+  ChevronLeft, RefreshCw, ChevronRight, Sparkles
 } from "lucide-react";
 
 const VR_CATEGORIES = [
@@ -30,15 +30,7 @@ const VR_HEADSETS = [
   { name: "PlayStation VR", short: "PSVR", note: "PS4/PS5" },
   { name: "HTC Vive", short: "VIVE", note: "PC VR" },
   { name: "Valve Index", short: "INDEX", note: "SteamVR" },
-  { name: "Bigscreen Beyond", short: "BIG", note: "Ultra thin" },
-  { name: "Apple Vision Pro", short: "AVP", note: "Premium" },
-];
-
-const VR_TIPS = [
-  { tip: "Use a VR headset for the best 180°/360° experience" },
-  { tip: "Look for videos tagged '180° SBS' for side-by-side stereo" },
-  { tip: "Download in 4K for crystal clear VR quality" },
-  { tip: "YouTube VR app supports 360° playback on all headsets" },
+  { name: "Apple Vision Pro", short: "AVP", note: "WebXR" },
 ];
 
 const AdultVR = () => {
@@ -51,7 +43,18 @@ const AdultVR = () => {
     queryFn: () => searchVideos(selectedCategory.value, page),
   });
 
-  const videos = data?.videos || [];
+  const rawVideos = data?.videos || [];
+
+  const formattedVideos = rawVideos.map((v: any) => ({
+    id: v.video_id || v.id,
+    title: v.title,
+    url: v.url,
+    thumbnail: v.default_thumb || v.thumbnail || "",
+    duration: v.duration,
+    views: typeof v.views === "number" ? v.views.toLocaleString() : v.views,
+    rating: v.rating,
+    source: v.source || "pornhub",
+  })).filter((v: any) => Boolean(v.id));
 
   const handleCategoryChange = (cat: typeof VR_CATEGORIES[0]) => {
     setSelectedCategory(cat);
@@ -60,11 +63,9 @@ const AdultVR = () => {
 
   return (
     <div className="min-h-screen bg-[#020202] text-white overflow-x-hidden">
-      {/* Animated VR background */}
+      {/* Lightweight background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.1),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(6,182,212,0.06),transparent_60%)]" />
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08),transparent_60%)]" />
       </div>
 
       <Navbar />
@@ -72,181 +73,128 @@ const AdultVR = () => {
       <main className="relative z-10 pt-20 sm:pt-24 pb-16 container max-w-7xl mx-auto px-3 sm:px-6">
 
         {/* Header */}
-        <div className="mb-8 sm:mb-10">
-          <button onClick={() => navigate("/adult/catalog")} className="flex items-center gap-2 text-white/30 hover:text-white text-[10px] font-bold uppercase tracking-widest mb-5 transition-colors">
+        <div className="mb-6 sm:mb-8">
+          <button
+            onClick={() => navigate("/adult/catalog")}
+            className="flex items-center gap-2 text-white/30 hover:text-white text-[10px] font-bold uppercase tracking-widest mb-4 transition-colors"
+          >
             <ChevronLeft className="w-3.5 h-3.5" /> Back to Catalog
           </button>
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="flex items-center gap-4">
-              <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-40 animate-pulse" />
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-3xl">
-                  🥽
-                </div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                🥽
               </div>
               <div>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black uppercase italic tracking-tighter">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-black uppercase italic tracking-tighter text-white">
                     VR <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Porn</span> Zone
                   </h1>
-                  <span className="px-2 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-[9px] font-black text-blue-300 uppercase tracking-widest">
-                    180° • 360° • 4K
+                  <span className="px-2 py-0.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-[9px] font-black text-blue-300 uppercase tracking-widest">
+                    180° • 360°
                   </span>
                 </div>
-                <p className="text-white/35 text-xs sm:text-sm mt-1">Immersive VR experiences — compatible with all headsets</p>
+                <p className="text-white/40 text-[11px] sm:text-xs font-medium mt-0.5">
+                  Immersive virtual reality adult content — click any video to play
+                </p>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Headset compatibility bar */}
-        <div className="mb-8 p-4 rounded-2xl border border-blue-500/20 bg-blue-500/5 overflow-x-auto">
-          <p className="text-[9px] font-black uppercase tracking-widest text-blue-400/70 mb-3">🎮 Compatible Headsets</p>
-          <div className="flex gap-3 min-w-max sm:min-w-0 sm:flex-wrap">
-            {VR_HEADSETS.map((h) => (
-              <div key={h.name} className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border border-blue-500/20 bg-blue-500/5 flex-shrink-0">
-                <span className="text-[11px] font-black text-blue-300 uppercase">{h.short}</span>
-                <span className="text-[9px] text-white/30">{h.note}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Category grid */}
-        <div className="mb-8">
-          <h2 className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-4">🎬 VR Categories</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-            {VR_CATEGORIES.map((cat) => {
-              const isActive = selectedCategory.value === cat.value;
-              return (
-                <button
-                  key={cat.value}
-                  onClick={() => handleCategoryChange(cat)}
-                  className={cn(
-                    "relative group flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl border transition-all duration-300 active:scale-95",
-                    isActive
-                      ? "border-blue-400/50 shadow-[0_0_20px_rgba(59,130,246,0.3)]"
-                      : "border-white/8 bg-white/[0.02] hover:border-blue-500/30 hover:bg-blue-500/5"
-                  )}
-                >
-                  {isActive && (
-                    <div className={cn("absolute inset-0 rounded-2xl bg-gradient-to-br opacity-20", cat.color)} />
-                  )}
-                  <span className="text-2xl relative z-10">{cat.icon}</span>
-                  <span className={cn(
-                    "text-[9px] sm:text-[10px] font-black uppercase tracking-wide text-center leading-tight relative z-10",
-                    isActive ? "text-white" : "text-white/50 group-hover:text-white"
-                  )}>
-                    {cat.label.replace(/^\S+\s/, "")}
-                  </span>
-                  {isActive && <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* VR Tips strip */}
-        <div className="mb-8 flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
-          {VR_TIPS.map((t, i) => (
-            <div key={i} className="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border border-white/5 bg-white/[0.02]">
-              <span className="text-blue-400 text-[10px]">💡</span>
-              <span className="text-[10px] text-white/30 whitespace-nowrap">{t.tip}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Video Grid */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <div className="w-1 h-5 rounded-full bg-gradient-to-b from-blue-500 to-cyan-500" />
-              <h2 className="text-sm font-black uppercase tracking-widest text-white">{selectedCategory.label}</h2>
-              {!isLoading && <span className="text-[10px] text-white/30">{videos.length} videos</span>}
-            </div>
             <button
               onClick={() => refetch()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/8 text-[10px] font-black text-white/40 hover:text-white uppercase tracking-widest transition-all"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-[10px] font-black text-white/60 hover:text-white uppercase tracking-widest transition-all self-start sm:self-auto"
             >
               <RefreshCw className={cn("w-3 h-3", isLoading && "animate-spin")} /> Refresh
             </button>
           </div>
+        </div>
+
+        {/* Headsets bar */}
+        <div className="mb-6 p-3 rounded-2xl border border-blue-500/20 bg-blue-500/5 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+          <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap px-2">Compatible:</span>
+          {VR_HEADSETS.map((h) => (
+            <div key={h.name} className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-500/10 border border-blue-400/20 whitespace-nowrap">
+              <span className="text-[10px] font-black text-white">{h.short}</span>
+              <span className="text-[9px] text-white/40">({h.note})</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Category Pills */}
+        <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
+          {VR_CATEGORIES.map((cat) => {
+            const isActive = selectedCategory.value === cat.value;
+            return (
+              <button
+                key={cat.value}
+                onClick={() => handleCategoryChange(cat)}
+                className={cn(
+                  "flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wide border transition-all active:scale-95",
+                  isActive
+                    ? "bg-blue-600 border-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]"
+                    : "bg-white/[0.03] border-white/8 text-white/40 hover:text-white hover:bg-white/8"
+                )}
+              >
+                <span>{cat.icon}</span>
+                <span>{cat.label.replace(/^\S+\s/, "")}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Video Grid */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <h2 className="text-sm font-black uppercase tracking-widest text-white">{selectedCategory.label}</h2>
+              {!isLoading && <span className="text-[10px] text-white/30">({formattedVideos.length} videos)</span>}
+            </div>
+          </div>
 
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-              {Array.from({ length: 12 }).map((_, i) => (
+              {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="aspect-video rounded-2xl bg-white/5 animate-pulse" />
               ))}
             </div>
-          ) : videos.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <span className="text-5xl">🥽</span>
-              <p className="text-white/30 font-black uppercase tracking-widest text-sm">No VR content found</p>
-              <button onClick={() => refetch()} className="px-5 py-2.5 rounded-2xl bg-blue-600 text-white text-xs font-black uppercase tracking-widest">Try Again</button>
+          ) : formattedVideos.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-4 rounded-3xl border border-white/5 bg-white/[0.02]">
+              <span className="text-4xl">🥽</span>
+              <p className="text-white/40 font-black uppercase tracking-widest text-xs">No VR streams found for this category</p>
+              <button
+                onClick={() => handleCategoryChange(VR_CATEGORIES[0])}
+                className="px-4 py-2 rounded-xl bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-500"
+              >
+                View All VR
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-              {videos.map((video: any) => (
-                <div
-                  key={video.id}
-                  onClick={() => navigate(`/hub/watch/${video.id}`)}
-                  className="group relative rounded-2xl overflow-hidden border border-white/8 bg-white/[0.02] cursor-pointer hover:border-blue-500/40 transition-all hover:-translate-y-0.5"
-                >
-                  {/* Thumbnail */}
-                  <div className="aspect-video relative overflow-hidden">
-                    <img
-                      src={video.default_thumb || video.thumbnail}
-                      alt={video.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* VR Badge */}
-                    <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-blue-600/90 text-[8px] font-black text-white uppercase tracking-widest">
-                      🥽 VR
-                    </div>
-                    {/* Duration */}
-                    {video.duration && (
-                      <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-black/80 text-[9px] font-bold text-white">
-                        {video.duration}
-                      </div>
-                    )}
-                    {/* Play overlay */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="w-10 h-10 rounded-full bg-blue-600/80 flex items-center justify-center backdrop-blur">
-                        <Play className="w-5 h-5 text-white fill-white ml-0.5" />
-                      </div>
-                    </div>
-                  </div>
-                  {/* Info */}
-                  <div className="p-2.5">
-                    <p className="text-[11px] font-bold text-white/80 line-clamp-2 leading-tight mb-1.5">{video.title}</p>
-                    <div className="flex items-center gap-2 text-[9px] text-white/30">
-                      {video.views && <span className="flex items-center gap-0.5"><Eye className="w-2.5 h-2.5" />{video.views}</span>}
-                      {video.rating && <span className="flex items-center gap-0.5 text-yellow-500/70"><Star className="w-2.5 h-2.5" />{video.rating}%</span>}
-                    </div>
-                  </div>
-                </div>
+              {formattedVideos.map((video: any) => (
+                <AdultCard key={video.id} video={video} />
               ))}
             </div>
           )}
         </div>
 
         {/* Pagination */}
-        {videos.length > 0 && (
+        {formattedVideos.length > 0 && (
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/10 text-[11px] font-black uppercase tracking-widest text-white/40 hover:text-white disabled:opacity-30 transition-all"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white disabled:opacity-20 transition-all"
             >
               <ChevronLeft className="w-3.5 h-3.5" /> Prev
             </button>
-            <span className="px-4 py-2.5 rounded-xl border border-blue-500/30 bg-blue-500/10 text-[11px] font-black text-blue-300">
+            <span className="px-3.5 py-2 rounded-xl border border-blue-500/30 bg-blue-500/10 text-[10px] font-black text-blue-300">
               Page {page}
             </span>
             <button
               onClick={() => setPage(p => p + 1)}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/10 text-[11px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all"
             >
               Next <ChevronRight className="w-3.5 h-3.5" />
             </button>
