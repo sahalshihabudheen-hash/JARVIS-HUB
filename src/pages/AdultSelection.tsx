@@ -11,20 +11,7 @@ const AdultSelection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  useEffect(() => {
-    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
-    const hasAuthorizedAccess = user && (user.hasAdultAccess || user.isAdmin || isOwner);
 
-    // Prevent direct access from browser history, bookmarks, or refresh unless authorized
-    if (!(window as any).__jarvis_internal) {
-      navigate("/", { replace: true });
-      return;
-    }
-
-    if (!user || (!user.hasAdultAccess && !user.isAdmin && !isOwner)) {
-      navigate("/");
-    }
-  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-[#020202] text-white selection:bg-red-500/30 overflow-hidden">

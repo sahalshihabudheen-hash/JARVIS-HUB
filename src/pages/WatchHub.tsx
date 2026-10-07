@@ -82,20 +82,7 @@ const WatchHub = () => {
   const [isIncognito, setIsIncognito] = useState(false);
   const [useMirror, setUseMirror] = useState(true);
 
-  useEffect(() => {
-    const isOwner = user?.email?.toLowerCase() === "admin@gmail.com" || user?.email?.toLowerCase() === "superadmin@gmail.com";
-    const hasAuthorizedAccess = user && (user.hasAdultAccess || user.isAdmin || isOwner);
 
-    // Prevent direct access from browser history, bookmarks, or refresh unless authorized
-    if (!(window as any).__jarvis_internal) {
-      navigate("/", { replace: true });
-      return;
-    }
-
-    if (!user || (!user.hasAdultAccess && !user.isAdmin && !isOwner)) {
-      navigate("/");
-    }
-  }, [user, navigate]);
 
   /* Fetch video details */
   useEffect(() => {
