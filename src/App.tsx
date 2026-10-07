@@ -20,6 +20,8 @@ import EasternPremium from "./pages/EasternPremium";
 import AdultSelection from "./pages/AdultSelection";
 import AdultAIGenerator from "./pages/AdultAIGenerator";
 import AdultAICompanion from "./pages/AdultAICompanion";
+import AdultVR from "./pages/AdultVR";
+import AdultLiveCams from "./pages/AdultLiveCams";
 import WatchHub from "./pages/WatchHub";
 import News from "./pages/News";
 import Downloads from "./pages/Downloads";
@@ -216,6 +218,8 @@ const App = () => (
                   <Route path="/adult/eastern" element={<EasternPremium />} />
                   <Route path="/adult/ai" element={<AdultAIGenerator />} />
                   <Route path="/adult/companion" element={<AdultAICompanion />} />
+                  <Route path="/adult/vr" element={<AdultVR />} />
+                  <Route path="/adult/live" element={<AdultLiveCams />} />
                   <Route path="/news" element={<News />} />
                   <Route path="/downloads" element={<Downloads />} />
                   <Route path="/hub/watch/:id" element={<WatchHub />} />

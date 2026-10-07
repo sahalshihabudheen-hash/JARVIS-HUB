@@ -539,44 +539,70 @@ const AdultCatalog = () => {
             </form>
           </div>
 
-          {/* ── AI TOOLS BANNER ── */}
-          <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* ── AI & FEATURE TOOLS BANNER ── */}
+          <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
             {/* AI Image Generator */}
             <button
               onClick={() => navigate("/adult/ai")}
-              className="group relative flex items-center gap-4 p-4 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-600/10 to-pink-600/5 hover:from-purple-600/20 hover:to-pink-600/15 transition-all duration-300 hover:border-purple-400/50 text-left overflow-hidden"
+              className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-2xl border border-purple-500/30 bg-gradient-to-br sm:bg-gradient-to-r from-purple-600/10 to-pink-600/5 hover:from-purple-600/20 hover:to-pink-600/15 transition-all duration-300 hover:border-purple-400/50 text-center sm:text-left overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center flex-shrink-0 text-xl group-hover:scale-110 transition-transform">
-                🎨
-              </div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-purple-500/5 to-transparent" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center flex-shrink-0 text-lg group-hover:scale-110 transition-transform">🎨</div>
               <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-black text-white uppercase tracking-tight">AI Image Studio</span>
-                  <span className="px-1.5 py-0.5 rounded-full bg-purple-500/30 border border-purple-400/30 text-[8px] font-black text-purple-300 uppercase">NEW</span>
+                <div className="flex items-center gap-1.5 justify-center sm:justify-start">
+                  <span className="text-xs font-black text-white uppercase tracking-tight">AI Images</span>
+                  <span className="hidden sm:block px-1.5 py-0.5 rounded-full bg-purple-500/30 border border-purple-400/30 text-[8px] font-black text-purple-300 uppercase">NEW</span>
                 </div>
-                <p className="text-[10px] text-white/40 mt-0.5">Generate nude AI art from text • Free • Instant</p>
+                <p className="text-[9px] text-white/35 mt-0.5 hidden sm:block">Text → nude AI art • Free</p>
               </div>
-              <Zap className="w-4 h-4 text-purple-400 ml-auto flex-shrink-0 group-hover:text-purple-300" />
             </button>
 
             {/* AI Companion */}
             <button
               onClick={() => navigate("/adult/companion")}
-              className="group relative flex items-center gap-4 p-4 rounded-2xl border border-pink-500/30 bg-gradient-to-r from-pink-600/10 to-rose-600/5 hover:from-pink-600/20 hover:to-rose-600/15 transition-all duration-300 hover:border-pink-400/50 text-left overflow-hidden"
+              className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-2xl border border-pink-500/30 bg-gradient-to-br sm:bg-gradient-to-r from-pink-600/10 to-rose-600/5 hover:from-pink-600/20 hover:to-rose-600/15 transition-all duration-300 hover:border-pink-400/50 text-center sm:text-left overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-600 to-rose-500 flex items-center justify-center flex-shrink-0 text-xl group-hover:scale-110 transition-transform">
-                💬
-              </div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-pink-500/5 to-transparent" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-600 to-rose-500 flex items-center justify-center flex-shrink-0 text-lg group-hover:scale-110 transition-transform">💬</div>
               <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-black text-white uppercase tracking-tight">AI Companion</span>
-                  <span className="px-1.5 py-0.5 rounded-full bg-pink-500/30 border border-pink-400/30 text-[8px] font-black text-pink-300 uppercase">CHAT</span>
+                <div className="flex items-center gap-1.5 justify-center sm:justify-start">
+                  <span className="text-xs font-black text-white uppercase tracking-tight">AI Chat</span>
+                  <span className="hidden sm:block px-1.5 py-0.5 rounded-full bg-pink-500/30 border border-pink-400/30 text-[8px] font-black text-pink-300 uppercase">CHAT</span>
                 </div>
-                <p className="text-[10px] text-white/40 mt-0.5">Lexi • Aria • Sakura • Nova — flirty AI girls</p>
+                <p className="text-[9px] text-white/35 mt-0.5 hidden sm:block">Lexi • Aria • Sakura • Nova</p>
               </div>
-              <Flame className="w-4 h-4 text-pink-400 ml-auto flex-shrink-0 group-hover:text-pink-300" />
+            </button>
+
+            {/* VR Zone */}
+            <button
+              onClick={() => navigate("/adult/vr")}
+              className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-br sm:bg-gradient-to-r from-blue-600/10 to-cyan-600/5 hover:from-blue-600/20 hover:to-cyan-600/15 transition-all duration-300 hover:border-blue-400/50 text-center sm:text-left overflow-hidden"
+            >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-blue-500/5 to-transparent" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0 text-lg group-hover:scale-110 transition-transform">🥽</div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 justify-center sm:justify-start">
+                  <span className="text-xs font-black text-white uppercase tracking-tight">VR Zone</span>
+                  <span className="hidden sm:block px-1.5 py-0.5 rounded-full bg-blue-500/30 border border-blue-400/30 text-[8px] font-black text-blue-300 uppercase">360°</span>
+                </div>
+                <p className="text-[9px] text-white/35 mt-0.5 hidden sm:block">Immersive VR porn • 4K</p>
+              </div>
+            </button>
+
+            {/* Live Cams */}
+            <button
+              onClick={() => navigate("/adult/live")}
+              className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-2xl border border-red-500/30 bg-gradient-to-br sm:bg-gradient-to-r from-red-600/10 to-rose-600/5 hover:from-red-600/20 hover:to-rose-600/15 transition-all duration-300 hover:border-red-400/50 text-center sm:text-left overflow-hidden"
+            >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-red-500/5 to-transparent" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-500 flex items-center justify-center flex-shrink-0 text-lg group-hover:scale-110 transition-transform">📡</div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 justify-center sm:justify-start">
+                  <span className="text-xs font-black text-white uppercase tracking-tight">Live Cams</span>
+                  <span className="hidden sm:block px-1.5 py-0.5 rounded-full bg-red-500/30 border border-red-400/30 text-[8px] font-black text-red-300 uppercase flex items-center gap-0.5"><span className="w-1 h-1 rounded-full bg-red-400 animate-pulse inline-block mr-0.5" />LIVE</span>
+                </div>
+                <p className="text-[9px] text-white/35 mt-0.5 hidden sm:block">Real people • Free • Now</p>
+              </div>
             </button>
           </div>
 
