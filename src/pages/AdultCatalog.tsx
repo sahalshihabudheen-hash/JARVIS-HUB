@@ -45,7 +45,7 @@ const AdultCatalog = () => {
     }
   });
 
-  const [source, setSource] = useState<"pornhub" | "redtube" | "eporner">("pornhub");
+  const [source, setSource] = useState<"pornhub" | "redtube" | "eporner" | "avgle">("pornhub");
   const [adultHistory, setAdultHistory] = useState<AdultHistoryItem[]>([]);
 
   useEffect(() => {
@@ -434,8 +434,9 @@ const AdultCatalog = () => {
                 <div className="flex bg-white/5 backdrop-blur p-1 rounded-xl border border-white/10">
                   {[
                     { id: "pornhub", label: "PornHub", short: "PH", color: "bg-orange-500" },
-                    { id: "redtube",  label: "RedTube",  short: "RT", color: "bg-red-600" },
-                    { id: "eporner", label: "ePorner",  short: "EP", color: "bg-blue-600" },
+                    { id: "redtube", label: "RedTube", short: "RT", color: "bg-red-600" },
+                    { id: "eporner", label: "ePorner", short: "EP", color: "bg-blue-600" },
+                    { id: "avgle",   label: "JAV Hub",  short: "JAV", color: "bg-pink-600" },
                   ].map((s) => (
                     <button
                       key={s.id}
@@ -997,11 +998,11 @@ const AdultCatalog = () => {
           {/* Grid */}
           {isLoading ? (
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
               {[...Array(12)].map((_, i) => (
-                <div key={i} className="flex flex-col gap-3">
+                <div key={i} className="flex flex-col gap-2 rounded-2xl bg-white/[0.02] p-2 border border-white/5">
                   <div className="aspect-video rounded-xl shimmer bg-white/5" />
-                  <div className="h-4 w-3/4 bg-white/5 rounded shimmer" />
+                  <div className="h-3.5 w-3/4 bg-white/5 rounded shimmer mt-1" />
                   <div className="h-3 w-1/2 bg-white/5 rounded shimmer" />
                 </div>
               ))}
@@ -1021,7 +1022,7 @@ const AdultCatalog = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                 {videos.map((video) => (
                   <div key={video.id} className={isBlurred ? "blur-xl hover:blur-none transition-all duration-500" : ""}>
                     <AdultCard video={video} />

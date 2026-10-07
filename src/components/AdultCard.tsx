@@ -182,61 +182,65 @@ const AdultCard = ({ video, className }: AdultCardProps) => {
             </div>
           )}
 
-          {/* "PREVIEW" badge */}
-          {isHovered && (
-            <div className="absolute top-3 left-3 z-20 animate-in zoom-in-95 fade-in duration-300">
-              <span className="px-2.5 py-1 rounded-lg bg-pink-600/90 backdrop-blur-md text-[8px] font-black tracking-[0.2em] uppercase text-white shadow-xl border border-white/20">
-                Preview
-              </span>
+          {/* Top badges bar */}
+          <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-20 pointer-events-none">
+            <div className="flex items-center gap-1.5">
+              {isHovered ? (
+                <span className="px-2 py-0.5 rounded-md bg-pink-600/90 backdrop-blur-md text-[8px] font-black tracking-[0.15em] uppercase text-white shadow-xl border border-white/20 animate-in zoom-in-95 duration-200">
+                  Preview
+                </span>
+              ) : (
+                <span className="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md text-[8px] font-black uppercase tracking-wider text-pink-400 border border-pink-500/20">
+                  {video.source ? video.source.toUpperCase() : "HD"}
+                </span>
+              )}
             </div>
-          )}
 
-          {/* Gradient overlay */}
-          <div
-            className={cn(
-              "absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent transition-opacity duration-500",
-              isHovered ? "opacity-80" : "opacity-40 group-hover:opacity-60"
-            )}
-          />
-
-          {/* Rating Badge */}
-          {video.rating && (
-            <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
+            <div className="flex items-center gap-1 pointer-events-auto">
               <button
                 onClick={handleWatchLater}
                 className={cn(
-                  "p-2 rounded-xl backdrop-blur-md border transition-all duration-300",
+                  "p-1.5 rounded-lg backdrop-blur-md border transition-all duration-300",
                   isSaved
-                    ? "bg-pink-500/20 text-pink-500 border-pink-500/50 shadow-[0_0_15px_rgba(236,72,153,0.3)]"
-                    : "bg-black/40 text-white/60 border-white/10 hover:bg-white/10 hover:text-white"
+                    ? "bg-pink-500/25 text-pink-400 border-pink-500/50 shadow-[0_0_12px_rgba(236,72,153,0.35)]"
+                    : "bg-black/50 text-white/60 border-white/10 hover:bg-white/15 hover:text-white"
                 )}
               >
-                {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+                {isSaved ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
               </button>
             </div>
-          )}
+          </div>
 
-          {/* Duration badge */}
-          <div className="absolute bottom-3 right-3 px-2 py-1 rounded-md backdrop-blur-md text-[10px] font-bold text-white bg-black/60 border border-white/10 z-10 shadow-lg">
-            {video.duration}
+          {/* Duration & Rating bar */}
+          <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between z-10 pointer-events-none">
+            {video.rating ? (
+              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-bold text-yellow-400">
+                <Star className="w-2.5 h-2.5 fill-current" />
+                <span>{video.rating}%</span>
+              </div>
+            ) : <div />}
+
+            {video.duration && (
+              <div className="px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-[9px] font-bold text-white border border-white/10 shadow-lg">
+                {video.duration}
+              </div>
+            )}
           </div>
         </div>
 
         {/* ── Info row ── */}
-        <div className="p-4 space-y-2 bg-[#050505] relative z-10">
-          <h3 className="font-bold text-sm line-clamp-1 leading-snug group-hover:text-pink-400 transition-colors">
+        <div className="p-3 sm:p-4 space-y-1.5 bg-[#050505] relative z-10 border-t border-white/5">
+          <h3 className="font-bold text-xs sm:text-sm line-clamp-2 leading-tight group-hover:text-pink-400 transition-colors">
             {video.title}
           </h3>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 text-[10px] font-bold text-white/30 uppercase tracking-widest">
-              <div className="flex items-center gap-1.5">
-                <span>{video.views} views</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5 text-pink-500/50">
-               <span className="text-[8px] font-bold uppercase tracking-widest">Premium</span>
-            </div>
+          <div className="flex items-center justify-between pt-0.5">
+            <span className="text-[10px] font-bold text-white/35 uppercase tracking-wider">
+              {video.views} views
+            </span>
+            <span className="text-[9px] font-black uppercase tracking-widest text-pink-500/70 bg-pink-500/10 px-1.5 py-0.5 rounded border border-pink-500/20">
+              Stream
+            </span>
           </div>
         </div>
       </div>
