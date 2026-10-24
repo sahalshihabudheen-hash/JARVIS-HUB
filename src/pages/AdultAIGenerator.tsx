@@ -1,22 +1,27 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import {
   Sparkles, Download, RefreshCw, Wand2, Image as ImageIcon, ChevronLeft,
-  Shuffle, Lock, Zap, Star, Grid3x3, Maximize2, X, Copy, Check, ChevronDown, ChevronUp
+  Shuffle, Lock, Zap, Star, Grid3x3, Maximize2, X, Copy, Check, ChevronDown, ChevronUp,
+  Upload, SlidersHorizontal, ArrowRight, AlertCircle, Eye, Trash2
 } from "lucide-react";
 
-// ── Pollinations.ai — free, no API key, NSFW enabled ──────────────────────────
-const buildImageUrl = (prompt: string, model: string, w: number, h: number, seed: number) => {
+// ── Pollinations.ai URL builder ──────────────────────────────────────────────
+const buildImageUrl = (prompt: string, model: string, w: number, h: number, seed: number, imageUrl?: string) => {
   const encoded = encodeURIComponent(prompt);
-  return `https://image.pollinations.ai/prompt/${encoded}?width=${w}&height=${h}&model=${model}&seed=${seed}&nologo=true&enhance=true`;
+  let url = `https://image.pollinations.ai/prompt/${encoded}?width=${w}&height=${h}&model=${model}&seed=${seed}&nologo=true&enhance=true`;
+  if (imageUrl) {
+    url += `&image=${encodeURIComponent(imageUrl)}`;
+  }
+  return url;
 };
 
 const MODELS = [
-  { id: "flux",        label: "Flux",        badge: "⚡ Best",  desc: "Highest quality, most realistic" },
-  { id: "turbo",       label: "Turbo",       badge: "🚀 Fast",  desc: "Quick generation, great detail" },
+  { id: "flux",        label: "Flux",        badge: "⚡ Best",  desc: "Highest quality, precise edits" },
+  { id: "turbo",       label: "Turbo",       badge: "🚀 Fast",  desc: "Fast generation, high detail" },
   { id: "dreamshaper", label: "Dreamshaper", badge: "🌸 Anime", desc: "Anime & fantasy art style" },
   { id: "flux-realism",label: "Flux Real",   badge: "📸 Hyper", desc: "Ultra-photorealistic output" },
 ];
@@ -31,18 +36,27 @@ const STYLE_PRESETS = [
 ];
 
 const QUICK_PROMPTS = [
-  { label: "🌸 Anime Girl",     prompt: "beautiful anime girl, nude, long hair, soft lighting, high quality anime art" },
-  { label: "💎 Elegant Woman",  prompt: "elegant beautiful woman, nude, artistic, tasteful, studio lighting, professional" },
-  { label: "🔥 Fantasy Queen",  prompt: "fantasy queen, nude, long flowing hair, magical aura, ethereal lighting, digital art" },
-  { label: "🌊 Beach Scene",    prompt: "beautiful woman nude on beach, sunset lighting, artistic photography, natural" },
-  { label: "⚡ Cyberpunk Girl", prompt: "cyberpunk woman, nude, neon lights, futuristic city background, digital art" },
-  { label: "🌙 Moonlight",      prompt: "beautiful woman nude in moonlight, night, soft glow, romantic, artistic" },
-  { label: "🌺 Nature",         prompt: "beautiful woman nude in nature, forest, sunlight, artistic, tasteful photography" },
-  { label: "👸 Princess",       prompt: "beautiful princess nude, royal bedroom, soft lighting, fantasy art, detailed" },
-  { label: "🎨 Art Nouveau",    prompt: "art nouveau style woman nude, floral background, elegant, vintage poster art" },
-  { label: "💫 Galaxy Girl",    prompt: "beautiful woman nude, galaxy and stars background, cosmic art, glowing, ethereal" },
-  { label: "🐉 Dragon Rider",   prompt: "fantasy warrior woman nude, dragon companion, epic scene, detailed digital art" },
-  { label: "🌸 Hentai Style",   prompt: "high quality hentai anime, beautiful character, detailed illustration, vibrant colors" },
+  { label: "🌸 Anime Girl",     prompt: "beautiful anime girl, long hair, soft lighting, high quality anime art" },
+  { label: "💎 Elegant Woman",  prompt: "elegant beautiful woman, artistic portrait, studio lighting, professional photography" },
+  { label: "🔥 Fantasy Queen",  prompt: "fantasy queen, long flowing hair, magical aura, ethereal lighting, digital art" },
+  { label: "🌊 Beach Scene",    prompt: "beautiful scene on beach, golden sunset lighting, artistic photography, natural" },
+  { label: "⚡ Cyberpunk Girl", prompt: "cyberpunk character, neon lights, futuristic city background, digital art" },
+  { label: "🌙 Moonlight",      prompt: "beautiful figure in moonlight, night atmosphere, soft glow, romantic, artistic" },
+  { label: "🌺 Nature",         prompt: "figure in enchanted nature, lush forest, sunlight beams, artistic photography" },
+  { label: "👸 Princess",       prompt: "beautiful royal princess, palace bedroom, soft lighting, fantasy art, detailed" },
+  { label: "🎨 Art Nouveau",    prompt: "art nouveau style portrait, floral background, elegant, vintage poster art" },
+  { label: "💫 Galaxy Girl",    prompt: "cosmic character, galaxy and nebula background, cosmic art, glowing, ethereal" },
+  { label: "🐉 Dragon Rider",   prompt: "fantasy warrior, dragon companion, epic landscape, detailed digital art" },
+  { label: "🌸 Hentai Style",   prompt: "high quality anime illustration, beautiful character, detailed art, vibrant colors" },
+];
+
+const EDIT_PRESETS = [
+  { label: "🌆 Futuristic City", prompt: "Change the background to a futuristic cyberpunk city at night with neon signs" },
+  { label: "🌸 Anime Scene", prompt: "Make this photo look like a cinematic studio anime scene with vibrant colors" },
+  { label: "🌅 Sunset Glow", prompt: "Change the sky and atmosphere to a dramatic golden hour sunset, warm lighting" },
+  { label: "🌧️ Moody Rainy", prompt: "Add rainy reflections and moody cinematic blue lighting while preserving original composition" },
+  { label: "🎨 Oil Painting", prompt: "Transform into a classical renaissance oil painting masterpiece with textured brushwork" },
+  { label: "💎 Studio Polish", prompt: "Improve the lighting, enhance contrast and clarity while preserving the original subject" },
 ];
 
 const BODY_TAGS = [
@@ -66,6 +80,8 @@ interface GeneratedImage {
   model: string;
   seed: number;
   timestamp: number;
+  sourceImageUrl?: string;
+  isEdit?: boolean;
 }
 
 // Collapsible section wrapper for mobile
@@ -87,23 +103,101 @@ const Section = ({ title, children, defaultOpen = true }: { title: string; child
 
 const AdultAIGenerator = () => {
   const navigate = useNavigate();
+
+  // Mode: Text-to-Image vs Image-to-Image Edit
+  const [activeTab, setActiveTab] = useState<"generate" | "edit">("generate");
+
+  // Text-to-Image State
   const [prompt, setPrompt] = useState("");
   const [selectedStyle, setSelectedStyle] = useState(0);
   const [selectedModel, setSelectedModel] = useState("flux");
   const [selectedRatio, setSelectedRatio] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [batchCount, setBatchCount] = useState(1);
+
+  // Image-to-Image Edit State
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [sourcePreviewUrl, setSourcePreviewUrl] = useState<string | null>(null);
+  const [uploadedPublicUrl, setUploadedPublicUrl] = useState<string | null>(null);
+  const [editPrompt, setEditPrompt] = useState("");
+  const [editModel, setEditModel] = useState("flux");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editProgressStatus, setEditProgressStatus] = useState<string>("");
+  const [editError, setEditError] = useState<string | null>(null);
+  const [lastEditedImage, setLastEditedImage] = useState<GeneratedImage | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Gallery & Lightbox
   const [gallery, setGallery] = useState<GeneratedImage[]>([]);
   const [lightboxImg, setLightboxImg] = useState<GeneratedImage | null>(null);
-  const [batchCount, setBatchCount] = useState(1);
   const [copied, setCopied] = useState(false);
   const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
 
+  // Cleanup object URLs on unmount or replace
+  useEffect(() => {
+    return () => {
+      if (sourcePreviewUrl) {
+        URL.revokeObjectURL(sourcePreviewUrl);
+      }
+    };
+  }, [sourcePreviewUrl]);
+
+  // Handle file selection
+  const handleFile = (file: File) => {
+    setEditError(null);
+
+    // Validate type
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+    if (!validTypes.includes(file.type.toLowerCase())) {
+      setEditError("Unsupported file type. Please upload a JPG, PNG, or WebP image.");
+      return;
+    }
+
+    // Validate size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setEditError("File size exceeds 10MB limit. Please choose a smaller image.");
+      return;
+    }
+
+    if (sourcePreviewUrl) {
+      URL.revokeObjectURL(sourcePreviewUrl);
+    }
+
+    const preview = URL.createObjectURL(file);
+    setSourceFile(file);
+    setSourcePreviewUrl(preview);
+    setUploadedPublicUrl(null); // Will upload on edit submit
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const clearSourceImage = () => {
+    if (sourcePreviewUrl) {
+      URL.revokeObjectURL(sourcePreviewUrl);
+    }
+    setSourceFile(null);
+    setSourcePreviewUrl(null);
+    setUploadedPublicUrl(null);
+    setEditError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // Text-to-Image Generation
   const buildFinalPrompt = () => {
     const tags = selectedTags.length > 0 ? `, ${selectedTags.join(", ")}` : "";
     const style = STYLE_PRESETS[selectedStyle].suffix;
-    const base = prompt.trim() || "beautiful woman, nude";
-    return `${base}${tags}, ${style}, NSFW, explicit, high quality`;
+    const base = prompt.trim() || "beautiful woman, artistic";
+    return `${base}${tags}, ${style}, high quality, detailed`;
   };
 
   const generate = useCallback(async () => {
@@ -112,15 +206,88 @@ const AdultAIGenerator = () => {
     const ratio = ASPECT_RATIOS[selectedRatio];
     const finalPrompt = buildFinalPrompt();
     const newImgs: GeneratedImage[] = [];
+
     for (let i = 0; i < batchCount; i++) {
       const seed = Math.floor(Math.random() * 999999999);
       const id = `${Date.now()}-${i}-${seed}`;
       const url = buildImageUrl(finalPrompt, selectedModel, ratio.w, ratio.h, seed);
       newImgs.push({ id, url, prompt: finalPrompt, model: selectedModel, seed, timestamp: Date.now() });
     }
+
     setGallery(prev => [...newImgs, ...prev]);
-    setTimeout(() => setIsGenerating(false), 1500);
+    setTimeout(() => setIsGenerating(false), 1200);
   }, [isGenerating, prompt, selectedStyle, selectedModel, selectedRatio, selectedTags, batchCount]);
+
+  // Image-to-Image Edit
+  const performImageEdit = async () => {
+    if (isEditing) return;
+    if (!sourceFile) {
+      setEditError("Please upload an image to edit first.");
+      return;
+    }
+    if (!editPrompt.trim()) {
+      setEditError("Please enter editing instructions describing what to change.");
+      return;
+    }
+
+    setIsEditing(true);
+    setEditError(null);
+    setEditProgressStatus("Uploading source image...");
+
+    try {
+      let publicImageUrl = uploadedPublicUrl;
+
+      // Upload if not already uploaded
+      if (!publicImageUrl) {
+        const formData = new FormData();
+        formData.append("image", sourceFile);
+
+        const uploadRes = await fetch("/api/upload-image", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json().catch(() => ({}));
+          throw new Error(errData.error || `Upload failed with status ${uploadRes.status}`);
+        }
+
+        const uploadData = await uploadRes.json();
+        if (!uploadData.url) {
+          throw new Error("Could not retrieve uploaded image URL");
+        }
+
+        publicImageUrl = uploadData.url;
+        setUploadedPublicUrl(publicImageUrl);
+      }
+
+      setEditProgressStatus("AI applying image-to-image changes...");
+
+      const seed = Math.floor(Math.random() * 999999999);
+      const id = `edit-${Date.now()}-${seed}`;
+      const editedUrl = buildImageUrl(editPrompt.trim(), editModel, 768, 768, seed, publicImageUrl);
+
+      const editedImageItem: GeneratedImage = {
+        id,
+        url: editedUrl,
+        prompt: editPrompt.trim(),
+        model: editModel,
+        seed,
+        timestamp: Date.now(),
+        sourceImageUrl: sourcePreviewUrl || publicImageUrl,
+        isEdit: true,
+      };
+
+      setLastEditedImage(editedImageItem);
+      setGallery(prev => [editedImageItem, ...prev]);
+    } catch (err: any) {
+      console.error("Image edit error:", err);
+      setEditError(err?.message || "Failed to edit image. Please try again with a different prompt or image.");
+    } finally {
+      setIsEditing(false);
+      setEditProgressStatus("");
+    }
+  };
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
@@ -153,6 +320,7 @@ const AdultAIGenerator = () => {
   const removeFromGallery = (id: string) => {
     setGallery(prev => prev.filter(g => g.id !== id));
     if (lightboxImg?.id === id) setLightboxImg(null);
+    if (lastEditedImage?.id === id) setLastEditedImage(null);
   };
 
   return (
@@ -168,12 +336,12 @@ const AdultAIGenerator = () => {
       <main className="relative z-10 pt-20 sm:pt-24 pb-24 sm:pb-16 container max-w-6xl mx-auto px-3 sm:px-4">
 
         {/* ── Header ── */}
-        <div className="mb-6 sm:mb-10">
+        <div className="mb-6 sm:mb-8">
           <button
             onClick={() => navigate("/adult/catalog")}
             className="flex items-center gap-2 text-white/30 hover:text-white text-[10px] font-bold uppercase tracking-widest mb-4 sm:mb-6 transition-colors"
           >
-            <ChevronLeft className="w-3.5 h-3.5" /> Back
+            <ChevronLeft className="w-3.5 h-3.5" /> Back to Catalog
           </button>
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -189,334 +357,531 @@ const AdultAIGenerator = () => {
                   JARVIS <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">AI</span> Studio
                 </h1>
                 <p className="text-white/35 text-[10px] sm:text-xs font-medium mt-0.5 truncate">
-                  Text → Nude AI Art • Free • No Limits
+                  Text Generation & Image-to-Image Editing • Powered by Pollinations.ai
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 self-start sm:ml-auto flex-shrink-0">
               <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[9px] sm:text-[10px] font-black text-green-400 uppercase tracking-widest whitespace-nowrap">Free • Unlimited</span>
+              <span className="text-[9px] sm:text-[10px] font-black text-green-400 uppercase tracking-widest whitespace-nowrap">Free & Unlimited</span>
             </div>
           </div>
         </div>
 
-        {/* ── Two-column on desktop, single column on mobile ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-4 sm:gap-6">
+        {/* ── Mode Switcher Tabs ── */}
+        <div className="mb-6 flex p-1.5 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md max-w-md">
+          <button
+            onClick={() => setActiveTab("generate")}
+            className={cn(
+              "flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-95",
+              activeTab === "generate"
+                ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+                : "text-white/40 hover:text-white"
+            )}
+          >
+            <Sparkles className="w-4 h-4" /> Text to Image
+          </button>
+          <button
+            onClick={() => setActiveTab("edit")}
+            className={cn(
+              "flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-95",
+              activeTab === "edit"
+                ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+                : "text-white/40 hover:text-white"
+            )}
+          >
+            <SlidersHorizontal className="w-4 h-4" /> Edit Image (Img2Img)
+          </button>
+        </div>
 
-          {/* ── LEFT: Controls ── */}
-          <div className="space-y-3 sm:space-y-4">
-
-            {/* Prompt box */}
-            <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4 sm:p-5 backdrop-blur-sm">
-              <label className="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 flex items-center gap-2">
-                <Sparkles className="w-3 h-3" /> Your Prompt
-              </label>
-              <textarea
-                value={prompt}
-                onChange={e => setPrompt(e.target.value)}
-                placeholder="Describe what you want... e.g. beautiful woman, nude, soft lighting..."
-                rows={3}
-                className="w-full bg-transparent text-white text-sm placeholder:text-white/20 resize-none outline-none leading-relaxed"
-              />
-              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/5 flex-wrap">
-                <button
-                  onClick={randomizePrompt}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-purple-500/20 border border-white/8 hover:border-purple-500/30 text-white/40 hover:text-purple-300 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
-                >
-                  <Shuffle className="w-3 h-3" /> Random
-                </button>
-                <button
-                  onClick={() => copyPrompt(buildFinalPrompt())}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/8 text-white/40 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
-                >
-                  {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
-                  {copied ? "Copied!" : "Copy"}
-                </button>
-                <span className="ml-auto text-[10px] text-white/20">{prompt.length} chars</span>
-              </div>
-            </div>
-
-            {/* Quick Prompts — scrollable horizontal on mobile */}
-            <Section title="⚡ Quick Prompts">
-              <div className="grid grid-cols-2 sm:grid-cols-2 gap-2">
-                {QUICK_PROMPTS.map((qp) => (
+        {/* ── MAIN CONTENT: Mode 1: Text to Image | Mode 2: Edit Image ── */}
+        {activeTab === "generate" ? (
+          /* ── TAB 1: TEXT TO IMAGE GENERATOR ── */
+          <div className="grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-4 sm:gap-6">
+            {/* LEFT: Controls */}
+            <div className="space-y-3 sm:space-y-4">
+              {/* Prompt box */}
+              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4 sm:p-5 backdrop-blur-sm">
+                <label className="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 flex items-center gap-2">
+                  <Sparkles className="w-3 h-3" /> Your Prompt
+                </label>
+                <textarea
+                  value={prompt}
+                  onChange={e => setPrompt(e.target.value)}
+                  placeholder="Describe what you want to create... e.g. futuristic cyberpunk cityscape, neon lights..."
+                  rows={3}
+                  className="w-full bg-transparent text-white text-sm placeholder:text-white/20 resize-none outline-none leading-relaxed"
+                />
+                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/5 flex-wrap">
                   <button
-                    key={qp.label}
-                    onClick={() => setPrompt(qp.prompt)}
-                    className={cn(
-                      "px-3 py-2.5 rounded-xl text-[10px] font-bold text-left border transition-all active:scale-95",
-                      prompt === qp.prompt
-                        ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
-                        : "bg-white/[0.03] border-white/8 text-white/50 hover:bg-purple-500/10 hover:border-purple-500/20 hover:text-white"
-                    )}
+                    onClick={randomizePrompt}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-purple-500/20 border border-white/8 hover:border-purple-500/30 text-white/40 hover:text-purple-300 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
                   >
-                    {qp.label}
+                    <Shuffle className="w-3 h-3" /> Random
                   </button>
-                ))}
-              </div>
-            </Section>
-
-            {/* Body Tags */}
-            <Section title="💪 Body & Style Tags">
-              <div className="flex flex-wrap gap-2">
-                {BODY_TAGS.map((tag) => (
                   <button
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wide border transition-all active:scale-95",
-                      selectedTags.includes(tag)
-                        ? "bg-pink-600/30 border-pink-500/50 text-pink-200"
-                        : "bg-white/[0.03] border-white/8 text-white/40 hover:bg-pink-500/10 hover:border-pink-500/20 hover:text-white"
-                    )}
+                    onClick={() => copyPrompt(buildFinalPrompt())}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/8 text-white/40 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
                   >
-                    {tag}
+                    {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
+                    {copied ? "Copied!" : "Copy"}
                   </button>
-                ))}
+                  <span className="ml-auto text-[10px] text-white/20">{prompt.length} chars</span>
+                </div>
               </div>
-            </Section>
 
-            {/* Art Style */}
-            <Section title="🎨 Art Style" defaultOpen={true}>
-              <div className="grid grid-cols-3 gap-2">
-                {STYLE_PRESETS.map((style, i) => (
-                  <button
-                    key={style.label}
-                    onClick={() => setSelectedStyle(i)}
-                    className={cn(
-                      "py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wide border transition-all active:scale-95",
-                      selectedStyle === i
-                        ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
-                        : "bg-white/[0.03] border-white/8 text-white/40 hover:text-white hover:border-white/15"
-                    )}
-                  >
-                    {style.label}
-                  </button>
-                ))}
-              </div>
-            </Section>
-
-            {/* AI Model */}
-            <Section title="🤖 AI Model" defaultOpen={false}>
-              <div className="space-y-2">
-                {MODELS.map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setSelectedModel(m.id)}
-                    className={cn(
-                      "w-full flex items-center gap-3 px-4 py-3 rounded-2xl border text-left transition-all active:scale-[0.98]",
-                      selectedModel === m.id
-                        ? "bg-purple-600/20 border-purple-500/50"
-                        : "bg-white/[0.02] border-white/8 hover:bg-white/5 hover:border-white/15"
-                    )}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[11px] font-black text-white uppercase">{m.label}</span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/10 text-white/50">{m.badge}</span>
-                      </div>
-                      <p className="text-[10px] text-white/30 mt-0.5 truncate">{m.desc}</p>
-                    </div>
-                    {selectedModel === m.id && <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse flex-shrink-0" />}
-                  </button>
-                ))}
-              </div>
-            </Section>
-
-            {/* Ratio & Count — side by side on mobile */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3 block">📐 Ratio</label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {ASPECT_RATIOS.map((r, i) => (
+              {/* Quick Prompts */}
+              <Section title="⚡ Quick Prompts">
+                <div className="grid grid-cols-2 gap-2">
+                  {QUICK_PROMPTS.map((qp) => (
                     <button
-                      key={r.label}
-                      onClick={() => setSelectedRatio(i)}
+                      key={qp.label}
+                      onClick={() => setPrompt(qp.prompt)}
                       className={cn(
-                        "py-2 rounded-xl text-center border transition-all active:scale-95",
-                        selectedRatio === i
+                        "px-3 py-2.5 rounded-xl text-[10px] font-bold text-left border transition-all active:scale-95",
+                        prompt === qp.prompt
+                          ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
+                          : "bg-white/[0.03] border-white/8 text-white/50 hover:bg-purple-500/10 hover:border-purple-500/20 hover:text-white"
+                      )}
+                    >
+                      {qp.label}
+                    </button>
+                  ))}
+                </div>
+              </Section>
+
+              {/* Body & Style Tags */}
+              <Section title="💪 Character & Scene Tags">
+                <div className="flex flex-wrap gap-2">
+                  {BODY_TAGS.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => toggleTag(tag)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wide border transition-all active:scale-95",
+                        selectedTags.includes(tag)
+                          ? "bg-pink-600/30 border-pink-500/50 text-pink-200"
+                          : "bg-white/[0.03] border-white/8 text-white/40 hover:bg-pink-500/10 hover:border-pink-500/20 hover:text-white"
+                      )}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </Section>
+
+              {/* Art Style */}
+              <Section title="🎨 Art Style" defaultOpen={true}>
+                <div className="grid grid-cols-3 gap-2">
+                  {STYLE_PRESETS.map((style, i) => (
+                    <button
+                      key={style.label}
+                      onClick={() => setSelectedStyle(i)}
+                      className={cn(
+                        "py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wide border transition-all active:scale-95",
+                        selectedStyle === i
                           ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
                           : "bg-white/[0.03] border-white/8 text-white/40 hover:text-white hover:border-white/15"
                       )}
                     >
-                      <div className="text-sm">{r.icon}</div>
-                      <div className="text-[8px] font-black uppercase mt-0.5">{r.label}</div>
+                      {style.label}
                     </button>
                   ))}
                 </div>
-              </div>
+              </Section>
 
-              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3 flex items-center gap-1.5">
-                  <Grid3x3 className="w-3 h-3" /> Count
-                </label>
-                <div className="flex flex-col gap-1.5">
-                  {[1, 2, 4].map(n => (
+              {/* AI Model */}
+              <Section title="🤖 AI Model" defaultOpen={false}>
+                <div className="space-y-2">
+                  {MODELS.map((m) => (
                     <button
-                      key={n}
-                      onClick={() => setBatchCount(n)}
+                      key={m.id}
+                      onClick={() => setSelectedModel(m.id)}
                       className={cn(
-                        "w-full py-2.5 rounded-xl text-[11px] font-black border transition-all active:scale-95",
-                        batchCount === n
-                          ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
-                          : "bg-white/[0.03] border-white/8 text-white/40 hover:text-white"
+                        "w-full flex items-center gap-3 px-4 py-3 rounded-2xl border text-left transition-all active:scale-[0.98]",
+                        selectedModel === m.id
+                          ? "bg-purple-600/20 border-purple-500/50"
+                          : "bg-white/[0.02] border-white/8 hover:bg-white/5 hover:border-white/15"
                       )}
                     >
-                      {n}x
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[11px] font-black text-white uppercase">{m.label}</span>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/10 text-white/50">{m.badge}</span>
+                        </div>
+                        <p className="text-[10px] text-white/30 mt-0.5 truncate">{m.desc}</p>
+                      </div>
+                      {selectedModel === m.id && <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse flex-shrink-0" />}
+                    </button>
+                  ))}
+                </div>
+              </Section>
+
+              {/* Ratio & Count */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3 block">📐 Ratio</label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {ASPECT_RATIOS.map((r, i) => (
+                      <button
+                        key={r.label}
+                        onClick={() => setSelectedRatio(i)}
+                        className={cn(
+                          "py-2 rounded-xl text-center border transition-all active:scale-95",
+                          selectedRatio === i
+                            ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
+                            : "bg-white/[0.03] border-white/8 text-white/40 hover:text-white hover:border-white/15"
+                        )}
+                      >
+                        <div className="text-sm">{r.icon}</div>
+                        <div className="text-[8px] font-black uppercase mt-0.5">{r.label}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3 flex items-center gap-1.5">
+                    <Grid3x3 className="w-3 h-3" /> Count
+                  </label>
+                  <div className="flex flex-col gap-1.5">
+                    {[1, 2, 4].map(n => (
+                      <button
+                        key={n}
+                        onClick={() => setBatchCount(n)}
+                        className={cn(
+                          "w-full py-2.5 rounded-xl text-[11px] font-black border transition-all active:scale-95",
+                          batchCount === n
+                            ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
+                            : "bg-white/[0.03] border-white/8 text-white/40 hover:text-white"
+                        )}
+                      >
+                        {n}x
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Generate Button */}
+              <button
+                onClick={generate}
+                disabled={isGenerating}
+                className={cn(
+                  "w-full py-5 rounded-3xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all duration-300 active:scale-[0.98]",
+                  isGenerating
+                    ? "bg-purple-700/40 border border-purple-500/30 text-purple-300/50 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:shadow-[0_0_60px_rgba(168,85,247,0.6)]"
+                )}
+              >
+                {isGenerating ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    Generating{batchCount > 1 ? ` ${batchCount} images` : ""}...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-5 h-5" />
+                    Generate {batchCount > 1 ? `${batchCount} Images` : "Image"}
+                    <Zap className="w-4 h-4 text-yellow-300" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* RIGHT: Gallery */}
+            <div>{renderGallery()}</div>
+          </div>
+        ) : (
+          /* ── TAB 2: IMAGE-TO-IMAGE EDITING MODE ── */
+          <div className="grid grid-cols-1 lg:grid-cols-[440px,1fr] gap-4 sm:gap-6">
+            {/* LEFT: Upload & Edit Controls */}
+            <div className="space-y-4">
+              {/* Image Upload Zone */}
+              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-5 backdrop-blur-sm">
+                <label className="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Upload className="w-3.5 h-3.5" /> 1. Upload Source Image
+                  </span>
+                  {sourceFile && (
+                    <button
+                      onClick={clearSourceImage}
+                      className="text-white/40 hover:text-red-400 text-[9px] uppercase font-bold flex items-center gap-1 transition-colors"
+                    >
+                      <Trash2 className="w-3 h-3" /> Remove
+                    </button>
+                  )}
+                </label>
+
+                {/* Hidden input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png, image/jpeg, image/jpg, image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleFile(e.target.files[0]);
+                    }
+                  }}
+                />
+
+                {!sourcePreviewUrl ? (
+                  /* Drag & Drop Upload Target */
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={cn(
+                      "border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center gap-3 min-h-[180px]",
+                      isDragging
+                        ? "border-purple-400 bg-purple-500/10 scale-[1.01]"
+                        : "border-white/10 hover:border-purple-500/40 hover:bg-white/[0.03]"
+                    )}
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+                      <Upload className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-wider text-white">
+                        Click or Drag & Drop Image Here
+                      </p>
+                      <p className="text-[10px] text-white/35 mt-1 font-medium">
+                        Supports JPG, PNG, WebP (Max 10MB)
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  /* Image Preview Card */
+                  <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/40">
+                    <div className="aspect-video relative overflow-hidden flex items-center justify-center bg-black/60">
+                      <img
+                        src={sourcePreviewUrl}
+                        alt="Source Preview"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="p-3 bg-white/[0.02] border-t border-white/5 flex items-center justify-between text-[10px]">
+                      <div className="truncate max-w-[200px]">
+                        <p className="font-bold text-white truncate">{sourceFile?.name}</p>
+                        <p className="text-white/40 text-[9px]">
+                          {sourceFile ? (sourceFile.size / (1024 * 1024)).toFixed(2) + " MB" : ""}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wider text-[9px] transition-all"
+                      >
+                        Change
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Editing Prompt Field */}
+              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-5 backdrop-blur-sm">
+                <label className="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Wand2 className="w-3.5 h-3.5" /> 2. Describe Your Changes
+                  </span>
+                  <span className="text-[9px] text-white/30">{editPrompt.length} chars</span>
+                </label>
+                <textarea
+                  value={editPrompt}
+                  onChange={e => setEditPrompt(e.target.value)}
+                  placeholder="e.g. Change the background to a futuristic city at night, add neon lights, keep the subject intact..."
+                  rows={3}
+                  className="w-full bg-transparent text-white text-sm placeholder:text-white/20 resize-none outline-none leading-relaxed"
+                />
+
+                {/* Preset Suggestions */}
+                <div className="mt-4 pt-3 border-t border-white/5">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-2">
+                    ⚡ Quick Edit Ideas:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {EDIT_PRESETS.map((ep) => (
+                      <button
+                        key={ep.label}
+                        onClick={() => setEditPrompt(ep.prompt)}
+                        className={cn(
+                          "px-2.5 py-1.5 rounded-lg text-[9px] font-bold border transition-all active:scale-95",
+                          editPrompt === ep.prompt
+                            ? "bg-purple-600/30 border-purple-500/50 text-purple-200"
+                            : "bg-white/[0.02] border-white/8 text-white/50 hover:bg-purple-500/10 hover:text-white"
+                        )}
+                      >
+                        {ep.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Model Choice for Editing */}
+              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4">
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3 block">
+                  🤖 Editing Engine
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: "flux", name: "Flux (Recommended)", desc: "Best fidelity to source image" },
+                    { id: "turbo", name: "Turbo", desc: "Fast generation" },
+                  ].map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => setEditModel(m.id)}
+                      className={cn(
+                        "p-3 rounded-2xl border text-left transition-all active:scale-95",
+                        editModel === m.id
+                          ? "bg-purple-600/20 border-purple-500/50 text-white shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+                          : "bg-white/[0.02] border-white/8 text-white/40 hover:text-white"
+                      )}
+                    >
+                      <p className="text-[10px] font-black uppercase">{m.name}</p>
+                      <p className="text-[9px] text-white/30 mt-0.5">{m.desc}</p>
                     </button>
                   ))}
                 </div>
               </div>
+
+              {/* Error Message Banner */}
+              {editError && (
+                <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">{editError}</p>
+                </div>
+              )}
+
+              {/* Edit Image Action Button */}
+              <button
+                onClick={performImageEdit}
+                disabled={isEditing || !sourceFile}
+                className={cn(
+                  "w-full py-5 rounded-3xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all duration-300 active:scale-[0.98]",
+                  isEditing || !sourceFile
+                    ? "bg-purple-700/40 border border-purple-500/30 text-purple-300/40 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:shadow-[0_0_60px_rgba(168,85,247,0.6)]"
+                )}
+              >
+                {isEditing ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    <span>{editProgressStatus || "Editing Image..."}</span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-5 h-5" />
+                    <span>Apply AI Edits</span>
+                    <Zap className="w-4 h-4 text-yellow-300" />
+                  </>
+                )}
+              </button>
             </div>
 
-            {/* Generate Button */}
-            <button
-              onClick={generate}
-              disabled={isGenerating}
-              className={cn(
-                "w-full py-5 rounded-3xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all duration-300 active:scale-[0.98]",
-                isGenerating
-                  ? "bg-purple-700/40 border border-purple-500/30 text-purple-300/50 cursor-not-allowed"
-                  : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:shadow-[0_0_60px_rgba(168,85,247,0.6)]"
-              )}
-            >
-              {isGenerating ? (
-                <>
-                  <RefreshCw className="w-5 h-5 animate-spin" />
-                  Generating{batchCount > 1 ? ` ${batchCount} images` : ""}...
-                </>
-              ) : (
-                <>
-                  <Wand2 className="w-5 h-5" />
-                  Generate {batchCount > 1 ? `${batchCount} Images` : "Image"}
-                  <Zap className="w-4 h-4 text-yellow-300" />
-                </>
-              )}
-            </button>
-
-            {/* Note */}
-            <div className="flex items-start gap-2 px-4 py-3 rounded-2xl bg-white/[0.02] border border-white/5">
-              <Lock className="w-3.5 h-3.5 text-green-400 mt-0.5 flex-shrink-0" />
-              <p className="text-[10px] text-white/30 leading-relaxed">
-                100% AI-generated art. No real people. Powered by Pollinations.ai.
-              </p>
-            </div>
-          </div>
-
-          {/* ── RIGHT: Gallery ── */}
-          <div>
-            {gallery.length === 0 ? (
-              <div className="h-full min-h-[280px] sm:min-h-[500px] rounded-3xl border border-white/8 bg-white/[0.02] flex flex-col items-center justify-center gap-4 text-center p-8">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full" />
-                  <ImageIcon className="w-12 h-12 sm:w-16 sm:h-16 text-white/10 relative" />
-                </div>
-                <div>
-                  <p className="text-white/30 font-black uppercase tracking-widest text-sm">Gallery is empty</p>
-                  <p className="text-white/15 text-xs mt-1">Pick a prompt and hit Generate ✨</p>
-                </div>
-                <div className="flex flex-wrap justify-center gap-2 max-w-xs">
-                  {["Realistic", "Anime", "Fantasy"].map(s => (
-                    <span key={s} className="px-3 py-1 rounded-full border border-white/8 text-white/20 text-[10px] font-bold uppercase">{s}</span>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* Gallery header */}
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] text-white/30 font-bold uppercase tracking-widest">
-                    {gallery.length} image{gallery.length > 1 ? "s" : ""}
-                  </span>
-                  <button
-                    onClick={() => { setGallery([]); setLoadedIds(new Set()); }}
-                    className="text-[10px] text-white/20 hover:text-red-400 font-bold uppercase tracking-widest transition-colors"
-                  >
-                    Clear All
-                  </button>
-                </div>
-
-                {/* Image grid — 2 cols always, images have touch-friendly action bar */}
-                <div className={cn(
-                  "grid gap-3",
-                  gallery.length === 1 ? "grid-cols-1 max-w-xs mx-auto sm:max-w-none" : "grid-cols-2"
-                )}>
-                  {gallery.map((img) => (
-                    <div
-                      key={img.id}
-                      className="relative rounded-2xl overflow-hidden border border-white/8 bg-white/[0.02] aspect-[3/4]"
-                    >
-                      {/* Loading skeleton */}
-                      {!loadedIds.has(img.id) && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-pink-900/10 animate-pulse flex items-center justify-center">
-                          <RefreshCw className="w-8 h-8 text-white/20 animate-spin" />
-                        </div>
-                      )}
-                      <img
-                        src={img.url}
-                        alt="AI Generated"
-                        className={cn(
-                          "w-full h-full object-cover transition-all duration-500",
-                          loadedIds.has(img.id) ? "opacity-100" : "opacity-0"
-                        )}
-                        onLoad={() => setLoadedIds(prev => new Set([...prev, img.id]))}
-                        onError={() => setLoadedIds(prev => new Set([...prev, img.id]))}
-                      />
-
-                      {/* Always-visible bottom action bar (touch-friendly) */}
-                      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-8 pb-2 px-2">
-                        <div className="flex gap-1.5">
-                          <button
-                            onClick={() => setLightboxImg(img)}
-                            className="flex-1 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 text-[9px] font-black uppercase tracking-widest text-white flex items-center justify-center gap-1 active:scale-95 transition-all"
-                          >
-                            <Maximize2 className="w-3 h-3" /> View
-                          </button>
-                          <button
-                            onClick={() => downloadImage(img)}
-                            className="flex-1 py-2 rounded-xl bg-purple-600/80 backdrop-blur-sm border border-purple-400/20 text-[9px] font-black uppercase tracking-widest text-white flex items-center justify-center gap-1 active:scale-95 transition-all"
-                          >
-                            <Download className="w-3 h-3" /> Save
-                          </button>
-                          <button
-                            onClick={() => removeFromGallery(img.id)}
-                            className="w-9 h-9 rounded-xl bg-black/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/40 hover:text-red-400 active:scale-95 transition-all flex-shrink-0"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Model badge top-left */}
-                      <div className="absolute top-2 left-2">
-                        <span className="px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-[9px] font-black uppercase tracking-widest text-white/50">
-                          {img.model}
-                        </span>
-                      </div>
+            {/* RIGHT: Before vs After & Result Showcase */}
+            <div className="space-y-4">
+              {lastEditedImage ? (
+                /* Before & After Comparison Showcase */
+                <div className="rounded-3xl border border-purple-500/30 bg-white/[0.02] p-5 backdrop-blur-md">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-black uppercase tracking-widest text-purple-300 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" /> Latest Edit Result
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={performImageEdit}
+                        disabled={isEditing}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 hover:border-purple-400/40 text-[10px] font-black uppercase tracking-wider text-white/60 hover:text-white transition-all"
+                      >
+                        <RefreshCw className={cn("w-3 h-3", isEditing && "animate-spin")} /> Regenerate
+                      </button>
+                      <button
+                        onClick={() => downloadImage(lastEditedImage)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-[10px] font-black uppercase tracking-wider text-white transition-all"
+                      >
+                        <Download className="w-3 h-3" /> Download
+                      </button>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Side-by-Side comparison */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    {/* Original Source */}
+                    <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40 relative">
+                      <div className="aspect-[4/3] flex items-center justify-center overflow-hidden">
+                        <img
+                          src={sourcePreviewUrl || lastEditedImage.sourceImageUrl}
+                          alt="Original"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-[9px] font-black uppercase tracking-wider text-white/70">
+                        Original
+                      </span>
+                    </div>
+
+                    {/* Edited Result */}
+                    <div className="rounded-2xl overflow-hidden border border-purple-500/40 bg-black/40 relative shadow-[0_0_30px_rgba(168,85,247,0.3)]">
+                      <div className="aspect-[4/3] flex items-center justify-center overflow-hidden relative">
+                        <img
+                          src={lastEditedImage.url}
+                          alt="Edited AI"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-purple-600/90 backdrop-blur-md text-[9px] font-black uppercase tracking-wider text-white">
+                        AI Edited ✨
+                      </span>
+                      <button
+                        onClick={() => setLightboxImg(lastEditedImage)}
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/70 text-white/70 hover:text-white transition-all"
+                      >
+                        <Maximize2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/5 text-[10px] text-white/40 flex items-center justify-between">
+                    <p className="truncate max-w-[80%]">
+                      <span className="text-white font-bold">Prompt:</span> {lastEditedImage.prompt}
+                    </p>
+                    <button
+                      onClick={() => copyPrompt(lastEditedImage.prompt)}
+                      className="text-purple-400 hover:text-purple-300 font-bold uppercase tracking-wider"
+                    >
+                      Copy
+                    </button>
+                  </div>
                 </div>
-              </>
-            )}
+              ) : null}
+
+              {/* Gallery of all results */}
+              <div>{renderGallery()}</div>
+            </div>
           </div>
-        </div>
+        )}
       </main>
 
-      {/* Lightbox — full safe area on mobile */}
+      {/* Lightbox Modal */}
       {lightboxImg && (
         <div
           className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4"
           onClick={() => setLightboxImg(null)}
         >
           <div
-            className="relative w-full max-w-lg"
+            className="relative w-full max-w-xl"
             onClick={e => e.stopPropagation()}
           >
             {/* Close row */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Star className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Seed: {lightboxImg.seed}</span>
+                <span className="text-[10px] text-white/40 font-bold uppercase tracking-widest">
+                  {lightboxImg.isEdit ? "Image-to-Image Edit" : `Seed: ${lightboxImg.seed}`}
+                </span>
               </div>
               <button
                 onClick={() => setLightboxImg(null)}
@@ -547,6 +912,110 @@ const AdultAIGenerator = () => {
       <Footer />
     </div>
   );
+
+  // Helper function to render common gallery
+  function renderGallery() {
+    if (gallery.length === 0) {
+      return (
+        <div className="h-full min-h-[280px] sm:min-h-[450px] rounded-3xl border border-white/8 bg-white/[0.02] flex flex-col items-center justify-center gap-4 text-center p-8">
+          <div className="relative">
+            <div className="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full" />
+            <ImageIcon className="w-12 h-12 sm:w-16 sm:h-16 text-white/10 relative" />
+          </div>
+          <div>
+            <p className="text-white/30 font-black uppercase tracking-widest text-sm">No creations yet</p>
+            <p className="text-white/15 text-xs mt-1">
+              {activeTab === "edit"
+                ? "Upload an image and describe your changes ✨"
+                : "Type a prompt and hit Generate ✨"}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        {/* Gallery header */}
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[10px] text-white/30 font-bold uppercase tracking-widest">
+            {gallery.length} creation{gallery.length > 1 ? "s" : ""}
+          </span>
+          <button
+            onClick={() => { setGallery([]); setLoadedIds(new Set()); setLastEditedImage(null); }}
+            className="text-[10px] text-white/20 hover:text-red-400 font-bold uppercase tracking-widest transition-colors"
+          >
+            Clear All
+          </button>
+        </div>
+
+        {/* Image grid */}
+        <div className={cn(
+          "grid gap-3",
+          gallery.length === 1 ? "grid-cols-1 max-w-sm mx-auto sm:max-w-none" : "grid-cols-2"
+        )}>
+          {gallery.map((img) => (
+            <div
+              key={img.id}
+              className="relative rounded-2xl overflow-hidden border border-white/8 bg-white/[0.02] aspect-[3/4]"
+            >
+              {!loadedIds.has(img.id) && (
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-pink-900/10 animate-pulse flex items-center justify-center">
+                  <RefreshCw className="w-8 h-8 text-white/20 animate-spin" />
+                </div>
+              )}
+              <img
+                src={img.url}
+                alt="AI Output"
+                className={cn(
+                  "w-full h-full object-cover transition-all duration-500",
+                  loadedIds.has(img.id) ? "opacity-100" : "opacity-0"
+                )}
+                onLoad={() => setLoadedIds(prev => new Set([...prev, img.id]))}
+                onError={() => setLoadedIds(prev => new Set([...prev, img.id]))}
+              />
+
+              {/* Bottom action bar */}
+              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-8 pb-2 px-2">
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => setLightboxImg(img)}
+                    className="flex-1 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 text-[9px] font-black uppercase tracking-widest text-white flex items-center justify-center gap-1 active:scale-95 transition-all"
+                  >
+                    <Maximize2 className="w-3 h-3" /> View
+                  </button>
+                  <button
+                    onClick={() => downloadImage(img)}
+                    className="flex-1 py-2 rounded-xl bg-purple-600/80 backdrop-blur-sm border border-purple-400/20 text-[9px] font-black uppercase tracking-widest text-white flex items-center justify-center gap-1 active:scale-95 transition-all"
+                  >
+                    <Download className="w-3 h-3" /> Save
+                  </button>
+                  <button
+                    onClick={() => removeFromGallery(img.id)}
+                    className="w-9 h-9 rounded-xl bg-black/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/40 hover:text-red-400 active:scale-95 transition-all flex-shrink-0"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Badge top-left */}
+              <div className="absolute top-2 left-2 flex items-center gap-1">
+                {img.isEdit && (
+                  <span className="px-2 py-0.5 rounded-md bg-purple-600 text-[8px] font-black uppercase tracking-wider text-white">
+                    EDIT
+                  </span>
+                )}
+                <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[8px] font-black uppercase tracking-widest text-white/60">
+                  {img.model}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
 };
 
 export default AdultAIGenerator;
