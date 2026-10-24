@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   Sparkles, Download, RefreshCw, Wand2, Image as ImageIcon, ChevronLeft,
   Shuffle, Lock, Zap, Star, Grid3x3, Maximize2, X, Copy, Check, ChevronDown, ChevronUp,
-  Upload, SlidersHorizontal, AlertCircle, Trash2, Clock, CheckCircle2
+  Upload, SlidersHorizontal, AlertCircle, Trash2, Clock, CheckCircle2, Key
 } from "lucide-react";
 
 // ── Pollinations.ai URL builder ──────────────────────────────────────────────
@@ -120,6 +120,8 @@ const AdultAIGenerator = () => {
   const [uploadedPublicUrl, setUploadedPublicUrl] = useState<string | null>(null);
   const [subjectName, setSubjectName] = useState("");
   const [preserveStructure, setPreserveStructure] = useState(true);
+  const [pollenApiKey, setPollenApiKey] = useState(() => localStorage.getItem("pollinations_pollen_key") || "");
+  const [showKeySettings, setShowKeySettings] = useState(false);
   const [editPrompt, setEditPrompt] = useState("");
   const [editModel, setEditModel] = useState("flux");
   const [isEditing, setIsEditing] = useState(false);
@@ -289,18 +291,45 @@ const AdultAIGenerator = () => {
         setUploadedPublicUrl(publicImageUrl);
       }
 
-      setEditProgressStatus("AI applying image-to-image changes...");
-
+      let editedUrl = "";
+      const finalPrompt = buildFinalEditPrompt();
       const seed = Math.floor(Math.random() * 999999999);
       const id = `edit-${Date.now()}-${seed}`;
-      const finalPrompt = buildFinalEditPrompt();
-      const editedUrl = buildImageUrl(finalPrompt, editModel, 768, 768, seed, publicImageUrl);
+
+      if (pollenApiKey.trim()) {
+        setEditProgressStatus("Editing with Flux Kontext Pro engine...");
+        const editFormData = new FormData();
+        editFormData.append("image", sourceFile);
+        editFormData.append("prompt", finalPrompt);
+        editFormData.append("apiKey", pollenApiKey.trim());
+        editFormData.append("model", "black-forest-labs/flux.1-kontext-pro");
+
+        const editRes = await fetch("/api/edit-image", {
+          method: "POST",
+          body: editFormData,
+        });
+
+        if (!editRes.ok) {
+          const errData = await editRes.json().catch(() => ({}));
+          throw new Error(errData.error || errData.message || `Edit failed with status ${editRes.status}`);
+        }
+
+        const editData = await editRes.json();
+        if (!editData.url) {
+          throw new Error("No edited image URL returned");
+        }
+        editedUrl = editData.url;
+      } else {
+        setEditProgressStatus("AI generating edited variation...");
+        editedUrl = buildImageUrl(finalPrompt, editModel, 768, 768, seed, publicImageUrl);
+        setCooldown(45); // Set 45s cooldown on free tier
+      }
 
       const editedImageItem: GeneratedImage = {
         id,
         url: editedUrl,
         prompt: finalPrompt,
-        model: editModel,
+        model: pollenApiKey.trim() ? "flux-kontext-pro" : editModel,
         seed,
         timestamp: Date.now(),
         sourceImageUrl: sourcePreviewUrl || publicImageUrl,
@@ -309,7 +338,6 @@ const AdultAIGenerator = () => {
 
       setLastEditedImage(editedImageItem);
       setGallery(prev => [editedImageItem, ...prev]);
-      setCooldown(45); // Set 45s cooldown
     } catch (err: any) {
       console.error("Image edit error:", err);
       setEditError(err?.message || "Failed to edit image. Please check your connection or wait for cooldown.");
@@ -808,6 +836,60 @@ const AdultAIGenerator = () => {
                     ))}
                   </div>
                 </div>
+              </div>
+
+              {/* Pollinations Key & Exact Fidelity Switch */}
+              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Key className="w-3.5 h-3.5 text-purple-400" />
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-wider text-white">
+                        Pollinations Edit Mode
+                      </p>
+                      <p className="text-[9px] text-white/40">
+                        {pollenApiKey.trim()
+                          ? "🟢 Pro Mode: Flux.1 Kontext Pro (Exact car & shape lock)"
+                          : "⚡ Free Classic Mode (Generates artistic match with structure prompt)"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowKeySettings(s => !s)}
+                    className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-[9px] font-bold transition-colors"
+                  >
+                    {showKeySettings ? "Hide Key" : pollenApiKey.trim() ? "Edit Key" : "+ Add Free Key"}
+                  </button>
+                </div>
+
+                {showKeySettings && (
+                  <div className="pt-2 border-t border-white/5 space-y-2">
+                    <p className="text-[9px] text-white/50 leading-relaxed">
+                      To lock the <strong className="text-white">exact vehicle body panels & pixels</strong>, enter your free Pollen API key from{" "}
+                      <a
+                        href="https://enter.pollinations.ai/keys"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-purple-400 underline font-semibold hover:text-purple-300"
+                      >
+                        enter.pollinations.ai/keys
+                      </a>
+                      . Without a key, the free classic engine creates an AI variation inspired by your car & prompt.
+                    </p>
+                    <input
+                      type="password"
+                      value={pollenApiKey}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setPollenApiKey(val);
+                        localStorage.setItem("pollinations_pollen_key", val);
+                      }}
+                      placeholder="Paste your Pollinations key (pk_... or sk_...)"
+                      className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs placeholder:text-white/20 outline-none focus:border-purple-400/50 transition-colors"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Model Choice for Editing */}
