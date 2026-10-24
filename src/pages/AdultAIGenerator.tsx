@@ -296,40 +296,42 @@ const AdultAIGenerator = () => {
       const seed = Math.floor(Math.random() * 999999999);
       const id = `edit-${Date.now()}-${seed}`;
 
+      // Always try the /api/edit-image route first.
+      // The server uses POLLINATIONS_API_KEY env var automatically.
+      // If user also typed their own key, it takes priority.
+      setEditProgressStatus("Editing with Flux Kontext Pro...");
+      const editFormData = new FormData();
+      editFormData.append("image", sourceFile);
+      editFormData.append("prompt", finalPrompt);
+      editFormData.append("model", "black-forest-labs/flux.1-kontext-pro");
       if (pollenApiKey.trim()) {
-        setEditProgressStatus("Editing with Flux Kontext Pro engine...");
-        const editFormData = new FormData();
-        editFormData.append("image", sourceFile);
-        editFormData.append("prompt", finalPrompt);
         editFormData.append("apiKey", pollenApiKey.trim());
-        editFormData.append("model", "black-forest-labs/flux.1-kontext-pro");
+      }
 
-        const editRes = await fetch("/api/edit-image", {
-          method: "POST",
-          body: editFormData,
-        });
+      const editRes = await fetch("/api/edit-image", {
+        method: "POST",
+        body: editFormData,
+      });
 
-        if (!editRes.ok) {
-          const errData = await editRes.json().catch(() => ({}));
-          throw new Error(errData.error || errData.message || `Edit failed with status ${editRes.status}`);
-        }
-
+      if (editRes.ok) {
         const editData = await editRes.json();
-        if (!editData.url) {
-          throw new Error("No edited image URL returned");
+        if (editData.url) {
+          editedUrl = editData.url;
         }
-        editedUrl = editData.url;
-      } else {
-        setEditProgressStatus("AI generating edited variation...");
+      }
+
+      // Fallback to free classic if server has no key configured
+      if (!editedUrl) {
+        setEditProgressStatus("Classic mode: generating AI variation...");
         editedUrl = buildImageUrl(finalPrompt, editModel, 768, 768, seed, publicImageUrl);
-        setCooldown(45); // Set 45s cooldown on free tier
+        setCooldown(45); // 45s cooldown on free tier
       }
 
       const editedImageItem: GeneratedImage = {
         id,
         url: editedUrl,
         prompt: finalPrompt,
-        model: pollenApiKey.trim() ? "flux-kontext-pro" : editModel,
+        model: "flux-kontext-pro",
         seed,
         timestamp: Date.now(),
         sourceImageUrl: sourcePreviewUrl || publicImageUrl,

@@ -1,4 +1,7 @@
 {
+  "env": {
+    "POLLINATIONS_API_KEY": "@pollinations-api-key"
+  },
   "rewrites": [
     {
       "source": "/watch/tv/:id/:season/:episode",
