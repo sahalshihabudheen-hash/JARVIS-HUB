@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   Sparkles, Download, RefreshCw, Wand2, Image as ImageIcon, ChevronLeft,
   Shuffle, Lock, Zap, Star, Grid3x3, Maximize2, X, Copy, Check, ChevronDown, ChevronUp,
-  Upload, SlidersHorizontal, ArrowRight, AlertCircle, Eye, Trash2
+  Upload, SlidersHorizontal, AlertCircle, Trash2, Clock, Car, Palette
 } from "lucide-react";
 
 // ── Pollinations.ai URL builder ──────────────────────────────────────────────
@@ -20,10 +20,10 @@ const buildImageUrl = (prompt: string, model: string, w: number, h: number, seed
 };
 
 const MODELS = [
-  { id: "flux",        label: "Flux",        badge: "⚡ Best",  desc: "Highest quality, precise edits" },
-  { id: "turbo",       label: "Turbo",       badge: "🚀 Fast",  desc: "Fast generation, high detail" },
-  { id: "dreamshaper", label: "Dreamshaper", badge: "🌸 Anime", desc: "Anime & fantasy art style" },
-  { id: "flux-realism",label: "Flux Real",   badge: "📸 Hyper", desc: "Ultra-photorealistic output" },
+  { id: "flux",          label: "Flux",         badge: "⚡ Best",  desc: "Highest quality, best image preservation" },
+  { id: "turbo",         label: "Turbo",        badge: "🚀 Fast",  desc: "Fast generation, high detail" },
+  { id: "flux-realism",  label: "Flux Real",    badge: "📸 Hyper", desc: "Ultra-photorealistic textures & lighting" },
+  { id: "flux-anime",    label: "Flux Anime",   badge: "🌸 Anime", desc: "Stylized anime/manga illustration" },
 ];
 
 const STYLE_PRESETS = [
@@ -36,34 +36,29 @@ const STYLE_PRESETS = [
 ];
 
 const QUICK_PROMPTS = [
-  { label: "🌸 Anime Girl",     prompt: "beautiful anime girl, long hair, soft lighting, high quality anime art" },
-  { label: "💎 Elegant Woman",  prompt: "elegant beautiful woman, artistic portrait, studio lighting, professional photography" },
-  { label: "🔥 Fantasy Queen",  prompt: "fantasy queen, long flowing hair, magical aura, ethereal lighting, digital art" },
-  { label: "🌊 Beach Scene",    prompt: "beautiful scene on beach, golden sunset lighting, artistic photography, natural" },
-  { label: "⚡ Cyberpunk Girl", prompt: "cyberpunk character, neon lights, futuristic city background, digital art" },
-  { label: "🌙 Moonlight",      prompt: "beautiful figure in moonlight, night atmosphere, soft glow, romantic, artistic" },
-  { label: "🌺 Nature",         prompt: "figure in enchanted nature, lush forest, sunlight beams, artistic photography" },
-  { label: "👸 Princess",       prompt: "beautiful royal princess, palace bedroom, soft lighting, fantasy art, detailed" },
-  { label: "🎨 Art Nouveau",    prompt: "art nouveau style portrait, floral background, elegant, vintage poster art" },
-  { label: "💫 Galaxy Girl",    prompt: "cosmic character, galaxy and nebula background, cosmic art, glowing, ethereal" },
-  { label: "🐉 Dragon Rider",   prompt: "fantasy warrior, dragon companion, epic landscape, detailed digital art" },
-  { label: "🌸 Hentai Style",   prompt: "high quality anime illustration, beautiful character, detailed art, vibrant colors" },
+  { label: "🌸 Anime Scene",    prompt: "cinematic anime landscape with cherry blossoms, vibrant colors, Makoto Shinkai style" },
+  { label: "🏎️ Cyberpunk Car",  prompt: "futuristic hypercar, glowing neon underglow, wet asphalt city street, cyberpunk aesthetic" },
+  { label: "🔥 Fantasy Realm",  prompt: "epic fantasy castle on floating island, dragons in sky, glowing aurora, digital art" },
+  { label: "🌊 Beach Sunset",   prompt: "luxurious sports coupe parked on tropical beach at sunset, golden reflections on waves" },
+  { label: "⚡ Sci-Fi Mech",    prompt: "giant futuristic robot mech in hangar, steam, cinematic dramatic lighting, detailed concept art" },
+  { label: "🌙 Cyber City",     prompt: "sprawling futuristic metropolis at night, neon skyscrapers, flying vehicles, blade runner style" },
+  { label: "🎨 Retro 80s",      prompt: "synthwave 80s retro car cruising down grid highway, wireframe mountains, neon sunset" },
+  { label: "💎 Concept Supercar", prompt: "aerodynamic concept supercar, metallic silver finish, automotive studio lighting, 8k render" },
 ];
 
 const EDIT_PRESETS = [
-  { label: "🌆 Futuristic City", prompt: "Change the background to a futuristic cyberpunk city at night with neon signs" },
-  { label: "🌸 Anime Scene", prompt: "Make this photo look like a cinematic studio anime scene with vibrant colors" },
-  { label: "🌅 Sunset Glow", prompt: "Change the sky and atmosphere to a dramatic golden hour sunset, warm lighting" },
-  { label: "🌧️ Moody Rainy", prompt: "Add rainy reflections and moody cinematic blue lighting while preserving original composition" },
-  { label: "🎨 Oil Painting", prompt: "Transform into a classical renaissance oil painting masterpiece with textured brushwork" },
-  { label: "💎 Studio Polish", prompt: "Improve the lighting, enhance contrast and clarity while preserving the original subject" },
+  { label: "🚗 Custom Paint", prompt: "Change the car paint to sleek metallic ruby red with carbon fiber accents, high gloss finish" },
+  { label: "🌃 Cyberpunk Street", prompt: "Place this vehicle on a wet asphalt street in a futuristic cyberpunk city at night with neon reflections" },
+  { label: "🏔️ Mountain Highway", prompt: "Place this car driving on a scenic coastal mountain road during golden hour sunset" },
+  { label: "🏁 Racing Track", prompt: "Place this car on a high-speed professional race track with motion blur and asphalt reflections" },
+  { label: "🌸 Anime Illustration", prompt: "Transform this photo into a cinematic studio anime scene with cel-shaded colors and vibrant sky" },
+  { label: "🌧️ Moody Rainy Night", prompt: "Add rainy weather, wet ground reflections, and cinematic moody blue street lighting while keeping the vehicle intact" },
 ];
 
 const BODY_TAGS = [
-  "big breasts", "small breasts", "curvy", "slim", "athletic",
-  "long legs", "big butt", "toned body", "petite", "tall",
-  "long hair", "short hair", "blonde", "brunette", "redhead",
-  "fair skin", "dark skin", "tan skin",
+  "metallic paint", "matte black", "carbon fiber", "neon lights",
+  "glossy finish", "studio lighting", "golden hour", "rain reflections",
+  "cyberpunk", "anime style", "vintage retro", "hyper-detailed",
 ];
 
 const ASPECT_RATIOS = [
@@ -107,6 +102,9 @@ const AdultAIGenerator = () => {
   // Mode: Text-to-Image vs Image-to-Image Edit
   const [activeTab, setActiveTab] = useState<"generate" | "edit">("generate");
 
+  // Cooldown countdown timer (45 seconds for Pollinations free tier)
+  const [cooldown, setCooldown] = useState(0);
+
   // Text-to-Image State
   const [prompt, setPrompt] = useState("");
   const [selectedStyle, setSelectedStyle] = useState(0);
@@ -135,6 +133,15 @@ const AdultAIGenerator = () => {
   const [copied, setCopied] = useState(false);
   const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
 
+  // Cooldown countdown tick
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown(c => Math.max(0, c - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
   // Cleanup object URLs on unmount or replace
   useEffect(() => {
     return () => {
@@ -151,7 +158,7 @@ const AdultAIGenerator = () => {
     // Validate type
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
     if (!validTypes.includes(file.type.toLowerCase())) {
-      setEditError("Unsupported file type. Please upload a JPG, PNG, or WebP image.");
+      setEditError("Unsupported file format. Please upload JPG, PNG, or WebP.");
       return;
     }
 
@@ -168,7 +175,7 @@ const AdultAIGenerator = () => {
     const preview = URL.createObjectURL(file);
     setSourceFile(file);
     setSourcePreviewUrl(preview);
-    setUploadedPublicUrl(null); // Will upload on edit submit
+    setUploadedPublicUrl(null);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -196,12 +203,12 @@ const AdultAIGenerator = () => {
   const buildFinalPrompt = () => {
     const tags = selectedTags.length > 0 ? `, ${selectedTags.join(", ")}` : "";
     const style = STYLE_PRESETS[selectedStyle].suffix;
-    const base = prompt.trim() || "beautiful woman, artistic";
+    const base = prompt.trim() || "futuristic concept car, automotive studio lighting";
     return `${base}${tags}, ${style}, high quality, detailed`;
   };
 
   const generate = useCallback(async () => {
-    if (isGenerating) return;
+    if (isGenerating || cooldown > 0) return;
     setIsGenerating(true);
     const ratio = ASPECT_RATIOS[selectedRatio];
     const finalPrompt = buildFinalPrompt();
@@ -215,12 +222,13 @@ const AdultAIGenerator = () => {
     }
 
     setGallery(prev => [...newImgs, ...prev]);
+    setCooldown(45); // Set 45s cooldown to match Pollinations free tier
     setTimeout(() => setIsGenerating(false), 1200);
-  }, [isGenerating, prompt, selectedStyle, selectedModel, selectedRatio, selectedTags, batchCount]);
+  }, [isGenerating, cooldown, prompt, selectedStyle, selectedModel, selectedRatio, selectedTags, batchCount]);
 
   // Image-to-Image Edit
   const performImageEdit = async () => {
-    if (isEditing) return;
+    if (isEditing || cooldown > 0) return;
     if (!sourceFile) {
       setEditError("Please upload an image to edit first.");
       return;
@@ -280,9 +288,10 @@ const AdultAIGenerator = () => {
 
       setLastEditedImage(editedImageItem);
       setGallery(prev => [editedImageItem, ...prev]);
+      setCooldown(45); // Set 45s cooldown
     } catch (err: any) {
       console.error("Image edit error:", err);
-      setEditError(err?.message || "Failed to edit image. Please try again with a different prompt or image.");
+      setEditError(err?.message || "Failed to edit image. Please check your connection or wait for cooldown.");
     } finally {
       setIsEditing(false);
       setEditProgressStatus("");
@@ -361,9 +370,20 @@ const AdultAIGenerator = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 self-start sm:ml-auto flex-shrink-0">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[9px] sm:text-[10px] font-black text-green-400 uppercase tracking-widest whitespace-nowrap">Free & Unlimited</span>
+
+            {/* Status & Cooldown Pill */}
+            <div className="flex items-center gap-2 sm:ml-auto flex-wrap">
+              {cooldown > 0 ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                  <Clock className="w-3 h-3 animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-wider">Cooldown: {cooldown}s</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                  <span className="text-[10px] font-black text-green-400 uppercase tracking-widest whitespace-nowrap">AI Ready</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -394,7 +414,7 @@ const AdultAIGenerator = () => {
           </button>
         </div>
 
-        {/* ── MAIN CONTENT: Mode 1: Text to Image | Mode 2: Edit Image ── */}
+        {/* ── MAIN CONTENT ── */}
         {activeTab === "generate" ? (
           /* ── TAB 1: TEXT TO IMAGE GENERATOR ── */
           <div className="grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-4 sm:gap-6">
@@ -408,7 +428,7 @@ const AdultAIGenerator = () => {
                 <textarea
                   value={prompt}
                   onChange={e => setPrompt(e.target.value)}
-                  placeholder="Describe what you want to create... e.g. futuristic cyberpunk cityscape, neon lights..."
+                  placeholder="Describe what you want to create... e.g. futuristic concept car, neon city street..."
                   rows={3}
                   className="w-full bg-transparent text-white text-sm placeholder:text-white/20 resize-none outline-none leading-relaxed"
                 />
@@ -450,8 +470,8 @@ const AdultAIGenerator = () => {
                 </div>
               </Section>
 
-              {/* Body & Style Tags */}
-              <Section title="💪 Character & Scene Tags">
+              {/* Style Tags */}
+              <Section title="💪 Aesthetics & Lighting">
                 <div className="flex flex-wrap gap-2">
                   {BODY_TAGS.map((tag) => (
                     <button
@@ -566,10 +586,10 @@ const AdultAIGenerator = () => {
               {/* Generate Button */}
               <button
                 onClick={generate}
-                disabled={isGenerating}
+                disabled={isGenerating || cooldown > 0}
                 className={cn(
                   "w-full py-5 rounded-3xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all duration-300 active:scale-[0.98]",
-                  isGenerating
+                  isGenerating || cooldown > 0
                     ? "bg-purple-700/40 border border-purple-500/30 text-purple-300/50 cursor-not-allowed"
                     : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:shadow-[0_0_60px_rgba(168,85,247,0.6)]"
                 )}
@@ -577,7 +597,12 @@ const AdultAIGenerator = () => {
                 {isGenerating ? (
                   <>
                     <RefreshCw className="w-5 h-5 animate-spin" />
-                    Generating{batchCount > 1 ? ` ${batchCount} images` : ""}...
+                    Generating...
+                  </>
+                ) : cooldown > 0 ? (
+                  <>
+                    <Clock className="w-4 h-4 animate-pulse text-amber-300" />
+                    Slot ready in {cooldown}s
                   </>
                 ) : (
                   <>
@@ -691,7 +716,7 @@ const AdultAIGenerator = () => {
                 <textarea
                   value={editPrompt}
                   onChange={e => setEditPrompt(e.target.value)}
-                  placeholder="e.g. Change the background to a futuristic city at night, add neon lights, keep the subject intact..."
+                  placeholder="e.g. Change car color to metallic ruby red, place in a rainy cyberpunk city at night with neon lights..."
                   rows={3}
                   className="w-full bg-transparent text-white text-sm placeholder:text-white/20 resize-none outline-none leading-relaxed"
                 />
@@ -726,10 +751,7 @@ const AdultAIGenerator = () => {
                   🤖 Editing Engine
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: "flux", name: "Flux (Recommended)", desc: "Best fidelity to source image" },
-                    { id: "turbo", name: "Turbo", desc: "Fast generation" },
-                  ].map((m) => (
+                  {MODELS.map((m) => (
                     <button
                       key={m.id}
                       onClick={() => setEditModel(m.id)}
@@ -740,8 +762,11 @@ const AdultAIGenerator = () => {
                           : "bg-white/[0.02] border-white/8 text-white/40 hover:text-white"
                       )}
                     >
-                      <p className="text-[10px] font-black uppercase">{m.name}</p>
-                      <p className="text-[9px] text-white/30 mt-0.5">{m.desc}</p>
+                      <div className="flex items-center justify-between mb-0.5">
+                        <span className="text-[10px] font-black uppercase">{m.label}</span>
+                        <span className="text-[8px] px-1.5 py-0.2 rounded bg-white/10 text-white/60">{m.badge}</span>
+                      </div>
+                      <p className="text-[9px] text-white/30 truncate">{m.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -758,10 +783,10 @@ const AdultAIGenerator = () => {
               {/* Edit Image Action Button */}
               <button
                 onClick={performImageEdit}
-                disabled={isEditing || !sourceFile}
+                disabled={isEditing || !sourceFile || cooldown > 0}
                 className={cn(
                   "w-full py-5 rounded-3xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all duration-300 active:scale-[0.98]",
-                  isEditing || !sourceFile
+                  isEditing || !sourceFile || cooldown > 0
                     ? "bg-purple-700/40 border border-purple-500/30 text-purple-300/40 cursor-not-allowed"
                     : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-[0_0_40px_rgba(168,85,247,0.4)] hover:shadow-[0_0_60px_rgba(168,85,247,0.6)]"
                 )}
@@ -770,6 +795,11 @@ const AdultAIGenerator = () => {
                   <>
                     <RefreshCw className="w-5 h-5 animate-spin" />
                     <span>{editProgressStatus || "Editing Image..."}</span>
+                  </>
+                ) : cooldown > 0 ? (
+                  <>
+                    <Clock className="w-4 h-4 animate-pulse text-amber-300" />
+                    <span>Slot ready in {cooldown}s</span>
                   </>
                 ) : (
                   <>
@@ -793,10 +823,11 @@ const AdultAIGenerator = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={performImageEdit}
-                        disabled={isEditing}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 hover:border-purple-400/40 text-[10px] font-black uppercase tracking-wider text-white/60 hover:text-white transition-all"
+                        disabled={isEditing || cooldown > 0}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 hover:border-purple-400/40 text-[10px] font-black uppercase tracking-wider text-white/60 hover:text-white transition-all disabled:opacity-40"
                       >
-                        <RefreshCw className={cn("w-3 h-3", isEditing && "animate-spin")} /> Regenerate
+                        <RefreshCw className={cn("w-3 h-3", isEditing && "animate-spin")} />
+                        {cooldown > 0 ? `${cooldown}s` : "Regenerate"}
                       </button>
                       <button
                         onClick={() => downloadImage(lastEditedImage)}
