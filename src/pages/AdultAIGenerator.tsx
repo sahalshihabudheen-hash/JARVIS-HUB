@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   Sparkles, Download, RefreshCw, Wand2, Image as ImageIcon, ChevronLeft,
   Shuffle, Lock, Zap, Star, Grid3x3, Maximize2, X, Copy, Check, ChevronDown, ChevronUp,
-  Upload, SlidersHorizontal, AlertCircle, Trash2, Clock, Car, Palette
+  Upload, SlidersHorizontal, AlertCircle, Trash2, Clock, CheckCircle2
 } from "lucide-react";
 
 // ── Pollinations.ai URL builder ──────────────────────────────────────────────
@@ -47,12 +47,12 @@ const QUICK_PROMPTS = [
 ];
 
 const EDIT_PRESETS = [
-  { label: "🚗 Custom Paint", prompt: "Change the car paint to sleek metallic ruby red with carbon fiber accents, high gloss finish" },
-  { label: "🌃 Cyberpunk Street", prompt: "Place this vehicle on a wet asphalt street in a futuristic cyberpunk city at night with neon reflections" },
-  { label: "🏔️ Mountain Highway", prompt: "Place this car driving on a scenic coastal mountain road during golden hour sunset" },
-  { label: "🏁 Racing Track", prompt: "Place this car on a high-speed professional race track with motion blur and asphalt reflections" },
-  { label: "🌸 Anime Illustration", prompt: "Transform this photo into a cinematic studio anime scene with cel-shaded colors and vibrant sky" },
-  { label: "🌧️ Moody Rainy Night", prompt: "Add rainy weather, wet ground reflections, and cinematic moody blue street lighting while keeping the vehicle intact" },
+  { label: "🚗 Change to Red", prompt: "Change the car paint color to glossy metallic candy red, keeping original headlights and wheel rims" },
+  { label: "🖤 Matte Black Paint", prompt: "Change the exterior color to sleek satin matte black with glossy carbon fiber accents" },
+  { label: "🌃 Cyberpunk City", prompt: "Place this exact vehicle on wet asphalt in a futuristic cyberpunk city at night with glowing neon reflections" },
+  { label: "🏔️ Mountain Highway", prompt: "Place this exact car driving on a scenic coastal mountain road during golden hour sunset" },
+  { label: "🏁 Racing Track", prompt: "Place this vehicle on a professional asphalt race track with high-speed motion blur" },
+  { label: "🌸 Anime Cel-Shade", prompt: "Transform into a cinematic studio anime illustration with cel-shaded colors and vibrant sky" },
 ];
 
 const BODY_TAGS = [
@@ -118,6 +118,8 @@ const AdultAIGenerator = () => {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreviewUrl, setSourcePreviewUrl] = useState<string | null>(null);
   const [uploadedPublicUrl, setUploadedPublicUrl] = useState<string | null>(null);
+  const [subjectName, setSubjectName] = useState("");
+  const [preserveStructure, setPreserveStructure] = useState(true);
   const [editPrompt, setEditPrompt] = useState("");
   const [editModel, setEditModel] = useState("flux");
   const [isEditing, setIsEditing] = useState(false);
@@ -226,7 +228,25 @@ const AdultAIGenerator = () => {
     setTimeout(() => setIsGenerating(false), 1200);
   }, [isGenerating, cooldown, prompt, selectedStyle, selectedModel, selectedRatio, selectedTags, batchCount]);
 
-  // Image-to-Image Edit
+  // Build high-fidelity Edit Prompt
+  const buildFinalEditPrompt = () => {
+    // Clean common typos automatically
+    const cleanInstructions = editPrompt.trim()
+      .replace(/\bchage\b/gi, "change")
+      .replace(/\bcara\b/gi, "car")
+      .replace(/\bgodd\b/gi, "good")
+      .replace(/\bbaground\b/gi, "background");
+
+    const subject = subjectName.trim() || "vehicle in the reference image";
+
+    if (preserveStructure) {
+      return `Exact same ${subject} from the reference image, strictly preserve identical body shape, panels, headlights, wheel rims, and angular contours. ${cleanInstructions}, automotive photography, hyper-detailed, photorealistic, 8k`;
+    }
+
+    return `${cleanInstructions}, ${subject}, photorealistic, high quality`;
+  };
+
+  // Image-to-Image Edit Execution
   const performImageEdit = async () => {
     if (isEditing || cooldown > 0) return;
     if (!sourceFile) {
@@ -273,12 +293,13 @@ const AdultAIGenerator = () => {
 
       const seed = Math.floor(Math.random() * 999999999);
       const id = `edit-${Date.now()}-${seed}`;
-      const editedUrl = buildImageUrl(editPrompt.trim(), editModel, 768, 768, seed, publicImageUrl);
+      const finalPrompt = buildFinalEditPrompt();
+      const editedUrl = buildImageUrl(finalPrompt, editModel, 768, 768, seed, publicImageUrl);
 
       const editedImageItem: GeneratedImage = {
         id,
         url: editedUrl,
-        prompt: editPrompt.trim(),
+        prompt: finalPrompt,
         model: editModel,
         seed,
         timestamp: Date.now(),
@@ -705,24 +726,68 @@ const AdultAIGenerator = () => {
                 )}
               </div>
 
-              {/* Editing Prompt Field */}
-              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-5 backdrop-blur-sm">
-                <label className="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 flex items-center justify-between">
+              {/* Editing Controls & Prompt Box */}
+              <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-5 backdrop-blur-sm space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-widest text-purple-400 flex items-center justify-between">
                   <span className="flex items-center gap-2">
-                    <Wand2 className="w-3.5 h-3.5" /> 2. Describe Your Changes
+                    <Wand2 className="w-3.5 h-3.5" /> 2. Editing Instructions
                   </span>
-                  <span className="text-[9px] text-white/30">{editPrompt.length} chars</span>
                 </label>
-                <textarea
-                  value={editPrompt}
-                  onChange={e => setEditPrompt(e.target.value)}
-                  placeholder="e.g. Change car color to metallic ruby red, place in a rainy cyberpunk city at night with neon lights..."
-                  rows={3}
-                  className="w-full bg-transparent text-white text-sm placeholder:text-white/20 resize-none outline-none leading-relaxed"
-                />
+
+                {/* Subject Name Input */}
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/50 mb-1.5 flex items-center justify-between">
+                    <span>🏷️ Target Subject (e.g. Lamborghini Aventador, sports car)</span>
+                    <span className="text-[9px] text-purple-300 font-bold">Helps preserve exact car model</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={subjectName}
+                    onChange={e => setSubjectName(e.target.value)}
+                    placeholder="e.g. Lamborghini Aventador, Ferrari, sports car..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs placeholder:text-white/25 outline-none focus:border-purple-400/50 transition-colors"
+                  />
+                </div>
+
+                {/* Structure Preservation Switch */}
+                <div className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] border border-white/8">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-white flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3 h-3 text-purple-400" /> Preserve Exact Geometry & Body Panels
+                    </p>
+                    <p className="text-[9px] text-white/35 mt-0.5">Keeps identical contours, headlights, spoiler, and wheel rims</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPreserveStructure(p => !p)}
+                    className={cn(
+                      "w-11 h-6 rounded-full transition-colors relative flex items-center px-0.5 flex-shrink-0 ml-3",
+                      preserveStructure ? "bg-purple-600" : "bg-white/10"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-5 h-5 rounded-full bg-white shadow-md transition-transform",
+                      preserveStructure ? "translate-x-5" : "translate-x-0"
+                    )} />
+                  </button>
+                </div>
+
+                {/* Main Instruction Prompt */}
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-white/50 mb-1.5 block">
+                    Desired Modifications:
+                  </label>
+                  <textarea
+                    value={editPrompt}
+                    onChange={e => setEditPrompt(e.target.value)}
+                    placeholder="e.g. Change body color to glossy metallic ruby red, add studio automotive lighting..."
+                    rows={3}
+                    className="w-full bg-white/[0.02] border border-white/8 rounded-2xl p-3 text-white text-xs placeholder:text-white/20 resize-none outline-none focus:border-purple-500/40 leading-relaxed"
+                  />
+                </div>
 
                 {/* Preset Suggestions */}
-                <div className="mt-4 pt-3 border-t border-white/5">
+                <div className="pt-2 border-t border-white/5">
                   <p className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-2">
                     ⚡ Quick Edit Ideas:
                   </p>
