@@ -367,6 +367,26 @@ const AdultAIGenerator = () => {
     }
   };
 
+  // Send a generated image into the Edit tab as the source image
+  const sendToEditor = async (img: GeneratedImage) => {
+    setEditError(null);
+    setLightboxImg(null);
+    setActiveTab("edit");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    try {
+      const res = await fetch(img.url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const type = blob.type && blob.type.startsWith("image/") ? blob.type : "image/jpeg";
+      const ext = type.split("/")[1] || "jpg";
+      handleFile(new File([blob], `generated-${img.seed}.${ext}`, { type }));
+      setEditPrompt("");
+    } catch (err) {
+      console.error("sendToEditor error:", err);
+      setEditError("Couldn't load that image into the editor. Save it and upload it manually instead.");
+    }
+  };
+
   const copyPrompt = (p: string) => {
     navigator.clipboard.writeText(p);
     setCopied(true);
@@ -1074,6 +1094,14 @@ const AdultAIGenerator = () => {
               className="w-full rounded-3xl border border-white/10 max-h-[70vh] object-contain"
             />
 
+            {/* Edit this image */}
+            <button
+              onClick={() => sendToEditor(lightboxImg)}
+              className="mt-4 w-full py-4 rounded-2xl bg-white/10 border border-white/15 text-white text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white/15 transition-all active:scale-[0.98]"
+            >
+              <Wand2 className="w-4 h-4" /> Edit This Image
+            </button>
+
             {/* Download */}
             <button
               onClick={() => downloadImage(lightboxImg)}
@@ -1159,6 +1187,12 @@ const AdultAIGenerator = () => {
                     className="flex-1 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 text-[9px] font-black uppercase tracking-widest text-white flex items-center justify-center gap-1 active:scale-95 transition-all"
                   >
                     <Maximize2 className="w-3 h-3" /> View
+                  </button>
+                  <button
+                    onClick={() => sendToEditor(img)}
+                    className="flex-1 py-2 rounded-xl bg-pink-600/80 backdrop-blur-sm border border-pink-400/20 text-[9px] font-black uppercase tracking-widest text-white flex items-center justify-center gap-1 active:scale-95 transition-all"
+                  >
+                    <Wand2 className="w-3 h-3" /> Edit
                   </button>
                   <button
                     onClick={() => downloadImage(img)}
