@@ -19,8 +19,8 @@ export default async function handler(req: Request) {
     const userApiKey = (formData.get('apiKey') as string) || '';
     const apiKey = userApiKey || process.env.POLLINATIONS_API_KEY || '';
 
-    if (!file) {
-      return new Response(JSON.stringify({ error: 'No source image file provided' }), {
+    if (!file && !imageUrl) {
+      return new Response(JSON.stringify({ error: 'No source image provided' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -55,7 +55,7 @@ export default async function handler(req: Request) {
       });
     } else {
       const upstreamForm = new FormData();
-      upstreamForm.append('image', file);
+      upstreamForm.append('image', file as File);
       upstreamForm.append('prompt', prompt);
       upstreamForm.append('model', model);
       upstreamForm.append('response_format', 'b64_json');

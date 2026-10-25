@@ -156,21 +156,58 @@ const AdultAIGenerator = () => {
   }, [sourcePreviewUrl]);
 
   // Handle file selection
-  const handleFile = (file: File) => {
+  // Downscale big photos in the browser so uploads stay under Vercel's ~4.5MB body limit
+  const compressImage = (file: File, maxDim = 1536, quality = 0.85): Promise<File> =>
+    new Promise((resolve) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        const needsResize = scale < 1;
+        if (!needsResize && file.size <= 3 * 1024 * 1024) return resolve(file);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(file);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return resolve(file);
+            const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+            resolve(new File([blob], name, { type: "image/jpeg" }));
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        resolve(file);
+      };
+      img.src = url;
+    });
+
+  const handleFile = async (rawFile: File) => {
     setEditError(null);
 
     // Validate type
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
-    if (!validTypes.includes(file.type.toLowerCase())) {
+    if (!validTypes.includes(rawFile.type.toLowerCase())) {
       setEditError("Unsupported file format. Please upload JPG, PNG, or WebP.");
       return;
     }
 
-    // Validate size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setEditError("File size exceeds 10MB limit. Please choose a smaller image.");
+    // Generous raw limit, since we compress below
+    if (rawFile.size > 30 * 1024 * 1024) {
+      setEditError("File size exceeds 30MB limit. Please choose a smaller image.");
       return;
     }
+
+    const file = await compressImage(rawFile);
 
     if (sourcePreviewUrl) {
       URL.revokeObjectURL(sourcePreviewUrl);
@@ -301,7 +338,7 @@ const AdultAIGenerator = () => {
       // If user also typed their own key, it takes priority.
       setEditProgressStatus("Editing with Flux Kontext Pro...");
       const editFormData = new FormData();
-      editFormData.append("image", sourceFile);
+      if (!publicImageUrl) editFormData.append("image", sourceFile);
       editFormData.append("prompt", finalPrompt);
       editFormData.append("model", "kontext");
       if (publicImageUrl) editFormData.append("imageUrl", publicImageUrl);
