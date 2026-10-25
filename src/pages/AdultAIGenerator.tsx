@@ -303,7 +303,8 @@ const AdultAIGenerator = () => {
       const editFormData = new FormData();
       editFormData.append("image", sourceFile);
       editFormData.append("prompt", finalPrompt);
-      editFormData.append("model", "black-forest-labs/flux.1-kontext-pro");
+      editFormData.append("model", "kontext");
+      if (publicImageUrl) editFormData.append("imageUrl", publicImageUrl);
       if (pollenApiKey.trim()) {
         editFormData.append("apiKey", pollenApiKey.trim());
       }
@@ -313,19 +314,14 @@ const AdultAIGenerator = () => {
         body: editFormData,
       });
 
-      if (editRes.ok) {
-        const editData = await editRes.json();
-        if (editData.url) {
-          editedUrl = editData.url;
-        }
+      const editData = await editRes.json().catch(() => ({}));
+      if (!editRes.ok || !editData.url) {
+        // Show the real reason instead of silently making a variation
+        throw new Error(
+          editData.message || editData.error || `Image edit failed (HTTP ${editRes.status}). Check POLLINATIONS_API_KEY and redeploy.`
+        );
       }
-
-      // Fallback to free classic if server has no key configured
-      if (!editedUrl) {
-        setEditProgressStatus("Classic mode: generating AI variation...");
-        editedUrl = buildImageUrl(finalPrompt, editModel, 768, 768, seed, publicImageUrl);
-        setCooldown(45); // 45s cooldown on free tier
-      }
+      editedUrl = editData.url;
 
       const editedImageItem: GeneratedImage = {
         id,
